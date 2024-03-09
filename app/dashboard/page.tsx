@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import FetchDataSteps from "@/components/tutorial/FetchDataSteps";
 import Header from "@/components/Header";
 import { redirect } from "next/navigation";
+import NextLinkButton from "../../components/NextLinkButton";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -13,42 +14,49 @@ export default async function ProtectedPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/login");
+    return redirect("/");
   }
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
       <div className="w-full">
-        <div className="py-6 font-bold bg-purple-950 text-center">
-          This is a protected page that you can only see as an authenticated
-          user
-        </div>
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-            <DeployButton />
-            <AuthButton />
+          <div className="w-full max-w-4xl flex justify-between items-center p-3 text-lg">
+            UCSD Alpha Kappa Psi
           </div>
+          <AuthButton />
         </nav>
       </div>
 
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <Header />
-        <main className="flex-1 flex flex-col gap-6">
-          <h2 className="font-bold text-4xl mb-4">Next steps</h2>
-          <FetchDataSteps />
-        </main>
+        <div className="flex flex-col">
+          <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center mt-32">
+            Please choose your role:
+          </p>
+          <p className="text-xl lg:text-xl !leading-tight max-w-xl text-left mt-8 mb-2">
+            For rushees:
+          </p>
+          The application is mandatory for consideration. Due Thursday, April 11th.
+          <div className="flex mt-4 justify-center items-center">
+            <NextLinkButton destination="application">
+              Application
+            </NextLinkButton>
+          </div>
+          <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+        </div>
+        <main className="flex flex-col justify-center items-center"></main>
       </div>
 
       <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
         <p>
-          Powered by{" "}
+          Property of{' '}
           <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
+            href="https://www.akpsiucsd.com"
             target="_blank"
             className="font-bold hover:underline"
             rel="noreferrer"
           >
-            Supabase
+            UCSD Alpha Kappa Psi
           </a>
         </p>
       </footer>
