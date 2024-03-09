@@ -1,0 +1,34 @@
+/* styles.css */
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeOutDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+  
+  .fadeInUp {
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  
+  .fadeOutDown {
+    animation: fadeOutDown 0.5s ease forwards;
+  }
+
+  .fadeInUpInterviewForm{
+    animation: fadeInUp 3s ease forwards;
+  }
