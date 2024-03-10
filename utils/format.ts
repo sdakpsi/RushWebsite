@@ -9,12 +9,19 @@ export function extractFileName(url) {
   }
 
   export function formatTimestamp(timestamp) {
+    if(!timestamp) return null;
     const date = new Date(timestamp);
-    return `${date.toLocaleTimeString('en-US', {
+    const formattedDate = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const formattedTime = date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       second: '2-digit',
       hour12: true
-    })}`;
+    });
+    return `${formattedDate} at ${formattedTime}`;
   }
   
