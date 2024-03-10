@@ -72,35 +72,44 @@ export async function PUT(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
   }
-  const { id, firstName, lastName, pronouns, email, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl } = await req.json();
+
+  const { id, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, socialMedias} = await req.json();
+const socialMediasObject = socialMedias || null;
   const name = firstName + " " + lastName
+  const submitted = isSubmitting ? new Date() : null;
+  let updateObject = {
+    name,
+    pronouns, 
+    phone_number: phoneNumber,
+    year: yearInCollege,
+    graduation_qtr: graduationQuarter,
+    graduation_year: graduationYear || null,
+    major, 
+    minors: minor || "", 
+    gpa: cumulativeGPA || null, 
+    classes: currentClasses, 
+    extracirriculars: extracurricularActivities, 
+    accomplishment: proudAccomplishment, 
+    why_akpsi: joinReason, 
+    goals: lifeGoals, 
+    comfort_zone: comfortZone, 
+    social_media: socialMediasObject,
+    business: businessType, 
+    additional: additionalDetails,
+    resume: resumeFileUrl,
+    cover_letter: coverLetterFileUrl,
+    last_updated: new Date(),
+  };
+  
+  // Conditionally add 'submitted' to the update object if isSubmitting is true
+  if (isSubmitting) {
+    updateObject.submitted = submitted;
+  }
+  
   const { data, error } = await supabase
     .from('applications')
-    .update({ 
-      name,
-      pronouns, 
-      phone_number: phoneNumber,
-      //social media
-      year: yearInCollege,
-      graduation_qtr: graduationQuarter,
-      graduation_year: graduationYear || null,
-      major, 
-      minor, 
-      gpa: cumulativeGPA || null, 
-      classes: currentClasses, 
-      extracirriculars: extracurricularActivities, 
-      accomplishment: proudAccomplishment, 
-      why_akpsi: joinReason, 
-      goals: lifeGoals, 
-      comfort_zone: comfortZone, 
-      business: businessType, 
-      additional: additionalDetails,
-      resume: resumeFileUrl,
-      cover_letter: coverLetterFileUrl,
-      last_updated: new Date()
-    })
+    .update(updateObject)
     .eq('id', id);
-    console.log("hi", data, error)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

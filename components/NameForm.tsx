@@ -5,19 +5,29 @@ import { debounce } from 'lodash';
 import FileDropzone from './Dropzone';
 import { ApplicationFileTypes } from '@/lib/types';
 import { formatTimestamp, extractFileName } from '@/utils/format';
+import { toast } from 'react-toastify';
+import { delay } from '@/utils/delay';
+import { smallInput, textLabel, largeInput } from './NameForm.styles';
 export default function NameForm() {
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const debouncedSave = useCallback(
     debounce(async (applicationData) => {
-      setIsSaving(true); // Indicate that saving has started
+      setIsSaving(true); 
+
+      const body = JSON.stringify({
+        ...applicationData,
+        lastSubmitted: new Date().toISOString(),
+        isSubmitting: false,
+      });
       try {
         const response = await fetch('/api/application', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(applicationData),
+          body: body
         });
   
         if (!response.ok) {
@@ -25,7 +35,7 @@ export default function NameForm() {
         }
   
         console.log('Application data saved successfully');
-        setLastSaved(new Date().toLocaleTimeString()); // Update last saved time
+        setLastSaved(formatTimestamp(new Date()));
       } catch (error) {
         console.error('Error saving application data:', error);
       } finally {
@@ -67,7 +77,7 @@ export default function NameForm() {
         setMinor(data.minor); 
         setCumulativeGPA(data.gpa || ''); 
         setCurrentClasses(data.classes); 
-        setExtracurricularActivities(data.extracurriculars); 
+        setExtracurricularActivities(data.extracirriculars); 
         setProudAccomplishment(data.accomplishment);
         setJoinReason(data.why_akpsi);
         setLifeGoals(data.goals);
@@ -77,8 +87,11 @@ export default function NameForm() {
         setResumeFileUrl(data.resume);
         setCoverLetterFileUrl(data.cover_letter);
         setLastSaved(formatTimestamp(data.last_updated));
-
-        
+        setLastSubmitted(formatTimestamp(data.submitted) || null)
+        setFacebook(data.social_media?.facebook || '');
+        setInstagram(data.social_media?.instagram || '');
+        setLinkedIn(data.social_media?.linkedin || '');
+        setTiktok(data.social_media?.tiktok || '');
       } catch (error) {
         console.error('Error fetching application data:', error);
       }
@@ -102,7 +115,9 @@ export default function NameForm() {
   const [pronouns, setPronouns] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [yearInCollege, setYearInCollege] = useState<string>('');
-  const [graduationYear, setGraduationYear] = useState<string>('');
+  const [graduationYear, setGraduationYear] = useState<number|null>(null);
+  const [isGraduationYearValid, setIsGraduationYearValid] = useState<boolean>(true);
+  const [isCumulativeGPAValid, setIsCumulativeGPAValid] = useState<boolean>(true);
   const [graduationQuarter, setGraduationQuarter] = useState<string>('');
   const [major, setMajor] = useState<string>('');
   const [minor, setMinor] = useState<string>('');
@@ -118,10 +133,14 @@ export default function NameForm() {
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
   const [resumeFileUrl, setResumeFileUrl] = useState<string>('');
   const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>('');
+  const [lastSubmitted, setLastSubmitted] = useState<string|null>(null);
+  const [facebook, setFacebook] = useState<string>('');
+  const [instagram, setInstagram] = useState<string>('');
+  const [linkedIn, setLinkedIn] = useState<string>('');
+  const [tiktok, setTiktok] = useState<string>('');
   
 
   useEffect(() => {
-    if (resumeFileUrl || coverLetterFileUrl) {
       debouncedSave({
         id: applicationId,
         firstName,
@@ -141,12 +160,42 @@ export default function NameForm() {
         lifeGoals,
         comfortZone,
         businessType,
-        additionalDetails,
-        resumeFileUrl,
-        coverLetterFileUrl,
+        
+      additionalDetails,
+      resumeFileUrl,
+      coverLetterFileUrl,
+      socialMedias: {
+    ...(facebook && { facebook }),
+    ...(instagram && { instagram }),
+    ...(linkedIn && { linkedIn }),
+    ...(tiktok && { tiktok }),
+  },
       });
+  }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
+
+  const handleGraduationYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const numberValue = parseInt(value, 10);
+    const isValid = !isNaN(numberValue);
+  
+    setIsGraduationYearValid(isValid);
+  
+    if (isValid || value === '') {
+      setGraduationYear(value ? numberValue : null);
     }
-  }, [resumeFileUrl, coverLetterFileUrl]);
+  };
+
+  const handleCumulativeGPAChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const floatValue = parseFloat(value);
+    const isValid = !isNaN(floatValue);
+  
+    setIsCumulativeGPAValid(isValid); 
+  
+    if (isValid || value === '') {
+      setCumulativeGPA(value);
+    }
+  };
 
 
   const handleChange =
@@ -163,9 +212,8 @@ export default function NameForm() {
       lastName,
       pronouns,
       phoneNumber,
-      yearInCollege,
-      graduationYear,
       graduationQuarter,
+      graduationYear,
       major,
       minor,
       cumulativeGPA,
@@ -176,59 +224,153 @@ export default function NameForm() {
       lifeGoals,
       comfortZone,
       businessType,
+     
       additionalDetails,
       resumeFileUrl,
       coverLetterFileUrl,
+      socialMedias: {
+    ...(facebook && { facebook }),
+    ...(instagram && { instagram }),
+    ...(linkedIn && { linkedIn }),
+    ...(tiktok && { tiktok }),
+  },
     });
   };
 
   // Function to handle form submission
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // You can handle form submission logic here
-    console.log('First Name:', firstName);
-    console.log('Last Name:', lastName);
-    console.log('Pronouns:', pronouns);
-    console.log('Phone Number:', phoneNumber);
-    console.log('Year in College:', yearInCollege);
-    console.log('Graduation Year:', graduationYear);
-    console.log('Graduation Quarter:', graduationQuarter);
-    console.log('Major:', major);
-    console.log('Minor:', minor);
-    console.log('Cumulative GPA:', cumulativeGPA);
-    console.log('Current Classes:', currentClasses);
-    console.log('Extracurricular Activities:', extracurricularActivities);
-    console.log('Proud Accomplishment:', proudAccomplishment);
-    console.log('Join Reason:', joinReason);
-    console.log('Life Goals:', lifeGoals);
-    console.log('Comfort Zone:', comfortZone);
-    console.log('Business Type:', businessType);
-    console.log('Additional Details:', additionalDetails);
+    if(!isGraduationYearValid) {
+      toast.error('Graduation year is invalid.');
+      return;
+    }
+     if (!isCumulativeGPAValid) {
+    toast.error('Cumulative GPA is invalid.');
+    return;
+  }
+
+    const fields = [
+      { name: 'First Name', value: firstName },
+      { name: 'Last Name', value: lastName },
+      { name: 'Pronouns', value: pronouns },
+      { name: 'Phone Number', value: phoneNumber },
+      { name: 'Year in College', value: yearInCollege },
+      { name: 'Graduation Year', value: graduationYear },
+      { name: 'Graduation Quarter', value: graduationQuarter },
+      { name: 'Major', value: major },
+      { name: 'Cumulative GPA', value: cumulativeGPA },
+      { name: 'Current Classes', value: currentClasses },
+      { name: 'Extracurricular Activities', value: extracurricularActivities },
+      { name: 'Proud Accomplishment', value: proudAccomplishment },
+      { name: 'Join Reason', value: joinReason },
+      { name: 'Life Goals', value: lifeGoals },
+      { name: 'Comfort Zone', value: comfortZone },
+      { name: 'Business Type', value: businessType },
+      { name: 'Additional Details', value: additionalDetails },
+      { name: 'Resume File URL', value: resumeFileUrl },
+    ];
+  
+    const emptyFields = fields.filter(field => !field.value).map(field => field.name);
+    const socialMedias = {
+  ...(facebook && { facebook }),
+  ...(instagram && { instagram }),
+  ...(linkedIn && { linkedIn }),
+  ...(tiktok && { tiktok }),
+};
+  console.log(socialMedias, "socialMedias");  
+    if (emptyFields.length > 0) {
+      toast.error(`Empty fields: ${emptyFields.join(', ')}`);
+      return; 
+    } else{
+      setSubmitting(true);
+      try {
+        await delay(2000)
+        const body = JSON.stringify({
+          id: applicationId,
+          firstName,
+          lastName,
+          pronouns,
+          phoneNumber,
+          yearInCollege,
+          graduationYear,
+          graduationQuarter,
+          major,
+          minor,
+          cumulativeGPA,
+          currentClasses,
+          extracurricularActivities,
+          proudAccomplishment,
+          joinReason,
+          lifeGoals,
+          comfortZone,
+          businessType,
+          additionalDetails,
+          resumeFileUrl,
+          coverLetterFileUrl,
+          lastSubmitted: new Date().toISOString(),
+          isSubmitting: true,
+          socialMedias: JSON.stringify(socialMedias),
+        })
+        const response = await fetch('/api/application', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: body
+        });
+        if (response.ok) {
+          setLastSubmitted(formatTimestamp(new Date()));
+          toast.success('Application submitted! Thanks for taking the time to submit an application :)');
+        } else {
+          toast.error('Failed to submit application');
+        }
+      } catch (error) {
+        console.error('Error submitting application:', error);
+        toast.error('An error occurred while submitting the application');
+      }
+      finally {
+        setSubmitting(false);
+      }
   };
+  }
+
+
 
   if(loading){
+    return(
   <div className="text-center text-lg font-semibold text-gray-600">
     Loading application...
   </div>
+    )
   }
 
-  return (
+  if(submitting){
+    return(
+  <div className="text-center text-lg font-semibold text-gray-600">
+    Submitting application...
+  </div>)
+  }
+
+return (
     <div>
       <div className="save-status text-gray-400 ">
-        {isSaving ? 'Saving...' : lastSaved && `Last saved at ${lastSaved}`}
+        {isSaving ? 'Saving...' : lastSaved && `Last saved on ${lastSaved}`}
+      </div>
+      <div className="submit-status text-green-600">
+        {lastSubmitted && `Last submitted at: ${lastSubmitted}`}
       </div>
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
       <h2 className="text-lg font-bold mb-6"></h2>
       <div className="grid grid-cols-2 gap-4">
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="firstName"
           >
             First Name:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="firstName"
             type="text"
             value={firstName}
@@ -238,13 +380,13 @@ export default function NameForm() {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="lastName"
           >
             Last Name:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="lastName"
             type="text"
             value={lastName}
@@ -254,13 +396,13 @@ export default function NameForm() {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="pronouns"
           >
             Pronouns:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="pronouns"
             type="text"
             value={pronouns}
@@ -271,13 +413,13 @@ export default function NameForm() {
       
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="phoneNumber"
           >
             Phone Number:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="phoneNumber"
             type="tel"
             value={phoneNumber}
@@ -287,13 +429,13 @@ export default function NameForm() {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="yearInCollege"
           >
             Year in College:
           </label>
           <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="yearInCollege"
             value={yearInCollege}
             onChange={handleChange(setYearInCollege)}
@@ -307,35 +449,32 @@ export default function NameForm() {
           </select>
         </div>
         <div className="mb-4">
-          <label
-            className="block text-gray-400 text-sm font-bold mb-2"
-            htmlFor="graduationYear"
-          >
-            Graduation Year:
-          </label>
-          <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="graduationYear"
-            value={graduationYear}
-            onChange={handleChange(setGraduationYear)}
-          >
-            <option value="">Select Year</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-            <option value="2027">2027</option>
-            <option value="2028">2028</option>
-          </select>
-        </div>
+  <label
+    className={textLabel}
+    htmlFor="graduationYear"
+  >
+    Graduation Year:
+  </label>
+  <input
+className={`${smallInput} ${!isGraduationYearValid ? 'border-red-500' : ''}`}
+  id="graduationYear"
+  type="number"
+  value={graduationYear?.toString() || ''}
+  onChange={handleGraduationYearChange}
+  placeholder="Enter graduation year"
+/>
+{!isGraduationYearValid && <p className="text-red-500 text-xs italic">Please enter a valid grad year</p>}
+
+</div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="graduationQuarter"
           >
             Graduation Quarter:
           </label>
           <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="graduationQuarter"
             value={graduationQuarter}
             onChange={handleChange(setGraduationQuarter)}
@@ -348,13 +487,13 @@ export default function NameForm() {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="major"
           >
             Major:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="major"
             type="text"
             value={major}
@@ -364,46 +503,121 @@ export default function NameForm() {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="minor"
           >
-            Minor:
+            Minor (optional):
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
+
             id="minor"
             type="text"
             value={minor}
             onChange={handleChange(setMinor)}
             placeholder="Enter your minor"
           />
+          
+
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="cumulativeGPA"
           >
             Cumulative GPA:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
-            id="cumulativeGPA"
-            type="text"
-            value={cumulativeGPA}
-            onChange={handleChange(setCumulativeGPA)}
-            placeholder="Enter your cumulative GPA"
-          />
+className={`${smallInput} ${!isCumulativeGPAValid ? 'border-red-500' : ''}`}
+
+  id="graduationYear"
+  type="number"
+  value={cumulativeGPA?.toString() || ''}
+  onChange={handleCumulativeGPAChange}
+  step="0.01"
+  placeholder="Enter GPA"
+/>
+{!isCumulativeGPAValid && <p className="text-red-500 text-xs italic">Please enter a valid GPA</p>}
+
         </div>
+        
         <div className="col-span-2 mb-4">
+        <div className="mb-4">
+  <div className="text-gray-600 mb-2">Enter your social medias! Please use links if possible :)</div>
+  <div>
+    <label
+      className={textLabel}
+      htmlFor="facebook"
+    >
+      Facebook:
+    </label>
+    <input
+      className={smallInput}
+      id="facebook"
+      type="text"
+      value={facebook}
+      onChange={handleChange(setFacebook)}
+      placeholder="Facebook"
+    />
+  </div>
+  <div className="mt-4">
+    <label
+      className={textLabel}
+      htmlFor="instagram"
+    >
+      Instagram:
+    </label>
+    <input
+      className={smallInput}
+      id="instagram"
+      type="text"
+      value={instagram}
+      onChange={handleChange(setInstagram)}
+      placeholder="Instagram"
+    />
+  </div>
+  <div className="mt-4">
+    <label
+      className={textLabel}
+      htmlFor="linkedIn"
+    >
+      LinkedIn:
+    </label>
+    <input
+      className={smallInput}
+      id="linkedIn"
+      type="text"
+      value={linkedIn}
+      onChange={handleChange(setLinkedIn)}
+      placeholder="LinkedIn"
+    />
+  </div>
+  <div className="mt-4">
+    <label
+      className={textLabel}
+      htmlFor="tiktok"
+    >
+      TikTok:
+    </label>
+    <input
+      className={smallInput}
+      id="tiktok"
+      type="text"
+      value={tiktok}
+      onChange={handleChange(setTiktok)}
+      placeholder="TikTok"
+    />
+  </div>
+</div>
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="currentClasses"
           >
             What classes are you currently enrolled in for this quarter? Please
             list all days and times, and include any discussion sections.
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="currentClasses"
             value={currentClasses}
             onChange={handleChange(setCurrentClasses)}
@@ -413,7 +627,7 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="extracurricularActivities"
           >
             Please list the extracurricular activities you are involved in for
@@ -421,7 +635,7 @@ export default function NameForm() {
             anticipate each activity will take.
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="extracurricularActivities"
             value={extracurricularActivities}
             onChange={handleChange(setExtracurricularActivities)}
@@ -431,14 +645,14 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="proudAccomplishment"
           >
             What accomplishment are you most proud of (personal or
             professional)? (500 words max)
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="proudAccomplishment"
             value={proudAccomplishment}
             onChange={handleChange(setProudAccomplishment)}
@@ -448,7 +662,7 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="joinReason"
           >
             Why do you want to join Alpha Kappa Psi? What do you seek to gain
@@ -456,7 +670,7 @@ export default function NameForm() {
             community? (500 words max)
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="joinReason"
             value={joinReason}
             onChange={handleChange(setJoinReason)}
@@ -466,7 +680,7 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="lifeGoals"
           >
             What are your current life goals (personal or professional) and how
@@ -474,7 +688,7 @@ export default function NameForm() {
             (500 words max)
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="lifeGoals"
             value={lifeGoals}
             onChange={handleChange(setLifeGoals)}
@@ -484,14 +698,14 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="comfortZone"
           >
             Tell us about a time you went out of your comfort zone. Why did you
             decide to take this risk and what did you learn? (500 words max)
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="comfortZone"
             value={comfortZone}
             onChange={handleChange(setComfortZone)}
@@ -501,14 +715,14 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="businessType"
           >
             What type of business would you create if money was not a limiting
             factor? (500 words max)
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="businessType"
             value={businessType}
             onChange={handleChange(setBusinessType)}
@@ -518,14 +732,14 @@ export default function NameForm() {
         </div>
         <div className="col-span-2 mb-4">
           <label
-            className="block text-gray-400 text-sm font-bold mb-2"
+            className={textLabel}
             htmlFor="additionalDetails"
           >
             Add any details about yourself that you were not able to convey with
             the questions above!
           </label>
           <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+            className={largeInput}
             id="additionalDetails"
             value={additionalDetails}
             onChange={handleChange(setAdditionalDetails)}
