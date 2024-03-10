@@ -27,11 +27,12 @@ export default async function Navbar() {
       .eq('id', user!.id)
       .single();
     isPIC = data?.is_pic;
+    console.log(data?.is_pic);
   }
 
   return (
-    <nav className="w-full flex justify-center items-center border-b border-b-foreground/10 h-16">
-      <div className="flex justify-between items-center w-full max-w-4xl px-3 text-lg">
+    <nav className="w-full flex justify-center items-center border-b border-b-foreground/10 h-16 px-28">
+      <div className="flex justify-between items-center w-full px-3 text-lg">
         <Link href="/dashboard">
           <span>UCSD Alpha Kappa Psi</span>
         </Link>

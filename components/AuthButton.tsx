@@ -10,7 +10,6 @@ interface AuthButtonProps {
 }
 
 const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
-
   const signOut = async () => {
     // Call the sign-out API route
     await fetch('/api/signout', { method: 'POST' });
@@ -19,7 +18,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
 
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.user_metadata.name}!
+      Hey, {user.user_metadata.name} ({user.email})!
       <button
         onClick={signOut}
         className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
