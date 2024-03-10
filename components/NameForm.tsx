@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
 import FileDropzone from './Dropzone';
-import { ApplicationFileTypes } from '@/lib/types';
+import { ApplicationFileTypes, StudentYears, UCSDColleges, UCSDQuarters } from '@/lib/types';
 import { formatTimestamp, extractFileName } from '@/utils/format';
 import { toast } from 'react-toastify';
 import { delay } from '@/utils/delay';
@@ -65,6 +65,7 @@ export default function NameForm() {
 
         const applicationObject = await response.json();
         const data = applicationObject.application;
+        const social_media = JSON.parse(data.social_media);
         setApplicationId(data.id);
         setFirstName(data.name.split(' ')[0]); 
         setLastName(data.name.split(' ')[1]); 
@@ -88,10 +89,11 @@ export default function NameForm() {
         setCoverLetterFileUrl(data.cover_letter);
         setLastSaved(formatTimestamp(data.last_updated));
         setLastSubmitted(formatTimestamp(data.submitted) || null)
-        setFacebook(data.social_media?.facebook || '');
-        setInstagram(data.social_media?.instagram || '');
-        setLinkedIn(data.social_media?.linkedin || '');
-        setTiktok(data.social_media?.tiktok || '');
+        setFacebook(social_media?.facebook || '');
+        setInstagram(social_media?.instagram || '');
+        setLinkedIn(social_media?.linkedin || '');
+        setTiktok(social_media?.tiktok || '');
+        setCollege(data.college);
       } catch (error) {
         console.error('Error fetching application data:', error);
       }
@@ -138,6 +140,7 @@ export default function NameForm() {
   const [instagram, setInstagram] = useState<string>('');
   const [linkedIn, setLinkedIn] = useState<string>('');
   const [tiktok, setTiktok] = useState<string>('');
+  const [college, setCollege] = useState<string>('');
   
 
   useEffect(() => {
@@ -164,12 +167,13 @@ export default function NameForm() {
       additionalDetails,
       resumeFileUrl,
       coverLetterFileUrl,
-      socialMedias: {
+      college,
+      socialMedias: JSON.stringify({
     ...(facebook && { facebook }),
     ...(instagram && { instagram }),
     ...(linkedIn && { linkedIn }),
     ...(tiktok && { tiktok }),
-  },
+  }),
       });
   }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
 
@@ -228,12 +232,12 @@ export default function NameForm() {
       additionalDetails,
       resumeFileUrl,
       coverLetterFileUrl,
-      socialMedias: {
+      socialMedias: JSON.stringify( {
     ...(facebook && { facebook }),
     ...(instagram && { instagram }),
     ...(linkedIn && { linkedIn }),
     ...(tiktok && { tiktok }),
-  },
+  }),
     });
   };
 
@@ -268,6 +272,7 @@ export default function NameForm() {
       { name: 'Business Type', value: businessType },
       { name: 'Additional Details', value: additionalDetails },
       { name: 'Resume File URL', value: resumeFileUrl },
+      {name: 'College', value: college}
     ];
   
     const emptyFields = fields.filter(field => !field.value).map(field => field.name);
@@ -277,7 +282,6 @@ export default function NameForm() {
   ...(linkedIn && { linkedIn }),
   ...(tiktok && { tiktok }),
 };
-  console.log(socialMedias, "socialMedias");  
     if (emptyFields.length > 0) {
       toast.error(`Empty fields: ${emptyFields.join(', ')}`);
       return; 
@@ -307,6 +311,7 @@ export default function NameForm() {
           additionalDetails,
           resumeFileUrl,
           coverLetterFileUrl,
+          college,
           lastSubmitted: new Date().toISOString(),
           isSubmitting: true,
           socialMedias: JSON.stringify(socialMedias),
@@ -419,7 +424,7 @@ return (
             Phone Number:
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={smallInput}
             id="phoneNumber"
             type="tel"
             value={phoneNumber}
@@ -441,11 +446,32 @@ return (
             onChange={handleChange(setYearInCollege)}
           >
             <option value="">Select Year</option>
-            <option value="First Year">First Year</option>
-            <option value="Second Year">Second Year</option>
-            <option value="Third Year">Third Year</option>
-            <option value="Fourth Year">Fourth Year</option>
-            <option value="Fifth Year +">Fifth Year +</option>
+            {Object.values(StudentYears).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label
+            className={textLabel}
+            htmlFor="college"
+          >
+            College:
+          </label>
+          <select
+            className={smallInput}
+            id="college"
+            value={college}
+            onChange={handleChange(setCollege)}
+          >
+            <option value="">Select College</option>
+            {Object.values(UCSDColleges).map((college) => (
+    <option key={college} value={college}>
+      {college}
+    </option>
+  ))}
           </select>
         </div>
         <div className="mb-4">
@@ -478,11 +504,12 @@ className={`${smallInput} ${!isGraduationYearValid ? 'border-red-500' : ''}`}
             id="graduationQuarter"
             value={graduationQuarter}
             onChange={handleChange(setGraduationQuarter)}
-          >
-            <option value="">Select Quarter</option>
-            <option value="Fall">Fall</option>
-            <option value="Winter">Winter</option>
-            <option value="Spring">Spring</option>
+          >  <option value="">Select Quarter</option>
+           {Object.values(UCSDQuarters).map((quarter) => (
+    <option key={quarter} value={quarter}>
+      {quarter}
+    </option>
+  ))}
           </select>
         </div>
         <div className="mb-4">

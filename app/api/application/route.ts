@@ -63,7 +63,6 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ message: 'Method Not Allowed' }, { status: 405 });
   }
 
-  console.log("updating")
 
   const supabase = createClient();
   const userResponse = await supabase.auth.getUser();
@@ -73,8 +72,8 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
   }
 
-  const { id, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, socialMedias} = await req.json();
-const socialMediasObject = socialMedias || null;
+  const { id, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, college, socialMedias} = await req.json();
+const socialMediaString = JSON.stringify(socialMedias) || null;
   const name = firstName + " " + lastName
   const submitted = isSubmitting ? new Date() : null;
   let updateObject = {
@@ -93,11 +92,12 @@ const socialMediasObject = socialMedias || null;
     why_akpsi: joinReason, 
     goals: lifeGoals, 
     comfort_zone: comfortZone, 
-    social_media: socialMediasObject,
+    social_media: socialMediaString,
     business: businessType, 
     additional: additionalDetails,
     resume: resumeFileUrl,
     cover_letter: coverLetterFileUrl,
+    college,
     last_updated: new Date(),
   };
   
