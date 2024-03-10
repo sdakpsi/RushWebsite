@@ -65,7 +65,6 @@ export default function NameForm() {
 
         const applicationObject = await response.json();
         const data = applicationObject.application;
-        const social_media = JSON.parse(data.social_media);
         setApplicationId(data.id);
         setFirstName(data.name.split(' ')[0]); 
         setLastName(data.name.split(' ')[1]); 
@@ -89,10 +88,10 @@ export default function NameForm() {
         setCoverLetterFileUrl(data.cover_letter);
         setLastSaved(formatTimestamp(data.last_updated));
         setLastSubmitted(formatTimestamp(data.submitted) || null)
-        setFacebook(social_media?.facebook || '');
-        setInstagram(social_media?.instagram || '');
-        setLinkedIn(social_media?.linkedin || '');
-        setTiktok(social_media?.tiktok || '');
+        setFacebook(data.social_media?.facebook || '');
+        setInstagram(data.social_media?.instagram || '');
+        setLinkedIn(data.social_media?.linkedIn || '');
+        setTiktok(data.social_media?.tiktok || '');
         setCollege(data.college);
       } catch (error) {
         console.error('Error fetching application data:', error);
@@ -168,12 +167,12 @@ export default function NameForm() {
       resumeFileUrl,
       coverLetterFileUrl,
       college,
-      socialMedias: JSON.stringify({
+      socialMedias: {
     ...(facebook && { facebook }),
     ...(instagram && { instagram }),
     ...(linkedIn && { linkedIn }),
     ...(tiktok && { tiktok }),
-  }),
+  },
       });
   }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
 
@@ -232,12 +231,12 @@ export default function NameForm() {
       additionalDetails,
       resumeFileUrl,
       coverLetterFileUrl,
-      socialMedias: JSON.stringify( {
+      socialMedias: {
     ...(facebook && { facebook }),
     ...(instagram && { instagram }),
     ...(linkedIn && { linkedIn }),
     ...(tiktok && { tiktok }),
-  }),
+  },
     });
   };
 
@@ -282,6 +281,7 @@ export default function NameForm() {
   ...(linkedIn && { linkedIn }),
   ...(tiktok && { tiktok }),
 };
+  console.log(socialMedias, "socialMedias");  
     if (emptyFields.length > 0) {
       toast.error(`Empty fields: ${emptyFields.join(', ')}`);
       return; 
