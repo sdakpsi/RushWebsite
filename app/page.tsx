@@ -10,11 +10,6 @@ import GoogleOAuth from '@/components/GoogleOAuth';
 export default async function Index() {
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-lg">
-          UCSD Alpha Kappa Psi
-        </div>
-      </nav>
 
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
         <div className="flex flex-col gap-16 items-center">
@@ -27,20 +22,6 @@ export default async function Index() {
           <GoogleOAuth />
         </main>
       </div>
-
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-        <p>
-          Property of{' '}
-          <a
-            href="https://www.akpsiucsd.com"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer"
-          >
-            UCSD Alpha Kappa Psi
-          </a>
-        </p>
-      </footer>
     </div>
   );
 }

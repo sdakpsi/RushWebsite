@@ -1,4 +1,3 @@
-'use client';
 
 import DeployButton from '@/components/DeployButton';
 import React, { useEffect, useState } from 'react';
