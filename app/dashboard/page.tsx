@@ -6,6 +6,7 @@ import NextLinkButton from '../../components/NextLinkButton';
 import { User } from '@supabase/supabase-js'; // Ensure you import the User type
 import { redirect } from 'next/navigation';
 import ActiveLoginComponent from '@/components/ActiveLoginComponent';
+import ActiveSetter from '@/components/ActiveSetter';
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -19,7 +20,6 @@ export default async function ProtectedPage() {
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
       <div className="w-full"></div>
-
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
         <div className="flex flex-col">
           <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center mt-32">
@@ -35,7 +35,7 @@ export default async function ProtectedPage() {
               Application
             </NextLinkButton>
           </div>
-          <ActiveLoginComponent />
+          <ActiveSetter />
           <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
         </div>
         <main className="flex flex-col justify-center items-center"></main>
