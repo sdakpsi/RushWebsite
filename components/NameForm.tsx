@@ -1,12 +1,88 @@
 'use client';
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-
+import React, { useState, ChangeEvent, FormEvent, useEffect, useCallback } from 'react';
+import { debounce } from 'lodash';
 export default function NameForm() {
+  const debouncedSave = useCallback(
+    debounce(async (applicationData) => {
+      setIsSaving(true); // Indicate that saving has started
+      try {
+        const response = await fetch('/api/application', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(applicationData),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to save application data');
+        }
+  
+        console.log('Application data saved successfully');
+        setLastSaved(new Date().toLocaleTimeString()); // Update last saved time
+      } catch (error) {
+        console.error('Error saving application data:', error);
+      } finally {
+        setIsSaving(false); // Reset saving status regardless of outcome
+      }
+    }, 1000),
+    []
+  );
+
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/application', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch application data');
+        }
+
+        const applicationObject = await response.json();
+        const data = applicationObject.application;
+        setApplicationId(data.id);
+        setFirstName(data.name.split(' ')[0]); 
+        setLastName(data.name.split(' ')[1]); 
+        setPronouns(data.pronouns); 
+        setPhoneNumber(data.phone_number); 
+        setYearInCollege(data.year); 
+        setGraduationYear(data.graduation_year || ''); 
+        setGraduationQuarter(data.graduation_qtr); 
+        setMajor(data.major); 
+        setMinor(data.minor); 
+        setCumulativeGPA(data.gpa || ''); 
+        setCurrentClasses(data.classes); 
+        setExtracurricularActivities(data.extracurriculars); 
+        setProudAccomplishment(data.accomplishment);
+        setJoinReason(data.why_akpsi);
+        setLifeGoals(data.goals);
+        setComfortZone(data.comfort_zone);
+        setBusinessType(data.business);
+        setAdditionalDetails(data.additional);
+
+        
+      } catch (error) {
+        console.error('Error fetching application data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [applicationId, setApplicationId] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [pronouns, setPronouns] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [yearInCollege, setYearInCollege] = useState<string>('');
   const [graduationYear, setGraduationYear] = useState<string>('');
@@ -25,14 +101,35 @@ export default function NameForm() {
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
 
   const handleChange =
-    (setState: React.Dispatch<React.SetStateAction<string>>) =>
-    (
-      event: ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
-      setState(event.target.value);
-    };
+  (setState: React.Dispatch<React.SetStateAction<string>>) =>
+  (
+    event: ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setState(event.target.value);
+    debouncedSave({
+      id: applicationId,
+      firstName,
+      lastName,
+      pronouns,
+      phoneNumber,
+      yearInCollege,
+      graduationYear,
+      graduationQuarter,
+      major,
+      minor,
+      cumulativeGPA,
+      currentClasses,
+      extracurricularActivities,
+      proudAccomplishment,
+      joinReason,
+      lifeGoals,
+      comfortZone,
+      businessType,
+      additionalDetails,
+    });
+  };
 
   // Function to handle form submission
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -41,7 +138,6 @@ export default function NameForm() {
     console.log('First Name:', firstName);
     console.log('Last Name:', lastName);
     console.log('Pronouns:', pronouns);
-    console.log('Email:', email);
     console.log('Phone Number:', phoneNumber);
     console.log('Year in College:', yearInCollege);
     console.log('Graduation Year:', graduationYear);
@@ -60,6 +156,10 @@ export default function NameForm() {
   };
 
   return (
+    <div>
+      <div className="save-status text-gray-400 ">
+        {isSaving ? 'Saving...' : lastSaved && `Last saved at ${lastSaved}`}
+      </div>
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
       <h2 className="text-lg font-bold mb-6"></h2>
       <div className="grid grid-cols-2 gap-4">
@@ -111,22 +211,7 @@ export default function NameForm() {
             placeholder="Enter your preferred pronouns"
           />
         </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-400 text-sm font-bold mb-2"
-            htmlFor="email"
-          >
-            Email Address:
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="email"
-            type="email"
-            value={email}
-            onChange={handleChange(setEmail)}
-            placeholder="Enter your email address"
-          />
-        </div>
+      
         <div className="mb-4">
           <label
             className="block text-gray-400 text-sm font-bold mb-2"
@@ -413,5 +498,6 @@ export default function NameForm() {
         Submit
       </button>
     </form>
+    </div>
   );
 }

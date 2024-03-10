@@ -6,6 +6,7 @@ import NextLinkButton from '../../components/NextLinkButton';
 import { User } from '@supabase/supabase-js'; // Ensure you import the User type
 import { redirect } from 'next/navigation';
 import ActiveLoginComponent from '@/components/ActiveLoginComponent';
+import ApplicationButton from '@/components/ApplicationButton';
 import ActiveSetter from '@/components/ActiveSetter';
 import Link from 'next/link';
 import styles from './styles.module.css';
@@ -30,9 +31,7 @@ export default async function ProtectedPage() {
             Welcome to the application portal!
           </p>
           <div className="flex mt-4 justify-center items-center">
-            <NextLinkButton destination="application">
-              Application
-            </NextLinkButton>
+            <ApplicationButton />
           </div>
           <p className="text-xl lg:text-lg !leading-tight max-w-xl text-left mt-8 mb-2">
             The application is mandatory for consideration. Due Thursday, April

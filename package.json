@@ -11,6 +11,7 @@
     "@supabase/supabase-js": "latest",
     "autoprefixer": "10.4.17",
     "geist": "^1.2.1",
+    "lodash": "^4.17.21",
     "next": "latest",
     "postcss": "8.4.33",
     "react": "18.2.0",
