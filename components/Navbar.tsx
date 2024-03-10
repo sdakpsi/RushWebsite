@@ -31,7 +31,7 @@ export default async function Navbar() {
   }
 
   return (
-    <nav className="w-full flex justify-center items-center border-b border-b-foreground/10 h-16 px-28">
+    <nav className="w-full flex justify-center items-center border-b border-b-foreground/10 h-16 px-24">
       <div className="flex justify-between items-center w-full px-3 text-lg">
         <Link href="/dashboard">
           <span>UCSD Alpha Kappa Psi</span>

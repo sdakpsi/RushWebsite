@@ -74,3 +74,25 @@ export async function getApplication(applicationID: string) {
   // If no error and data is fetched successfully, return the application data
   return data;
 }
+
+export async function getCases(prospectID: string | null) {
+  const supabase = createClient();
+
+  if (!prospectID) {
+    console.error('Application ID is required.');
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('case_studies')
+    .select('*')
+    .eq('prospect', prospectID);
+
+  if (error) {
+    console.error('Error fetching application:', error.message);
+    return null;
+  }
+  console.log(data);
+  // If no error and data is fetched successfully, return the application data
+  return data;
+}

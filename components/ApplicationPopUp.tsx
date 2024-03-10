@@ -30,13 +30,32 @@ interface Application {
   user_id: string;
 }
 
+interface Case {
+  id: string;
+  prospect: string;
+  active: string;
+  leadership_score: number;
+  leadership_comments: string;
+  teamwork_score: number;
+  teamwork_comments: string;
+  analytical_score: number;
+  analytical_comments: string;
+  public_speaking_score: number;
+  public_speaking_comments: string;
+  role: string;
+  thoughts: string;
+  additional: string;
+}
+
 interface ApplicationPopupProps {
   application: Application;
+  cases: Case[];
   onClose: () => void;
 }
 
 const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   application,
+  cases,
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);

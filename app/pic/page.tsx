@@ -14,7 +14,7 @@ import styles from './styles.module.css';
 import logo from './akpsilogo.png';
 import Image from 'next/image';
 import ApplicantCard from '@/components/ApplicantCard';
-import { getUsers, getIsPIC, getApplication } from '../getUsers';
+import { getUsers, getIsPIC, getApplication, getCases } from '../getUsers';
 import ApplicationPopup from '@/components/ApplicationPopUp';
 
 interface Packet {
@@ -37,10 +37,12 @@ export default function ProtectedPage() {
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
   >(null);
+  const [userID, setUserID] = useState<string | null>(null);
   const [currentApplication, setCurrentApplication] = useState<any | null>(
     null
   );
   const [searchQuery, setSearchQuery] = useState('');
+  const [cases, setCases] = useState<[]>([]);
 
   useEffect(() => {
     const users = async () => {
@@ -50,6 +52,16 @@ export default function ProtectedPage() {
 
     users();
   }, []);
+
+  useEffect(() => {
+    const users = async () => {
+      const bruh = await getCases(userID);
+      setCases(bruh);
+      console.log(bruh);
+    };
+
+    users();
+  }, [userID]);
 
   useEffect(() => {
     const users = async () => {
@@ -110,6 +122,7 @@ export default function ProtectedPage() {
                 {currentApplication && (
                   <ApplicationPopup
                     application={currentApplication}
+                    cases={cases}
                     onClose={handleClosePopup}
                   />
                 )}
