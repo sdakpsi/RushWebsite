@@ -1,21 +1,34 @@
+'use client';
+
 import DeployButton from '@/components/DeployButton';
+import React, { useEffect, useState } from 'react';
 import AuthButton from '@/components/AuthButton';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import FetchDataSteps from '@/components/tutorial/FetchDataSteps';
 import Header from '@/components/Header';
 import { redirect } from 'next/navigation';
 import NextLinkButton from '../../components/NextLinkButton';
+import { User } from '@supabase/supabase-js'; // Ensure you import the User type
 
-export default async function ProtectedPage() {
-  const supabase = createClient();
+export default function ProtectedPage() {
+  const [user, setUser] = useState<User | null>(null);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        // If there's no user, perform client-side redirection to '/'
+        window.location.href = '/';
+      } else {
+        setUser(user);
+      }
+    };
 
-//   if (!user) {
-//     return redirect('/');
-//   }
+    fetchUser();
+  }, []);
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
