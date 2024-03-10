@@ -5,16 +5,25 @@ import React from 'react'
 
 export default function GoogleOAuth() {
     // Function to handle sign-in with Google
-    const handleSignInWithGoogle = () => {
-        const supabase = createClient();
-        supabase.auth.signInWithOAuth({
-          provider: 'google',   
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-          }
-        });
-
-    };
+    const handleSignInWithGoogle = async () => {
+      const supabase = createClient();
+      try {
+          const { error } = await supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                  redirectTo: `${window.location.origin}/auth/callback`,
+                  queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                  },
+              },
+        
+          });
+          if (error) throw error;
+      } catch (error) {
+          console.error('Error signing in with Google:', error.message);
+      }
+  };
   
     return (
       <button className="flex items-center justify-center bg-white w-1/2 text-black px-4 py-2 border rounded shadow-sm hover:bg-gray-100"
