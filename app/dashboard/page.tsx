@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createClient } from '@/utils/supabase/server';
 import Navbar from '@/components/Navbar';
@@ -11,17 +10,15 @@ import ActiveLoginComponent from '@/components/ActiveLoginComponent';
 export default async function ProtectedPage() {
   const supabase = createClient();
   const {
-  data: { user },
+    data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-  return redirect("/");
+    return redirect('/');
   }
-
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <div className="w-full">
-      </div>
+      <div className="w-full"></div>
 
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
         <div className="flex flex-col">
@@ -38,14 +35,11 @@ export default async function ProtectedPage() {
               Application
             </NextLinkButton>
           </div>
-            <ActiveLoginComponent />
-      
-    
+          <ActiveLoginComponent />
           <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
         </div>
         <main className="flex flex-col justify-center items-center"></main>
       </div>
-      <Footer />
     </div>
   );
 }

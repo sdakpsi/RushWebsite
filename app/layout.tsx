@@ -1,18 +1,18 @@
-import { GeistSans } from "geist/font/sans";
-import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers";
+import { GeistSans } from 'geist/font/sans';
+import './globals.css';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+  : 'http://localhost:3000';
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: 'Next.js and Supabase Starter Kit',
+  description: 'The fastest way to build apps with Next.js and Supabase',
 };
 
 export default async function RootLayout({
@@ -30,8 +30,8 @@ export default async function RootLayout({
 
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
-      console.log("hi")
-      user=null
+      console.log('hi');
+      user = null;
     }
   });
 
@@ -39,7 +39,7 @@ export default async function RootLayout({
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
-        <Navbar user = {user} />
+          <Navbar />
           {children}
         </main>
         <Footer />
@@ -47,4 +47,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
