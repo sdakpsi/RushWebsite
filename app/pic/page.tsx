@@ -1,5 +1,7 @@
-import React from 'react';
-import { createClient } from '@/utils/supabase/server';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import NextLinkButton from '../../components/NextLinkButton';
@@ -11,34 +13,72 @@ import Link from 'next/link';
 import styles from './styles.module.css';
 import logo from './akpsilogo.png';
 import Image from 'next/image';
+import ApplicantCard from '@/components/ApplicantCard';
+import { getUsers, getIsPIC, getApplication } from '../getUsers';
+import ApplicationPopup from '@/components/ApplicationPopUp';
 
-export default async function ProtectedPage() {
-  const supabase = createClient();
+interface Packet {
+  id: string;
+  created_at: string;
+  full_name: string;
+  is_active: boolean;
+  is_pic: boolean;
+  application: string | null; // Assuming application could be null
+  case_study: string | null; // Assuming case_study could be null
+  interview: string | null; // Assuming interview could be null
+  email: string;
+  active_case_studies: string | null; // Assuming active_case_studies could be null
+  active_interviews: string | null; // Assuming active_interviews could be null
+}
 
-  let isPIC = false;
-  let usersData = [];
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function ProtectedPage() {
+  const [usersData, setUserData] = useState<Packet[]>([]);
+  const [isPIC, setIsPIC] = useState(false);
+  const [currentApplicationId, setCurrentApplicationId] = useState<
+    string | null
+  >(null);
+  const [currentApplication, setCurrentApplication] = useState<any | null>(
+    null
+  );
 
-  if (user) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('is_pic')
-      .eq('id', user.id)
-      .single();
-    isPIC = data?.is_pic;
-  }
+  useEffect(() => {
+    const users = async () => {
+      const bruh = await getUsers();
+      setUserData(bruh);
+    };
 
-  if (isPIC) {
-    const { data, error } = await supabase.from('users').select('*');
-    if (error) {
-      console.error(error);
-    } else {
-      usersData = data;
-      console.log(usersData);
-    }
-  }
+    users();
+  }, []);
+
+  useEffect(() => {
+    const users = async () => {
+      const bruh2 = await getIsPIC();
+      setIsPIC(bruh2);
+    };
+
+    users();
+  }, []);
+
+  useEffect(() => {
+    const fetchApplication = async () => {
+      if (currentApplicationId) {
+        const applicationData = await getApplication(currentApplicationId);
+        setCurrentApplication(applicationData);
+        console.log(applicationData);
+      }
+    };
+
+    fetchApplication();
+  }, [currentApplicationId]);
+
+  const handleViewApplication = async (applicationId: string) => {
+    setCurrentApplicationId(applicationId);
+  };
+
+  const handleClosePopup = () => {
+    setCurrentApplication(null); // Or setCurrentApplicationId(null) depending on your logic
+    setCurrentApplicationId(null);
+  };
 
   return (
     <div className="flex-1 w-full flex justify-center items-center py-10">
@@ -46,25 +86,20 @@ export default async function ProtectedPage() {
         <div className="text-center">
           <p className="text-xl lg:text-4xl leading-tight mb-2">PIC Portal</p>
           {isPIC ? (
-            <div className="flex overflow-x-auto no-scrollbar mt-4 space-x-4">
-              {usersData.map((user) => (
-                <div
-                  key={user.id}
-                  className="min-w-[200px rounded-lg p-4 shadow-lg"
-                >
-                  <h3 className="font-bold text-lg">{user.full_name}</h3>
-                  <p className="mt-2">{user.email}</p>
-                  <p className="mt-1">
-                    Case Study: {user.case_study ? 'Yes' : 'No'}
-                  </p>
-                  <p className="mt-1">
-                    Interview: {user.interview ? 'Yes' : 'No'}
-                  </p>
-                  <p className="mt-1">
-                    Application: {user.application ? 'Yes' : 'No'}
-                  </p>
-                </div>
+            <div className="mt-4 grid grid-cols-3 gap-4">
+              {usersData.map((applicant) => (
+                <ApplicantCard
+                  key={applicant.id}
+                  applicant={applicant}
+                  onViewApplication={handleViewApplication}
+                />
               ))}
+              {currentApplication && (
+                <ApplicationPopup
+                  application={currentApplication}
+                  onClose={handleClosePopup}
+                />
+              )}
             </div>
           ) : (
             <div className="mt-8">

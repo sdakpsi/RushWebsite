@@ -9,6 +9,25 @@ interface AuthButtonProps {
   user: User | null;
 }
 
+const handleSignInWithGoogle = async () => {
+  const supabase = createClient();
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error signing in with Google:', error.message);
+  }
+};
+
 const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   const signOut = async () => {
     // Call the sign-out API route
@@ -28,12 +47,12 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
     </div>
   ) : (
     <div className="flex items-center gap-4">
-      <Link
-        href="/login"
+      <button
+        onClick={handleSignInWithGoogle}
         className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
       >
         Login
-      </Link>
+      </button>
     </div>
   );
 };
