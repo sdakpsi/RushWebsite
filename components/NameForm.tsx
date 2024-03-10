@@ -3,7 +3,11 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
 import FileDropzone from './Dropzone';
+import { ApplicationFileTypes } from '@/lib/types';
+import { formatTimestamp, extractFileName } from '@/utils/format';
 export default function NameForm() {
+  const [loading, setLoading] = useState(false);
+
   const debouncedSave = useCallback(
     debounce(async (applicationData) => {
       setIsSaving(true); // Indicate that saving has started
@@ -34,7 +38,9 @@ export default function NameForm() {
   
 
   useEffect(() => {
+
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await fetch('/api/application', {
           method: 'POST',
@@ -68,15 +74,22 @@ export default function NameForm() {
         setComfortZone(data.comfort_zone);
         setBusinessType(data.business);
         setAdditionalDetails(data.additional);
+        setResumeFileUrl(data.resume);
+        setCoverLetterFileUrl(data.cover_letter);
+        setLastSaved(formatTimestamp(data.last_updated));
 
         
       } catch (error) {
         console.error('Error fetching application data:', error);
       }
+
+      setLoading(false);
     };
 
     fetchData();
   }, []);
+
+
 
   /**
    * States for user application forms
@@ -103,19 +116,37 @@ export default function NameForm() {
   const [comfortZone, setComfortZone] = useState<string>('');
   const [businessType, setBusinessType] = useState<string>('');
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
+  const [resumeFileUrl, setResumeFileUrl] = useState<string>('');
+  const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>('');
+  
 
-  /**
-   * Reference for files
-   */
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-
-  /**
-   * Handles file upload
-   */
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    console.log(file);
-  };
+  useEffect(() => {
+    if (resumeFileUrl || coverLetterFileUrl) {
+      debouncedSave({
+        id: applicationId,
+        firstName,
+        lastName,
+        pronouns,
+        phoneNumber,
+        yearInCollege,
+        graduationYear,
+        graduationQuarter,
+        major,
+        minor,
+        cumulativeGPA,
+        currentClasses,
+        extracurricularActivities,
+        proudAccomplishment,
+        joinReason,
+        lifeGoals,
+        comfortZone,
+        businessType,
+        additionalDetails,
+        resumeFileUrl,
+        coverLetterFileUrl,
+      });
+    }
+  }, [resumeFileUrl, coverLetterFileUrl]);
 
 
   const handleChange =
@@ -146,6 +177,8 @@ export default function NameForm() {
       comfortZone,
       businessType,
       additionalDetails,
+      resumeFileUrl,
+      coverLetterFileUrl,
     });
   };
 
@@ -172,6 +205,12 @@ export default function NameForm() {
     console.log('Business Type:', businessType);
     console.log('Additional Details:', additionalDetails);
   };
+
+  if(loading){
+  <div className="text-center text-lg font-semibold text-gray-600">
+    Loading application...
+  </div>
+  }
 
   return (
     <div>
@@ -496,26 +535,37 @@ export default function NameForm() {
         </div>
       </div>
       <div className="flex justify-between mb-6">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline"
-          type="button"
-        >
-          Upload Cover Letter
-        </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline"
-          type="button"
-        >
-          Upload Resume
-        </button>
+    
       </div>
+      
+      <div className="mb-4">
+        <a
+          href={resumeFileUrl ? resumeFileUrl : '#'}
+          className={`text-blue-500 hover:text-blue-700 ${!resumeFileUrl && 'pointer-events-none'}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Resume: {resumeFileUrl ? extractFileName(resumeFileUrl) : 'Not Uploaded'}
+        </a>
+      </div>
+      <FileDropzone setFileUrl={setResumeFileUrl} type={ApplicationFileTypes.RESUME}/>
+      <div className="mb-4">
+        <a
+          href={coverLetterFileUrl ? coverLetterFileUrl : '#'}
+          className={`text-blue-500 hover:text-blue-700 ${!coverLetterFileUrl && 'pointer-events-none'}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Cover Letter: {coverLetterFileUrl ? extractFileName(coverLetterFileUrl) : 'Not Uploaded'}
+        </a>
+      </div>
+      <FileDropzone setFileUrl={setCoverLetterFileUrl} type={ApplicationFileTypes.COVER_LETTER} />
       <button
         className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline w-full"
         type="submit"
       >
         Submit
       </button>
-      <FileDropzone />
 
     </form>
     </div>

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   if (userError || !userData) {
     return NextResponse.json({ error: userError?.message || 'User not found' }, { status: 400 });
   }
-
+ 
   if (userData.application) {
     const { data: applicationData, error: applicationError } = await supabase
       .from('applications')
@@ -72,7 +72,7 @@ export async function PUT(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
   }
-  const { id, firstName, lastName, pronouns, email, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails } = await req.json();
+  const { id, firstName, lastName, pronouns, email, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl } = await req.json();
   const name = firstName + " " + lastName
   const { data, error } = await supabase
     .from('applications')
@@ -95,6 +95,8 @@ export async function PUT(req: NextRequest) {
       comfort_zone: comfortZone, 
       business: businessType, 
       additional: additionalDetails,
+      resume: resumeFileUrl,
+      cover_letter: coverLetterFileUrl,
       last_updated: new Date()
     })
     .eq('id', id);

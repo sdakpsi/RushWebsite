@@ -3,6 +3,8 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from 'react-toastify';
 import { cookies } from 'next/headers';
 
 const defaultUrl = process.env.VERCEL_URL
@@ -21,7 +23,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const supabase = createServerComponentClient({ cookies });
-
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -39,6 +40,7 @@ export default async function RootLayout({
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
+          <ToastContainer />
           <Navbar />
           {children}
         </main>
