@@ -3,39 +3,48 @@ import { createClient } from '@/utils/supabase/client';
 import React, { useEffect, useState } from 'react';
 import NextLinkButton from './NextLinkButton';
 import ActiveLoginComponent from './ActiveLoginComponent';
+import { redirect } from 'next/navigation';
 
-export default function ActiveSetter() {
-  const [isActive, setIsActive] = useState(false);
+export default async function ActiveSetter() {
+  const supabase = createClient();
+  let isActive = false;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('is_active')
+      .eq('id', user!.id)
+      .single();
+    isActive = data?.is_active;
+  }
 
-  useEffect(() => {
-    const fetchActiveStatus = async () => {
-      try {
-        const response = await fetch('/api/is-active', { method: 'GET' }); // Assuming you're intending to "get" the active status.
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log(data.isActive);
-        setIsActive(data.isActive);
-      } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-      }
-    };
-
-    fetchActiveStatus();
-  }, []);
+  if (!user) {
+    return redirect('/');
+  }
 
   return (
     <div>
-      <p className="text-xl lg:text-xl !leading-tight max-w-xl text-left mt-8 mb-2">
-        For actives:
+      <p className="text-xl lg:text-4xl !leading-tight text-center mb-2">
+        Active Portal
       </p>
       {isActive ? (
-        <div className="flex mt-4 justify-center items-center">
-          <NextLinkButton destination="/active">Active Portal</NextLinkButton>
+        <div className="flex flex-col gap-6 mt-4 justify-center items-center">
+          <NextLinkButton destination="/active/case">
+            Case Study Portal
+          </NextLinkButton>
+          <NextLinkButton destination="/active/interview">
+            Interview Portal
+          </NextLinkButton>
+          <NextLinkButton destination="/active/delibs">
+            Delibs Portal
+          </NextLinkButton>
         </div>
       ) : (
-        <ActiveLoginComponent />
+        <div className="flex mt-8 justify-center items-center">
+          <ActiveLoginComponent />
+        </div>
       )}
     </div>
   );

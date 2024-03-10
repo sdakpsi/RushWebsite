@@ -11,7 +11,7 @@ export default function ActiveLoginComponent() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent the form from actually submitting
 
-    if (inputValue === 'hyewonsucks') {
+    if (inputValue === process.env.NEXT_PUBLIC_ACTIVE_PASSWORD) {
       // Call your API function here
       console.log('Correct phrase entered. Make API call here.');
       makeApiCall(); // This is where you can later define your API call logic
@@ -23,10 +23,12 @@ export default function ActiveLoginComponent() {
   const makeApiCall = async () => {
     console.log('Making API call...');
     await fetch('/api/is-active', { method: 'POST' });
+    window.location.reload(); // This will reload the page
   };
 
   return (
     <div>
+      <p>You are not marked as active, enter the password.</p>
       <form
         onSubmit={handleSubmit}
         className="flex mt-4 justify-center items-center gap-2"
@@ -36,7 +38,7 @@ export default function ActiveLoginComponent() {
           value={inputValue}
           onChange={handleInputChange}
           className="px-4 py-2 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300 text-black"
-          placeholder="Enter your phrase"
+          placeholder="Enter the password"
         />
 
         <button
