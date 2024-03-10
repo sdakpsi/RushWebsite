@@ -2,6 +2,7 @@
 
 import React, { useState, ChangeEvent, FormEvent, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
+import FileDropzone from './Dropzone';
 export default function NameForm() {
   const debouncedSave = useCallback(
     debounce(async (applicationData) => {
@@ -77,6 +78,9 @@ export default function NameForm() {
     fetchData();
   }, []);
 
+  /**
+   * States for user application forms
+   */
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [applicationId, setApplicationId] = useState<string>('');
@@ -99,6 +103,20 @@ export default function NameForm() {
   const [comfortZone, setComfortZone] = useState<string>('');
   const [businessType, setBusinessType] = useState<string>('');
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
+
+  /**
+   * Reference for files
+   */
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  /**
+   * Handles file upload
+   */
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    console.log(file);
+  };
+
 
   const handleChange =
   (setState: React.Dispatch<React.SetStateAction<string>>) =>
@@ -497,6 +515,8 @@ export default function NameForm() {
       >
         Submit
       </button>
+      <FileDropzone />
+
     </form>
     </div>
   );
