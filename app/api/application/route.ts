@@ -73,7 +73,7 @@ export async function PUT(req: NextRequest) {
   }
 
   const { id, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, college, socialMedias} = await req.json();
-const socialMediaString = JSON.stringify(socialMedias) || null;
+const socialMediasObject = socialMedias || null;
   const name = firstName + " " + lastName
   const submitted = isSubmitting ? new Date() : null;
   let updateObject = {
@@ -92,7 +92,7 @@ const socialMediaString = JSON.stringify(socialMedias) || null;
     why_akpsi: joinReason, 
     goals: lifeGoals, 
     comfort_zone: comfortZone, 
-    social_media: socialMediaString,
+    social_media: socialMediasObject,
     business: businessType, 
     additional: additionalDetails,
     resume: resumeFileUrl,
