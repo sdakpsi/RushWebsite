@@ -16,7 +16,7 @@ interface Packet {
 
 interface ApplicantCardProps {
   applicant: Packet;
-  onViewApplication: (applicationId: string) => void; // Add onViewApplication function prop
+  onViewApplication: (applicationId: string, userId: string) => void; // Add onViewApplication function prop
 }
 
 const ApplicantCard: React.FC<ApplicantCardProps> = ({
@@ -31,7 +31,8 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
         <button
           // Ensure application ID is passed to onViewApplication; handle potential null value
           onClick={() =>
-            applicant.application && onViewApplication(applicant.application)
+            applicant.application &&
+            onViewApplication(applicant.application, applicant.id)
           }
           className="mt-2 px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-700 transition duration-300"
         >

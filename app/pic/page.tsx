@@ -84,8 +84,12 @@ export default function ProtectedPage() {
     fetchApplication();
   }, [currentApplicationId]);
 
-  const handleViewApplication = async (applicationId: string) => {
+  const handleViewApplication = async (
+    applicationId: string,
+    userId: string
+  ) => {
     setCurrentApplicationId(applicationId);
+    setUserID(userId);
   };
 
   const handleClosePopup = () => {
