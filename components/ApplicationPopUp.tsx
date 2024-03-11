@@ -60,9 +60,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
 
-  const socialMedia = JSON.parse(
-    application.social_media ? application.social_media : '{}'
-  );
+  const socialMedia = application.social_media ? application.social_media : {};
 
   const handleViewDocument = (documentUrl: string) => {
     setViewDocument(documentUrl);
