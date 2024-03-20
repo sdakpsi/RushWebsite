@@ -34,6 +34,36 @@ export default function ProtectedPage() {
       setAnimationClass('fadeOutDown');
     }
   }, [showingForm]);
+  useEffect(() => {
+    // Load the saved state from local storage when the component mounts
+    const savedProspect = localStorage.getItem('selectedProspect');
+    if (savedProspect) {
+      setSelectedProspect(JSON.parse(savedProspect));
+      setShowingForm(true);
+    }
+  }, []); // Empty dependency array means this effect runs once on mount
+  
+  useEffect(() => {
+    // Save the selectedProspect to local storage whenever it changes
+    const handleSaveState = () => {
+      if (selectedProspect) {
+        console.log("Saving selectedProspect to localStorage");
+        localStorage.setItem('selectedProspect', JSON.stringify(selectedProspect));
+      }
+    };
+  
+    // Consider saving immediately when selectedProspect changes,
+    // instead of waiting for the page to unload
+    handleSaveState();
+  
+    // Optionally, if you still want to save on unload, you can keep this:
+    window.addEventListener('beforeunload', handleSaveState);
+  
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener('beforeunload', handleSaveState);
+    };
+  }, [selectedProspect]);
 
   if (isLoading) {
     return <div>Loading...</div>;
