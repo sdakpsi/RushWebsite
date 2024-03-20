@@ -1,4 +1,5 @@
 'use server';
+import { ProspectInterview } from '@/lib/types';
 import { createClient } from '@/utils/supabase/server';
 
 export async function getUsers() {
@@ -52,6 +53,22 @@ export async function getIsPIC() {
   return isPIC;
 }
 
+export async function getIsActive() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('is_active, is_pic') // Select both is_active and is_pic
+      .eq('id', user.id)
+      .single();
+    return data?.is_active || data?.is_pic;
+  }
+  return false;
+}
+
 export async function getApplication(applicationID: string) {
   const supabase = createClient();
 
@@ -95,4 +112,51 @@ export async function getCases(prospectID: string | null) {
   console.log(data);
   // If no error and data is fetched successfully, return the application data
   return data;
+}
+
+export async function getInterviewProspects(): Promise<ProspectInterview[] | null> {
+  const supabase = createClient();
+  let hasPerms = false;
+  console.log("hi")
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    // Adjust the query to check for either is_pic or is_active being true
+    const { data, error } = await supabase
+      .from('users')
+      .select('is_pic, is_active') // Select both is_pic and is_active
+      .eq('id', user.id)
+      .single();
+
+    if (error) {
+      console.error('Error checking permissions:', error.message);
+      return null; // Handle error appropriately
+    }
+
+    // Set hasPerms to true if is_pic is true OR is_active is true
+    if (data?.is_pic || data?.is_active) {
+      hasPerms = true;
+    }
+  }
+  // First, check if the current user is active
+ 
+
+  // If the user is active, proceed to fetch interview prospects
+  if (hasPerms) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('full_name, email')
+      .eq('is_active', false)
+      .eq('is_pic', false);
+
+    if (error) {
+      console.error('Error fetching interview prospects:', error.message);
+      return null;
+    }
+    console.log(data, "data");
+    return data;
+  }
+  return null;
 }

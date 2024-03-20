@@ -29,3 +29,8 @@ export enum UCSDColleges{
     SEVENTH = "Seventh",
     EIGHTH = "Eighth"
 }
+
+export type ProspectInterview = {
+    full_name: string;
+    email: string;
+}
