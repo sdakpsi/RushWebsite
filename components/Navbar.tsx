@@ -3,6 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import ActiveButton from './ActiveButton';
 import Link from 'next/link';
 import PICButton from './PICButton';
+import logo from './akpsilogo.png';
+import Image from 'next/image';
 
 export default async function Navbar() {
   const supabase = createClient();
@@ -34,7 +36,10 @@ export default async function Navbar() {
     <nav className="w-full flex justify-center items-center border-b border-b-foreground/10 h-16 px-24">
       <div className="flex justify-between items-center w-full px-3 text-lg">
         <Link href="/dashboard">
-          <span>UCSD Alpha Kappa Psi</span>
+          <div className='flex flex-row'>
+            <Image src={logo} alt="logo" className="w-[2rem] mr-3"></Image>
+            <span>UCSD Alpha Kappa Psi</span>
+          </div>
         </Link>
         <PICButton is_pic={isPIC} />
         <ActiveButton is_active={isActive} />

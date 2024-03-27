@@ -23,7 +23,10 @@ export default async function ProtectedPage() {
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
         <div className="flex flex-col">
           <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center mt-12">
-            Welcome to Alpha Kappa Psi's Spring 2024 Rush Application!
+            UCSD Alpha Kappa Psi
+          </p>
+          <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
+            Spring '24 Rush Application
           </p>
           <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
           <NameForm />

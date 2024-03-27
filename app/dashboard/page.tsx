@@ -27,7 +27,7 @@ export default async function ProtectedPage() {
       <div className="w-full"></div>
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
         <div className="flex flex-col">
-          <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center mt-32">
+          <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-2xl text-center mt-32">
             Welcome to the application portal!
           </p>
           <div className="flex mt-4 justify-center items-center">
