@@ -142,6 +142,8 @@ export default function NameForm() {
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
   const [resumeFileUrl, setResumeFileUrl] = useState<string>('');
   const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>('');
+  const [exresumeFileUrl, setExResumeFileUrl] = useState<string>('');
+  const [excoverLetterFileUrl, setExCoverLetterFileUrl] = useState<string>('');
   const [lastSubmitted, setLastSubmitted] = useState<string | null>(null);
   const [facebook, setFacebook] = useState<string>('');
   const [instagram, setInstagram] = useState<string>('');
@@ -182,6 +184,18 @@ export default function NameForm() {
       },
     });
   }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
+
+  useEffect(() => {
+    setExCoverLetterFileUrl(
+      coverLetterFileUrl ? extractFileName(coverLetterFileUrl) : 'Not Uploaded'
+    );
+  }, [coverLetterFileUrl]);
+
+  useEffect(() => {
+    setExResumeFileUrl(
+      resumeFileUrl ? extractFileName(resumeFileUrl) : 'Not Uploaded'
+    );
+  }, [resumeFileUrl]);
 
   const handleGraduationYearChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -742,8 +756,7 @@ export default function NameForm() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Resume:{' '}
-            {resumeFileUrl ? extractFileName(resumeFileUrl) : 'Not Uploaded'}
+            Resume: {exresumeFileUrl}
           </a>
         </div>
         <FileDropzone
@@ -759,10 +772,7 @@ export default function NameForm() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Cover Letter:{' '}
-            {coverLetterFileUrl
-              ? extractFileName(coverLetterFileUrl)
-              : 'Not Uploaded'}
+            Cover Letter: {excoverLetterFileUrl}
           </a>
         </div>
         <FileDropzone
