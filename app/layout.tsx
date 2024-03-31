@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import 'react-toastify/dist/ReactToastify.css';
-import {ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 
@@ -14,8 +14,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: 'Next.js and Supabase Starter Kit',
-  description: 'The fastest way to build apps with Next.js and Supabase',
+  title: "UCSD AKPsi Spring'24 Dashboard",
+  description: "Apply here for UCSD AKPsi's Spring '24 Rush",
 };
 
 export default async function RootLayout({
@@ -61,8 +61,6 @@ export default async function RootLayout({
     isPIC = data?.is_pic;
     console.log(data?.is_pic);
   }
-
-  
 
   return (
     <html lang="en" className={GeistSans.className}>
