@@ -1,4 +1,5 @@
-export function extractFileName({url} : any) {
+export function extractFileName({ url }: any) {
+  if (!url) return null;
   const lastSlashIndex = url.lastIndexOf('/');
   const fullName = url.substring(lastSlashIndex + 1);
 
