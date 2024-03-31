@@ -42,7 +42,7 @@ export default function ProtectedPage() {
     null
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const [cases, setCases] = useState<[]>([]);
+  const [cases, setCases] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
 
   useEffect(() => {
     const users = async () => {
@@ -55,7 +55,7 @@ export default function ProtectedPage() {
 
   useEffect(() => {
     const users = async () => {
-      const bruh = await getCases(userID);
+      const bruh = (await getCases(userID)) || [];
       setCases(bruh);
       console.log(bruh);
     };

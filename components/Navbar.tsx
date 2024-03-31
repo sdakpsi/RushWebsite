@@ -1,3 +1,5 @@
+'use client';
+
 import AuthButton from '@/components/AuthButton';
 import { createClient } from '@/utils/supabase/server';
 import ActiveButton from './ActiveButton';
@@ -5,46 +7,47 @@ import Link from 'next/link';
 import PICButton from './PICButton';
 import logo from './akpsilogo.png';
 import Image from 'next/image';
+import { User } from '@supabase/supabase-js';
+import { useState } from 'react';
+import { MenuIcon } from '@heroicons/react/outline'; // Import a hamburger menu icon
 
-export default async function Navbar() {
-  const supabase = createClient();
-  let isActive = false;
-  let isPIC = false;
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('is_active')
-      .eq('id', user!.id)
-      .single();
-    isActive = data?.is_active;
-  }
+interface NavbarProps {
+  isPIC: boolean;
+  isActive: boolean;
+  user: User | null; // Use the appropriate type for your user object
+}
 
-  if (user) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('is_pic')
-      .eq('id', user!.id)
-      .single();
-    isPIC = data?.is_pic;
-    console.log(data?.is_pic);
-  }
-
+export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   return (
-    <nav className="w-full flex justify-center items-center border-b border-b-foreground/10 h-16 px-24">
-      <div className="flex justify-between items-center w-full px-3 text-lg">
+    <nav className="w-full border-b border-b-foreground/10 h-16 px-4 sm:px-48">
+      <div className="flex justify-between items-center w-full mt-3">
+        {/* Logo and title, adjust size for mobile */}
         <Link href="/dashboard">
-          <div className='flex flex-row'>
-            <Image src={logo} alt="logo" className="w-[2rem] mr-3"></Image>
-            <span>UCSD Alpha Kappa Psi</span>
+          <div className="flex flex-row items-center cursor-pointer">
+            <Image
+              src={logo}
+              alt="logo"
+              width={40}
+              height={40}
+              className="sm:w-[2rem] sm:mr-3"
+            ></Image>
+            <span className="hidden sm:block text-xl">UCSD Alpha Kappa Psi</span>{' '}
           </div>
         </Link>
-        <PICButton is_pic={isPIC} />
-        <ActiveButton is_active={isActive} />
-        <AuthButton user={user} />
+        <div className="sm:hidden">
+          <AuthButton user={user} />
+          {/* Add any additional buttons or links you want in the mobile menu here */}
+        </div>
+        {/* Items to show on large screens */}
+        <div className="hidden sm:flex gap-4 items-center">
+          <PICButton is_pic={isPIC} />
+          <ActiveButton is_active={isActive} />
+          <AuthButton user={user} />
+        </div>
       </div>
+
+      {/* Mobile Menu, hidden by default, shown when menu is toggled */}
     </nav>
   );
 }

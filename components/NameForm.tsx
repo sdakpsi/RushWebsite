@@ -370,13 +370,13 @@ export default function NameForm() {
 
   return (
     <div>
-      <div className="save-status text-gray-400 ">
+      <div className="save-status text-gray-400 px-4 sm:px-0">
         {isSaving ? 'Saving...' : lastSaved && `Last saved on ${lastSaved}`}
       </div>
-      <div className="submit-status text-green-600">
+      <div className="submit-status text-green-600 px-4 sm:px-0">
         {lastSubmitted && `Last submitted at: ${lastSubmitted}`}
       </div>
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto px-4 sm:px-0">
         <h2 className="text-lg font-bold mb-6"></h2>
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-4">

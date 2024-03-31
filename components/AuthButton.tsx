@@ -23,8 +23,14 @@ const handleSignInWithGoogle = async () => {
       },
     });
     if (error) throw error;
-  } catch (error) {
-    console.error('Error signing in with Google:', error.message);
+  } catch (error: unknown) {
+    // Type error as unknown
+    // Now we need to narrow down the type of 'error' before we can access its properties
+    if (error instanceof Error) {
+      console.error('Error signing in with Google:', error.message);
+    } else {
+      console.error('An unexpected error occurred:', error);
+    }
   }
 };
 

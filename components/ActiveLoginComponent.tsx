@@ -28,7 +28,7 @@ export default function ActiveLoginComponent() {
 
   return (
     <div>
-      <p>You are not marked as active, enter the password.</p>
+      <p className="text-sm sm:text-lg">You are not marked as active, enter the password.</p>
       <form
         onSubmit={handleSubmit}
         className="flex mt-4 justify-center items-center gap-2"

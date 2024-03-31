@@ -26,7 +26,7 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
             data: { user },
           } = await supabase.auth.getUser();
          
-          setUserId(user.id);
+          setUserId(user!.id);
         };
     
         fetchUser();
@@ -35,25 +35,36 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
     async function uploadFileToSupabase(file: File) {
         setUploading(true);
         try {
-            if (file.type === "application/pdf" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-                const filePath = `${userId}/${Date.now()}_${file.name}`;
-                const { data, error } = await supabase.storage.from("SPRING24").upload(filePath, file);
-    
-                if (error) throw new Error(error.message);
-    
-                const url = `${supabase.storage.from("SPRING24").getPublicUrl(filePath).data.publicUrl}`;
-                console.log("File uploaded successfully:", url);
-                setFileName(file.name);
-                setFileUrl(url);
-                return url;
-            } else {
-                throw new Error("Invalid file type. Only PDF and .docx files are allowed.");
-            }
-        } catch (error) {
-            console.error("Upload error:", error.message);
-            toast.error(`Upload failed: ${error.message}`); 
+          if (
+            file.type === 'application/pdf' ||
+            file.type ===
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          ) {
+            const filePath = `${userId}/${Date.now()}_${file.name}`;
+            const { data, error } = await supabase.storage
+              .from('SPRING24')
+              .upload(filePath, file);
+
+            if (error) throw new Error(error.message);
+
+            const url = `${
+              supabase.storage.from('SPRING24').getPublicUrl(filePath).data
+                .publicUrl
+            }`;
+            console.log('File uploaded successfully:', url);
+            setFileName(file.name);
+            setFileUrl(url);
+            return url;
+          } else {
+            throw new Error(
+              'Invalid file type. Only PDF and .docx files are allowed.'
+            );
+          }
+        } catch (error: any) {
+          console.error('Upload error:', error.message);
+          toast.error(`Upload failed: ${error.message}`);
         } finally {
-            setUploading(false); 
+          setUploading(false);
         }
         return null;
     }

@@ -98,6 +98,7 @@ const socialMediasObject = socialMedias || null;
     resume: resumeFileUrl,
     cover_letter: coverLetterFileUrl,
     college,
+    submitted,
     last_updated: new Date(),
   };
   

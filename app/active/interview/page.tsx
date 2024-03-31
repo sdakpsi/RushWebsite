@@ -69,13 +69,12 @@ export default function ProtectedPage() {
     return <div>Loading...</div>;
   }
 
-  if (showingForm) {
-    return(
-      <div className={`animate-in ${animationClass === 'fadeOutDown' ? 'fadeInUp' : ''}`}>
-        <ActiveInterviewForm 
-        selectedProspect={selectedProspect}/>
-        </div>
-    )
+  if (showingForm && selectedProspect) {
+    return (
+      <div className={`animate-in ${animationClass}`}>
+        <ActiveInterviewForm selectedProspect={selectedProspect} />
+      </div>
+    );
   }
 
   return (

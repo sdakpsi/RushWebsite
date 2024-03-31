@@ -33,7 +33,7 @@ export default async function ProtectedPage() {
           <div className="flex mt-4 justify-center items-center">
             <ApplicationButton />
           </div>
-          <p className="text-xl lg:text-lg !leading-tight max-w-xl text-left mt-8 mb-2">
+          <p className="text-md lg:text-lg !leading-tight max-w-xl text-left mt-8 mb-2 px-10">
             The application is mandatory for consideration. Due Thursday, April
             11th.
           </p>

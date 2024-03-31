@@ -8,25 +8,32 @@ export default function GoogleOAuth() {
     const handleSignInWithGoogle = async () => {
       const supabase = createClient();
       try {
-          const { error } = await supabase.auth.signInWithOAuth({
-              provider: 'google',
-              options: {
-                  redirectTo: `${window.location.origin}/auth/callback`,
-                  queryParams: {
-                    access_type: 'offline',
-                    prompt: 'consent',
-                  },
-              },
-        
-          });
-          if (error) throw error;
-      } catch (error) {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            },
+          },
+        });
+        if (error) throw error;
+      } catch (error: unknown) {
+        // Type error as unknown
+        // Now we need to narrow down the type of 'error' before we can access its properties
+        if (error instanceof Error) {
           console.error('Error signing in with Google:', error.message);
+        } else {
+          console.error('An unexpected error occurred:', error);
+        }
       }
-  };
+    };
+  
+  
   
     return (
-      <button className="flex items-center justify-center bg-white w-1/2 text-black px-4 py-2 border rounded shadow-sm hover:bg-gray-100"
+      <button className="flex items-center text-sm sm:text-lg justify-center bg-white sm:w-1/2 text-black px-4 py-2 border rounded shadow-sm hover:bg-gray-100"
       onClick={handleSignInWithGoogle}>
         <svg
           className="w-6 h-6 mr-2 -ml-1"

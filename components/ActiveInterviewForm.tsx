@@ -33,7 +33,7 @@ export default function ActiveInterviewForm({ selectedProspect }: ActiveIntervie
     }, [formData]); // This effect depends on formData
 
 
-    const onSubmit = (data) => {
+    const onSubmit = (data: any) => {
       console.log(data);
       // Perform form submission logic
     };
