@@ -70,16 +70,17 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
     }
 
     return (
-        <Dropzone onDrop={acceptedFiles => uploadFileToSupabase(acceptedFiles[0])}>
-            {({ getRootProps, getInputProps }) => (
-                <section className="flex justify-center items-center p-6">
-                    <div {...getRootProps({ className: 'dropzone' })} className="flex flex-col justify-center items-center border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 p-6 w-full max-w-xl cursor-pointer hover:border-gray-500">
-                        <input {...getInputProps()} />
-                        {uploading && <p className="text-gray-700 text-lg">Uploading...</p>}
-                        {(!uploading ) && <p className="text-gray-700 text-lg">{type === ApplicationFileTypes.COVER_LETTER && "Optional: "} Select or drag your {type} into here!</p>}
-                    </div>
-                </section>
-            )}
-        </Dropzone>
-    );
+      <Dropzone onDrop={acceptedFiles => uploadFileToSupabase(acceptedFiles[0])}>
+          {({ getRootProps, getInputProps }) => (
+              <section className="flex justify-center items-center p-6">
+                  <div {...getRootProps({ className: 'dropzone' })} className="flex flex-col justify-center items-center border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 p-6 w-full max-w-xl cursor-pointer hover:border-gray-500">
+                      <input {...getInputProps()} />
+                      {uploading && <p className="text-gray-700 text-lg">Uploading...</p>}
+                      {!uploading && fileName && <p className="text-green-500 text-lg">Uploaded: {fileName}</p>}
+                      {!uploading && !fileName && <p className="text-gray-700 text-lg">{type === ApplicationFileTypes.COVER_LETTER ? "Optional: " : ""}Select or drag your {type} into here!</p>}
+                  </div>
+              </section>
+          )}
+      </Dropzone>
+  );
 }

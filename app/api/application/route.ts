@@ -72,8 +72,19 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
   }
 
-  const { id, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, college, socialMedias} = await req.json();
-const socialMediasObject = socialMedias || null;
+  const { applicationId, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, college, facebook, instagram, linkedIn, tiktok, } = await req.json();
+  let socialMediasObject = null;
+  const socialFields = { facebook, instagram, linkedIn, tiktok };
+  const hasSocialMedia = Object.values(socialFields).some(value => value); 
+  
+  if (hasSocialMedia) {
+    socialMediasObject = {};
+    for (const [key, value] of Object.entries(socialFields)) {
+      if (value) { 
+        socialMediasObject[key] = value;
+      }
+    }
+  }
   const name = firstName + " " + lastName
   const submitted = isSubmitting ? new Date() : null;
   let updateObject = {
@@ -101,8 +112,9 @@ const socialMediasObject = socialMedias || null;
     submitted,
     last_updated: new Date(),
   };
+
+  console.log(updateObject)
   
-  // Conditionally add 'submitted' to the update object if isSubmitting is true
   if (isSubmitting) {
     updateObject.submitted = submitted;
   }
@@ -110,11 +122,13 @@ const socialMediasObject = socialMedias || null;
   const { data, error } = await supabase
     .from('applications')
     .update(updateObject)
-    .eq('id', id);
+    .eq('id', applicationId);
+  
 
   if (error) {
+    console.log('Error updating application:', error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
-
+  console.log('Application updated successfully:', data);
   return NextResponse.json({ message: 'Application updated successfully', data }, { status: 200 });
 }

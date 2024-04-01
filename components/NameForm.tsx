@@ -6,11 +6,13 @@ import React, {
   FormEvent,
   useEffect,
   useCallback,
+  useRef,
 } from 'react';
 import { debounce } from 'lodash';
 import FileDropzone from './Dropzone';
 import {
   ApplicationFileTypes,
+  ApplicationFormState,
   StudentYears,
   UCSDColleges,
   UCSDQuarters,
@@ -20,40 +22,43 @@ import { toast } from 'react-toastify';
 import { delay } from '@/utils/delay';
 import { smallInput, textLabel, largeInput } from './NameForm.styles';
 export default function NameForm() {
+  
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const debouncedSave = useCallback(
-    debounce(async (applicationData) => {
+    debounce(async () => {
       setIsSaving(true);
+      const applicationData = formStateRef.current; 
 
       const body = JSON.stringify({
         ...applicationData,
         lastSubmitted: new Date().toISOString(),
         isSubmitting: false,
       });
+  
       try {
         const response = await fetch('/api/application', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: body,
+          body,
         });
-
+  
         if (!response.ok) {
           throw new Error('Failed to save application data');
         }
-
+  
         console.log('Application data saved successfully');
         setLastSaved(formatTimestamp(new Date()));
       } catch (error) {
         console.error('Error saving application data:', error);
       } finally {
-        setIsSaving(false); // Reset saving status regardless of outcome
+        setIsSaving(false);
       }
     }, 1000),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -82,7 +87,7 @@ export default function NameForm() {
         setGraduationYear(data.graduation_year || '');
         setGraduationQuarter(data.graduation_qtr);
         setMajor(data.major);
-        setMinor(data.minor);
+        setMinor(data.minors || '');
         setCumulativeGPA(data.gpa || '');
         setCurrentClasses(data.classes);
         setExtracurricularActivities(data.extracirriculars);
@@ -142,8 +147,6 @@ export default function NameForm() {
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
   const [resumeFileUrl, setResumeFileUrl] = useState<string>('');
   const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>('');
-  const [exresumeFileUrl, setExResumeFileUrl] = useState<string>('');
-  const [excoverLetterFileUrl, setExCoverLetterFileUrl] = useState<string>('');
   const [lastSubmitted, setLastSubmitted] = useState<string | null>(null);
   const [facebook, setFacebook] = useState<string>('');
   const [instagram, setInstagram] = useState<string>('');
@@ -151,9 +154,38 @@ export default function NameForm() {
   const [tiktok, setTiktok] = useState<string>('');
   const [college, setCollege] = useState<string>('');
 
+  const formStateRef = useRef<ApplicationFormState>({
+    applicationId,
+    firstName,
+    lastName,
+    pronouns,
+    phoneNumber,
+    yearInCollege,
+    graduationYear,
+    graduationQuarter,
+    major,
+    minor,
+    cumulativeGPA,
+    currentClasses,
+    extracurricularActivities,
+    proudAccomplishment,
+    joinReason,
+    lifeGoals,
+    comfortZone,
+    businessType,
+    additionalDetails,
+    resumeFileUrl,
+    coverLetterFileUrl,
+    college,
+    facebook,
+    instagram,
+    linkedIn,
+    tiktok,
+  });
+
   useEffect(() => {
-    debouncedSave({
-      id: applicationId,
+    formStateRef.current = {
+      applicationId,
       firstName,
       lastName,
       pronouns,
@@ -171,31 +203,21 @@ export default function NameForm() {
       lifeGoals,
       comfortZone,
       businessType,
-
       additionalDetails,
       resumeFileUrl,
       coverLetterFileUrl,
       college,
-      socialMedias: {
-        ...(facebook && { facebook }),
-        ...(instagram && { instagram }),
-        ...(linkedIn && { linkedIn }),
-        ...(tiktok && { tiktok }),
-      },
-    });
+      facebook,
+      instagram,
+      linkedIn,
+      tiktok,
+    };
+  }, [applicationId, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, college, facebook, instagram, linkedIn, tiktok]);
+
+  useEffect(() => {
+    debouncedSave();
   }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
 
-  useEffect(() => {
-    setExCoverLetterFileUrl(
-      coverLetterFileUrl ? extractFileName(coverLetterFileUrl) : 'Not Uploaded'
-    );
-  }, [coverLetterFileUrl]);
-
-  useEffect(() => {
-    setExResumeFileUrl(
-      resumeFileUrl ? extractFileName(resumeFileUrl) : 'Not Uploaded'
-    );
-  }, [resumeFileUrl]);
 
   const handleGraduationYearChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -233,35 +255,7 @@ export default function NameForm() {
       >
     ) => {
       setState(event.target.value);
-      debouncedSave({
-        id: applicationId,
-        firstName,
-        lastName,
-        pronouns,
-        phoneNumber,
-        graduationQuarter,
-        graduationYear,
-        major,
-        minor,
-        cumulativeGPA,
-        currentClasses,
-        extracurricularActivities,
-        proudAccomplishment,
-        joinReason,
-        lifeGoals,
-        comfortZone,
-        businessType,
-
-        additionalDetails,
-        resumeFileUrl,
-        coverLetterFileUrl,
-        socialMedias: {
-          ...(facebook && { facebook }),
-          ...(instagram && { instagram }),
-          ...(linkedIn && { linkedIn }),
-          ...(tiktok && { tiktok }),
-        },
-      });
+      debouncedSave();
     };
 
   // Function to handle form submission
@@ -301,13 +295,6 @@ export default function NameForm() {
     const emptyFields = fields
       .filter((field) => !field.value)
       .map((field) => field.name);
-    const socialMedias = {
-      ...(facebook && { facebook }),
-      ...(instagram && { instagram }),
-      ...(linkedIn && { linkedIn }),
-      ...(tiktok && { tiktok }),
-    };
-    console.log(socialMedias, 'socialMedias');
     if (emptyFields.length > 0) {
       toast.error(`Empty fields: ${emptyFields.join(', ')}`);
       return;
@@ -315,32 +302,11 @@ export default function NameForm() {
       setSubmitting(true);
       try {
         await delay(2000);
+        const applicationData = formStateRef.current; 
         const body = JSON.stringify({
-          id: applicationId,
-          firstName,
-          lastName,
-          pronouns,
-          phoneNumber,
-          yearInCollege,
-          graduationYear,
-          graduationQuarter,
-          major,
-          minor,
-          cumulativeGPA,
-          currentClasses,
-          extracurricularActivities,
-          proudAccomplishment,
-          joinReason,
-          lifeGoals,
-          comfortZone,
-          businessType,
-          additionalDetails,
-          resumeFileUrl,
-          coverLetterFileUrl,
-          college,
+          ...applicationData,
           lastSubmitted: new Date().toISOString(),
           isSubmitting: true,
-          socialMedias: JSON.stringify(socialMedias),
         });
         const response = await fetch('/api/application', {
           method: 'PUT',
@@ -756,7 +722,8 @@ export default function NameForm() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Resume: {exresumeFileUrl}
+            Resume:{' '}
+            {resumeFileUrl ? extractFileName(resumeFileUrl) : 'Not Uploaded'}
           </a>
         </div>
         <FileDropzone
@@ -772,7 +739,10 @@ export default function NameForm() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Cover Letter: {excoverLetterFileUrl}
+           Cover Letter:{' '}
+            {coverLetterFileUrl
+              ? extractFileName(coverLetterFileUrl)
+              : 'Not Uploaded'}
           </a>
         </div>
         <FileDropzone

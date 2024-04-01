@@ -34,3 +34,34 @@ export type ProspectInterview = {
     full_name: string;
     email: string;
 }
+
+
+export interface ApplicationFormState {
+    applicationId: string;
+    firstName: string;
+    lastName: string;
+    pronouns: string;
+    phoneNumber: string;
+    yearInCollege: string;
+    graduationYear: number | null;
+    graduationQuarter: string;
+    major: string;
+    minor: string | null;
+    cumulativeGPA: string;
+    currentClasses: string;
+    extracurricularActivities: string;
+    proudAccomplishment: string;
+    joinReason: string;
+    lifeGoals: string;
+    comfortZone: string;
+    businessType: string;
+    additionalDetails: string;
+    resumeFileUrl: string;
+    coverLetterFileUrl: string;
+    college: string;
+    facebook: string;
+    instagram: string;
+    linkedIn: string;
+    tiktok: string;
+    
+}
