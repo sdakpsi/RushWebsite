@@ -78,7 +78,7 @@ export async function PUT(req: NextRequest) {
   const hasSocialMedia = Object.values(socialFields).some(value => value); 
   
   if (hasSocialMedia) {
-    socialMediasObject = {};
+    let socialMediasObject: Record<string, string> = {};
     for (const [key, value] of Object.entries(socialFields)) {
       if (value) { 
         socialMediasObject[key] = value;

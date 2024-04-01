@@ -9,7 +9,6 @@ import logo from './akpsilogo.png';
 import Image from 'next/image';
 import { User } from '@supabase/supabase-js';
 import { useState } from 'react';
-import { MenuIcon } from '@heroicons/react/outline'; // Import a hamburger menu icon
 
 interface NavbarProps {
   isPIC: boolean;

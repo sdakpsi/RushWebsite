@@ -4,13 +4,12 @@ import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
 import { questions } from "../lib/InterviewQuestions";
 import { createInterview } from "@/app/supabase/interview";
-import {toast} from 'react-toastify';
+import { toast } from "react-toastify";
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
-  setSelectedProspect: (prospect: ProspectInterview|null) => void;
-    setShowingForm: (showingForm: boolean) => void;
-
+  setSelectedProspect: (prospect: ProspectInterview | null) => void;
+  setShowingForm: (showingForm: boolean) => void;
 }
 
 const options = [
@@ -26,10 +25,14 @@ export default function ActiveInterviewForm({
   setSelectedProspect,
   setShowingForm,
 }: ActiveInterviewFormProps) {
-
-    const [submitting, isSubmitting] = useState(false);
+  const [submitting, isSubmitting] = useState(false);
   const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
-  const { register, handleSubmit, watch, formState: {errors} } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: savedFormData,
   });
 
@@ -43,30 +46,28 @@ export default function ActiveInterviewForm({
 
   const onSubmit = async (data: InterviewForm) => {
     isSubmitting(true);
-    try{
-        await createInterview(data, selectedProspect);
-        toast.success("Form submitted successfully");
-        setSelectedProspect(null);
-        localStorage.removeItem("selectedProspect")
-        setShowingForm(false);
-        localStorage.removeItem("formData");
-    } catch(error){
-        toast.error("Error uploading interview form: " + error);
-    } finally{
-        isSubmitting(false);
+    try {
+      await createInterview(data, selectedProspect);
+      toast.success("Form submitted successfully");
+      setSelectedProspect(null);
+      localStorage.removeItem("selectedProspect");
+      setShowingForm(false);
+      localStorage.removeItem("formData");
+    } catch (error) {
+      toast.error("Error uploading interview form: " + error);
+    } finally {
+      isSubmitting(false);
     }
-    
-   
   };
   const onError = (errors: any) => {
     toast.error("Form submission errors:", errors.message);
-};
+  };
 
   const handleBack = () => {
     setSelectedProspect(null);
-    localStorage.removeItem("selectedProspect")
+    localStorage.removeItem("selectedProspect");
     setShowingForm(false);
-  }
+  };
 
   return (
     <div className="bg-black text-white p-5">
@@ -93,10 +94,14 @@ export default function ActiveInterviewForm({
             id="name"
             className="w-full p-2.5 text-base text-black"
             {...register("name", {
-            required: "Name is required",
+              required: "Name is required",
             })}
           />
-           {errors.name && <p className="text-red-500">{errors.name.message ?? "Required!"}</p>}
+          {errors.name && (
+            <p className="text-red-500">{`${
+              errors.name.message ?? "Required!"
+            }`}</p>
+          )}
         </div>
         <div className="mb-5">
           <label htmlFor="otherActives" className="block mb-2">
@@ -107,10 +112,14 @@ export default function ActiveInterviewForm({
             id="otherActives"
             className="w-full p-2.5 text-base text-black"
             {...register("otherActives", {
-            required: "Other Actives on Panel is required",
+              required: "Other Actives on Panel is required",
             })}
           />
-           {errors.name && <p className="text-red-500">{errors.otherActives.message ?? "Required!"}</p>}
+          {errors.otherActives && (
+            <p className="text-red-500">{`${
+              errors.otherActives.message ?? "Required!"
+            }`}</p>
+          )}
         </div>
 
         <div className="mb-5">
@@ -128,7 +137,9 @@ export default function ActiveInterviewForm({
               <label htmlFor={option.value}>{option.label}</label>
             </div>
           ))}
-          {errors.events && <p className="text-red-500">At least one event must be selected</p>}
+          {errors.events && (
+            <p className="text-red-500">At least one event must be selected</p>
+          )}
         </div>
 
         <div>
@@ -145,7 +156,12 @@ export default function ActiveInterviewForm({
                   required: index !== 7 ? "This field is required" : false, //silly question is optional
                 })}
               ></textarea>
-            {errors[question.name] && <p className="text-red-500">{errors[question.name].message || "Required!"}</p>}            </div>
+              {errors[question.name] && (
+                <p className="text-red-500">{`${
+                  errors[question.name]?.message || "Required!"
+                }`}</p>
+              )}{" "}
+            </div>
           ))}
         </div>
 
