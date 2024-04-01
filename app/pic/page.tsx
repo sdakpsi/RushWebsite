@@ -14,7 +14,7 @@ import styles from './styles.module.css';
 import logo from './akpsilogo.png';
 import Image from 'next/image';
 import ApplicantCard from '@/components/ApplicantCard';
-import { getUsers, getIsPIC, getApplication, getCases } from '../getUsers';
+import { getUsers, getIsPIC, getApplication, getCases } from '../supabase/getUsers';
 import ApplicationPopup from '@/components/ApplicationPopUp';
 
 interface Packet {

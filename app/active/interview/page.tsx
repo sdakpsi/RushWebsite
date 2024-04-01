@@ -7,7 +7,7 @@ import NextLinkButton from '../../../components/NextLinkButton';
 import { User } from '@supabase/supabase-js'; // Ensure you import the User type
 import { redirect } from 'next/navigation';
 import ActiveLoginComponent from '@/components/ActiveLoginComponent';
-import { getInterviewProspects, getIsActive } from '@/app/getUsers';
+import { getInterviewProspects, getIsActive } from '@/app/supabase/getUsers';
 import InterviewSearchBar from '@/components/InterviewSearchBar';
 import { ProspectInterview } from '@/lib/types';
 import ActiveInterviewForm from '@/components/ActiveInterviewForm';
@@ -29,15 +29,15 @@ export default function ProtectedPage() {
     checkActive();
   }, [])
 
-  // useEffect(() => {
-  //   if (!showingForm) {
-  //     setAnimationClass('fadeOutDown');
-  //   }
-  // }, [showingForm]);
+  useEffect(() => {
+      setAnimationClass('fadeInUp');    
+  }, [showingForm]);
+
   useEffect(() => {
     // Load the saved state from local storage when the component mounts
     const savedProspect = localStorage.getItem('selectedProspect');
     if (savedProspect) {
+      console.log("found prospect")
       setSelectedProspect(JSON.parse(savedProspect));
       setShowingForm(true);
     }
@@ -56,7 +56,6 @@ export default function ProtectedPage() {
    
     window.addEventListener('beforeunload', handleSaveState);
   
-    // Cleanup function to remove the event listener
     return () => {
       window.removeEventListener('beforeunload', handleSaveState);
     };
@@ -69,7 +68,10 @@ export default function ProtectedPage() {
   if (showingForm && selectedProspect) {
     return (
       <div className={`animate-in ${animationClass}`}>
-        <ActiveInterviewForm selectedProspect={selectedProspect} />
+        <ActiveInterviewForm 
+        selectedProspect={selectedProspect}
+        setSelectedProspect={setSelectedProspect}
+        setShowingForm={setShowingForm} />
       </div>
     );
   }

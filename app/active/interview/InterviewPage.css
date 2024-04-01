@@ -28,3 +28,7 @@
   .fadeOutDown {
     animation: fadeOutDown 0.5s ease forwards;
   }
+
+  .fadeInUpInterviewForm{
+    animation: fadeInUp 3s ease forwards;
+  }

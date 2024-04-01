@@ -31,6 +31,7 @@ export enum UCSDColleges{
 }
 
 export type ProspectInterview = {
+    id: string;
     full_name: string;
     email: string;
 }
@@ -62,6 +63,33 @@ export interface ApplicationFormState {
     facebook: string;
     instagram: string;
     linkedIn: string;
-    tiktok: string;
-    
+    tiktok: string;   
+}
+
+export interface RushEvents {
+    'Info Night': boolean;
+    'Business Workshop': boolean;
+    'Case Study': boolean;
+    'Social Night': boolean;
+    Interview: boolean;
+}
+
+//in supabase, it's stored as pythonic case (aboutYourself -> about_yourself) + a few more name changes sorry
+// but you can find it in the interviews table
+export interface InterviewForm{
+    name: string;
+    aboutYourself: string;
+    careerInterests: string;
+    instanceForFriend: string;
+    failureOvercome: string;
+    disagreementHandled: string;
+    handlingCriticism: string;
+    learningAbout: string;
+    sillyQuestion: string | null;
+    questionsAndCommitments: string;
+    whyGiveBid: string;
+    mostInfluential: string;
+    moreQuestions: string;
+    otherActives: string;
+    events: RushEvents;
 }

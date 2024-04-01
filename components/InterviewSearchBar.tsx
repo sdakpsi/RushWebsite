@@ -1,5 +1,5 @@
 "use client"
-import { getInterviewProspects } from '@/app/getUsers';
+import { getInterviewProspects } from '@/app/supabase/getUsers';
 import { ProspectInterview } from '@/lib/types';
 import React, { useEffect, useState } from 'react'
 

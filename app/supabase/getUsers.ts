@@ -147,7 +147,7 @@ export async function getInterviewProspects(): Promise<ProspectInterview[] | nul
   if (hasPerms) {
     const { data, error } = await supabase
       .from('users')
-      .select('full_name, email')
+      .select('full_name, email, id')
       .eq('is_active', false)
       .eq('is_pic', false);
 
