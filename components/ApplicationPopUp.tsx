@@ -1,4 +1,3 @@
-import { RushEvents } from '@/lib/types';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -80,261 +79,301 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('application');
 
-  const socialMedia = application.social_media ? application.social_media : {};
+  const socialMedia = application.social_media
+    ? application.social_media
+    : 'None';
 
   const handleViewDocument = (documentUrl: string) => {
     setViewDocument(documentUrl);
   };
 
+  const toggleSection = (sectionName: string) => {
+    if (activeSection === sectionName) {
+      setActiveSection(null); // If the current section is already active, close it
+    } else {
+      setActiveSection(sectionName); // Otherwise, open the clicked section
+    }
+  };
+
   return createPortal(
-    <>
-      <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center p-4 z-40">
-        <div className="bg-btn-background rounded-lg shadow-lg p-8 max-w-6xl w-full space-y-4 overflow-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl md:text-2xl font-bold">
-              {application.name}'s Application
-            </h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
+      <div className="bg-btn-background rounded-lg shadow-xl p-6 w-full space-y-4 mx-4 overflow-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">
+            {application.name}'s Packet
+          </h2>
+          <div>
+            <button
+              onClick={() => setActiveSection('application')}
+              className={`px-4 py-3 ${
+                activeSection === 'application'
+                  ? 'text-blue-500 border-blue-500 border-b-2'
+                  : 'text-gray-500 border-transparent'
+              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+            >
+              Application
+            </button>
+            <button
+              onClick={() => setActiveSection('cases')}
+              className={`px-4 py-3 ml-2 ${
+                activeSection === 'cases'
+                  ? 'text-blue-500 border-blue-500 border-b-2'
+                  : 'text-gray-500 border-transparent'
+              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+            >
+              Case Study Notes
+            </button>
+            <button
+              onClick={() => setActiveSection('interviews')}
+              className={`px-4 py-3 ml-2 ${
+                activeSection === 'interviews'
+                  ? 'text-blue-500 border-blue-500 border-b-2'
+                  : 'text-gray-500 border-transparent'
+              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+            >
+              Interview Notes
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => handleViewDocument(application.resume)}
+              className="px-4 py-2 ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold rounded"
+            >
+              Resume
+            </button>
+            <button
+              onClick={() => handleViewDocument(application.cover_letter)}
+              className="px-4 py-2 ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold rounded"
+            >
+              Cover Letter
+            </button>
             <button
               onClick={onClose}
-              className="text-lg bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              className="px-4 py-2 ml-2 bg-red-500 hover:bg-red-800 text-white font-bold rounded"
             >
               Close
             </button>
           </div>
+        </div>
 
-          <div className="overflow-auto" style={{ maxHeight: '80vh' }}>
-            <div className="p-8 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Personal Details */}
-                <div>
-                  <h3 className="font-semibold mb-2">Personal Details</h3>
-                  <p>
-                    <strong>Pronouns:</strong> {application.pronouns}
-                  </p>
-                  <p>
-                    <strong>Phone Number:</strong> {application.phone_number}
-                  </p>
-                  {socialMedia && (
+        <div className="overflow-auto" style={{ maxHeight: '80vh' }}>
+          <div className="space-y-4">
+            {activeSection === 'application' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-700 p-6 rounded-xl shadow-lg">
+                    <h3 className="text-2xl font-bold text-white mb-3">
+                      Personal Details
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-2 text-gray-200">
+                      <li>
+                        <span className="font-semibold">Pronouns:</span>{' '}
+                        {application.pronouns}
+                      </li>
+                      <li>
+                        <span className="font-semibold">Phone Number:</span>{' '}
+                        {application.phone_number}
+                      </li>
+                      <li>
+                        <span className="font-semibold">Social Media:</span>{' '}
+                        {socialMedia || 'N/A'}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-700 p-6 rounded-xl shadow-lg ">
+                    <h3 className="text-2xl font-bold text-white mb-3">
+                      Academic Details
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-2 text-gray-200">
+                      <li>
+                        <span className="font-semibold">Year:</span>{' '}
+                        {application.year}
+                      </li>
+                      <li>
+                        <span className="font-semibold">Graduation Year:</span>{' '}
+                        {application.graduation_year}
+                      </li>
+                      <li>
+                        <span className="font-semibold">
+                          Graduation Quarter:
+                        </span>{' '}
+                        {application.graduation_qtr}
+                      </li>
+                      <li>
+                        <span className="font-semibold">Major:</span>{' '}
+                        {application.major}
+                      </li>
+                      {application.minors && (
+                        <li>
+                          <span className="font-semibold">Minors:</span>{' '}
+                          {application.minors}
+                        </li>
+                      )}
+                      <li>
+                        <span className="font-semibold">GPA:</span>{' '}
+                        {application.gpa}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="bg-gray-700 p-6 rounded-xl shadow-lg ">
+                  <h3 className="text-2xl font-bold text-white mb-3">
+                    Long Response
+                  </h3>
+                  <div className="list-disc pl-5 space-y-2 text-gray-200 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <strong>Social Media:</strong>
-                      {Object.entries(socialMedia).map(([platform, handle]) => (
-                        <p key={platform}>{`${
-                          platform.charAt(0).toUpperCase() + platform.slice(1)
-                        }: ${handle}`}</p>
-                      ))}
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Classes
+                      </div>
+                      <div>{application.classes}</div>
                     </div>
-                  )}
-                </div>
-
-                {/* Academic Details */}
-                <div>
-                  <h3 className="font-semibold mb-2">Academic Details</h3>
-                  <p>
-                    <strong>Year:</strong> {application.year}
-                  </p>
-                  <p>
-                    <strong>Graduation Year:</strong>{' '}
-                    {application.graduation_year}
-                  </p>
-                  <p>
-                    <strong>Graduation Quarter:</strong>{' '}
-                    {application.graduation_qtr}
-                  </p>
-                  <p>
-                    <strong>Major:</strong> {application.major}
-                  </p>
-                  {application.minors && (
-                    <p>
-                      <strong>Minors:</strong> {application.minors}
-                    </p>
-                  )}
-                  <p>
-                    <strong>GPA:</strong> {application.gpa}
-                  </p>
-                </div>
-              </div>
-
-              {/* Long Answers Section */}
-              <div className="mt-6">
-                <h3 className="font-semibold mb-2">Additional Information</h3>
-                <p>
-                  <strong>Classes:</strong> {application.classes}
-                </p>
-                <p>
-                  <strong>Extracurriculars:</strong>{' '}
-                  {application.extracirriculars}
-                </p>
-                <p>
-                  <strong>Accomplishment:</strong> {application.accomplishment}
-                </p>
-                <p>
-                  <strong>Why AKPsi:</strong> {application.why_akpsi}
-                </p>
-                <p>
-                  <strong>Goals:</strong> {application.goals}
-                </p>
-                <p>
-                  <strong>Comfort Zone:</strong> {application.comfort_zone}
-                </p>
-                <p>
-                  <strong>Business Idea:</strong> {application.business}
-                </p>
-                <p>
-                  <strong>Additional Details:</strong> {application.additional}
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <h3 className="text-xl font-bold mb-4">Cases Evaluation</h3>
-                {cases.map((caseItem) => (
-                  <div key={caseItem.id} className="mb-4">
-                    <h4 className="font-semibold">{caseItem.prospect}</h4>
-                    <div className="ml-4">
-                      <p>
-                        Leadership Score: {caseItem.leadership_score} -{' '}
-                        {caseItem.leadership_comments}
-                      </p>
-                      <p>
-                        Teamwork Score: {caseItem.teamwork_score} -{' '}
-                        {caseItem.teamwork_comments}
-                      </p>
-                      <p>
-                        Analytical Score: {caseItem.analytical_score} -{' '}
-                        {caseItem.analytical_comments}
-                      </p>
-                      <p>
-                        Public Speaking Score: {caseItem.public_speaking_score}{' '}
-                        - {caseItem.public_speaking_comments}
-                      </p>
-                      <p>Role: {caseItem.role}</p>
-                      <p>Thoughts: {caseItem.thoughts}</p>
-                      <p>Additional: {caseItem.additional}</p>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Extracurriculars
+                      </div>
+                      <div className="">{application.extracirriculars}</div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Accomplishment
+                      </div>
+                      <div className="">{application.accomplishment}</div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Why AKPsi
+                      </div>
+                      <div className="">{application.why_akpsi}</div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Goals
+                      </div>
+                      <div className="">{application.goals}</div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Comfort Zone
+                      </div>
+                      <div className="">{application.comfort_zone}</div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Business Idea
+                      </div>
+                      <div className="">{application.business}</div>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xl text-center mb-2">
+                        Additional Details
+                      </div>
+                      <div className="">{application.additional}</div>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              <div className="mt-8">
-                <h3 className="text-xl font-bold mb-4">Interview Responses</h3>
-                {interviews.map((interview, index) => (
-                  <div key={index} className="mb-6 p-4 rounded">
-                    <h4 className="font-semibold mb-2">
-                      Interview with {interview.active_name}
-                    </h4>
-                    <p>
-                      <strong>Other Actives:</strong> {interview.other_actives}
-                    </p>
-                    <p>
-                      <strong>Events attended:</strong>{' '}
-                      {interview.events_attended}
-                    </p>
-                    <p>
-                      <strong>About Yourself:</strong>{' '}
-                      {interview.about_yourself}
-                    </p>
-                    <p>
-                      <strong>Career Interests:</strong>{' '}
-                      {interview.career_interests}
-                    </p>
-                    <p>
-                      <strong>Instance For Friend:</strong>{' '}
-                      {interview.instance_for_friend}
-                    </p>
-                    <p>
-                      <strong>Failure Overcome:</strong>{' '}
-                      {interview.failure_overcome}
-                    </p>
-                    <p>
-                      <strong>Disagreement Handled:</strong>{' '}
-                      {interview.disagreement_handled}
-                    </p>
-                    <p>
-                      <strong>Handling Criticism:</strong>{' '}
-                      {interview.handling_criticism}
-                    </p>
-                    <p>
-                      <strong>Learning About:</strong>{' '}
-                      {interview.learning_about}
-                    </p>
-                    <p>
-                      <strong>Silly Question:</strong>{' '}
-                      {interview.silly_question}
-                    </p>
-                    <p>
-                      <strong>Questions And Commitments:</strong>{' '}
-                      {interview.questions_and_commitments}
-                    </p>
-                    <p>
-                      <strong>Why Give Bid:</strong> {interview.why_give_bid}
-                    </p>
-                    <p>
-                      <strong>Most Influential:</strong>{' '}
-                      {interview.most_influential}
-                    </p>
-                    <p>
-                      <strong>More Questions:</strong>{' '}
-                      {interview.more_questions}
-                    </p>
-
-                    {/* If there's a specific way to display events, you can add it here */}
-                  </div>
-                ))}
-              </div>
-
-              {/* Documents Section */}
-              <div className="flex flex-row justify-around mt-6">
-                <div>
-                  <button
-                    onClick={() => handleViewDocument(application.resume)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    View Resume
-                  </button>
-                  <a
-                    href={application.resume}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-4 mt-2"
-                    aria-label="Open resume in new window"
-                  >
-                    🔗
-                  </a>
                 </div>
-                <button
-                  onClick={() => handleViewDocument(application.cover_letter)}
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  View Cover Letter
-                </button>
-                <a
-                  href={application.cover_letter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-4 mt-2"
-                  aria-label="Open cover letter in new window"
-                >
-                  🔗
-                </a>
               </div>
-            </div>
+            )}
+
+            {/* Cases Evaluation Section */}
+            {activeSection === 'cases' && (
+              <div>
+                <h3 className="font-semibold text-lg mb-2">Cases Evaluation</h3>
+                {/* Assuming all cases have the same structure, iterate over the keys of the first case to create a layout */}
+                {cases.length > 0 &&
+                  Object.keys(cases[0])
+                    .filter(
+                      (key) => !['id', 'prospect', 'active'].includes(key)
+                    ) // Adjust as needed to exclude irrelevant keys
+                    .map((attribute) => (
+                      <div
+                        key={attribute}
+                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-600 rounded"
+                      >
+                        <div className="font-semibold text-white col-span-1">
+                          {attribute
+                            .split('_')
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1)
+                            )
+                            .join(' ')}
+                          :
+                        </div>
+                        {/* Display each case's attribute next to the type */}
+                        {cases.map((caseItem, index) => (
+                          <div key={index} className="md:col-span-1 text-white">
+                            {/* Check if the attribute needs special formatting or handling */}
+                            {typeof caseItem[attribute as keyof Case] ===
+                            'number'
+                              ? caseItem[attribute as keyof Case]
+                              : caseItem[attribute as keyof Case]}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+              </div>
+            )}
+
+            {/* Interview Responses Section */}
+            {activeSection === 'interviews' && (
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Interview Responses
+                </h3>
+                {/* Create an array of unique keys/questions from the first interview (assuming all interviews have the same keys) */}
+                {interviews.length > 0 &&
+                  Object.keys(interviews[0])
+                    .filter(
+                      (key) => !['id', 'prospect_id', 'active_id'].includes(key)
+                    )
+                    .map((question) => (
+                      <div
+                        key={question}
+                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-700 rounded"
+                      >
+                        {/* Display the question */}
+                        <div className="font-semibold items-center ml-2 justify-center col-span-1">
+                          {question
+                            .split('_')
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1)
+                            )
+                            .join(' ')}
+                          :
+                        </div>
+                        {/* Display each interview's response next to the question */}
+                        {interviews.map((interview, index) => (
+                          <div key={index} className="md:col-span-1">
+                            {interview[question as keyof Interview]}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Document View Modal */}
       {viewDocument && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-          <div className="relative w-full max-w-3xl h-3/4 bg-white rounded-lg overflow-auto">
+          <div className="relative bg-white rounded-lg w-full max-w-4xl h-3/4 overflow-auto">
             <iframe src={viewDocument} className="w-full h-full"></iframe>
             <button
               onClick={() => setViewDocument(null)}
-              className="absolute top-0 right-0 mt-2 mr-2 bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
+              className="absolute top-0 right-0 mt-4 mr-4 text-lg bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
             >
               Close
             </button>
           </div>
         </div>
       )}
-    </>,
+    </div>,
     document.body
   );
 };
