@@ -2,6 +2,7 @@ import { ProspectInterview } from "@/lib/types";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import  Select from 'react-select';
+import {questions} from '../lib/InterviewQuestions';
 
 interface ActiveInterviewFormProps {
     selectedProspect: ProspectInterview
@@ -14,6 +15,7 @@ const options = [
     { value: 'Social Night', label: 'Social Night' },
     { value: 'Interview', label: 'Interview' },
   ];
+
 
 
 export default function ActiveInterviewForm({ selectedProspect }: ActiveInterviewFormProps) {
@@ -35,7 +37,6 @@ export default function ActiveInterviewForm({ selectedProspect }: ActiveIntervie
 
     const onSubmit = (data: any) => {
       console.log(data);
-      // Perform form submission logic
     };
   
     return (
@@ -75,20 +76,24 @@ export default function ActiveInterviewForm({ selectedProspect }: ActiveIntervie
                     ))}
                 </div>
 
-                <div className="mb-5">
-                    <label htmlFor="question1" className="block mb-2">
-                        1. Tell us about yourself in 1 minute!
-                    </label>
-                    <textarea
-                        id="question1"
-                        className="w-full p-2.5 text-base text-black"
-                        {...register("question1", {
-                            required: "Required",
-                        })}
-                    ></textarea>
-                </div>
-
-                {/* Repeat the above structure for the remaining questions */}
+                <div>
+    {/* im like the look at me using a loop n shi */}
+    {questions.map((question, index) => (
+      <div key={index} className="mb-5">
+        <label htmlFor={question.name} className="block mb-2">
+          {question.label}
+        </label>
+        <textarea
+          id={question.name}
+          className="w-full p-2.5 text-base text-black"
+          {...register(question.name, {
+            required: index !== 7 ? "Required" : false, //silly question is optional
+          })}
+        ></textarea>
+      </div>
+    ))}
+  </div>
+               
 
                 <button
                     type="submit"

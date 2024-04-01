@@ -29,11 +29,11 @@ export default function ProtectedPage() {
     checkActive();
   }, [])
 
-  useEffect(() => {
-    if (showingForm) {
-      setAnimationClass('fadeOutDown');
-    }
-  }, [showingForm]);
+  // useEffect(() => {
+  //   if (!showingForm) {
+  //     setAnimationClass('fadeOutDown');
+  //   }
+  // }, [showingForm]);
   useEffect(() => {
     // Load the saved state from local storage when the component mounts
     const savedProspect = localStorage.getItem('selectedProspect');
@@ -41,10 +41,9 @@ export default function ProtectedPage() {
       setSelectedProspect(JSON.parse(savedProspect));
       setShowingForm(true);
     }
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []); 
   
   useEffect(() => {
-    // Save the selectedProspect to local storage whenever it changes
     const handleSaveState = () => {
       if (selectedProspect) {
         console.log("Saving selectedProspect to localStorage");
@@ -52,11 +51,9 @@ export default function ProtectedPage() {
       }
     };
   
-    // Consider saving immediately when selectedProspect changes,
-    // instead of waiting for the page to unload
     handleSaveState();
   
-    // Optionally, if you still want to save on unload, you can keep this:
+   
     window.addEventListener('beforeunload', handleSaveState);
   
     // Cleanup function to remove the event listener
@@ -95,7 +92,7 @@ export default function ProtectedPage() {
                 >
                   {ivName}
                 </p>
-              {/* ))} */}
+              ))}  */}
               <InterviewSearchBar
                 selectedProspect={selectedProspect}
                 setSelectedProspect={setSelectedProspect}
