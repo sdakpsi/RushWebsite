@@ -1,3 +1,4 @@
+import { RushEvents } from '@/lib/types';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -30,6 +31,24 @@ interface Application {
   user_id: string;
 }
 
+export interface Interview {
+  active_name: string;
+  about_yourself: string;
+  career_interests: string;
+  instance_for_friend: string;
+  failure_overcome: string;
+  disagreement_handled: string;
+  handling_criticism: string;
+  learning_about: string;
+  silly_question: string | null;
+  questions_and_commitments: string;
+  why_give_bid: string;
+  most_influential: string;
+  more_questions: string;
+  other_actives: string;
+  events_attended: string;
+}
+
 interface Case {
   id: string;
   prospect: string;
@@ -50,12 +69,14 @@ interface Case {
 interface ApplicationPopupProps {
   application: Application;
   cases: Case[];
+  interviews: Interview[];
   onClose: () => void;
 }
 
 const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   application,
   cases,
+  interviews,
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
@@ -190,6 +211,73 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <p>Thoughts: {caseItem.thoughts}</p>
                       <p>Additional: {caseItem.additional}</p>
                     </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8">
+                <h3 className="text-xl font-bold mb-4">Interview Responses</h3>
+                {interviews.map((interview, index) => (
+                  <div key={index} className="mb-6 p-4 rounded">
+                    <h4 className="font-semibold mb-2">
+                      Interview with {interview.active_name}
+                    </h4>
+                    <p>
+                      <strong>Other Actives:</strong> {interview.other_actives}
+                    </p>
+                    <p>
+                      <strong>Events attended:</strong>{' '}
+                      {interview.events_attended}
+                    </p>
+                    <p>
+                      <strong>About Yourself:</strong>{' '}
+                      {interview.about_yourself}
+                    </p>
+                    <p>
+                      <strong>Career Interests:</strong>{' '}
+                      {interview.career_interests}
+                    </p>
+                    <p>
+                      <strong>Instance For Friend:</strong>{' '}
+                      {interview.instance_for_friend}
+                    </p>
+                    <p>
+                      <strong>Failure Overcome:</strong>{' '}
+                      {interview.failure_overcome}
+                    </p>
+                    <p>
+                      <strong>Disagreement Handled:</strong>{' '}
+                      {interview.disagreement_handled}
+                    </p>
+                    <p>
+                      <strong>Handling Criticism:</strong>{' '}
+                      {interview.handling_criticism}
+                    </p>
+                    <p>
+                      <strong>Learning About:</strong>{' '}
+                      {interview.learning_about}
+                    </p>
+                    <p>
+                      <strong>Silly Question:</strong>{' '}
+                      {interview.silly_question}
+                    </p>
+                    <p>
+                      <strong>Questions And Commitments:</strong>{' '}
+                      {interview.questions_and_commitments}
+                    </p>
+                    <p>
+                      <strong>Why Give Bid:</strong> {interview.why_give_bid}
+                    </p>
+                    <p>
+                      <strong>Most Influential:</strong>{' '}
+                      {interview.most_influential}
+                    </p>
+                    <p>
+                      <strong>More Questions:</strong>{' '}
+                      {interview.more_questions}
+                    </p>
+
+                    {/* If there's a specific way to display events, you can add it here */}
                   </div>
                 ))}
               </div>

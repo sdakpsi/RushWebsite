@@ -14,7 +14,7 @@ import styles from './styles.module.css';
 import logo from './akpsilogo.png';
 import Image from 'next/image';
 import ApplicantCard from '@/components/ApplicantCard';
-import { getUsers, getIsPIC, getApplication, getCases } from '../supabase/getUsers';
+import { getUsers, getIsPIC, getApplication, getCases, getInterviews } from '../supabase/getUsers';
 import ApplicationPopup from '@/components/ApplicationPopUp';
 
 interface Packet {
@@ -43,6 +43,7 @@ export default function ProtectedPage() {
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [cases, setCases] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
+  const [interviews, setInterviews] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
 
   useEffect(() => {
     const users = async () => {
@@ -57,6 +58,16 @@ export default function ProtectedPage() {
     const users = async () => {
       const bruh = (await getCases(userID)) || [];
       setCases(bruh);
+      console.log(bruh);
+    };
+
+    users();
+  }, [userID]);
+
+  useEffect(() => {
+    const users = async () => {
+      const bruh = (await getInterviews(userID)) || [];
+      setInterviews(bruh);
       console.log(bruh);
     };
 
@@ -127,6 +138,7 @@ export default function ProtectedPage() {
                   <ApplicationPopup
                     application={currentApplication}
                     cases={cases}
+                    interviews={interviews}
                     onClose={handleClosePopup}
                   />
                 )}

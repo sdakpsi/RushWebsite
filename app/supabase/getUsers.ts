@@ -114,10 +114,34 @@ export async function getCases(prospectID: string | null) {
   return data;
 }
 
-export async function getInterviewProspects(): Promise<ProspectInterview[] | null> {
+export async function getInterviews(prospectID: string | null) {
+  const supabase = createClient();
+
+  if (!prospectID) {
+    console.error('Application ID is required.');
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('interviews')
+    .select('*')
+    .eq('prospect_id', prospectID);
+
+  if (error) {
+    console.error('Error fetching interviews:', error.message);
+    return null;
+  }
+  console.log(data);
+  // If no error and data is fetched successfully, return the application data
+  return data;
+}
+
+export async function getInterviewProspects(): Promise<
+  ProspectInterview[] | null
+> {
   const supabase = createClient();
   let hasPerms = false;
-  console.log("hi")
+  console.log('hi');
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -141,7 +165,6 @@ export async function getInterviewProspects(): Promise<ProspectInterview[] | nul
     }
   }
   // First, check if the current user is active
- 
 
   // If the user is active, proceed to fetch interview prospects
   if (hasPerms) {
@@ -155,7 +178,7 @@ export async function getInterviewProspects(): Promise<ProspectInterview[] | nul
       console.error('Error fetching interview prospects:', error.message);
       return null;
     }
-    console.log(data, "data");
+    console.log(data, 'data');
     return data;
   }
   return null;
