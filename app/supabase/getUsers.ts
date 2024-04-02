@@ -141,7 +141,6 @@ export async function getInterviewProspects(): Promise<
 > {
   const supabase = createClient();
   let hasPerms = false;
-  console.log('hi');
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -178,7 +177,6 @@ export async function getInterviewProspects(): Promise<
       console.error('Error fetching interview prospects:', error.message);
       return null;
     }
-    console.log(data, 'data');
     return data;
   }
   return null;

@@ -2,7 +2,7 @@ import { InterviewForm, ProspectInterview } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
-import { questions } from "../lib/InterviewQuestions";
+import { questions, scorableTraits } from "../lib/InterviewQuestions";
 import { createInterview } from "@/app/supabase/interview";
 import { toast } from "react-toastify";
 
@@ -153,7 +153,10 @@ export default function ActiveInterviewForm({
                 id={question.name}
                 className="w-full p-2.5 text-base text-black"
                 {...register(question.name, {
-                  required: index !== 7 ? "This field is required" : false, //silly question is optional
+                  required:
+                    index !== 7 && index !== 14
+                      ? "This field is required"
+                      : false, //silly question and additional are optional
                 })}
               ></textarea>
               {errors[question.name] && (
@@ -164,6 +167,23 @@ export default function ActiveInterviewForm({
             </div>
           ))}
         </div>
+
+        {scorableTraits.map((trait) => (
+          <div key={trait.propertyName} className="mb-5">
+            <label>{trait.displayName}</label>
+            <select
+              className="w-full p-2.5 text-base text-black"
+              {...register(trait.propertyName)}
+            >
+              <option value="">Select a score</option>
+              {[1, 2, 3, 4, 5].map((number) => (
+                <option key={number} value={number}>
+                  {number}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
 
         <button
           type="submit"
