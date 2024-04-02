@@ -1,10 +1,10 @@
-import { InterviewForm, ProspectInterview } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import Select from "react-select";
-import { questions, scorableTraits } from "../lib/InterviewQuestions";
-import { createInterview } from "@/app/supabase/interview";
-import { toast } from "react-toastify";
+import { InterviewForm, ProspectInterview } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import Select from 'react-select';
+import { questions, scorableTraits } from '../lib/InterviewQuestions';
+import { createInterview } from '@/app/supabase/interview';
+import { toast } from 'react-toastify';
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -13,11 +13,11 @@ interface ActiveInterviewFormProps {
 }
 
 const options = [
-  { value: "Info Night", label: "Info Night" },
-  { value: "Business Workshop", label: "Business Workshop" },
-  { value: "Case Study", label: "Case Study" },
-  { value: "Social Night", label: "Social Night" },
-  { value: "Interview", label: "Interview" },
+  { value: 'Info Night', label: 'Info Night' },
+  { value: 'Business Workshop', label: 'Business Workshop' },
+  { value: 'Case Study', label: 'Case Study' },
+  { value: 'Social Night', label: 'Social Night' },
+  { value: 'Interview', label: 'Interview' },
 ];
 
 export default function ActiveInterviewForm({
@@ -26,7 +26,7 @@ export default function ActiveInterviewForm({
   setShowingForm,
 }: ActiveInterviewFormProps) {
   const [submitting, isSubmitting] = useState(false);
-  const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+  const savedFormData = JSON.parse(localStorage.getItem('formData') || '{}');
   const {
     register,
     handleSubmit,
@@ -41,31 +41,31 @@ export default function ActiveInterviewForm({
 
   useEffect(() => {
     // Save form data to local storage on change
-    localStorage.setItem("formData", JSON.stringify(formData));
+    localStorage.setItem('formData', JSON.stringify(formData));
   }, [formData]); // This effect depends on formData
 
   const onSubmit = async (data: InterviewForm) => {
     isSubmitting(true);
     try {
       await createInterview(data, selectedProspect);
-      toast.success("Form submitted successfully");
+      toast.success('Form submitted successfully');
       setSelectedProspect(null);
-      localStorage.removeItem("selectedProspect");
+      localStorage.removeItem('selectedProspect');
       setShowingForm(false);
-      localStorage.removeItem("formData");
+      localStorage.removeItem('formData');
     } catch (error) {
-      toast.error("Error uploading interview form: " + error);
+      toast.error('Error uploading interview form: ' + error);
     } finally {
       isSubmitting(false);
     }
   };
   const onError = (errors: any) => {
-    toast.error("Form submission errors:", errors.message);
+    toast.error('Form submission errors:', errors.message);
   };
 
   const handleBack = () => {
     setSelectedProspect(null);
-    localStorage.removeItem("selectedProspect");
+    localStorage.removeItem('selectedProspect');
     setShowingForm(false);
   };
 
@@ -75,9 +75,9 @@ export default function ActiveInterviewForm({
         <button
           type="button"
           onClick={() => handleBack()}
-          className="px-4 py-2 text-base text-white border-none cursor-pointer"
+          className="px-4 py-2 text-base rounded-lg text-white border-none cursor-pointer"
         >
-          &lt; Back{" "}
+          &lt; Back{' '}
         </button>
         <h1 className="text-2xl text-center text-white">
           Interviewing: {selectedProspect.full_name}
@@ -92,14 +92,14 @@ export default function ActiveInterviewForm({
           <input
             type="text"
             id="name"
-            className="w-full p-2.5 text-base text-black"
-            {...register("name", {
-              required: "Name is required",
+            className="w-full p-2.5 rounded-lg text-base text-black"
+            {...register('name', {
+              required: 'Name is required',
             })}
           />
           {errors.name && (
             <p className="text-red-500">{`${
-              errors.name.message ?? "Required!"
+              errors.name.message ?? 'Required!'
             }`}</p>
           )}
         </div>
@@ -110,14 +110,14 @@ export default function ActiveInterviewForm({
           <input
             type="text"
             id="otherActives"
-            className="w-full p-2.5 text-base text-black"
-            {...register("otherActives", {
-              required: "Other Actives on Panel is required",
+            className="w-full p-2.5 rounded-lg text-base text-black"
+            {...register('otherActives', {
+              required: 'Other Actives on Panel is required',
             })}
           />
           {errors.otherActives && (
             <p className="text-red-500">{`${
-              errors.otherActives.message ?? "Required!"
+              errors.otherActives.message ?? 'Required!'
             }`}</p>
           )}
         </div>
@@ -131,7 +131,7 @@ export default function ActiveInterviewForm({
               <input
                 type="checkbox"
                 id={option.value}
-                className="mr-2"
+                className="mr-2 rounded-lg"
                 {...register(`events.${option.value}`)}
               />
               <label htmlFor={option.value}>{option.label}</label>
@@ -151,46 +151,51 @@ export default function ActiveInterviewForm({
               </label>
               <textarea
                 id={question.name}
-                className="w-full p-2.5 text-base text-black"
+                className="w-full p-2.5 text-base text-black rounded-lg"
                 {...register(question.name, {
                   required:
                     index !== 7 && index !== 14
-                      ? "This field is required"
+                      ? 'This field is required'
                       : false, //silly question and additional are optional
                 })}
               ></textarea>
               {errors[question.name] && (
                 <p className="text-red-500">{`${
-                  errors[question.name]?.message || "Required!"
+                  errors[question.name]?.message || 'Required!'
                 }`}</p>
-              )}{" "}
+              )}{' '}
             </div>
           ))}
         </div>
 
-        {scorableTraits.map((trait) => (
-          <div key={trait.propertyName} className="mb-5">
-            <label>{trait.displayName}</label>
-            <select
-              className="w-full p-2.5 text-base text-black"
-              {...register(trait.propertyName)}
+        <div className="flex flex-col sm:flex-row justify-evenly">
+          {scorableTraits.map((trait) => (
+            <div key={trait.propertyName} className="mb-5">
+              <label>{trait.displayName}</label>
+              <div className="mt-1">
+                <select
+                  className="p-2.5 text-base rounded-lg text-black"
+                  {...register(trait.propertyName)}
+                >
+                  <option value="">Score</option>
+                  {[1, 2, 3, 4, 5].map((number) => (
+                    <option key={number} value={number}>
+                      {number}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 px-5  rounded-xl py-2.5 text-base text-black border-none cursor-pointer"
             >
-              <option value="">Select a score</option>
-              {[1, 2, 3, 4, 5].map((number) => (
-                <option key={number} value={number}>
-                  {number}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
-
-        <button
-          type="submit"
-          className="bg-white px-5 py-2.5 text-base text-black border-none cursor-pointer"
-        >
-          Submit
-        </button>
+              Submit
+            </button>
+        </div>
       </form>
     </div>
   );

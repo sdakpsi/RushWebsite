@@ -66,12 +66,10 @@ export default function InterviewSearchBar({
 
   return (
     <div className="mb-6">
-      <div className="text-white mb-4">
-        Currently selected: {selectedProspect?.full_name ?? 'None'}
-      </div>
+      
       <label
         htmlFor="search"
-        className="block text-sm font-medium text-gray-700"
+        className="block text-xl font-medium text-gray-200"
       >
         Search
       </label>
@@ -82,10 +80,9 @@ export default function InterviewSearchBar({
           id="search"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-          style={{ backgroundColor: '#333', color: 'white' }}
+          className="shadow-sm focus:ring-indigo-500 block w-full sm:text-lg bg-gray-200 border-gray-300 rounded-md text-black"
         />
-        <div className="suggestions absolute z-10 w-full bg-gray-800 mt-1 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="suggestions absolute z-10 w-full bg-gray-800 mt-2 rounded-md shadow-lg max-h-150 overflow-auto">
           {filteredData.map((prospect, index) => (
             <div
               key={index}
