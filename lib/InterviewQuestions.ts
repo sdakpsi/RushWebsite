@@ -46,5 +46,18 @@ export  const questions = [
     {
         label: "12. Do you have any more questions for us?"
         ,name: "moreQuestions"
+    },
+    {
+      label: "13. Additional comments",
+      name: "additionalComments"
     }
   ];
+
+  export const scorableTraits = [
+    { displayName: "Empathy", propertyName: "empathy" },
+    { displayName: "Open-mindedness", propertyName: "openmindedness" },
+    { displayName: "Pledgeable", propertyName: "pledgeable" },
+    { displayName: "Motivated", propertyName: "motivated" },
+    { displayName: "Socially Aware", propertyName: "sociallyAware" }
+  ];
+

@@ -19,6 +19,8 @@ export default function ProtectedPage() {
   const [selectedProspect, setSelectedProspect] = useState<ProspectInterview | null>(null);
   const [showingForm, setShowingForm] = useState(false);
   const [animationClass, setAnimationClass] = useState('');
+  const [animationKey, setAnimationKey] = useState(0);
+
 
   useEffect(() => {
     const checkActive = async () => {
@@ -30,7 +32,11 @@ export default function ProtectedPage() {
   }, [])
 
   useEffect(() => {
-      setAnimationClass('fadeInUp');    
+    setAnimationClass("");
+    setAnimationKey((prevKey) => prevKey + 1);
+    setTimeout(() => {
+      setAnimationClass("fadeInUp");
+    }, 0);   
   }, [showingForm]);
 
   useEffect(() => {
@@ -67,7 +73,7 @@ export default function ProtectedPage() {
 
   if (showingForm && selectedProspect) {
     return (
-      <div className={`animate-in ${animationClass}`}>
+      <div key={animationKey}  className={`animate-in ${animationClass}`}>
         <ActiveInterviewForm 
         selectedProspect={selectedProspect}
         setSelectedProspect={setSelectedProspect}
@@ -77,7 +83,8 @@ export default function ProtectedPage() {
   }
 
   return (
-    <div className={`flex-1 w-full flex justify-center items-center animate-in ${animationClass}`}>      <div className="animate-in opacity-0 max-w-4xl w-full">
+    <div key={animationKey}  className={`flex-1 w-full flex justify-center items-center animate-in ${animationClass}`}>     
+     <div className="animate-in opacity-0 max-w-4xl w-full">
         <div className="flex flex-col justify-center">
           <p className="text-xl lg:text-4xl !leading-tight text-center mb-2">
             Interview Portal
@@ -87,14 +94,6 @@ export default function ProtectedPage() {
               <p className="text-xl lg:text-2xl !leading-tight text-left mb-2">
                 Interview Prospects:
               </p>
-              {/* {interviewProspects.map((ivName, index) => (
-                <p
-                  key={index}
-                  className="text-xl lg:text-xl !leading-tight text-left mb-2"
-                >
-                  {ivName}
-                </p>
-              ))}  */}
               <InterviewSearchBar
                 selectedProspect={selectedProspect}
                 setSelectedProspect={setSelectedProspect}

@@ -40,11 +40,22 @@ const num_events= eventsAttendedArray.length;
                 more_questions: data.moreQuestions,
                 events_attended: events_attended,
                 num_events: num_events,
+                additional: data.additionalComments ?? "",
+                empathy: data.empathy,
+                open_minded: data.openmindedness,
+                pledgeable: data.pledgeable,
+                motivated: data.motivated,
+                socially_aware: data.sociallyAware,
             },
         ]); 
+        if (error) {
+            console.error("Error inserting data:", error);
+            throw error;
+        }
+
+        console.log("Interview created:", interview);
+    } catch (error) {
+        console.error("An error occurred:", error);
+        throw error;
     }
-    catch (error) {
-        console.error(error);
-    }
-    console.log("Interview created:");
 }

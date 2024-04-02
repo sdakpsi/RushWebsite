@@ -92,4 +92,10 @@ export interface InterviewForm{
     moreQuestions: string;
     otherActives: string;
     events: RushEvents;
+    additionalComments: string | null;
+    empathy: number;
+    openmindedness: number;
+    pledgeable: number;
+    motivated: number;
+    sociallyAware: number;
 }
