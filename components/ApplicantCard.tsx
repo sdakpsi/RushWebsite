@@ -37,7 +37,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
           .single();
         if (error) throw error;
         if (data) setAvatarUrl(data.avatar_url);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching avatar URL:', error.message);
       }
     };

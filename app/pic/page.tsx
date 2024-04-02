@@ -44,7 +44,7 @@ export default function ProtectedPage() {
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
   >(null);
-  const [userID, setUserID] = useState<string | null>(null);
+  const [userID, setUserID] = useState<string>('');
   const [currentApplication, setCurrentApplication] = useState<any | null>(
     null
   );

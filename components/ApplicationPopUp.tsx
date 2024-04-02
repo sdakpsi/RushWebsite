@@ -93,7 +93,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const toggleSection = (sectionName: string) => {
     if (activeSection === sectionName) {
-      setActiveSection(null); // If the current section is already active, close it
+      setActiveSection(activeSection); // If the current section is already active, close it
     } else {
       setActiveSection(sectionName); // Otherwise, open the clicked section
     }
@@ -102,7 +102,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const [avatarUrl, setAvatarUrl] = useState<string>('');
   const [error, setError] = useState('');
 
-  const uploadImage = async (event) => {
+  const uploadImage = async (event: any) => {
     setUploading(true);
     setError('');
     try {
@@ -129,13 +129,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       }
 
       // Correctly handle the retrieval of the public URL
-      const { data, error: urlError } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      if (urlError) {
-        throw urlError;
-      }
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
 
       const { data: existingEntries, error: existingError } = await supabase
         .from('user_avatar')
@@ -163,7 +157,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       }
 
       setAvatarUrl(data.publicUrl);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error.message);
       setError(`Upload failed: ${error.message}`);
     } finally {
@@ -181,7 +175,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           .single();
         if (error) throw error;
         if (data) setAvatarUrl(data.avatar_url);
-      } catch (error) {
+      } catch (error : any) {
         console.error('Error fetching avatar URL:', error.message);
       }
     };
