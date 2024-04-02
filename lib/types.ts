@@ -99,3 +99,7 @@ export interface InterviewForm{
     motivated: number;
     sociallyAware: number;
 }
+
+export interface CaseStudyForm{
+    
+}

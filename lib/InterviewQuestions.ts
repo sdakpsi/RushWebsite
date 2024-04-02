@@ -1,4 +1,4 @@
-export  const questions = [
+export const questions = [
     {
       label: "1. Tell me about yourself in 1 minute.",
       name: "aboutYourself",
