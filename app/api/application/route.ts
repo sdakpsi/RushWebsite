@@ -73,18 +73,19 @@ export async function PUT(req: NextRequest) {
   }
 
   const { applicationId, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, isSubmitting, college, facebook, instagram, linkedIn, tiktok, } = await req.json();
-  let socialMediasObject = null;
+  let socialMediasObject: Record<string, string> | undefined = undefined;
   const socialFields = { facebook, instagram, linkedIn, tiktok };
   const hasSocialMedia = Object.values(socialFields).some(value => value); 
   
   if (hasSocialMedia) {
-    let socialMediasObject: Record<string, string> = {};
+    socialMediasObject = {};
     for (const [key, value] of Object.entries(socialFields)) {
       if (value) { 
         socialMediasObject[key] = value;
       }
     }
   }
+
   const name = firstName + " " + lastName
   const submitted = isSubmitting ? new Date() : null;
   let updateObject = {

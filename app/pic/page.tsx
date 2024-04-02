@@ -50,7 +50,6 @@ export default function ProtectedPage() {
       const bruh = await getUsers();
       setUserData(bruh);
     };
-
     users();
   }, []);
 
@@ -113,7 +112,7 @@ export default function ProtectedPage() {
 
   return (
     <div className="flex-1 w-full flex justify-center items-center py-10">
-      <div className="animate-in w-full max-w-4xl">
+      <div className="animate-in w-full mx-8">
         <div className="text-center">
           <p className="text-xl lg:text-4xl leading-tight mb-2">PIC Portal</p>
 
@@ -126,7 +125,7 @@ export default function ProtectedPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="mt-4 px-4 py-2 border rounded-lg shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out mb-4"
               />
-              <div className="mt-4 grid grid-cols-3 gap-4">
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredUsersData.map((applicant) => (
                   <ApplicantCard
                     key={applicant.id}
@@ -139,6 +138,7 @@ export default function ProtectedPage() {
                     application={currentApplication}
                     cases={cases}
                     interviews={interviews}
+                    userID={userID}
                     onClose={handleClosePopup}
                   />
                 )}
