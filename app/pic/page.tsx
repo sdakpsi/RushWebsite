@@ -14,8 +14,15 @@ import styles from './styles.module.css';
 import logo from './akpsilogo.png';
 import Image from 'next/image';
 import ApplicantCard from '@/components/ApplicantCard';
-import { getUsers, getIsPIC, getApplication, getCases, getInterviews } from '../supabase/getUsers';
+import {
+  getUsers,
+  getIsPIC,
+  getApplication,
+  getCases,
+  getInterviews,
+} from '../supabase/getUsers';
 import ApplicationPopup from '@/components/ApplicationPopUp';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface Packet {
   id: string;
@@ -44,14 +51,28 @@ export default function ProtectedPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cases, setCases] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
   const [interviews, setInterviews] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
+  const [isLoading, setIsLoading] = useState(true); // Initialize loading state
 
   useEffect(() => {
-    const users = async () => {
-      const bruh = await getUsers();
-      setUserData(bruh);
+    const fetchData = async () => {
+      setIsLoading(true); // Begin loading
+      try {
+        const usersData = await getUsers();
+        setUserData(usersData);
+        const picStatus = await getIsPIC();
+        setIsPIC(picStatus);
+
+        // Any additional data fetching logic can be included here
+        // After all data fetching is completed
+        setIsLoading(false); // End loading
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsLoading(false); // Ensure loading is ended even if there is an error
+      }
     };
-    users();
-  }, []);
+
+    fetchData();
+  }, []); // Dependency array left empty to run only on component mount
 
   useEffect(() => {
     const users = async () => {
@@ -72,15 +93,6 @@ export default function ProtectedPage() {
 
     users();
   }, [userID]);
-
-  useEffect(() => {
-    const users = async () => {
-      const bruh2 = await getIsPIC();
-      setIsPIC(bruh2);
-    };
-
-    users();
-  }, []);
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -109,6 +121,11 @@ export default function ProtectedPage() {
   const filteredUsersData = usersData.filter((applicant) =>
     applicant.full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Continue with your handleViewApplication, handleClosePopup functions, and render method
+  if (isLoading) {
+    return <LoadingSpinner />; // Placeholder for a loading state
+  }
 
   return (
     <div className="flex-1 w-full flex justify-center items-center py-10">

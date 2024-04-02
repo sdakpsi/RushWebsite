@@ -21,22 +21,22 @@ import { formatTimestamp, extractFileName } from '@/utils/format';
 import { toast } from 'react-toastify';
 import { delay } from '@/utils/delay';
 import { smallInput, textLabel, largeInput } from './NameForm.styles';
+import LoadingSpinner from './LoadingSpinner';
 export default function NameForm() {
-  
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   const debouncedSave = useCallback(
     debounce(async () => {
       setIsSaving(true);
-      const applicationData = formStateRef.current; 
+      const applicationData = formStateRef.current;
 
       const body = JSON.stringify({
         ...applicationData,
         lastSubmitted: new Date().toISOString(),
         isSubmitting: false,
       });
-  
+
       try {
         const response = await fetch('/api/application', {
           method: 'PUT',
@@ -45,11 +45,11 @@ export default function NameForm() {
           },
           body,
         });
-  
+
         if (!response.ok) {
           throw new Error('Failed to save application data');
         }
-  
+
         console.log('Application data saved successfully');
         setLastSaved(formatTimestamp(new Date()));
       } catch (error) {
@@ -58,7 +58,7 @@ export default function NameForm() {
         setIsSaving(false);
       }
     }, 1000),
-    [],
+    []
   );
 
   useEffect(() => {
@@ -212,12 +212,38 @@ export default function NameForm() {
       linkedIn,
       tiktok,
     };
-  }, [applicationId, firstName, lastName, pronouns, phoneNumber, yearInCollege, graduationYear, graduationQuarter, major, minor, cumulativeGPA, currentClasses, extracurricularActivities, proudAccomplishment, joinReason, lifeGoals, comfortZone, businessType, additionalDetails, resumeFileUrl, coverLetterFileUrl, college, facebook, instagram, linkedIn, tiktok]);
+  }, [
+    applicationId,
+    firstName,
+    lastName,
+    pronouns,
+    phoneNumber,
+    yearInCollege,
+    graduationYear,
+    graduationQuarter,
+    major,
+    minor,
+    cumulativeGPA,
+    currentClasses,
+    extracurricularActivities,
+    proudAccomplishment,
+    joinReason,
+    lifeGoals,
+    comfortZone,
+    businessType,
+    additionalDetails,
+    resumeFileUrl,
+    coverLetterFileUrl,
+    college,
+    facebook,
+    instagram,
+    linkedIn,
+    tiktok,
+  ]);
 
   useEffect(() => {
     debouncedSave();
   }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
-
 
   const handleGraduationYearChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -302,7 +328,7 @@ export default function NameForm() {
       setSubmitting(true);
       try {
         await delay(2000);
-        const applicationData = formStateRef.current; 
+        const applicationData = formStateRef.current;
         const body = JSON.stringify({
           ...applicationData,
           lastSubmitted: new Date().toISOString(),
@@ -333,11 +359,7 @@ export default function NameForm() {
   };
 
   if (loading) {
-    return (
-      <div className="text-center text-lg font-semibold text-gray-600">
-        Loading application...
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (submitting) {
@@ -739,7 +761,7 @@ export default function NameForm() {
             target="_blank"
             rel="noopener noreferrer"
           >
-           Cover Letter:{' '}
+            Cover Letter:{' '}
             {coverLetterFileUrl
               ? extractFileName(coverLetterFileUrl)
               : 'Not Uploaded'}

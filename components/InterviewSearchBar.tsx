@@ -2,6 +2,7 @@
 import { getInterviewProspects } from '@/app/supabase/getUsers';
 import { ProspectInterview } from '@/lib/types';
 import React, { useEffect, useState } from 'react'
+import LoadingSpinner from './LoadingSpinner';
 
 interface InterviewSearchBarProps {
   selectedProspect: ProspectInterview | null;
@@ -53,7 +54,7 @@ export default function InterviewSearchBar({
   };
 
   if (isLoading) {
-    return <div>Fetching Prospects...</div>;
+      return <LoadingSpinner />;
   }
 
   if (error) {

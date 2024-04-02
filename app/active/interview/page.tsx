@@ -12,6 +12,7 @@ import InterviewSearchBar from '@/components/InterviewSearchBar';
 import { ProspectInterview } from '@/lib/types';
 import ActiveInterviewForm from '@/components/ActiveInterviewForm';
 import './InterviewPage.css';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function ProtectedPage() {
   const [isActive, setIsActive] = useState(false);
@@ -70,7 +71,7 @@ export default function ProtectedPage() {
   }, [selectedProspect]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>;
   }
 
   return (
