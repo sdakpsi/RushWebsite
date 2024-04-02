@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/server';
 import Navbar from '@/components/Navbar';
@@ -12,15 +12,16 @@ import InterviewSearchBar from '@/components/InterviewSearchBar';
 import { ProspectInterview } from '@/lib/types';
 import ActiveInterviewForm from '@/components/ActiveInterviewForm';
 import './InterviewPage.css';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function ProtectedPage() {
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedProspect, setSelectedProspect] = useState<ProspectInterview | null>(null);
+  const [selectedProspect, setSelectedProspect] =
+    useState<ProspectInterview | null>(null);
   const [showingForm, setShowingForm] = useState(false);
   const [animationClass, setAnimationClass] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
-
 
   useEffect(() => {
     const checkActive = async () => {
@@ -29,91 +30,91 @@ export default function ProtectedPage() {
       setIsLoading(false);
     };
     checkActive();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setAnimationClass("");
+    setAnimationClass('');
     setAnimationKey((prevKey) => prevKey + 1);
     setTimeout(() => {
-      setAnimationClass("fadeInUp");
-    }, 0);   
+      setAnimationClass('fadeInUp');
+    }, 0);
   }, [showingForm]);
 
   useEffect(() => {
     // Load the saved state from local storage when the component mounts
     const savedProspect = localStorage.getItem('selectedProspect');
     if (savedProspect) {
-      console.log("found prospect")
+      console.log('found prospect');
       setSelectedProspect(JSON.parse(savedProspect));
       setShowingForm(true);
     }
-  }, []); 
-  
+  }, []);
+
   useEffect(() => {
     const handleSaveState = () => {
       if (selectedProspect) {
-        console.log("Saving selectedProspect to localStorage");
-        localStorage.setItem('selectedProspect', JSON.stringify(selectedProspect));
+        console.log('Saving selectedProspect to localStorage');
+        localStorage.setItem(
+          'selectedProspect',
+          JSON.stringify(selectedProspect)
+        );
       }
     };
-  
+
     handleSaveState();
-  
-   
+
     window.addEventListener('beforeunload', handleSaveState);
-  
+
     return () => {
       window.removeEventListener('beforeunload', handleSaveState);
     };
   }, [selectedProspect]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (showingForm && selectedProspect) {
-    return (
-      <div key={animationKey}  className={`animate-in ${animationClass}`}>
-        <ActiveInterviewForm 
-        selectedProspect={selectedProspect}
-        setSelectedProspect={setSelectedProspect}
-        setShowingForm={setShowingForm} />
-      </div>
-    );
+    return <LoadingSpinner/>;
   }
 
   return (
-    <div key={animationKey}  className={`flex-1 w-full flex justify-center items-center animate-in ${animationClass}`}>     
-     <div className="animate-in opacity-0 max-w-4xl w-full">
-        <div className="flex flex-col justify-center">
-          <p className="text-xl lg:text-4xl !leading-tight text-center mb-2">
+    <div className="container mx-auto px-4 pt-6">
+      {showingForm && selectedProspect ? (
+        <div key={animationKey} className={`animate-in ${animationClass}`}>
+          <ActiveInterviewForm
+            selectedProspect={selectedProspect}
+            setSelectedProspect={setSelectedProspect}
+            setShowingForm={setShowingForm}
+          />
+        </div>
+      ) : (
+        <div className="flex flex-col space-y-6">
+          <h1 className="text-2xl md:text-5xl font-semibold text-center mt-10">
             Interview Portal
-          </p>
+          </h1>
           {isActive ? (
-            <div>
-              <p className="text-xl lg:text-2xl !leading-tight text-left mb-2">
-                Interview Prospects:
+            <>
+              <p className="text-md md:text-2xl text-center">
+                Currently selected: {selectedProspect?.full_name || 'None'} (
+                {selectedProspect?.email || 'None'})
               </p>
+              {selectedProspect && (
+                <button
+                  className="self-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => setShowingForm(true)}
+                >
+                  Start Interview Form
+                </button>
+              )}
               <InterviewSearchBar
                 selectedProspect={selectedProspect}
                 setSelectedProspect={setSelectedProspect}
-               />
-               {selectedProspect && (
-               <button
-                 className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold py-2 px-4 rounded-full"
-                 onClick={() => setShowingForm(true)}
-               >
-                 Continue
-               </button>
-               )}
-            </div>
+              />
+            </>
           ) : (
-            <div className="flex mt-8 justify-center items-center">
+            <div className="mt-4">
               <ActiveLoginComponent />
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

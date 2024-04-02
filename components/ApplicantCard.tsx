@@ -1,4 +1,6 @@
-import React from 'react';
+import { createClient } from '@/utils/supabase/client';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface Packet {
   id: string;
@@ -23,23 +25,53 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   applicant,
   onViewApplication,
 }) => {
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const supabase = createClient();
+  useEffect(() => {
+    const fetchAvatarUrl = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('user_avatar')
+          .select('avatar_url')
+          .eq('user_id', applicant.id)
+          .single();
+        if (error) throw error;
+        if (data) setAvatarUrl(data.avatar_url);
+      } catch (error: any) {
+        console.error('Error fetching avatar URL:', error.message);
+      }
+    };
+
+    fetchAvatarUrl();
+  }, [applicant.id, supabase]);
   return (
-    <div className="bg-btn-background rounded-lg shadow-lg p-4 m-2 flex flex-col items-start">
-      <h3 className="font-bold text-lg">{applicant.full_name}</h3>
-      <p className="text-sm">{applicant.email}</p>
-      {applicant.application && (
-        <button
-          // Ensure application ID is passed to onViewApplication; handle potential null value
-          onClick={() =>
-            applicant.application &&
-            onViewApplication(applicant.application, applicant.id)
-          }
-          className="mt-2 px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-700 transition duration-300"
-        >
-          View Application
-        </button>
-      )}
-    </div>
+    <button
+      onClick={() =>
+        applicant.application &&
+        onViewApplication(applicant.application, applicant.id)
+      }
+      className="hover:scale-[1.03] transition duration-200"
+    >
+      <div className="bg-btn-background rounded-lg shadow-lg p-4 m-2 flex flex-col items-start">
+        <div className="flex flex-row">
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt="Avatar"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-gray-200 flex text-xs items-center justify-center">
+              <span className="text-gray-500">No Image</span>
+            </div>
+          )}
+          <div className="flex flex-col text-left ml-4">
+            <h3 className="font-bold text-lg">{applicant.full_name}</h3>
+            <p className="text-sm">{applicant.email}</p>
+          </div>
+        </div>
+      </div>
+    </button>
   );
 };
 

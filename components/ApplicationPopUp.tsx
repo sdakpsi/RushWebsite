@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { createClient } from '@/utils/supabase/client';
+import Image from 'next/image';
 
 interface Application {
   id: string;
@@ -69,6 +71,7 @@ interface ApplicationPopupProps {
   application: Application;
   cases: Case[];
   interviews: Interview[];
+  userID: string;
   onClose: () => void;
 }
 
@@ -76,14 +79,13 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   application,
   cases,
   interviews,
+  userID,
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('application');
-
-  const socialMedia = application.social_media
-    ? application.social_media
-    : 'None';
+  const supabase = createClient();
+  const [uploading, setUploading] = useState(false);
 
   const handleViewDocument = (documentUrl: string) => {
     setViewDocument(documentUrl);
@@ -91,11 +93,95 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const toggleSection = (sectionName: string) => {
     if (activeSection === sectionName) {
-      setActiveSection(null); // If the current section is already active, close it
+      setActiveSection(activeSection); // If the current section is already active, close it
     } else {
       setActiveSection(sectionName); // Otherwise, open the clicked section
     }
   };
+
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [error, setError] = useState('');
+
+  const uploadImage = async (event: any) => {
+    setUploading(true);
+    setError('');
+    try {
+      const file = event.target.files[0];
+      if (!file) {
+        throw new Error('You must select an image to upload.');
+      }
+
+      // Only allow image file types for upload
+      if (!file.type.startsWith('image/')) {
+        throw new Error('Invalid file type. Please select an image.');
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userID}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Correctly handle the retrieval of the public URL
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+
+      const { data: existingEntries, error: existingError } = await supabase
+        .from('user_avatar')
+        .select('id')
+        .eq('user_id', userID);
+
+      if (existingError) throw existingError;
+
+      if (existingEntries && existingEntries.length > 0) {
+        // Assuming the first entry is the correct one to update
+        const existingId = existingEntries[0].id;
+        const { error: updateError } = await supabase
+          .from('user_avatar')
+          .update({ avatar_url: data.publicUrl })
+          .eq('id', existingId);
+
+        if (updateError) throw updateError;
+      } else {
+        // Insert new entry
+        const { error: insertError } = await supabase
+          .from('user_avatar')
+          .insert([{ user_id: userID, avatar_url: data.publicUrl }]);
+
+        if (insertError) throw insertError;
+      }
+
+      setAvatarUrl(data.publicUrl);
+    } catch (error: any) {
+      console.error('Upload error:', error.message);
+      setError(`Upload failed: ${error.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAvatarUrl = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('user_avatar')
+          .select('avatar_url')
+          .eq('user_id', userID)
+          .single();
+        if (error) throw error;
+        if (data) setAvatarUrl(data.avatar_url);
+      } catch (error : any) {
+        console.error('Error fetching avatar URL:', error.message);
+      }
+    };
+
+    fetchAvatarUrl();
+  }, [userID, supabase]);
 
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
@@ -104,6 +190,27 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           <h2 className="text-2xl font-semibold">
             {application.name}'s Packet
           </h2>
+
+          <div className="relative inline-block">
+            {/* Image display */}
+            <button
+              onClick={() => setActiveSection('avatar')}
+              className="hover:scale-[1.04] transition duration-300"
+            >
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500">No Image</span>
+                </div>
+              )}
+            </button>
+          </div>
+
           <div>
             <button
               onClick={() => setActiveSection('application')}
@@ -177,8 +284,22 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         {application.phone_number}
                       </li>
                       <li>
-                        <span className="font-semibold">Social Media:</span>{' '}
-                        {socialMedia || 'N/A'}
+                        <span className="font-semibold">Social Media:</span>
+                        {application.social_media ? (
+                          <ul className="list-inside">
+                            {Object.entries(application.social_media).map(
+                              ([platform, answer], index) => (
+                                <li key={index}>
+                                  {platform.charAt(0).toUpperCase() +
+                                    platform.slice(1)}
+                                  : <span>{answer}</span>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        ) : (
+                          'N/A'
+                        )}
                       </li>
                     </ul>
                   </div>
@@ -353,6 +474,46 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         ))}
                       </div>
                     ))}
+              </div>
+            )}
+
+            {activeSection === 'avatar' && (
+              <div className="flex items-center justify-center gap-8">
+                <div className="flex text-center">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Avatar"
+                      className="inline-block max-h-96 w-auto object-cover"
+                      style={{ maxHeight: '70vh' }}
+                    />
+                  ) : (
+                    <div
+                      className="inline-block max-h-96 w-full bg-gray-200 flex items-center justify-center"
+                      style={{ maxHeight: '70vh', width: 'auto' }}
+                    >
+                      <span className="text-lg">No Image</span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor="avatar-upload"
+                    className="inline-block text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded cursor-pointer"
+                  >
+                    Upload New Image
+                  </label>
+                  <input
+                    id="avatar-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={uploadImage}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                  {uploading && <p className="mt-2">Uploading...</p>}
+                  {error && <p className="mt-2 text-red-500">{error}</p>}
+                </div>
               </div>
             )}
           </div>
