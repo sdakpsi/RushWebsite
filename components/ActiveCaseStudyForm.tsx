@@ -53,7 +53,7 @@ export default function ActiveCaseStudyForm({
     }
   };
   const onError = (errors: any) => {
-    const errorMessages = Object.values(errors).map((error) => error.message || 'An error occurred');
+    const errorMessages = Object.values(errors).map((error: any) => error.message || 'An error occurred');
     const errorMessageString = errorMessages.join(', ');
     toast.error(`Form submission errors: ${errorMessageString}`);
   };
