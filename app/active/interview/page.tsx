@@ -22,6 +22,7 @@ export default function ProtectedPage() {
   const [showingForm, setShowingForm] = useState(false);
   const [animationClass, setAnimationClass] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const checkActive = async () => {
@@ -70,7 +71,7 @@ export default function ProtectedPage() {
     };
   }, [selectedProspect]);
 
-  if (isLoading) {
+  if (isLoading || isSubmitting) {
     return <LoadingSpinner/>;
   }
 
@@ -82,6 +83,7 @@ export default function ProtectedPage() {
             selectedProspect={selectedProspect}
             setSelectedProspect={setSelectedProspect}
             setShowingForm={setShowingForm}
+            setIsSubmitting={setIsSubmitting}
           />
         </div>
       ) : (

@@ -99,3 +99,19 @@ export interface InterviewForm{
     motivated: number;
     sociallyAware: number;
 }
+
+export interface CaseStudyForm{
+    name: string;
+    leadership_score: number;
+    teamwork_score: number;
+    publicSpeaking_score: number;
+    analytical_score: number;
+    otherActives: string;
+    leadership_comments: string;
+    teamwork_comments: string;
+    publicSpeaking_comments: string;
+    analytical_comments: string;
+    additionalComments: string;
+    role: string;
+    thoughts: string;
+}
