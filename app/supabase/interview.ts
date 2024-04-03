@@ -75,6 +75,7 @@ export async function createCaseStudy(data: CaseStudyForm, selectedProspect: Pro
             {
                 prospect: selectedProspect.id,
                 active: user?.id as string,
+                active_name: data.name,
                 leadership_score: data.leadership_score,
                 teamwork_score: data.teamwork_score,
                 public_speaking_score: data.publicSpeaking_score,
