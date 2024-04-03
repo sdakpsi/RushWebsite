@@ -176,7 +176,7 @@ export default function ActiveInterviewForm({
               <div className="mt-1">
                 <select
                   className="p-2.5 text-base rounded-lg text-black"
-                  {...register(`${trait.propertyName}_score`, {
+                  {...register(`${trait.propertyName}`, {
                     required: `Please select a value for ${trait.propertyName}`,
                   })}
                 >
