@@ -49,7 +49,7 @@ export default function ProtectedPage() {
       setSelectedProspect(JSON.parse(savedProspect));
       setShowingForm(true);
     }
-  }, []);
+  }, [isSubmitting]);
 
   useEffect(() => {
     const handleSaveState = () => {
@@ -72,7 +72,7 @@ export default function ProtectedPage() {
   }, [selectedProspect]);
 
   if (isLoading || isSubmitting) {
-    return <LoadingSpinner/>;
+    return <LoadingSpinner />;
   }
 
   return (

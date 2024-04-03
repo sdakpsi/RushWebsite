@@ -25,7 +25,7 @@ export default function ActiveInterviewForm({
   selectedProspect,
   setSelectedProspect,
   setShowingForm,
-  setIsSubmitting
+  setIsSubmitting,
 }: ActiveInterviewFormProps) {
   const savedFormData = JSON.parse(localStorage.getItem('formData') || '{}');
   const {
@@ -192,12 +192,12 @@ export default function ActiveInterviewForm({
           ))}
         </div>
         <div className="mt-4">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 px-5  rounded-xl py-2.5 text-base text-black border-none cursor-pointer"
-            >
-              Submit
-            </button>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 px-5  rounded-xl py-2.5 text-base text-black border-none cursor-pointer"
+          >
+            Submit
+          </button>
         </div>
       </form>
     </div>
