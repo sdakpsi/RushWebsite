@@ -67,7 +67,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
           )}
           <div className="flex flex-col text-left ml-4">
             <h3 className="font-bold text-lg">{applicant.full_name}</h3>
-            <p className="text-sm">{applicant.email}</p>
+            <p className="text-xs">{applicant.email}</p>
           </div>
         </div>
       </div>

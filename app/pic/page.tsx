@@ -20,6 +20,7 @@ import {
   getApplication,
   getCases,
   getInterviews,
+  getIsActive,
 } from '../supabase/getUsers';
 import ApplicationPopup from '@/components/ApplicationPopUp';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -41,6 +42,7 @@ interface Packet {
 export default function ProtectedPage() {
   const [usersData, setUserData] = useState<Packet[]>([]);
   const [isPIC, setIsPIC] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
   >(null);
@@ -52,6 +54,19 @@ export default function ProtectedPage() {
   const [cases, setCases] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
   const [interviews, setInterviews] = useState<any[]>([]); // Use 'any[]' instead of '[]' to allow for arrays with any elements
   const [isLoading, setIsLoading] = useState(true); // Initialize loading state
+  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
+
+  const supabase = createClient();
+
+  const toggleApplicantSelection = (applicantId: string) => {
+    setSelectedApplicants((prevSelected) => {
+      if (prevSelected.includes(applicantId)) {
+        return prevSelected.filter((id) => id !== applicantId);
+      } else {
+        return [...prevSelected, applicantId];
+      }
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +76,8 @@ export default function ProtectedPage() {
         setUserData(usersData);
         const picStatus = await getIsPIC();
         setIsPIC(picStatus);
+        const activeStatus = await getIsActive();
+        setIsActive(activeStatus);
 
         // Any additional data fetching logic can be included here
         // After all data fetching is completed
@@ -127,6 +144,41 @@ export default function ProtectedPage() {
     return <LoadingSpinner />; // Placeholder for a loading state
   }
 
+  const handleSubmitDelibs = async () => {
+    try {
+      // Fetch all existing 'delibs' entries to get their IDs
+      const { data: delibsData, error: fetchError } = await supabase
+        .from('delibs')
+        .select('id');
+
+      if (fetchError) throw fetchError;
+
+      // Delete each entry individually (Consider performance implications)
+      const deletePromises = delibsData.map((delib) =>
+        supabase.from('delibs').delete().match({ id: delib.id })
+      );
+
+      await Promise.all(deletePromises);
+
+      // After deletion, proceed with inserting new rows
+      const rowsToInsert = selectedApplicants.map((applicantId) => ({
+        prospect_id: applicantId,
+      }));
+
+      const { error: insertError } = await supabase
+        .from('delibs')
+        .insert(rowsToInsert);
+
+      if (insertError) throw insertError;
+
+      alert('Delibs submitted successfully');
+      setSelectedApplicants([]); // Reset selection
+    } catch (error) {
+      console.error('Error handling delibs:', error);
+      alert('Failed to handle delibs');
+    }
+  };
+
   return (
     <div className="flex-1 w-full flex justify-center items-center py-10">
       <div className="animate-in w-full mx-8">
@@ -135,20 +187,45 @@ export default function ProtectedPage() {
 
           {isPIC ? (
             <div>
-              <input
-                type="text"
-                placeholder="Search by name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="mt-4 px-4 py-2 border rounded-lg shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out mb-4"
-              />
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {filteredUsersData.map((applicant) => (
-                  <ApplicantCard
-                    key={applicant.id}
-                    applicant={applicant}
-                    onViewApplication={handleViewApplication}
+              <div className="flex justify-center items-center w-full">
+                <div className="flex items-center mb-4 max-w-md w-full">
+                  <input
+                    type="text"
+                    placeholder="Search by name..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-grow px-4 py-2 border rounded-lg shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out"
                   />
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold ml-8 py-2 px-4 rounded-lg"
+                    onClick={handleSubmitDelibs}
+                  >
+                    DELIBS
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredUsersData.map((applicant: Packet) => (
+                  <div key={applicant.id} className="flex flex-col">
+                    <ApplicantCard
+                      key={applicant.id}
+                      applicant={applicant}
+                      onViewApplication={handleViewApplication}
+                    />
+                    <button
+                      className={`ml-2 ${
+                        selectedApplicants.includes(applicant.id)
+                          ? 'bg-green-500'
+                          : 'bg-gray-700'
+                      } hover:bg-green-700 text-white text-sm w-1/4 font-bold py-1 px-2 rounded`}
+                      onClick={() => toggleApplicantSelection(applicant.id)}
+                    >
+                      {selectedApplicants.includes(applicant.id)
+                        ? 'Deselect'
+                        : 'Select'}
+                    </button>
+                  </div>
                 ))}
                 {currentApplication && (
                   <ApplicationPopup
@@ -156,6 +233,7 @@ export default function ProtectedPage() {
                     cases={cases}
                     interviews={interviews}
                     userID={userID}
+                    isPIC={isPIC}
                     onClose={handleClosePopup}
                   />
                 )}

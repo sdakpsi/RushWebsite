@@ -33,6 +33,42 @@ export async function getUsers() {
   return usersData;
 }
 
+export async function getDelibsUsers() {
+  const supabase = createClient();
+
+  // First, fetch all prospect_ids from the delibs table
+  const { data: delibsData, error: delibsError } = await supabase
+    .from('delibs')
+    .select('prospect_id');
+
+  if (delibsError) {
+    console.error("Error fetching delibs' prospect_ids:", delibsError);
+    return [];
+  }
+
+  // Extract prospect_ids from the delibsData
+  const prospectIds = delibsData.map((delib) => delib.prospect_id);
+
+  if (prospectIds.length === 0) {
+    console.log('No prospects found in delibs.');
+    return [];
+  }
+
+  // Fetch users based on the prospectIds from the users table
+  const { data: usersData, error: usersError } = await supabase
+    .from('users')
+    .select('*')
+    .in('id', prospectIds); // Use the 'in' filter to get users whose id is in the prospectIds array
+
+  if (usersError) {
+    console.error('Error fetching users data:', usersError);
+    return [];
+  }
+
+  console.log(usersData);
+  return usersData;
+}
+
 export async function getIsPIC() {
   const supabase = createClient();
 

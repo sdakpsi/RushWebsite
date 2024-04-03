@@ -43,7 +43,7 @@ export default function ActiveCaseStudyForm({
       await createCaseStudy(data, selectedProspect);
       toast.success('Form submitted successfully');
       setSelectedProspect(null);
-      localStorage.removeItem('selectedProspect');
+      localStorage.removeItem('selectedProspectCase');
       setShowingForm(false);
       localStorage.removeItem('formDataCase');
     } catch (error) {
@@ -60,7 +60,7 @@ export default function ActiveCaseStudyForm({
 
   const handleBack = () => {
     setSelectedProspect(null);
-    localStorage.removeItem('selectedProspect');
+    localStorage.removeItem('selectedProspectCase');
     setShowingForm(false);
   };
 

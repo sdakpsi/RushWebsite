@@ -4,24 +4,37 @@ import React, { useEffect, useState } from 'react';
 import NextLinkButton from './NextLinkButton';
 import ActiveLoginComponent from './ActiveLoginComponent';
 import { redirect } from 'next/navigation';
+import { getIsActive } from '@/app/supabase/getUsers';
+import LoadingSpinner from './LoadingSpinner';
 
-export default async function ActiveSetter() {
+export default function ActiveSetter() {
   const supabase = createClient();
-  let isActive = false;
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('is_active')
-      .eq('id', user!.id)
-      .single();
-    isActive = data?.is_active;
-  }
 
-  if (!user) {
-    return redirect('/');
+  const [isActive, setIsActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Initialize loading state
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true); // Begin loading
+      try {
+        const activeStatus = await getIsActive();
+        setIsActive(activeStatus);
+        setIsLoading(false); // End loading
+      } catch (error) {
+        setIsLoading(false); // End loading
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // if (!user) {
+  //   return redirect('/');
+  // }
+
+  if (isLoading) {
+    return <LoadingSpinner />; // Placeholder for a loading state
   }
 
   return (
