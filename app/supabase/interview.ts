@@ -1,6 +1,6 @@
 "use server"
 
-import { InterviewForm, ProspectInterview } from "@/lib/types";
+import { CaseStudyForm, InterviewForm, ProspectInterview } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function createInterview(data: InterviewForm, selectedProspect: ProspectInterview) {
@@ -54,6 +54,47 @@ const num_events= eventsAttendedArray.length;
         }
 
         console.log("Interview created:", interview);
+    } catch (error) {
+        console.error("An error occurred:", error);
+        throw error;
+    }
+}
+
+export async function createCaseStudy(data: CaseStudyForm, selectedProspect: ProspectInterview) {
+    console.log(data, selectedProspect)
+    const supabase = createClient();
+
+    try {
+        const {
+            data: { user },
+          } = await supabase.auth.getUser();
+
+    const { data: interview, error } = await supabase
+        .from("case_studies")
+        .insert([
+            {
+                prospect: selectedProspect.id,
+                active: user?.id as string,
+                leadership_score: data.leadership_score,
+                teamwork_score: data.teamwork_score,
+                public_speaking_score: data.publicSpeaking_score,
+                analytical_score: data.analytical_score,
+                other_actives: data.otherActives,
+                leadership_comments: data.leadership_comments,
+                teamwork_comments: data.teamwork_comments,
+                public_speaking_comments: data.publicSpeaking_comments,
+                analytical_comments: data.analytical_comments,
+                additional: data.additionalComments ?? "",
+                role: data.role,
+                thoughts: data.thoughts,
+            },
+        ]); 
+        if (error) {
+            console.error("Error inserting data:", error);
+            throw error;
+        }
+
+        console.log("Case study created:", interview);
     } catch (error) {
         console.error("An error occurred:", error);
         throw error;

@@ -70,7 +70,7 @@ export default function ProtectedPage() {
     };
   }, [selectedProspect]);
 
-  if (isLoading) {
+  if (isLoading || isSubmitting) {
     return <LoadingSpinner/>;
   }
 

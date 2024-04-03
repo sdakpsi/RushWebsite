@@ -1,10 +1,11 @@
-import { InterviewForm, ProspectInterview } from '@/lib/types';
+import { CaseStudyForm, InterviewForm, ProspectInterview } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { questions, scorableTraits } from '../lib/InterviewQuestions';
-import { createInterview } from '@/app/supabase/interview';
+import { createCaseStudy, createInterview } from '@/app/supabase/interview';
 import { toast } from 'react-toastify';
+import { caseStudyData } from '@/lib/CaseStudyQuestions';
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -12,22 +13,13 @@ interface ActiveInterviewFormProps {
   setShowingForm: (showingForm: boolean) => void;
   setIsSubmitting: (isSubmitting: boolean) => void;
 }
-
-const options = [
-  { value: 'Info Night', label: 'Info Night' },
-  { value: 'Business Workshop', label: 'Business Workshop' },
-  { value: 'Case Study', label: 'Case Study' },
-  { value: 'Social Night', label: 'Social Night' },
-  { value: 'Interview', label: 'Interview' },
-];
-
-export default function ActiveInterviewForm({
+export default function ActiveCaseStudyForm({
   selectedProspect,
   setSelectedProspect,
   setShowingForm,
   setIsSubmitting
 }: ActiveInterviewFormProps) {
-  const savedFormData = JSON.parse(localStorage.getItem('formData') || '{}');
+  const savedFormData = JSON.parse(localStorage.getItem('formDataCase') || '{}');
   const {
     register,
     handleSubmit,
@@ -42,18 +34,18 @@ export default function ActiveInterviewForm({
 
   useEffect(() => {
     // Save form data to local storage on change
-    localStorage.setItem('formData', JSON.stringify(formData));
+    localStorage.setItem('formDataCase', JSON.stringify(formData));
   }, [formData]); // This effect depends on formData
 
-  const onSubmit = async (data: InterviewForm) => {
+  const onSubmit = async (data: CaseStudyForm) => {
     setIsSubmitting(true);
     try {
-      await createInterview(data, selectedProspect);
+      await createCaseStudy(data, selectedProspect);
       toast.success('Form submitted successfully');
       setSelectedProspect(null);
       localStorage.removeItem('selectedProspect');
       setShowingForm(false);
-      localStorage.removeItem('formData');
+      localStorage.removeItem('formDataCase');
     } catch (error) {
       toast.error('Error uploading interview form: ' + error);
     } finally {
@@ -61,7 +53,9 @@ export default function ActiveInterviewForm({
     }
   };
   const onError = (errors: any) => {
-    toast.error('Form submission errors:', errors.message);
+    const errorMessages = Object.values(errors).map((error) => error.message || 'An error occurred');
+    const errorMessageString = errorMessages.join(', ');
+    toast.error(`Form submission errors: ${errorMessageString}`);
   };
 
   const handleBack = () => {
@@ -81,7 +75,7 @@ export default function ActiveInterviewForm({
           &lt; Back{' '}
         </button>
         <h1 className="text-2xl text-center text-white">
-          Interviewing: {selectedProspect.full_name}
+          Case Study: {selectedProspect.full_name}
         </h1>
         <div></div>
       </div>
@@ -123,46 +117,23 @@ export default function ActiveInterviewForm({
           )}
         </div>
 
-        <div className="mb-5">
-          <label className="block mb-2">
-            Rush Events (Select all that apply)
-          </label>
-          {options.map((option, index) => (
-            <div key={index} className="flex items-center mb-2">
-              <input
-                type="checkbox"
-                id={option.value}
-                className="mr-2 rounded-lg"
-                {...register(`events.${option.value}`)}
-              />
-              <label htmlFor={option.value}>{option.label}</label>
-            </div>
-          ))}
-          {errors.events && (
-            <p className="text-red-500">At least one event must be selected</p>
-          )}
-        </div>
-
         <div>
           {/* im like the look at me using a loop n shi */}
-          {questions.map((question, index) => (
+          {caseStudyData.map((question, index) => (
             <div key={index} className="mb-5">
               <label htmlFor={question.name} className="block mb-2">
-                {question.label}
+              {index <= 3 ? `${question.name} Comments` : question.name}
               </label>
               <textarea
                 id={question.name}
                 className="w-full p-2.5 text-base text-black rounded-lg"
-                {...register(question.name, {
-                  required:
-                    index !== 7 && index !== 14
-                      ? `Field ${question.label} is required`
-                      : false, //silly question and additional are optional
+                {...register(index <= 3 ? `${question.label}_comments` : question.label, {
+                  required: `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`
                 })}
               ></textarea>
-              {errors[question.name] && (
+             {errors[index <= 3 ? `${question.label}_comments` : question.label] && (
                 <p className="text-red-500">{`${
-                  errors[question.name]?.message || 'Required!'
+                  errors[index <= 3 ? `${question.label}_comments` : question.label]?.message || 'Required!'
                 }`}</p>
               )}{' '}
             </div>
@@ -170,14 +141,14 @@ export default function ActiveInterviewForm({
         </div>
 
         <div className="flex flex-col sm:flex-row justify-evenly">
-          {scorableTraits.map((trait) => (
-            <div key={trait.propertyName} className="mb-5">
-              <label>{trait.displayName}</label>
+          {caseStudyData.slice(0, 4).map((trait) => (
+            <div key={trait.label} className="mb-5">
+              <label>{trait.name + " Score"}</label>
               <div className="mt-1">
                 <select
                   className="p-2.5 text-base rounded-lg text-black"
-                  {...register(`${trait.propertyName}_score`, {
-                    required: `Please select a value for ${trait.propertyName}`,
+                  {...register(`${trait.label}_score`, {
+                    required: `Please select a value for ${trait.name}`,
                   })}
                 >
                   <option value="">Score</option>
@@ -188,9 +159,30 @@ export default function ActiveInterviewForm({
                   ))}
                 </select>
               </div>
+              {errors[`${trait.label}_score`] && (
+                <p className="text-red-500">{`${
+                  errors[`${trait.label}_score`]?.message || 'Required!'
+                }`}</p>
+              )}
             </div>
           ))}
         </div>
+        <div className="mt-5">
+              <label htmlFor={"additionalComments"} className="block mb-2">
+                Additional Comments
+              </label>
+              <textarea
+                id={"additionalComments"}
+                className="w-full p-2.5 text-base text-black rounded-lg"
+                {...register("additionalComments", {
+                })}
+              ></textarea>
+              {errors["additionalComments"] && (
+                <p className="text-red-500">{`${
+                  errors["additionalComments"]?.message || 'Required!'
+                }`}</p>
+              )}{' '}
+            </div>
         <div className="mt-4">
             <button
               type="submit"

@@ -14,5 +14,13 @@ export const caseStudyData = [
     {
         name: "Analytical",
         label: "analytical",
+    },
+    {
+        name: "What role did they believe they played?",
+        label: "role",
+    },
+    {
+        name: "What did they think of the case study? What did they did like/not like about it? ",
+        label: "thoughts"
     }
 ]
