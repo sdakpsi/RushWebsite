@@ -41,7 +41,7 @@ export default async function ProtectedPage() {
         </div>
         <main className="flex flex-col justify-center items-center"></main>
       </div>
-      <Link
+      {/* <Link
         href="/active"
         className="absolute bottom-12 right-12 flex items-center justify-center h-16 w-16 rounded-full text-white text-lg font-bold transition duration-300 ease-in-out cursor-pointer"
       >
@@ -76,7 +76,7 @@ export default async function ProtectedPage() {
           </svg>
         </span>
         <Image src={logo} alt="logo" />
-      </Link>
+      </Link> */}
     </div>
   );
 }

@@ -34,6 +34,7 @@ interface Application {
 
 export interface Interview {
   active_name: string;
+  other_actives: string;
   about_yourself: string;
   career_interests: string;
   instance_for_friend: string;
@@ -46,8 +47,12 @@ export interface Interview {
   why_give_bid: string;
   most_influential: string;
   more_questions: string;
-  other_actives: string;
   events_attended: string;
+  empathy: number;
+  open_minded: number;
+  pledgeable: number;
+  motivated: number;
+  socially_aware: number;
 }
 
 interface Case {
@@ -72,6 +77,7 @@ interface ApplicationPopupProps {
   cases: Case[];
   interviews: Interview[];
   userID: string;
+  isPIC: boolean;
   onClose: () => void;
 }
 
@@ -80,6 +86,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   cases,
   interviews,
   userID,
+  isPIC,
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
@@ -101,6 +108,85 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const [avatarUrl, setAvatarUrl] = useState<string>('');
   const [error, setError] = useState('');
+
+  const [ivAverages, setIvAverages] = useState({
+    empathy: 0,
+    open_minded: 0,
+    pledgeable: 0,
+    motivated: 0,
+    socially_aware: 0,
+  });
+
+  useEffect(() => {
+    setIvAverages(calculateIvAverages(interviews));
+  }, [interviews]);
+
+  const calculateIvAverages = (interviews: Interview[]) => {
+    const totalScores = interviews.reduce(
+      (acc, curr) => ({
+        empathy: acc.empathy + curr.empathy,
+        open_minded: acc.open_minded + curr.open_minded,
+        pledgeable: acc.pledgeable + curr.pledgeable,
+        motivated: acc.motivated + curr.motivated,
+        socially_aware: acc.socially_aware + curr.socially_aware,
+      }),
+      {
+        empathy: 0,
+        open_minded: 0,
+        pledgeable: 0,
+        motivated: 0,
+        socially_aware: 0,
+      }
+    );
+
+    const averages = {
+      empathy: totalScores.empathy / interviews.length,
+      open_minded: totalScores.open_minded / interviews.length,
+      pledgeable: totalScores.pledgeable / interviews.length,
+      motivated: totalScores.motivated / interviews.length,
+      socially_aware: totalScores.socially_aware / interviews.length,
+    };
+
+    return averages;
+  };
+
+  const [averages, setAverages] = useState({
+    leadership_avg: 0,
+    teamwork_avg: 0,
+    analytical_avg: 0,
+    public_speaking_avg: 0,
+  });
+
+  useEffect(() => {
+    setAverages(calculateAverages(cases));
+  }, [cases]);
+
+  const calculateAverages = (cases: Case[]) => {
+    const totalScores = cases.reduce(
+      (acc, curr) => ({
+        leadership_score: acc.leadership_score + curr.leadership_score,
+        teamwork_score: acc.teamwork_score + curr.teamwork_score,
+        analytical_score: acc.analytical_score + curr.analytical_score,
+        public_speaking_score:
+          acc.public_speaking_score + curr.public_speaking_score,
+      }),
+      {
+        leadership_score: 0,
+        teamwork_score: 0,
+        analytical_score: 0,
+        public_speaking_score: 0,
+      }
+    );
+
+    const averages = {
+      leadership_avg: totalScores.leadership_score / cases.length,
+      teamwork_avg: totalScores.teamwork_score / cases.length,
+      analytical_avg: totalScores.analytical_score / cases.length,
+      public_speaking_avg: totalScores.public_speaking_score / cases.length,
+    };
+
+    return averages;
+  };
 
   const uploadImage = async (event: any) => {
     setUploading(true);
@@ -175,7 +261,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           .single();
         if (error) throw error;
         if (data) setAvatarUrl(data.avatar_url);
-      } catch (error : any) {
+      } catch (error: any) {
         console.error('Error fetching avatar URL:', error.message);
       }
     };
@@ -269,7 +355,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           <div className="space-y-4">
             {activeSection === 'application' && (
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-gray-700 p-6 rounded-xl shadow-lg">
                     <h3 className="text-2xl font-bold text-white mb-3">
                       Personal Details
@@ -339,7 +425,38 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       </li>
                     </ul>
                   </div>
+                  <div className="bg-gray-700 p-6 rounded-xl shadow-lg">
+                    <h3 className="text-2xl font-bold text-white mb-3">
+                      Scoring
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-2 text-gray-200">
+                      <li>
+                        <span className="font-semibold">Case Study:</span>{' '}
+                        {Object.values(averages)
+                          .reduce((acc, cur) => acc + cur, 0)
+                          .toFixed(2)}
+                      </li>
+                      <li>
+                        <span className="font-semibold">Interview:</span>{' '}
+                        {Object.values(ivAverages)
+                          .reduce((acc, cur) => acc + cur, 0)
+                          .toFixed(2)}
+                      </li>
+                      <li>
+                        <span className="font-semibold">Application:</span> [Add
+                        Score Here]
+                      </li>
+                      <li>
+                        <span className="font-semibold">Resume:</span> [Add
+                        Score Here]
+                      </li>
+                      <li>
+                        <span className="font-semibold">Total Score:</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
+
                 <div className="bg-gray-700 p-6 rounded-xl shadow-lg ">
                   <h3 className="text-2xl font-bold text-white mb-3">
                     Long Response
@@ -401,12 +518,113 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             {/* Cases Evaluation Section */}
             {activeSection === 'cases' && (
               <div>
-                <h3 className="font-semibold text-lg mb-2">Cases Evaluation</h3>
+                <h3 className="font-semibold text-lg mb-2">Case Study Notes</h3>
+                <div className="flex justify-center items-center gap-4 flex-wrap mt-2 mb-4">
+                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
+                    <span className="mb-2 font-semibold text-lg">
+                      Leadership:{' '}
+                    </span>
+                    <span className="text-md font-bold">
+                      {averages.leadership_avg.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
+                    <span className="mb-2 font-semibold text-lg">
+                      Teamwork:{' '}
+                    </span>
+                    <span className="text-md font-bold">
+                      {averages.teamwork_avg.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
+                    <span className="mb-2 font-semibold text-lg">
+                      Analytical:{' '}
+                    </span>
+                    <span className="text-md font-bold">
+                      {averages.analytical_avg.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
+                    <span className="mb-2 font-semibold text-lg">
+                      Public Speaking:{' '}
+                    </span>
+                    <span className="text-md font-bold">
+                      {averages.public_speaking_avg.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
                 {/* Assuming all cases have the same structure, iterate over the keys of the first case to create a layout */}
                 {cases.length > 0 &&
                   Object.keys(cases[0])
+                    .filter((key) => ['active_name'].includes(key)) // Adjust as needed to exclude irrelevant keys
+                    .map((attribute) => (
+                      <div
+                        key={attribute}
+                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-600 rounded"
+                      >
+                        <div className="font-semibold text-white col-span-1">
+                          {attribute
+                            .split('_')
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1)
+                            )
+                            .join(' ')}
+                          :
+                        </div>
+                        {/* Display each case's attribute next to the type */}
+                        {cases.map((caseItem, index) => (
+                          <div key={index} className="md:col-span-1 text-white">
+                            {/* Check if the attribute needs special formatting or handling */}
+                            {typeof caseItem[attribute as keyof Case] ===
+                            'number'
+                              ? caseItem[attribute as keyof Case]
+                              : caseItem[attribute as keyof Case]}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                {cases.length > 0 &&
+                  Object.keys(cases[0])
+                    .filter((key) => ['other_actives'].includes(key)) // Adjust as needed to exclude irrelevant keys
+                    .map((attribute) => (
+                      <div
+                        key={attribute}
+                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-600 rounded"
+                      >
+                        <div className="font-semibold text-white col-span-1">
+                          {attribute
+                            .split('_')
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1)
+                            )
+                            .join(' ')}
+                          :
+                        </div>
+                        {/* Display each case's attribute next to the type */}
+                        {cases.map((caseItem, index) => (
+                          <div key={index} className="md:col-span-1 text-white">
+                            {/* Check if the attribute needs special formatting or handling */}
+                            {typeof caseItem[attribute as keyof Case] ===
+                            'number'
+                              ? caseItem[attribute as keyof Case]
+                              : caseItem[attribute as keyof Case]}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                {cases.length > 0 &&
+                  Object.keys(cases[0])
                     .filter(
-                      (key) => !['id', 'prospect', 'active'].includes(key)
+                      (key) =>
+                        ![
+                          'id',
+                          'prospect',
+                          'active',
+                          'active_name',
+                          'other_actives',
+                        ].includes(key)
                     ) // Adjust as needed to exclude irrelevant keys
                     .map((attribute) => (
                       <div
@@ -441,23 +659,33 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             {/* Interview Responses Section */}
             {activeSection === 'interviews' && (
               <div>
-                <h3 className="font-semibold text-lg mb-2">
-                  Interview Responses
-                </h3>
+                <h3 className="font-semibold text-lg mb-2">Interview Notes</h3>
+                <div className="flex justify-center items-center gap-4 flex-wrap mt-2 mb-4">
+                  {Object.entries(ivAverages).map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="p-4 rounded-lg shadow-md bg-gray-600 text-center"
+                    >
+                      <span className="mb-2 font-semibold text-lg capitalize">
+                        {key}:{' '}
+                      </span>
+                      <span className="text-md font-bold">
+                        {isNaN(value) ? 'N/A' : value.toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
                 {/* Create an array of unique keys/questions from the first interview (assuming all interviews have the same keys) */}
-                {interviews.length > 0 &&
-                  Object.keys(interviews[0])
-                    .filter(
-                      (key) => !['id', 'prospect_id', 'active_id'].includes(key)
-                    )
-                    .map((question) => (
+                {interviews.length > 0 && (
+                  <>
+                    {/* Manually render active_name and other_actives first if they exist */}
+                    {['active_name', 'other_actives'].map((key) => (
                       <div
-                        key={question}
+                        key={key}
                         className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-700 rounded"
                       >
-                        {/* Display the question */}
                         <div className="font-semibold items-center ml-2 justify-center col-span-1">
-                          {question
+                          {key
                             .split('_')
                             .map(
                               (word) =>
@@ -466,14 +694,49 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                             .join(' ')}
                           :
                         </div>
-                        {/* Display each interview's response next to the question */}
                         {interviews.map((interview, index) => (
                           <div key={index} className="md:col-span-1">
-                            {interview[question as keyof Interview]}
+                            {interview[key as keyof Interview]}
                           </div>
                         ))}
                       </div>
                     ))}
+                    {/* Dynamically render the rest of the keys excluding active_name and other_actives */}
+                    {Object.keys(interviews[0])
+                      .filter(
+                        (key) =>
+                          ![
+                            'id',
+                            'prospect_id',
+                            'active_id',
+                            'active_name',
+                            'other_actives',
+                          ].includes(key)
+                      )
+                      .map((question) => (
+                        <div
+                          key={question}
+                          className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-700 rounded"
+                        >
+                          <div className="font-semibold items-center ml-2 justify-center col-span-1">
+                            {question
+                              .split('_')
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              )
+                              .join(' ')}
+                            :
+                          </div>
+                          {interviews.map((interview, index) => (
+                            <div key={index} className="md:col-span-1">
+                              {interview[question as keyof Interview]}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                  </>
+                )}
               </div>
             )}
 
@@ -496,24 +759,28 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </div>
                   )}
                 </div>
-                <div>
-                  <label
-                    htmlFor="avatar-upload"
-                    className="inline-block text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded cursor-pointer"
-                  >
-                    Upload New Image
-                  </label>
-                  <input
-                    id="avatar-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={uploadImage}
-                    disabled={uploading}
-                    className="hidden"
-                  />
-                  {uploading && <p className="mt-2">Uploading...</p>}
-                  {error && <p className="mt-2 text-red-500">{error}</p>}
-                </div>
+                {isPIC ? (
+                  <div>
+                    <label
+                      htmlFor="avatar-upload"
+                      className="inline-block text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded cursor-pointer"
+                    >
+                      Upload New Image
+                    </label>
+                    <input
+                      id="avatar-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={uploadImage}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                    {uploading && <p className="mt-2">Uploading...</p>}
+                    {error && <p className="mt-2 text-red-500">{error}</p>}
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
             )}
           </div>
