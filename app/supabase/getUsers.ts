@@ -59,7 +59,7 @@ export async function getDelibsUsers() {
   const { data: usersData, error: usersError } = await supabase
     .from('users')
     .select('*')
-    .in('id', prospectIds); 
+    .in('id', prospectIds);
 
   if (usersError) {
     return [];
@@ -96,7 +96,7 @@ export async function getIsActive() {
   if (user) {
     const { data, error } = await supabase
       .from('users')
-      .select('is_active, is_pic') 
+      .select('is_active, is_pic')
       .eq('id', user.id)
       .single();
     return data?.is_active || data?.is_pic;
@@ -116,7 +116,7 @@ export async function getApplication(applicationID: string) {
     .from('applications')
     .select('*')
     .eq('id', applicationID)
-    .single(); 
+    .single();
 
   if (error) {
     console.error('Error fetching application:', error.message);
@@ -177,16 +177,15 @@ export async function getInterviewProspects(): Promise<
   if (user) {
     const { data, error } = await supabase
       .from('users')
-      .select('is_pic, is_active') 
+      .select('is_pic, is_active')
       .eq('id', user.id)
       .single();
 
     if (error) {
       console.error('Error checking permissions:', error.message);
-      return null; 
+      return null;
     }
 
-    
     if (data?.is_pic || data?.is_active) {
       hasPerms = true;
     }
@@ -199,7 +198,7 @@ export async function getInterviewProspects(): Promise<
       .select('full_name, email, id')
       .eq('is_active', false)
       .eq('is_pic', false)
-      .eq('cased', true)
+      //.eq('cased', true)
       .order('full_name', { ascending: true });
 
     if (error) {
