@@ -26,7 +26,7 @@ export async function getUsers() {
       .select('*')
       .eq('is_active', false)
       .eq('is_pic', false)
-      .eq('cased', true)
+      //.eq('cased', true)
       .order('full_name', { ascending: true });
     if (error) {
       console.error(error);
