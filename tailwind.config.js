@@ -10,6 +10,9 @@ module.exports = {
         twinkle: 'twinkle 4s ease-in-out infinite',
         'shooting-star': 'shooting-star 5s linear infinite',
       },
+      fontFamily: {
+        'libre-caslon': ['LibreCaslon', 'serif'],
+      },
       keyframes: {
         twinkle: {
           '0%, 100%': { opacity: 0 },
