@@ -119,5 +119,5 @@ export interface CaseStudyForm{
 export type InterestForm = {
     name: string;
     email: string;
-    phone: string | null;
+    phone: string;
 }
