@@ -82,7 +82,7 @@ const InterestForm = () => {
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true);
+    // setIsSubmitting(true); Commented this out for now because the loading state is ugly and we don't need it right now
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     console.log(formData);
