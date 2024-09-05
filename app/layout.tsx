@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { libreCaslon } from '@/fonts/fonts';
+import { bonVivant } from '@/fonts/fonts';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -49,7 +50,10 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${GeistSans.className} ${libreCaslon.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.className} ${libreCaslon.variable} ${bonVivant.variable}`}
+    >
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
           <ToastContainer />

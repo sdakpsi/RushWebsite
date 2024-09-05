@@ -40,7 +40,7 @@
     transform: translateY(0);
   }
 }
- 
+
 .libre-caslon-text-regular {
   font-family: var(--font-libre-caslon);
   font-weight: 400;
@@ -49,4 +49,14 @@
 .libre-caslon-text-bold {
   font-family: var(--font-libre-caslon);
   font-weight: 700;
-} 
+}
+
+.bon-vivant-text-regular {
+  font-family: var(--font-bon-vivant);
+  font-weight: 400;
+}
+
+.bon-vivant-text-bold {
+  font-family: var(--font-bon-vivant);
+  font-weight: 700;
+}
