@@ -9,6 +9,8 @@ import logo from './akpsilogo.png';
 import Image from 'next/image';
 import { User } from '@supabase/supabase-js';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+
 
 interface NavbarProps {
   isPIC: boolean;
@@ -18,6 +20,13 @@ interface NavbarProps {
 
 export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isInterestPage = pathname.endsWith('/interest');
+  if (isInterestPage) {
+    return null;
+  }
+
   return (
     <nav className="w-full border-b border-b-foreground/10 h-16 px-4 sm:px-48">
       <div className="flex justify-between items-center w-full mt-3">

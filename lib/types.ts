@@ -115,3 +115,9 @@ export interface CaseStudyForm{
     role: string;
     thoughts: string;
 }
+
+export type InterestForm = {
+    name: string;
+    email: string;
+    phone: string | null;
+}
