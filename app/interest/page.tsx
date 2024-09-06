@@ -136,15 +136,55 @@ const InterestForm = () => {
       {shootingStars.map((star) => (
         <ShootingStar key={star.id} delay={star.delay} />
       ))}
-      <div className="flex flex-col items-center mb-8">
-        <Image src={logo} alt="logo" width={80} height={80} className="mb-4" />
-        <span className="text-2xl text-white bon-vivant-text-bold">
-          UCSD Alpha Kappa Psi
-        </span>
+      <div className="max-w-md relative mt-4">
+        <div className="flex flex-row items-center justify-center mb-8">
+          <Image
+            src={logo}
+            alt="logo"
+            width={80}
+            height={80}
+            className="mb-4"
+          />
+          <span className="ml-4 text-lg lg:text-2xl text-white bon-vivant-text-bold">
+            UCSD Alpha Kappa Psi
+          </span>
+        </div>
+
+        <div className="text-white text-left mb-8 text-sm px-2 lg:text-md libre-caslon-text-regular">
+          Hello! Thank you for taking interest in UCSD Alpha Kappa Psi's Fall
+          2024 Rush Week. The brothers of Alpha Kappa Psi are looking forward to
+          see you during Week 1 of Fall Quarter. We hope that you are just as
+          excited for this journey as we are!
+          <br />
+          <br />
+          Please fill out this form so we can keep you updated about our
+          upcoming rush events and details. Feel free to contact us on our
+          social media if you have any questions!
+          <br />
+          <br />
+          For questions –<br />
+          Instagram:{' '}
+          <a
+            target="_blank"
+            href="https://www.instagram.com/ucsdakpsi"
+            className="underline"
+          >
+            @ucsdakpsi
+          </a>
+          <br />
+          Email:{' '}
+          <a
+            target="_blank"
+            href="mailto:akpfall2024@gmail.com"
+            className="underline"
+          >
+            akpfall2024@gmail.com
+          </a>
+        </div>
       </div>
-      <div className="bg-blue-800 bg-opacity-30 rounded-lg p-8 backdrop-blur-sm max-w-md relative z-10">
+      <div className="bg-blue-800 bg-opacity-30 rounded-lg p-8 backdrop-blur-sm max-w-md md:w-full relative z-10">
         <h1 className="text-3xl font-bold text-white mb-6 text-center bon-vivant-text-bold">
-          Align Your Stars
+          COMING SOON
         </h1>
         <h2 className="text-xl text-blue-200 mb-8 text-center bon-vivant-text-regular">
           Alpha Kappa Psi | Fall 2024 Rush
@@ -181,7 +221,7 @@ const InterestForm = () => {
               value={formData.email}
               onChange={handleChange}
               className="w-full p-2 rounded bg-blue-900 bg-opacity-50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bon-vivant-text-regular"
-              placeholder="your@email.com"
+              placeholder="Your@email.com"
             />
           </div>
           <div>
