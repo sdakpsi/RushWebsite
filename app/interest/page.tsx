@@ -87,38 +87,46 @@ const InterestForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // setIsSubmitting(true); Commented this out for now because the loading state is ugly and we don't need it right now
     e.preventDefault();
+
+    // Prepare form data
     const formData = new FormData(e.target as HTMLFormElement);
-    console.log(formData);
-    // name, email, phone
     const data = Object.fromEntries(formData.entries());
-    // {
-    //   name: string;
-    //   email: string;
-    //   phone: string | null;
-    // } => data
-    if (data.name === '' || data.email === '') {
+
+    // Validate required fields
+    if (!data.name || !data.email) {
       toast.error('Name and email are required');
-      setIsSubmitting(false);
       return;
     }
-    // await means were wait going to wait at this code
+
     try {
+      // Make API call
       const response = await fetch('/api/interest', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+
+      // Check if response is ok, handle errors
       if (response.ok) {
-        toast.success('Application submitted successfully');
+        toast.success('Interest form submitted successfully');
         setFormData({
           name: '',
           email: '',
           phone: '',
         });
+      } else {
+        // If response is not ok, extract error message from the response
+        const errorData = await response.json();
+        if (errorData.message) {
+          toast.error(errorData.message);
+        } else {
+          toast.error('Error submitting the form. Please try again.');
+        }
       }
-    } catch (error) {
-      toast.error(`Error submitting application`);
+    } catch (error: any) {
+      // Handle any network or unexpected errors
+      toast.error(`An error occurred: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
