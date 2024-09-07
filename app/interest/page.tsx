@@ -2,10 +2,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import logo from '../../components/akpsilogo.png';
-import { toast, ToastOptions } from 'react-toastify';
 import { InterestForm as InterestFormType } from '@/lib/types';
-import { libreCaslon } from '@/fonts/fonts';
-import { bonVivant } from '@/fonts/fonts';
+import customToast from '@/components/CustomToast';
 
 interface ShootingStar {
   id: number;
@@ -48,31 +46,9 @@ const ShootingStar = ({ delay }: { delay: number }) => {
   );
 };
 
-const customToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
-  const toastOptions: ToastOptions = {
-    style: {
-      background: '#1e3a8a', // dark blue background
-      color: '#ffffff', // white text
-    },
-    className: `${bonVivant.className} bon-vivant-text-regular`,
-    progressStyle: { background: '#3b82f6' }, // light blue progress bar
-  };
 
-  switch (type) {
-    case 'success':
-      toast.success(message, toastOptions);
-      break;
-    case 'error':
-      toast.error(message, toastOptions);
-      break;
-    case 'warning':
-      toast.warning(message, toastOptions);
-      break;
-    default:
-      toast.info(message, toastOptions);
-  }
-};
 
+ 
 const InterestForm = () => {
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const [formData, setFormData] = useState<InterestFormType>({
