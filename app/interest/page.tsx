@@ -117,7 +117,7 @@ const InterestForm = () => {
 
       // Check if response is ok, handle errors
       if (response.ok) {
-        customToast('Interest form submitted successfully', 'success');
+        customToast('Interest form submitted!', 'success');
         setFormData({
           name: '',
           email: '',
