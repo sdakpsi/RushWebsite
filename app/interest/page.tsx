@@ -2,9 +2,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import logo from '../../components/akpsilogo.png';
-import { toast } from 'react-toastify';
 import { InterestForm as InterestFormType } from '@/lib/types';
-import { libreCaslon } from '@/fonts/fonts';
+import customToast from '@/components/CustomToast';
 
 interface ShootingStar {
   id: number;
@@ -47,6 +46,9 @@ const ShootingStar = ({ delay }: { delay: number }) => {
   );
 };
 
+
+
+ 
 const InterestForm = () => {
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const [formData, setFormData] = useState<InterestFormType>({
@@ -95,13 +97,13 @@ const InterestForm = () => {
 
     // Validate required fields
     if (!data.name || !data.email) {
-      toast.error('Name and email are required');
+      customToast('Name and email are required', 'error');
       return;
     }
 
     const nameWords = (data.name as string).trim().split(/\s+/);
     if (nameWords.length < 2) {
-      toast.error('Please enter your full name (first and last name)');
+      customToast('Please enter your full name (first and last name)', 'error');
       return;
     }
 
@@ -115,7 +117,7 @@ const InterestForm = () => {
 
       // Check if response is ok, handle errors
       if (response.ok) {
-        toast.success('Interest form submitted successfully');
+        customToast('Interest form submitted successfully', 'success');
         setFormData({
           name: '',
           email: '',
@@ -125,14 +127,15 @@ const InterestForm = () => {
         // If response is not ok, extract error message from the response
         const errorData = await response.json();
         if (errorData.message) {
-          toast.error(errorData.message);
+          customToast(errorData.message, 'error');
         } else {
-          toast.error('Error submitting the form. Please try again.');
+          customToast('Error submitting the form. Please try again.', 'error');
         }
       }
     } catch (error: any) {
       // Handle any network or unexpected errors
-      toast.error(`An error occurred: ${error.message}`);
+      customToast(`An error occurred: ${error.message}`, 'error');
+
     } finally {
       setIsSubmitting(false);
     }
