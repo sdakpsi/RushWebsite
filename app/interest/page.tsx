@@ -99,6 +99,12 @@ const InterestForm = () => {
       return;
     }
 
+    const nameWords = (data.name as string).trim().split(/\s+/);
+    if (nameWords.length < 2) {
+      toast.error('Please enter your full name (first and last name)');
+      return;
+    }
+
     try {
       // Make API call
       const response = await fetch('/api/interest', {
@@ -203,7 +209,7 @@ const InterestForm = () => {
               htmlFor="name"
               className="block text-blue-200 mb-2 bon-vivant-text-bold"
             >
-              Name*
+              Your full name*
             </label>
             <input
               type="text"
