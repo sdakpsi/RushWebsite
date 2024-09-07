@@ -1,5 +1,5 @@
 import DeployButton from '@/components/DeployButton';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import AuthButton from '@/components/AuthButton';
 import { createClient } from '@/utils/supabase/server';
 import FetchDataSteps from '@/components/tutorial/FetchDataSteps';

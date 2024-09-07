@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { User } from '@supabase/supabase-js';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-
+import RCButton from './RCButton';
 
 interface NavbarProps {
   isPIC: boolean;
@@ -40,7 +40,9 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
               height={40}
               className="sm:w-[2rem] sm:mr-3"
             ></Image>
-            <span className="hidden xl:block xl:text-xl">UCSD Alpha Kappa Psi</span>{' '}
+            <span className="hidden xl:block xl:text-xl">
+              UCSD Alpha Kappa Psi
+            </span>{' '}
           </div>
         </Link>
         <div className="sm:hidden">
@@ -51,6 +53,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         <div className="hidden sm:flex gap-4 items-center">
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
+          <RCButton is_pic={isPIC} />
           <AuthButton user={user} />
         </div>
       </div>

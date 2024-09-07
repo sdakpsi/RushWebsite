@@ -37,6 +37,38 @@ export async function getUsers() {
   return usersData;
 }
 
+export async function getInterestFormSubmissions() {
+  const supabase = createClient();
+
+  let isPIC = false;
+  let interestFormData = [];
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('is_pic')
+      .eq('id', user.id)
+      .single();
+    isPIC = data?.is_pic;
+  }
+
+  if (isPIC) {
+    const { data, error } = await supabase
+      .from('interests')
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (error) {
+      console.error(error);
+    } else {
+      interestFormData = data;
+    }
+  }
+  return interestFormData;
+}
+
 export async function getDelibsUsers() {
   const supabase = createClient();
 
