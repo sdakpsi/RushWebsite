@@ -9,9 +9,10 @@ const customToast = (message: string, type: 'success' | 'error' | 'info' | 'warn
             border: '1px solid #3b82f6', // Light blue border (Tailwind's blue-500)
             borderRadius: '6px', // Rounded corners
             maxWidth: '400px', // Limit the maximum width
-            whiteSpace: 'nowrap', // Prevent text wrapping
+            whiteSpace: 'wrap', // Allow text wrapping
             overflow: 'hidden', // Hide overflow
-            textOverflow: 'ellipsis', // Add ellipsis for overflowing text
+            lineHeight: '1.4', // Adjust line height for readability
+            padding: '10px 15px', // Add some padding
         },
         className: `${bonVivant.className} bon-vivant-text-regular`,
         progressStyle: { background: '#3b82f6' }, // light blue progress bar
