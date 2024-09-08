@@ -98,11 +98,25 @@ const InterestForm = () => {
     //   email: string;
     //   phone: string | null;
     // } => data
-    if (data.name === '' || data.email === '') {
-      toast.error('Name and email are required');
+    if (data.name === '' && data.email === '') {
+      toast.error('Name and email cannot be empty');
       setIsSubmitting(false);
       return;
     }
+
+    if (data.name === '') {
+      toast.error('Name cannot be empty');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (data.email === '') {
+      toast.error('Email cannot be empty');
+      setIsSubmitting(false);
+      return;
+    }
+
+
     // await means were wait going to wait at this code
     try {
       const response = await fetch('/api/interest', {
