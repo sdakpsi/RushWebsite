@@ -46,9 +46,6 @@ const ShootingStar = ({ delay }: { delay: number }) => {
   );
 };
 
-
-
- 
 const InterestForm = () => {
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const [formData, setFormData] = useState<InterestFormType>({
@@ -96,8 +93,21 @@ const InterestForm = () => {
     const data = Object.fromEntries(formData.entries());
 
     // Validate required fields
-    if (!data.name || !data.email) {
-      customToast('Name and email are required', 'error');
+    if (
+      (!data.name && !data.email) ||
+      (data.name === '' && data.email === '')
+    ) {
+      customToast('Name and email cannot be empty', 'error');
+      return;
+    }
+
+    if (data.name === '') {
+      customToast('Name cannot be empty', 'error');
+      return;
+    }
+
+    if (data.email === '') {
+      customToast('Email cannot be empty', 'error');
       return;
     }
 
@@ -135,7 +145,6 @@ const InterestForm = () => {
     } catch (error: any) {
       // Handle any network or unexpected errors
       customToast(`An error occurred: ${error.message}`, 'error');
-
     } finally {
       setIsSubmitting(false);
     }
