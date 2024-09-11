@@ -6,6 +6,7 @@ import SignUpUserSteps from '@/components/tutorial/SignUpUserSteps';
 import Header from '@/components/Header';
 import GoogleOAuth from '@/components/GoogleOAuth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function Index() {
   const supabase = createClient();
@@ -24,7 +25,7 @@ export default async function Index() {
           <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center mt-32">
             Welcome to the Fall 2024 Rush!
           </p>
-          {/* {travis add button to go to interest form here} */}
+          <Link href="/interest"><button className="p-2 rounded px-5 transition duration-100 bg-btn-background hover:bg-btn-background-hover">Interest Form</button></Link>
           <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
         </div>
         <main className="flex flex-col justify-center items-center">
