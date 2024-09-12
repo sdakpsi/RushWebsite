@@ -30,12 +30,13 @@ export default async function ProtectedPage() {
           </p>
           <p className="text-gray-500 mt-4">
             If you're having any issues or have any questions, please contact
-            AJ/Christen @ 6507720579/5103345535
+            Ally or Val @ (916) 841-7952 / (408) 805-2888!
           </p>
           <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
           <NameForm />
           <p className="text-md lg:text-lg !leading-tight max-w-xl text-left mt-8 mb-2 px-10">
-            If any issues arise, contact AJ/Christen at 6507720579/5103345535.
+            If you're having any issues or have any questions, please contact
+            Ally or Val @ (916) 841-7952 / (408) 805-2888!
           </p>
         </div>
       </div>
