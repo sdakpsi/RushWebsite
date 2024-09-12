@@ -36,7 +36,7 @@ export default async function Index() {
   //           <span className="font-bold">kvuilkasrtgyazkvxjal.supabase.co</span>
   //           <p className="text-gray-500 mt-4">
   //             If you're having any issues or have any questions, please contact
-  //             AJ/Christen @ 6507720579/5103345535
+  //            Ally or Val @ (916) 841-7952 / (408) 805-2888!
   //           </p>
   //         </div>
   //       </main>
