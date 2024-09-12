@@ -16,8 +16,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "UCSD AKPsi Spring'24 Dashboard",
-  description: "Apply here for UCSD AKPsi's Spring '24 Rush",
+  title: "UCSD AKPsi Fall'24 Dashboard",
+  description: "Apply here for UCSD AKPsi's Fall '24 Rush",
 };
 
 export default async function RootLayout({
