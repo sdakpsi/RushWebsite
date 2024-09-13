@@ -42,7 +42,14 @@ git branch
 
 You should typically be on the `dev` branch for development work.
 
-### Step 4: Start the Development Server
+### Step 4: Open VS Code and set up .env
+
+1. Open VS Code (download it if you don't have it)
+2. Open the folder called RushWebsite in VS Code
+3. On the left, create a new file in the main directory called `.env.local`
+4. Get the contents from your friendly neighborhood akpsi dev
+
+### Step 5: Start the Development Server
 
 1. Run the following command to start the development server:
 
