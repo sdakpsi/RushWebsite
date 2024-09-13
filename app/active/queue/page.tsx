@@ -1,67 +1,68 @@
 'use client';
+
 import React from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import ActiveCaseStudyForm from '@/components/ActiveCaseStudyForm';
-import InterviewSearchBar from '@/components/InterviewSearchBar';
+import ApplicantCard from '@/components/ApplicantCard';
+import ApplicationPopup from '@/components/ApplicationPopUp';
 import ActiveLoginComponent from '@/components/ActiveLoginComponent';
 import { useActiveStatus } from '@/hooks/useCheckActive';
-import { useSelectedProspect } from '@/hooks/useSelectedProspect';
-import { useFormAnimation } from '@/hooks/useFormAnimation';
-
-// mirror implementation of interview page
+import { useDelibsUsers } from '@/hooks/getDelibsUsers';
+import { useApplicationView } from '@/hooks/useApplicationView';
+import { useCasesAndInterviews } from '@/hooks/getCasesAndInterviews';
 
 export default function ProtectedPage() {
-  const { isActive, isLoading } = useActiveStatus();
-  const { selectedProspect, setSelectedProspect, isSubmitting, setIsSubmitting } = useSelectedProspect();
-  const { showingForm, setShowingForm, animationClass, animationKey } = useFormAnimation();
+  const { isActive, isLoading: isActiveLoading } = useActiveStatus();
+  const { usersData, isLoading: isUsersLoading } = useDelibsUsers();
+  const { 
+    currentApplicationId, 
+    currentApplication, 
+    userID, 
+    handleViewApplication, 
+    handleClosePopup 
+  } = useApplicationView();
+  const { cases, interviews } = useCasesAndInterviews(userID);
 
-  if (isLoading || isSubmitting) {
+  if (isActiveLoading || isUsersLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="w-full flex justify-center items-center">
-      <div className="animate-in opacity-0 max-w-4xl w-full">
-        {isActive ? (
-          <div className="container mx-auto px-4 pt-6">
-            {showingForm && selectedProspect ? (
-              <div key={animationKey} className={`animate-in ${animationClass}`}>
-                <ActiveCaseStudyForm
-                  selectedProspect={selectedProspect}
-                  setSelectedProspect={setSelectedProspect}
-                  setShowingForm={setShowingForm}
-                  setIsSubmitting={setIsSubmitting}
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col space-y-6">
-                <h1 className="text-2xl md:text-5xl font-semibold text-center mt-10">
-                  Case Study Portal
-                </h1>
-                <p className="text-md md:text-2xl text-center">
-                  Currently selected: {selectedProspect?.full_name || 'None'} (
-                  {selectedProspect?.email || 'None'})
-                </p>
-                {selectedProspect && (
-                  <button
-                    className="self-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => setShowingForm(true)}
-                  >
-                    Start Case Study Form
-                  </button>
+    <div className="flex-1 w-full flex justify-center items-center py-10">
+      <div className="animate-in w-full mx-8">
+        <div className="text-center">
+          <p className="text-xl lg:text-4xl leading-tight mb-2">
+            Applicant Queue
+          </p>
+
+          {isActive ? (
+            <div>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {usersData.map((applicant) => (
+                  <div key={applicant.id} className="flex flex-col">
+                    <ApplicantCard
+                      applicant={applicant}
+                      onViewApplication={handleViewApplication}
+                    />
+                  </div>
+                ))}
+                {currentApplication && (
+                  <ApplicationPopup
+                    application={currentApplication}
+                    cases={cases}
+                    interviews={interviews}
+                    isPIC={false}
+                    userID={userID}
+                    onClose={handleClosePopup}
+                  />
                 )}
-                <InterviewSearchBar
-                  selectedProspect={selectedProspect}
-                  setSelectedProspect={setSelectedProspect}
-                />
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex mt-8 justify-center items-center">
-            <ActiveLoginComponent />
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="mt-8">
+              <ActiveLoginComponent />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

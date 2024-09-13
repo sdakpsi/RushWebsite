@@ -64,6 +64,14 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
                 Delibs
               </Link>
             </li>
+            <li>
+              <Link
+                href="/active/queue"
+                className="block py-2 px-4 hover:bg-btn-background-hover"
+              >
+                Queue
+              </Link>
+            </li>
           </ul>
         </div>
       )}
