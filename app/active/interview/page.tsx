@@ -1,73 +1,19 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/server';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import NextLinkButton from '../../../components/NextLinkButton';
-import { User } from '@supabase/supabase-js'; // Ensure you import the User type
-import { redirect } from 'next/navigation';
-import ActiveLoginComponent from '@/components/ActiveLoginComponent';
-import { getInterviewProspects, getIsActive } from '@/app/supabase/getUsers';
-import InterviewSearchBar from '@/components/InterviewSearchBar';
-import { ProspectInterview } from '@/lib/types';
-import ActiveInterviewForm from '@/components/ActiveInterviewForm';
-import './InterviewPage.css';
+import React from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import ActiveInterviewForm from '@/components/ActiveInterviewForm';
+import InterviewSearchBar from '@/components/InterviewSearchBar';
+import ActiveLoginComponent from '@/components/ActiveLoginComponent';
+import { useActiveStatus } from '@/hooks/useCheckActive';
+import { useSelectedProspect } from '@/hooks/useSelectedProspect';
+import { useFormAnimation } from '@/hooks/useFormAnimation';
+
+// mirror implementation of case page
 
 export default function ProtectedPage() {
-  const [isActive, setIsActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedProspect, setSelectedProspect] =
-    useState<ProspectInterview | null>(null);
-  const [showingForm, setShowingForm] = useState(false);
-  const [animationClass, setAnimationClass] = useState('');
-  const [animationKey, setAnimationKey] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    const checkActive = async () => {
-      const isUserActive = await getIsActive();
-      setIsActive(isUserActive);
-      setIsLoading(false);
-    };
-    checkActive();
-  }, []);
-
-  useEffect(() => {
-    setAnimationClass('');
-    setAnimationKey((prevKey) => prevKey + 1);
-    setTimeout(() => {
-      setAnimationClass('fadeInUp');
-    }, 0);
-  }, [showingForm]);
-
-  useEffect(() => {
-    // Load the saved state from local storage when the component mounts
-    const savedProspect = localStorage.getItem('selectedProspect');
-    if (savedProspect) {
-      setSelectedProspect(JSON.parse(savedProspect));
-      setShowingForm(true);
-    }
-  }, [isSubmitting]);
-
-  useEffect(() => {
-    const handleSaveState = () => {
-      if (selectedProspect) {
-        localStorage.setItem(
-          'selectedProspect',
-          JSON.stringify(selectedProspect)
-        );
-      }
-    };
-
-    handleSaveState();
-
-    window.addEventListener('beforeunload', handleSaveState);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleSaveState);
-    };
-  }, [selectedProspect]);
+  const { isActive, isLoading } = useActiveStatus();
+  const { selectedProspect, setSelectedProspect, isSubmitting, setIsSubmitting } = useSelectedProspect();
+  const { showingForm, setShowingForm, animationClass, animationKey } = useFormAnimation();
 
   if (isLoading || isSubmitting) {
     return <LoadingSpinner />;
