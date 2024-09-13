@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getCases, getInterviews } from '@/app/supabase/getUsers';
 
-export function getCasesAndInterviews(userID: string) {
+export function useCasesAndInterviews(userID: string) {
   const [cases, setCases] = useState<any[]>([]);
   const [interviews, setInterviews] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchData = async () => {
       if (userID) {
         const fetchedCases = await getCases(userID);
@@ -15,7 +17,8 @@ export function getCasesAndInterviews(userID: string) {
       }
     };
     fetchData();
+    setIsLoading(false);
   }, [userID]);
 
-  return { cases, interviews };
+  return { cases, interviews, isLoading };
 }
