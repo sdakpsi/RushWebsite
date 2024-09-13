@@ -1,18 +1,17 @@
-import { GeistSans } from 'geist/font/sans';
-import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
-import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
-import { libreCaslon } from '@/fonts/fonts';
-import { bonVivant } from '@/fonts/fonts';
+import { GeistSans } from "geist/font/sans";
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { createClient } from "@/utils/supabase/server";
+import { libreCaslon } from "@/fonts/fonts";
+import { bonVivant } from "@/fonts/fonts";
+import ReactQueryProvider from "@/server/queryClientProvider";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000';
+  : "http://localhost:3000";
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
@@ -33,20 +32,20 @@ export default async function RootLayout({
   } = await supabase.auth.getUser();
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_active')
-      .eq('id', user!.id)
+      .from("users")
+      .select("is_active")
+      .eq("id", user.id)
       .single();
-    isActive = data?.is_active;
+    isActive = !!data?.is_active;
   }
 
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_pic')
-      .eq('id', user!.id)
+      .from("users")
+      .select("is_pic")
+      .eq("id", user.id)
       .single();
-    isPIC = data?.is_pic;
+    isPIC = !!data?.is_pic;
   }
 
   return (
@@ -55,12 +54,14 @@ export default async function RootLayout({
       className={`${GeistSans.className} ${libreCaslon.variable} ${bonVivant.variable}`}
     >
       <body className="bg-background text-foreground">
-        <main className="min-h-screen flex flex-col items-center">
-          <ToastContainer />
-          <Navbar isPIC={isPIC} isActive={isActive} user={user} />
-          {children}
-        </main>
-        <Footer />
+        <ReactQueryProvider>
+          <main className="flex min-h-screen flex-col items-center">
+            <ToastContainer />
+            <Navbar isPIC={isPIC} isActive={isActive} user={user} />
+            {children}
+          </main>
+          <Footer />
+        </ReactQueryProvider>
       </body>
     </html>
   );

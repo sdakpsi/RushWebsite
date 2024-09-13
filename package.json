@@ -13,6 +13,7 @@
     "@supabase/auth-helpers-react": "^0.4.2",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@tanstack/react-query": "^5.56.2",
     "autoprefixer": "10.4.17",
     "geist": "^1.2.1",
     "lodash": "^4.17.21",
