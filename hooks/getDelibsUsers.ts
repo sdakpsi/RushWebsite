@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { getDelibsUsers } from '@/app/supabase/getUsers';
+import { getDelibsUsers as fetchDelibsUsers } from '@/app/supabase/getUsers';
 import { Packet } from '@/lib/types';
 
-export function useDelibsUsers() {
+export function getDelibsUsers() {
   const [usersData, setUserData] = useState<Packet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getDelibsUsers();
+        const data = await fetchDelibsUsers();
         setUserData(data);
       } catch (error) {
         console.error('Error fetching data:', error);

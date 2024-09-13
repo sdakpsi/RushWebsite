@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getCases, getInterviews } from '@/app/supabase/getUsers';
 
-export function useCasesAndInterviews(userID: string) {
+export function getCasesAndInterviews(userID: string) {
   const [cases, setCases] = useState<any[]>([]);
   const [interviews, setInterviews] = useState<any[]>([]);
 

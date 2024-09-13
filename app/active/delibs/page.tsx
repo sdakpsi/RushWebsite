@@ -6,13 +6,13 @@ import ApplicantCard from '@/components/ApplicantCard';
 import ApplicationPopup from '@/components/ApplicationPopUp';
 import ActiveLoginComponent from '@/components/ActiveLoginComponent';
 import { useActiveStatus } from '@/hooks/useCheckActive';
-import { useDelibsUsers } from '@/hooks/useDelibsUsers';
+import { getDelibsUsers } from '@/hooks/getDelibsUsers';
 import { useApplicationView } from '@/hooks/useApplicationView';
-import { useCasesAndInterviews } from '@/hooks/useCasesAndInterviews';
+import { getCasesAndInterviews } from '@/hooks/getCasesAndInterviews';
 
 export default function ProtectedPage() {
   const { isActive, isLoading: isActiveLoading } = useActiveStatus();
-  const { usersData, isLoading: isUsersLoading } = useDelibsUsers();
+  const { usersData, isLoading: isUsersLoading } = getDelibsUsers();
   const { 
     currentApplicationId, 
     currentApplication, 
@@ -20,7 +20,7 @@ export default function ProtectedPage() {
     handleViewApplication, 
     handleClosePopup 
   } = useApplicationView();
-  const { cases, interviews } = useCasesAndInterviews(userID);
+  const { cases, interviews } = getCasesAndInterviews(userID);
 
   if (isActiveLoading || isUsersLoading) {
     return <LoadingSpinner />;
