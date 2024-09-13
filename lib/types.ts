@@ -121,3 +121,18 @@ export type InterestForm = {
     email: string;
     phone: string;
 }
+
+export interface Packet {
+    id: string;
+    created_at: string;
+    full_name: string;
+    is_active: boolean;
+    is_pic: boolean;
+    application: string | null; 
+    case_study: string | null; 
+    interview: string | null; 
+    email: string;
+    active_case_studies: string | null; 
+    active_interviews: string | null; 
+    total_score: number | null;
+}
