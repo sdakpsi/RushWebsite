@@ -31,7 +31,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
     <nav className="w-full border-b border-b-foreground/10 h-16 px-4 sm:px-48">
       <div className="flex justify-between items-center w-full mt-3">
         {/* Logo and title, adjust size for mobile */}
-        <Link href="/dashboard">
+        <Link href="/">
           <div className="flex flex-row items-center cursor-pointer">
             <Image
               src={logo}
