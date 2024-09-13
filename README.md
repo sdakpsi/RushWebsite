@@ -46,6 +46,7 @@ You should typically be on the `dev` branch for development work.
 
 1. Open VS Code (download it if you don't have it)
 2. Open the folder called RushWebsite in VS Code
+3. Install "Prettier - Code formatter" and "ESLint" extensions in VS Code
 3. On the left, create a new file in the main directory called `.env.local`
 4. Get the contents from your friendly neighborhood akpsi dev
 
