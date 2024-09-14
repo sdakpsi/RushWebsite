@@ -5,6 +5,7 @@ import GoogleOAuth from '@/components/GoogleOAuth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ApplicationButton from '@/components/ApplicationButton';
+import background from './background.png';
 
 export default async function Index() {
   const supabase = createClient();
@@ -14,11 +15,25 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="flex-1 w-full flex flex-col items-center">
+    <div
+      className="flex-1 w-full flex flex-col items-center"
+      // style={{
+      //   backgroundImage: 'background.png', // Replace with your image path
+      //   backgroundSize: 'cover', // Ensures the image covers the whole container
+      //   backgroundPosition: 'center', // Centers the image
+      //   backgroundRepeat: 'no-repeat' // Prevents the image from repeating
+      // }}
+      style={{
+        backgroundImage: `url(${background.src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <div className="animate-in flex-1 flex flex-col gap-10 opacity-0 max-w-4xl px-3">
         <div className="flex flex-col items-center">
           <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center mt-32">
-            Welcome to the Fall 2024 Rush!
+            Welcome to Alpha Kappa Psi Fall 2024 Application Portal!
           </p>
           <p className="text-lg lg:text-xl mt-8">
             Fill out the interest form to stay in the loop regarding rush!
