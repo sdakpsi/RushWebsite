@@ -69,16 +69,10 @@ export default function ProtectedPage() {
   }
 
   return (
-    <div className="w-full flex justify-center items-center">
-      <div className="animate-in opacity-0 max-w-4xl w-full">
-        {isActive ? (
-          <div className="container mx-auto px-4 pt-6">
-            {showingForm && selectedProspect ? (
-              <div
-                key={animationKey}
-                className={`animate-in ${animationClass}`}
-              >
-                <ActiveCaseStudyForm
+      <div className="container mx-auto px-4 pt-6">
+        {showingForm && selectedProspect ? (
+          <div key={animationKey} className={`animate-in ${animationClass}`}>
+            <ActiveCaseStudyForm
                   selectedProspect={selectedProspect}
                   setSelectedProspect={setSelectedProspect}
                   setShowingForm={setShowingForm}
@@ -118,12 +112,5 @@ export default function ProtectedPage() {
               </div>
             )}
           </div>
-        ) : (
-          <div className="flex mt-8 justify-center items-center">
-            <ActiveLoginComponent />
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
