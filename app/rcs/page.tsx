@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { getIsPIC, getInterestFormSubmissions } from '../supabase/getUsers';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { toast } from 'react-toastify';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { createClient } from "@/utils/supabase/client";
+import { getIsPIC, getInterestFormSubmissions } from "../supabase/getUsers";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy, faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 interface InterestFormSubmission {
   created_at: string;
@@ -16,78 +17,75 @@ interface InterestFormSubmission {
 }
 
 export default function ProtectedPage() {
-  const [interestFormData, setInterestFormData] = useState<
-    InterestFormSubmission[]
-  >([]);
-  const [isPIC, setIsPIC] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const fetchData = async () => {
-    setIsLoading(true); // Begin loading
-    try {
-      const usersData = await getInterestFormSubmissions();
-      setInterestFormData(usersData);
-      const picStatus = await getIsPIC();
-      setIsPIC(picStatus);
-      setIsLoading(false); // End loading
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setIsLoading(false); // Ensure loading is ended even if there is an error
-    }
-  };
+  const { data: isPIC, isLoading: isPICLoading } = useQuery({
+    queryKey: ["isPIC"],
+    queryFn: () => getIsPIC(),
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data: interestFormData, isLoading: isDataLoading } = useQuery({
+    queryKey: ["interestFormSubmissions", refreshKey],
+    queryFn: () => getInterestFormSubmissions(),
+    enabled: !!isPIC,
+  });
+
+  const copyMutation = useMutation({
+    mutationFn: (data: string) => navigator.clipboard.writeText(data),
+    onSuccess: () => toast.success("Copied to clipboard!"),
+  });
 
   const copyToClipboard = (data: string) => {
-    navigator.clipboard.writeText(data);
-    toast.success('Copied to clipboard!');
+    copyMutation.mutate(data);
   };
 
   const copyEmails = () => {
-    const emails = interestFormData.map((item) => item.email).join(', ');
+    const emails = interestFormData?.map((item) => item.email).join(", ") || "";
     copyToClipboard(emails);
   };
 
   const copyPhones = () => {
-    const phones = interestFormData.map((item) => item.phone).join(', ');
+    const phones = interestFormData?.map((item) => item.phone).join(", ") || "";
     copyToClipboard(phones);
   };
 
-  if (isLoading) {
+  const refreshData = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  if (isPICLoading || isDataLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="flex-1 w-full flex justify-center items-center py-10">
-      <div className="animate-in w-full mx-8">
+    <div className="flex w-full flex-1 items-center justify-center py-10">
+      <div className="animate-in mx-8 w-full">
         <div className="text-center">
           {isPIC ? (
             <div className="mt-8">
-              <p className="text-xl lg:text-4xl leading-tight mb-2">
+              <p className="mb-2 text-xl leading-tight lg:text-4xl">
                 Interest Form Submissions
                 <FontAwesomeIcon
                   icon={faRefresh}
                   className="ml-2 cursor-pointer text-blue-500"
-                  onClick={fetchData}
+                  onClick={refreshData}
                 />
               </p>
-              <table className="min-w-full mt-4 bg-black text-left border-gray-200">
+              <table className="mt-4 min-w-full border-gray-200 bg-black text-left">
                 <thead>
                   <tr>
-                    <th className="py-2 px-4 border">Submission Time</th>
-                    <th className="py-2 px-4 border">Full Name</th>
-                    <th className="py-2 px-4 border">
-                      Email{' '}
+                    <th className="border px-4 py-2">Submission Time</th>
+                    <th className="border px-4 py-2">Full Name</th>
+                    <th className="border px-4 py-2">
+                      Email{" "}
                       <FontAwesomeIcon
                         icon={faCopy}
                         className="ml-2 cursor-pointer text-blue-500"
                         onClick={copyEmails}
                       />
                     </th>
-                    <th className="py-2 px-4 border">
-                      Phone{' '}
+                    <th className="border px-4 py-2">
+                      Phone{" "}
                       <FontAwesomeIcon
                         icon={faCopy}
                         className="ml-2 cursor-pointer text-blue-500"
@@ -97,14 +95,14 @@ export default function ProtectedPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {interestFormData.map((item, index) => (
+                  {interestFormData?.map((item, index) => (
                     <tr key={index} className="text-left">
-                      <td className="py-2 px-4 border">
+                      <td className="border px-4 py-2">
                         {new Date(item.created_at).toLocaleString()}
                       </td>
-                      <td className="py-2 px-4 border">{item.full_name}</td>
-                      <td className="py-2 px-4 border">{item.email}</td>
-                      <td className="py-2 px-4 border">{item.phone}</td>
+                      <td className="border px-4 py-2">{item.full_name}</td>
+                      <td className="border px-4 py-2">{item.email}</td>
+                      <td className="border px-4 py-2">{item.phone}</td>
                     </tr>
                   ))}
                 </tbody>
