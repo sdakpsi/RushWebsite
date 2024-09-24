@@ -1,19 +1,26 @@
-'use client';
-import React from 'react';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import ActiveInterviewForm from '@/components/ActiveInterviewForm';
-import InterviewSearchBar from '@/components/InterviewSearchBar';
-import ActiveLoginComponent from '@/components/ActiveLoginComponent';
-import { useActiveStatus } from '@/hooks/useCheckActive';
-import { useSelectedProspect } from '@/hooks/useSelectedProspect';
-import { useFormAnimation } from '@/hooks/useFormAnimation';
+"use client";
+import React from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import ActiveInterviewForm from "@/components/ActiveInterviewForm";
+import InterviewSearchBar from "@/components/InterviewSearchBar";
+import ActiveLoginComponent from "@/components/ActiveLoginComponent";
+import { useActiveStatus } from "@/hooks/useCheckActive";
+import { useSelectedProspect } from "@/hooks/useSelectedProspect";
+import { useFormAnimation } from "@/hooks/useFormAnimation";
+import PastActiveSubmission from "@/components/PastActiveSubmission";
 
 // mirror implementation of case page
 
 export default function ProtectedPage() {
   const { isActive, isLoading } = useActiveStatus();
-  const { selectedProspect, setSelectedProspect, isSubmitting, setIsSubmitting } = useSelectedProspect();
-  const { showingForm, setShowingForm, animationClass, animationKey } = useFormAnimation();
+  const {
+    selectedProspect,
+    setSelectedProspect,
+    isSubmitting,
+    setIsSubmitting,
+  } = useSelectedProspect();
+  const { showingForm, setShowingForm, animationClass, animationKey } =
+    useFormAnimation();
 
   if (isLoading || isSubmitting) {
     return <LoadingSpinner />;
@@ -32,23 +39,24 @@ export default function ProtectedPage() {
         </div>
       ) : (
         <div className="flex flex-col space-y-6">
-          <h1 className="text-2xl md:text-5xl font-semibold text-center mt-10">
+          <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
             Interview Portal
           </h1>
           {isActive ? (
             <>
-              <p className="text-md md:text-2xl text-center">
-                Currently selected: {selectedProspect?.full_name || 'None'} (
-                {selectedProspect?.email || 'None'})
+              <p className="text-md text-center md:text-2xl">
+                Currently selected: {selectedProspect?.full_name ?? "None"} (
+                {selectedProspect?.email ?? "None"})
               </p>
               {selectedProspect && (
                 <button
-                  className="self-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="self-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                   onClick={() => setShowingForm(true)}
                 >
                   Start Interview Form
                 </button>
               )}
+              <PastActiveSubmission type="interviews" />
               <InterviewSearchBar
                 selectedProspect={selectedProspect}
                 setSelectedProspect={setSelectedProspect}
