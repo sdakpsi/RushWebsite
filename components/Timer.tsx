@@ -45,20 +45,20 @@ const Timer = () => {
   }
 
   return (
-    <div className="mt-8 flex justify-center gap-5">
-      <div className="rounded-lg bg-black p-6 text-center text-white">
+    <div className="mt-8 flex justify-center gap-3">
+      <div className="rounded-lg bg-black/50 p-4 text-center text-white">
         <p className="text-5xl font-bold">{formatTime(timeLeft.days)}</p>
         <p className="text-gray-400">Days</p>
       </div>
-      <div className="rounded-lg bg-black p-6 text-center text-white">
+      <div className="rounded-lg bg-black/50 p-4 text-center text-white">
         <p className="text-5xl font-bold">{formatTime(timeLeft.hours)}</p>
         <p className="text-gray-400">Hours</p>
       </div>
-      <div className="rounded-lg bg-black p-6 text-center text-white">
+      <div className="rounded-lg bg-black/50 p-4 text-center text-white">
         <p className="text-5xl font-bold">{formatTime(timeLeft.minutes)}</p>
         <p className="text-gray-400">Minutes</p>
       </div>
-      <div className="rounded-lg bg-black p-6 text-center text-white">
+      <div className="rounded-lg bg-black/50 p-4 text-center text-white">
         <p className="text-5xl font-bold">{formatTime(timeLeft.seconds)}</p>
         <p className="text-gray-400">Seconds</p>
       </div>
