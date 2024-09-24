@@ -1,6 +1,6 @@
-'use server';
-import { ProspectInterview } from '@/lib/types';
-import { createClient } from '@/utils/supabase/server';
+"use server";
+import { ProspectInterview } from "@/lib/types";
+import { createClient } from "@/utils/supabase/server";
 
 export async function getUsers() {
   const supabase = createClient();
@@ -13,21 +13,21 @@ export async function getUsers() {
 
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_pic')
-      .eq('id', user.id)
+      .from("users")
+      .select("is_pic")
+      .eq("id", user.id)
       .single();
     isPIC = data?.is_pic;
   }
 
   if (isPIC) {
     const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('is_active', false)
-      .eq('is_pic', false)
+      .from("users")
+      .select("*")
+      .eq("is_active", false)
+      .eq("is_pic", false)
       //.eq('cased', true) // TODO: Make this a parameter that can be passed in
-      .order('full_name', { ascending: true });
+      .order("full_name", { ascending: true });
     if (error) {
       console.error(error);
     } else {
@@ -48,18 +48,18 @@ export async function getInterestFormSubmissions() {
 
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_pic')
-      .eq('id', user.id)
+      .from("users")
+      .select("is_pic")
+      .eq("id", user.id)
       .single();
     isPIC = data?.is_pic;
   }
 
   if (isPIC) {
     const { data, error } = await supabase
-      .from('interests')
-      .select('*')
-      .order('created_at', { ascending: true });
+      .from("interests")
+      .select("*")
+      .order("created_at", { ascending: true });
     if (error) {
       console.error(error);
     } else {
@@ -74,8 +74,8 @@ export async function getDelibsUsers() {
 
   // First, fetch all prospect_ids from the delibs table
   const { data: delibsData, error: delibsError } = await supabase
-    .from('delibs')
-    .select('prospect_id');
+    .from("delibs")
+    .select("prospect_id");
 
   if (delibsError) {
     return [];
@@ -89,9 +89,9 @@ export async function getDelibsUsers() {
   }
 
   const { data: usersData, error: usersError } = await supabase
-    .from('users')
-    .select('*')
-    .in('id', prospectIds);
+    .from("users")
+    .select("*")
+    .in("id", prospectIds);
 
   if (usersError) {
     return [];
@@ -110,9 +110,9 @@ export async function getIsPIC() {
 
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_pic')
-      .eq('id', user.id)
+      .from("users")
+      .select("is_pic")
+      .eq("id", user.id)
       .single();
     isPIC = data?.is_pic;
   }
@@ -127,9 +127,9 @@ export async function getIsActive() {
   } = await supabase.auth.getUser();
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_active, is_pic')
-      .eq('id', user.id)
+      .from("users")
+      .select("is_active, is_pic")
+      .eq("id", user.id)
       .single();
     return data?.is_active || data?.is_pic;
   }
@@ -140,18 +140,18 @@ export async function getApplication(applicationID: string) {
   const supabase = createClient();
 
   if (!applicationID) {
-    console.error('Application ID is required.');
+    console.error("Application ID is required.");
     return null;
   }
 
   const { data, error } = await supabase
-    .from('applications')
-    .select('*')
-    .eq('id', applicationID)
+    .from("applications")
+    .select("*")
+    .eq("id", applicationID)
     .single();
 
   if (error) {
-    console.error('Error fetching application:', error.message);
+    console.error("Error fetching application:", error.message);
     return null;
   }
   return data;
@@ -161,17 +161,17 @@ export async function getCases(prospectID: string | null) {
   const supabase = createClient();
 
   if (!prospectID) {
-    console.error('Application ID is required.');
+    console.error("Application ID is required.");
     return null;
   }
 
   const { data, error } = await supabase
-    .from('case_studies')
-    .select('*')
-    .eq('prospect', prospectID);
+    .from("case_studies")
+    .select("*")
+    .eq("prospect", prospectID);
 
   if (error) {
-    console.error('Error fetching application:', error.message);
+    console.error("Error fetching application:", error.message);
     return null;
   }
   return data;
@@ -181,17 +181,17 @@ export async function getInterviews(prospectID: string | null) {
   const supabase = createClient();
 
   if (!prospectID) {
-    console.error('Application ID is required.');
+    console.error("Application ID is required.");
     return null;
   }
 
   const { data, error } = await supabase
-    .from('interviews')
-    .select('*')
-    .eq('prospect_id', prospectID);
+    .from("interviews")
+    .select("*")
+    .eq("prospect_id", prospectID);
 
   if (error) {
-    console.error('Error fetching interviews:', error.message);
+    console.error("Error fetching interviews:", error.message);
     return null;
   }
   return data;
@@ -208,13 +208,13 @@ export async function getInterviewProspects(): Promise<
 
   if (user) {
     const { data, error } = await supabase
-      .from('users')
-      .select('is_pic, is_active')
-      .eq('id', user.id)
+      .from("users")
+      .select("is_pic, is_active")
+      .eq("id", user.id)
       .single();
 
     if (error) {
-      console.error('Error checking permissions:', error.message);
+      console.error("Error checking permissions:", error.message);
       return null;
     }
 
@@ -226,12 +226,12 @@ export async function getInterviewProspects(): Promise<
   // User is marked active, proceed to get interview prospects
   if (hasPerms) {
     const { data, error } = await supabase
-      .from('users')
-      .select('full_name, email, id')
-      .eq('is_active', false)
-      .eq('is_pic', false)
+      .from("users")
+      .select("full_name, email, id")
+      .eq("is_active", false)
+      .eq("is_pic", false)
       //.eq('cased', true) //TODO: Make this a paramter that can be passed in
-      .order('full_name', { ascending: true });
+      .order("full_name", { ascending: true });
 
     if (error) {
       return null;
@@ -239,4 +239,56 @@ export async function getInterviewProspects(): Promise<
     return data;
   }
   return null;
+}
+
+export async function getActiveSubmissions(
+  type: "interviews" | "case_studies"
+): Promise<string[] | null> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("is_pic, is_active")
+    .eq("id", user.id)
+    .single();
+
+  if (userError) {
+    console.error("Error checking user permissions:", userError.message);
+    return null;
+  }
+
+  if (!userData?.is_pic && !userData?.is_active) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from(type)
+    .select("prospect")
+    .eq("active", user.id);
+
+  if (error) {
+    console.error(`Error fetching ${type} prospects:`, error.message);
+    return null;
+  }
+
+  const prospectIds = data.map((item) => item.prospect as string);
+
+  const { data: prospectData, error: prospectError } = await supabase
+    .from("users")
+    .select("full_name")
+    .in("id", prospectIds);
+
+  if (prospectError) {
+    console.error("Error fetching prospect data:", prospectError.message);
+    return null;
+  }
+
+  return prospectData.map((prospect) => prospect.full_name as string);
 }
