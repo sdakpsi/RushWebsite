@@ -34,8 +34,8 @@ export default function PastActiveSubmission({
     <div className="mb-6">
       <label className="block text-xl font-medium text-gray-200">
         {type === "case_studies"
-          ? "Past Case Study Submissions"
-          : "Past Interview Submissions"}
+          ? "Your past Case Study Submissions"
+          : "Your past Interview Submissions"}
       </label>
       <div className="relative mt-1">
         {prospectData && prospectData.length > 0 ? (
