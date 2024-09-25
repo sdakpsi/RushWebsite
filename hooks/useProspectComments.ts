@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { getUsers } from "@/app/supabase/getUsers";
-import { Packet } from "@/lib/types";
+import { getComments } from "@/app/supabase/getUsers";
+import { Comment } from "@/lib/types";
 
-export function usePICUsers() {
-  const [usersData, setUserData] = useState<Packet[]>([]);
+export function useProspectComments() {
+  const [commentsData, setCommentsData] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getUsers();
-        setUserData(data);
+        const data = await getComments();
+        setCommentsData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -20,5 +20,5 @@ export function usePICUsers() {
     fetchData();
   }, []);
 
-  return { usersData, isLoading };
+  return { commentsData, isLoading };
 }

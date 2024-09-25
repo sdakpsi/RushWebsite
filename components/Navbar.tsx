@@ -45,7 +45,8 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
             </span>{" "}
           </div>
         </Link>
-        <div className="sm:hidden">
+        <div className="flex flex-row gap-3 sm:hidden">
+          <ActiveButton is_active={isActive} />
           <AuthButton user={user} />
           {/* Add any additional buttons or links you want in the mobile menu here */}
         </div>
