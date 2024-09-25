@@ -56,7 +56,7 @@ export default function ProtectedPage() {
                   Start Interview Form
                 </button>
               )}
-              <PastActiveSubmission type="interviews" />
+              <PastActiveSubmission type="interviews" showingForm={showingForm} />
               <InterviewSearchBar
                 selectedProspect={selectedProspect}
                 setSelectedProspect={setSelectedProspect}

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveCaseStudyForm from "@/components/ActiveCaseStudyForm";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
@@ -22,9 +22,13 @@ export default function ProtectedPage() {
   const { showingForm, setShowingForm, animationClass, animationKey } =
     useFormAnimation();
 
+  useEffect(() => {
+    console.log("showingForm", showingForm);
+  }, [showingForm]);
   if (isLoading || isSubmitting) {
     return <LoadingSpinner />;
   }
+
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -60,7 +64,7 @@ export default function ProtectedPage() {
                     Start Case Study Form
                   </button>
                 )}
-                <PastActiveSubmission type="case_studies" />
+                <PastActiveSubmission type="case_studies" showingForm={showingForm} />
                 <InterviewSearchBar
                   selectedProspect={selectedProspect}
                   setSelectedProspect={setSelectedProspect}

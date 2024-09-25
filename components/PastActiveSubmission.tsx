@@ -1,22 +1,29 @@
 "use client";
 import { getActiveSubmissions } from "@/app/supabase/getUsers";
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function PastActiveSubmission({
   type,
+  showingForm,
 }: {
   type: "interviews" | "case_studies";
+  showingForm: boolean;
 }) {
   const {
     data: prospectData,
     isLoading,
     error,
+    refetch,
   } = useQuery({
-    queryKey: [`${type}Submissions`],
+    queryKey: [`${type}Submissions`, showingForm],
     queryFn: () => getActiveSubmissions(type),
   });
+
+  useEffect(() => {
+    void refetch();
+  }, [showingForm, refetch]);
 
   if (isLoading) {
     return <LoadingSpinner />;

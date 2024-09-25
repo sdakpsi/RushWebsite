@@ -1,5 +1,5 @@
 "use server";
-import { ProspectInterview } from "@/lib/types";
+import { type ProspectInterview } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getUsers() {
