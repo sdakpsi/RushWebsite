@@ -1,8 +1,9 @@
-"use client"
+'use client';
 import { getInterviewProspects } from '@/app/supabase/getUsers';
 import { ProspectInterview } from '@/lib/types';
-import React, { useEffect, useState } from 'react'
-import LoadingSpinner from './LoadingSpinner';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import loadingImage from './akpsilogo.png';
 
 interface InterviewSearchBarProps {
   selectedProspect: ProspectInterview | null;
@@ -54,7 +55,7 @@ export default function InterviewSearchBar({
   };
 
   if (isLoading) {
-      return <LoadingSpinner />;
+    return <div className="">Loading prospects...</div>;
   }
 
   if (error) {
@@ -67,12 +68,11 @@ export default function InterviewSearchBar({
 
   return (
     <div className="mb-6">
-      
       <label
         htmlFor="search"
         className="block text-xl font-medium text-gray-200"
       >
-        Search
+        Search for and select a prospect:
       </label>
       <div className="mt-1 relative">
         <input
@@ -83,8 +83,8 @@ export default function InterviewSearchBar({
           onChange={(e) => setSearchInput(e.target.value)}
           className="shadow-sm focus:ring-indigo-500 block w-full sm:text-lg bg-gray-200 border-gray-300 rounded-md text-black"
         />
-        <div className="suggestions absolute z-10 w-full bg-gray-800 mt-2 rounded-md shadow-lg max-h-150 overflow-auto">
-          {filteredData.map((prospect, index) => (
+        <div className="suggestions w-full bg-gray-800 mt-2 rounded-md shadow-lg">
+          {filteredData.slice(0, 5).map((prospect, index) => (
             <div
               key={index}
               className="suggestion px-4 py-2 border-b border-gray-700 text-white cursor-pointer hover:bg-gray-700"
