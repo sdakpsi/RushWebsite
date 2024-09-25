@@ -1,16 +1,16 @@
-import DeployButton from '../components/DeployButton';
-import AuthButton from '../components/AuthButton';
-import { createClient } from '@/utils/supabase/server';
-import ConnectSupabaseSteps from '@/components/tutorial/ConnectSupabaseSteps';
-import SignUpUserSteps from '@/components/tutorial/SignUpUserSteps';
-import Header from '@/components/Header';
-import GoogleOAuth from '@/components/GoogleOAuth';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import Timer from '@/components/Timer';
-import { bonVivant } from '@/fonts/fonts';
-import posterImage from './image_on_page.png'
-import Image from 'next/image';
+import DeployButton from "../components/DeployButton";
+import AuthButton from "../components/AuthButton";
+import { createClient } from "@/utils/supabase/server";
+import ConnectSupabaseSteps from "@/components/tutorial/ConnectSupabaseSteps";
+import SignUpUserSteps from "@/components/tutorial/SignUpUserSteps";
+import Header from "@/components/Header";
+import GoogleOAuth from "@/components/GoogleOAuth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import Timer from "@/components/Timer";
+import { bonVivant } from "@/fonts/fonts";
+import posterImage from "./image_on_page.png";
+import Image from "next/image";
 
 export default async function Index() {
   const supabase = createClient();
@@ -18,61 +18,102 @@ export default async function Index() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user) {
-    return redirect('/dashboard');
-  }
 
   return (
-    <div className="flex-1 w-full flex flex-col items-center bg-gradient-to-b from-[#1E3A8A] to-[#3B82F6] text-white min-h-screen relative">
-      {/* Page Stuff */}
-      <div className="animate-in flex flex-col gap-0 opacity-0 max-w-4xl px-3 items-center mt-8">
-        <div className="flex flex-col gap-8 sm:gap-0 items-center">
-          <p className="text-3xl lg:text-4xl font-semibold text-center ${bonVivant.className} bon-vivant-text-regular">
+    <div className="relative flex min-h-screen w-full flex-1 flex-col bg-gradient-to-b from-[#11273B] via-[#264E72] to-[#5782A9] text-white">
+      {/* Wrapper for the image and text */}
+      <div className="mt-12 flex flex-col items-center justify-between px-8 lg:mt-48 lg:flex-row lg:px-20">
+        {/* Left side: Text content */}
+        <div className="flex w-full flex-col gap-6 text-left sm:gap-4 lg:w-2/3">
+          {/* Welcome text */}
+          <p className="${bonVivant.className} bon-vivant-text-regular text-left text-3xl font-semibold lg:text-5xl">
             Welcome to the Alpha Kappa Psi Fall Rush 2024 Application Portal
           </p>
-          
-          <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
-        </div>
-        
-       {/* Align The Stars Image */}
-       {/* JustifyContent -> defines how you're aligning on the main axis */}
-       {/* AlignItems -> defines how you're aligning on the cross axis  */}
-       <div className = "flex flex-row justify-between w-full">
-       <main className="flex flex-col justify-center items-center gap-4">
-          <p className="text-xl lg:text-2xl !leading-tight mx-auto max-w-xl text-center mb-2 ${bonVivant.className} bon-vivant-text-bold">
-            Please sign in for the application.
+
+          <p className="text-left text-sm text-gray-200 lg:text-lg">
+            Please fill out the interest form below to receive updates regarding
+            rush!
           </p>
 
-          <Link href="/interest">
-            <button className="p-2 rounded px-5 transition duration-100 bg-btn-background hover:bg-btn-background-hover ${bonVivant.className} bon-vivant-text-regular">
-              Interest Form
-            </button>
-          </Link>
-          
-          <GoogleOAuth />
-          <div className="text-gray-200 text-xs mt-4">
-            *When signing in, it will ask to continue to{' '}
-            <span className="font-bold">kvuilkasrtgyazkvxjal.supabase.co</span>
-            
+          {/* Center the button */}
+          <div className="flex w-full justify-center">
+            <Link href="/interest">
+              <button className="rounded bg-btn-background p-2 px-5 transition duration-100 hover:bg-btn-background-hover">
+                Interest Form
+              </button>
+            </Link>
           </div>
-        </main>
-       <Image src={posterImage} width= {350} height={350} alt="logo" />
-       </div>
 
-        
+          {/* Divider line */}
+          <div className="my-6 w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent p-[1px]" />
+
+          {/* Sign-in text and button */}
+          <div className="flex flex-col items-center gap-4">
+            {user ? (
+              <>
+                <p className="${bonVivant.className} bon-vivant-text-bold text-center text-lg !leading-tight lg:text-2xl">
+                  Fill out the application for consideration! <br></br>Due
+                  Thursday, October 3rd at 12 PM.
+                </p>
+                <Link href="/">
+                  <button
+                    className="text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 lg:text-lg"
+                    disabled={true}
+                  >
+                    Application not currently open
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="${bonVivant.className} bon-vivant-text-bold max-w-xl text-center text-xl !leading-tight lg:text-2xl">
+                  Please sign in for the application. <br></br>Due Thursday,
+                  October 3rd at 12 PM.
+                </p>
+                <p className="${bonVivant.className} bon-vivant-text-bold max-w-xl text-center text-xs !leading-tight">
+                  (not currently open)
+                </p>
+
+                {/* Google Sign-In Button */}
+                <div className="flex justify-center">
+                  <GoogleOAuth />
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Contact information */}
+          <div className="mt-4 text-left text-xs text-gray-200">
+            If you're having any issues or have any questions, please contact
+            Ally Pan or Val Chen @ (916) 841-7952 / (408) 805-2888!
+          </div>
+
+          {/* Supabase sign-in notice */}
+          <div className="text-left text-xs text-gray-200">
+            *When signing in, it will ask to continue to{" "}
+            <span className="font-bold">kvuilkasrtgyazkvxjal.supabase.co</span>
+          </div>
+        </div>
+
+        {/* Right side: Image and Timer */}
+        <div className="mt-12 flex flex-col items-center lg:ml-12 lg:mt-0">
+          <Image
+            src={posterImage}
+            width={300}
+            height={300}
+            alt="logo"
+            className="mb-4"
+          />
+
+          {/* Timer */}
+          <p className="${bonVivant.className} bon-vivant-text-regular mt-6 text-lg">
+            Countdown to Rush!
+          </p>
+          <div className="mb-6 mt-2 flex w-full justify-center lg:mb-0">
+            <Timer />
+          </div>
+        </div>
       </div>
-
-      {/* Timer*/}
-       
-      <div className="bottom-20 right-0">
-        <Timer />
-      </div>
-
-      <p className="text-gray-300 mt-4">
-              If you're having any issues or have any questions, please contact
-              Ally or Val @ (916) 841-7952 / (408) 805-2888!
-      </p>
-      
     </div>
   );
 }

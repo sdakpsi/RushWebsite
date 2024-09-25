@@ -1,9 +1,10 @@
-'use client';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import logo from '../../components/akpsilogo.png';
-import { InterestForm as InterestFormType } from '@/lib/types';
-import customToast from '@/components/CustomToast';
+"use client";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import logo from "../../components/akpsilogo.png";
+import { InterestForm as InterestFormType } from "@/lib/types";
+import customToast from "@/components/CustomToast";
+import background from "../background.png";
 
 interface ShootingStar {
   id: number;
@@ -20,7 +21,7 @@ const Star = ({
   size: number;
 }) => (
   <div
-    className="absolute bg-white rounded-full"
+    className="absolute rounded-full bg-white"
     style={{
       top: `${top}%`,
       left: `${left}%`,
@@ -36,7 +37,7 @@ const ShootingStar = ({ delay }: { delay: number }) => {
 
   return (
     <div
-      className="absolute w-1 h-1 bg-blue-200 rounded-full animate-shooting-star"
+      className="absolute h-1 w-1 animate-shooting-star rounded-full bg-blue-200"
       style={{
         top: `${top}%`,
         left: `${left}%`,
@@ -49,9 +50,9 @@ const ShootingStar = ({ delay }: { delay: number }) => {
 const InterestForm = () => {
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const [formData, setFormData] = useState<InterestFormType>({
-    name: '',
-    email: '',
-    phone: '',
+    name: "",
+    email: "",
+    phone: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stars] = useState(() =>
@@ -95,56 +96,56 @@ const InterestForm = () => {
     // Validate required fields
     if (
       (!data.name && !data.email) ||
-      (data.name === '' && data.email === '')
+      (data.name === "" && data.email === "")
     ) {
-      customToast('Name and email cannot be empty', 'error');
+      customToast("Name and email cannot be empty", "error");
       return;
     }
 
-    if (data.name === '') {
-      customToast('Name cannot be empty', 'error');
+    if (data.name === "") {
+      customToast("Name cannot be empty", "error");
       return;
     }
 
-    if (data.email === '') {
-      customToast('Email cannot be empty', 'error');
+    if (data.email === "") {
+      customToast("Email cannot be empty", "error");
       return;
     }
 
     const nameWords = (data.name as string).trim().split(/\s+/);
     if (nameWords.length < 2) {
-      customToast('Please enter your full name (first and last name)', 'error');
+      customToast("Please enter your full name (first and last name)", "error");
       return;
     }
 
     try {
       // Make API call
-      const response = await fetch('/api/interest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/interest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       // Check if response is ok, handle errors
       if (response.ok) {
-        customToast('Interest form submitted!', 'success');
+        customToast("Interest form submitted!", "success");
         setFormData({
-          name: '',
-          email: '',
-          phone: '',
+          name: "",
+          email: "",
+          phone: "",
         });
       } else {
         // If response is not ok, extract error message from the response
         const errorData = await response.json();
         if (errorData.message) {
-          customToast(errorData.message, 'error');
+          customToast(errorData.message, "error");
         } else {
-          customToast('Error submitting the form. Please try again.', 'error');
+          customToast("Error submitting the form. Please try again.", "error");
         }
       }
     } catch (error: any) {
       // Handle any network or unexpected errors
-      customToast(`An error occurred: ${error.message}`, 'error');
+      customToast(`An error occurred: ${error.message}`, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -155,15 +156,27 @@ const InterestForm = () => {
   }
 
   return (
-    <div className="flex-col bg-gradient-to-b from-blue-900 to-black flex items-center justify-center p-4 relative min-h-screen w-screen overflow-hidden">
+    <div
+      className="relative flex min-h-screen w-screen flex-col items-center justify-center overflow-hidden p-4"
+      style={{
+        backgroundImage: `url(${background.src})`,
+
+        backgroundSize: "cover",
+
+        backgroundPosition: "center",
+
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="absolute inset-0 z-0 bg-black opacity-20"></div>
       {stars.map((star) => (
         <Star key={star.id} {...star} />
       ))}
       {shootingStars.map((star) => (
         <ShootingStar key={star.id} delay={star.delay} />
       ))}
-      <div className="max-w-md relative mt-4">
-        <div className="flex flex-row items-center justify-center mb-8">
+      <div className="relative mt-4 max-w-md">
+        <div className="mb-8 flex flex-row items-center justify-center">
           <Image
             src={logo}
             alt="logo"
@@ -171,12 +184,12 @@ const InterestForm = () => {
             height={80}
             className="mb-4"
           />
-          <span className="ml-4 text-lg lg:text-2xl text-white bon-vivant-text-bold">
+          <span className="bon-vivant-text-bold ml-4 text-lg text-white lg:text-2xl">
             UCSD Alpha Kappa Psi
           </span>
         </div>
 
-        <div className="text-white text-left mb-8 text-sm px-2 lg:text-md libre-caslon-text-regular">
+        <div className="lg:text-md libre-caslon-text-regular mb-8 px-2 text-left text-sm text-white">
           Hello! Thank you for taking interest in UCSD Alpha Kappa Psi's Fall
           2024 Rush Week. The brothers of Alpha Kappa Psi are looking forward to
           see you during Week 1 of Fall Quarter. We hope that you are just as
@@ -189,7 +202,7 @@ const InterestForm = () => {
           <br />
           <br />
           For questions –<br />
-          Instagram:{' '}
+          Instagram:{" "}
           <a
             target="_blank"
             href="https://www.instagram.com/ucsdakpsi"
@@ -198,7 +211,7 @@ const InterestForm = () => {
             @ucsdakpsi
           </a>
           <br />
-          Email:{' '}
+          Email:{" "}
           <a
             target="_blank"
             href="mailto:akpfall2024@gmail.com"
@@ -208,18 +221,18 @@ const InterestForm = () => {
           </a>
         </div>
       </div>
-      <div className="bg-blue-800 bg-opacity-30 rounded-lg p-8 backdrop-blur-sm max-w-md md:w-full relative z-10">
-        <h1 className="text-3xl font-bold text-white mb-6 text-center bon-vivant-text-bold">
-          COMING SOON
+      <div className="relative z-10 max-w-md rounded-lg bg-cyan-950 bg-opacity-50 p-8 backdrop-blur-sm md:w-full">
+        <h1 className="bon-vivant-text-bold mb-6 text-center text-3xl font-bold text-white">
+          Align Your Stars
         </h1>
-        <h2 className="text-xl text-blue-200 mb-8 text-center bon-vivant-text-regular">
+        <h2 className="bon-vivant-text-regular mb-8 text-center text-xl text-blue-200">
           Alpha Kappa Psi | Fall 2024 Rush
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-6 w-full">
+        <form onSubmit={handleSubmit} className="w-full space-y-6">
           <div>
             <label
               htmlFor="name"
-              className="block text-blue-200 mb-2 bon-vivant-text-bold"
+              className="bon-vivant-text-bold mb-2 block text-blue-200"
             >
               Your full name*
             </label>
@@ -229,47 +242,52 @@ const InterestForm = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-2 rounded bg-blue-900 bg-opacity-50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bon-vivant-text-regular"
+              className="bon-vivant-text-regular w-full rounded bg-cyan-900 bg-opacity-50 p-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
               placeholder="Your name"
             />
           </div>
+
           <div>
             <label
               htmlFor="email"
-              className="block text-blue-200 mb-2 bon-vivant-text-bold"
+              className="bon-vivant-text-bold mb-2 block text-blue-200"
             >
               Email*
             </label>
+
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-2 rounded bg-blue-900 bg-opacity-50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bon-vivant-text-regular"
+              className="bon-vivant-text-regular w-full rounded bg-cyan-900 bg-opacity-50 p-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
               placeholder="Your@email.com"
             />
           </div>
+
           <div>
             <label
               htmlFor="phone"
-              className="block text-blue-200 mb-2 bon-vivant-text-bold"
+              className="bon-vivant-text-bold mb-2 block text-blue-200"
             >
               Phone
             </label>
+
             <input
               type="tel"
               id="phone"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full p-2 rounded mb-3 bg-blue-900 bg-opacity-50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bon-vivant-text-regular"
+              className="bon-vivant-text-regular mb-3 w-full rounded bg-cyan-900 bg-opacity-50 p-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
               placeholder="(123) 456-7890"
             />
           </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-800 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 bon-vivant-text-regular"
+            className="bon-vivant-text-regular w-full rounded bg-cyan-800 px-4 py-2 font-bold text-white transition duration-300 hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
           >
             Submit
           </button>
