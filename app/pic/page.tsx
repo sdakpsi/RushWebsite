@@ -93,6 +93,7 @@ export default function ProtectedPage() {
                   />
                 )}
               </div>
+              
             </div>
           ) : (
             <div className="mt-8">

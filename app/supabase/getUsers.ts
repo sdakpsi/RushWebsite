@@ -1,5 +1,5 @@
 "use server";
-import { type ProspectInterview } from "@/lib/types";
+import { type ProspectInterview, type Comment } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getUsers() {
@@ -193,6 +193,18 @@ export async function getInterviews(prospectID: string | null) {
   if (error) {
     console.error("Error fetching interviews:", error.message);
     return null;
+  }
+  return data;
+}
+
+export async function getComments(): Promise<Comment[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from("comments").select("*");
+
+  if (error) {
+    console.error("Error fetching interviews:", error.message);
+    return [];
   }
   return data;
 }
