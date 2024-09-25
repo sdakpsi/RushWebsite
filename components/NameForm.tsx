@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   useState,
@@ -7,21 +7,21 @@ import React, {
   useEffect,
   useCallback,
   useRef,
-} from 'react';
-import { debounce } from 'lodash';
-import FileDropzone from './Dropzone';
+} from "react";
+import { debounce } from "lodash";
+import FileDropzone from "./Dropzone";
 import {
   ApplicationFileTypes,
   ApplicationFormState,
   StudentYears,
   UCSDColleges,
   UCSDQuarters,
-} from '@/lib/types';
-import { formatTimestamp, extractFileName } from '@/utils/format';
-import { toast } from 'react-toastify';
-import { delay } from '@/utils/delay';
-import { smallInput, textLabel, largeInput } from './NameForm.styles';
-import LoadingSpinner from './LoadingSpinner';
+} from "@/lib/types";
+import { formatTimestamp, extractFileName } from "@/utils/format";
+import { toast } from "react-toastify";
+import { delay } from "@/utils/delay";
+import { smallInput, textLabel, largeInput } from "./NameForm.styles";
+import LoadingSpinner from "./LoadingSpinner";
 export default function NameForm() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -38,21 +38,21 @@ export default function NameForm() {
       });
 
       try {
-        const response = await fetch('/api/application', {
-          method: 'PUT',
+        const response = await fetch("/api/application", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body,
         });
 
         if (!response.ok) {
-          throw new Error('Failed to save application data');
+          throw new Error("Failed to save application data");
         }
 
         setLastSaved(formatTimestamp(new Date()));
       } catch (error) {
-        console.error('Error saving application data:', error);
+        console.error("Error saving application data:", error);
       } finally {
         setIsSaving(false);
       }
@@ -64,30 +64,30 @@ export default function NameForm() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/application', {
-          method: 'POST',
+        const response = await fetch("/api/application", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch application data');
+          throw new Error("Failed to fetch application data");
         }
 
         const applicationObject = await response.json();
         const data = applicationObject.application;
         setApplicationId(data.id);
-        setFirstName(data.name.split(' ')[0]);
-        setLastName(data.name.split(' ')[1]);
+        setFirstName(data.name.split(" ")[0]);
+        setLastName(data.name.split(" ")[1]);
         setPronouns(data.pronouns);
         setPhoneNumber(data.phone_number);
         setYearInCollege(data.year);
-        setGraduationYear(data.graduation_year || '');
+        setGraduationYear(data.graduation_year || "");
         setGraduationQuarter(data.graduation_qtr);
         setMajor(data.major);
-        setMinor(data.minors || '');
-        setCumulativeGPA(data.gpa || '');
+        setMinor(data.minors || "");
+        setCumulativeGPA(data.gpa || "");
         setCurrentClasses(data.classes);
         setExtracurricularActivities(data.extracirriculars);
         setProudAccomplishment(data.accomplishment);
@@ -100,13 +100,13 @@ export default function NameForm() {
         setCoverLetterFileUrl(data.cover_letter);
         setLastSaved(formatTimestamp(data.last_updated));
         setLastSubmitted(formatTimestamp(data.submitted) || null);
-        setFacebook(data.social_media?.facebook || '');
-        setInstagram(data.social_media?.instagram || '');
-        setLinkedIn(data.social_media?.linkedIn || '');
-        setTiktok(data.social_media?.tiktok || '');
+        setFacebook(data.social_media?.facebook || "");
+        setInstagram(data.social_media?.instagram || "");
+        setLinkedIn(data.social_media?.linkedIn || "");
+        setTiktok(data.social_media?.tiktok || "");
         setCollege(data.college);
       } catch (error) {
-        console.error('Error fetching application data:', error);
+        console.error("Error fetching application data:", error);
       }
 
       setLoading(false);
@@ -120,38 +120,38 @@ export default function NameForm() {
    */
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [applicationId, setApplicationId] = useState<string>('');
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [pronouns, setPronouns] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [yearInCollege, setYearInCollege] = useState<string>('');
+  const [applicationId, setApplicationId] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [pronouns, setPronouns] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [yearInCollege, setYearInCollege] = useState<string>("");
   const [graduationYear, setGraduationYear] = useState<number | null>(null);
   const [isGraduationYearValid, setIsGraduationYearValid] =
     useState<boolean>(true);
   const [isCumulativeGPAValid, setIsCumulativeGPAValid] =
     useState<boolean>(true);
-  const [graduationQuarter, setGraduationQuarter] = useState<string>('');
-  const [major, setMajor] = useState<string>('');
-  const [minor, setMinor] = useState<string>('');
-  const [cumulativeGPA, setCumulativeGPA] = useState<string>('');
-  const [currentClasses, setCurrentClasses] = useState<string>('');
+  const [graduationQuarter, setGraduationQuarter] = useState<string>("");
+  const [major, setMajor] = useState<string>("");
+  const [minor, setMinor] = useState<string>("");
+  const [cumulativeGPA, setCumulativeGPA] = useState<string>("");
+  const [currentClasses, setCurrentClasses] = useState<string>("");
   const [extracurricularActivities, setExtracurricularActivities] =
-    useState<string>('');
-  const [proudAccomplishment, setProudAccomplishment] = useState<string>('');
-  const [joinReason, setJoinReason] = useState<string>('');
-  const [lifeGoals, setLifeGoals] = useState<string>('');
-  const [comfortZone, setComfortZone] = useState<string>('');
-  const [businessType, setBusinessType] = useState<string>('');
-  const [additionalDetails, setAdditionalDetails] = useState<string>('');
-  const [resumeFileUrl, setResumeFileUrl] = useState<string>('');
-  const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>('');
+    useState<string>("");
+  const [proudAccomplishment, setProudAccomplishment] = useState<string>("");
+  const [joinReason, setJoinReason] = useState<string>("");
+  const [lifeGoals, setLifeGoals] = useState<string>("");
+  const [comfortZone, setComfortZone] = useState<string>("");
+  const [businessType, setBusinessType] = useState<string>("");
+  const [additionalDetails, setAdditionalDetails] = useState<string>("");
+  const [resumeFileUrl, setResumeFileUrl] = useState<string>("");
+  const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>("");
   const [lastSubmitted, setLastSubmitted] = useState<string | null>(null);
-  const [facebook, setFacebook] = useState<string>('');
-  const [instagram, setInstagram] = useState<string>('');
-  const [linkedIn, setLinkedIn] = useState<string>('');
-  const [tiktok, setTiktok] = useState<string>('');
-  const [college, setCollege] = useState<string>('');
+  const [facebook, setFacebook] = useState<string>("");
+  const [instagram, setInstagram] = useState<string>("");
+  const [linkedIn, setLinkedIn] = useState<string>("");
+  const [tiktok, setTiktok] = useState<string>("");
+  const [college, setCollege] = useState<string>("");
 
   const formStateRef = useRef<ApplicationFormState>({
     applicationId,
@@ -253,7 +253,7 @@ export default function NameForm() {
 
     setIsGraduationYearValid(isValid);
 
-    if (isValid || value === '') {
+    if (isValid || value === "") {
       setGraduationYear(value ? numberValue : null);
     }
   };
@@ -267,7 +267,7 @@ export default function NameForm() {
 
     setIsCumulativeGPAValid(isValid);
 
-    if (isValid || value === '') {
+    if (isValid || value === "") {
       setCumulativeGPA(value);
     }
   };
@@ -287,41 +287,41 @@ export default function NameForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isGraduationYearValid) {
-      toast.error('Graduation year is invalid.');
+      toast.error("Graduation year is invalid.");
       return;
     }
     if (!isCumulativeGPAValid) {
-      toast.error('Cumulative GPA is invalid.');
+      toast.error("Cumulative GPA is invalid.");
       return;
     }
 
     const fields = [
-      { name: 'First Name', value: firstName },
-      { name: 'Last Name', value: lastName },
-      { name: 'Pronouns', value: pronouns },
-      { name: 'Phone Number', value: phoneNumber },
-      { name: 'Year in College', value: yearInCollege },
-      { name: 'Graduation Year', value: graduationYear },
-      { name: 'Graduation Quarter', value: graduationQuarter },
-      { name: 'Major', value: major },
-      { name: 'Cumulative GPA', value: cumulativeGPA },
-      { name: 'Current Classes', value: currentClasses },
-      { name: 'Extracurricular Activities', value: extracurricularActivities },
-      { name: 'Proud Accomplishment', value: proudAccomplishment },
-      { name: 'Join Reason', value: joinReason },
-      { name: 'Life Goals', value: lifeGoals },
-      { name: 'Comfort Zone', value: comfortZone },
-      { name: 'Business Type', value: businessType },
-      { name: 'Additional Details', value: additionalDetails },
-      { name: 'Resume File URL', value: resumeFileUrl },
-      { name: 'College', value: college },
+      { name: "First Name", value: firstName },
+      { name: "Last Name", value: lastName },
+      { name: "Pronouns", value: pronouns },
+      { name: "Phone Number", value: phoneNumber },
+      { name: "Year in College", value: yearInCollege },
+      { name: "Graduation Year", value: graduationYear },
+      { name: "Graduation Quarter", value: graduationQuarter },
+      { name: "Major", value: major },
+      { name: "Cumulative GPA", value: cumulativeGPA },
+      { name: "Current Classes", value: currentClasses },
+      { name: "Extracurricular Activities", value: extracurricularActivities },
+      { name: "Proud Accomplishment", value: proudAccomplishment },
+      { name: "Join Reason", value: joinReason },
+      { name: "Life Goals", value: lifeGoals },
+      { name: "Comfort Zone", value: comfortZone },
+      { name: "Business Type", value: businessType },
+      { name: "Additional Details", value: additionalDetails },
+      { name: "Resume File URL", value: resumeFileUrl },
+      { name: "College", value: college },
     ];
 
     const emptyFields = fields
       .filter((field) => !field.value)
       .map((field) => field.name);
     if (emptyFields.length > 0) {
-      toast.error(`Empty fields: ${emptyFields.join(', ')}`);
+      toast.error(`Empty fields: ${emptyFields.join(", ")}`);
       return;
     } else {
       setSubmitting(true);
@@ -333,24 +333,24 @@ export default function NameForm() {
           lastSubmitted: new Date().toISOString(),
           isSubmitting: true,
         });
-        const response = await fetch('/api/application', {
-          method: 'PUT',
+        const response = await fetch("/api/application", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: body,
         });
         if (response.ok) {
           setLastSubmitted(formatTimestamp(new Date()));
           toast.success(
-            'Application submitted! Thanks for taking the time to submit an application :)'
+            "Application submitted! Thanks for taking the time to submit an application :)"
           );
         } else {
-          toast.error('Failed to submit application');
+          toast.error("Failed to submit application");
         }
       } catch (error) {
-        console.error('Error submitting application:', error);
-        toast.error('An error occurred while submitting the application');
+        console.error("Error submitting application:", error);
+        toast.error("An error occurred while submitting the application");
       } finally {
         setSubmitting(false);
       }
@@ -371,14 +371,14 @@ export default function NameForm() {
 
   return (
     <div>
-      <div className="save-status text-gray-400 px-4 sm:px-0">
-        {isSaving ? 'Saving...' : lastSaved && `Last saved on ${lastSaved}`}
+      <div className="save-status px-4 text-gray-400 sm:px-0">
+        {isSaving ? "Saving..." : lastSaved && `Last saved on ${lastSaved}`}
       </div>
-      <div className="submit-status text-green-600 px-4 sm:px-0">
+      <div className="submit-status px-4 text-green-600 sm:px-0">
         {lastSubmitted && `Last submitted at: ${lastSubmitted}`}
       </div>
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto px-4 sm:px-0">
-        <h2 className="text-lg font-bold mb-6"></h2>
+      <form onSubmit={handleSubmit} className="mx-auto max-w-md px-4 sm:px-0">
+        <h2 className="mb-6 text-lg font-bold"></h2>
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-4">
             <label className={textLabel} htmlFor="firstName">
@@ -475,16 +475,16 @@ export default function NameForm() {
             </label>
             <input
               className={`${smallInput} ${
-                !isGraduationYearValid ? 'border-red-500' : ''
+                !isGraduationYearValid ? "border-red-500" : ""
               }`}
               id="graduationYear"
               type="number"
-              value={graduationYear?.toString() || ''}
+              value={graduationYear?.toString() || ""}
               onChange={handleGraduationYearChange}
               placeholder="Enter graduation year"
             />
             {!isGraduationYearValid && (
-              <p className="text-red-500 text-xs italic">
+              <p className="text-xs italic text-red-500">
                 Please enter a valid grad year
               </p>
             )}
@@ -499,7 +499,7 @@ export default function NameForm() {
               value={graduationQuarter}
               onChange={handleChange(setGraduationQuarter)}
             >
-              {' '}
+              {" "}
               <option value="">Select Quarter</option>
               {Object.values(UCSDQuarters).map((quarter) => (
                 <option key={quarter} value={quarter}>
@@ -540,17 +540,17 @@ export default function NameForm() {
             </label>
             <input
               className={`${smallInput} ${
-                !isCumulativeGPAValid ? 'border-red-500' : ''
+                !isCumulativeGPAValid ? "border-red-500" : ""
               }`}
               id="graduationYear"
               type="number"
-              value={cumulativeGPA?.toString() || ''}
+              value={cumulativeGPA?.toString() || ""}
               onChange={handleCumulativeGPAChange}
               step="0.01"
               placeholder="Enter GPA"
             />
             {!isCumulativeGPAValid && (
-              <p className="text-red-500 text-xs italic">
+              <p className="text-xs italic text-red-500">
                 Please enter a valid GPA
               </p>
             )}
@@ -558,8 +558,8 @@ export default function NameForm() {
 
           <div className="col-span-2 mb-4">
             <div className="mb-4">
-              <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
-              <div className="text-gray-300 text-lg mb-2">
+              <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
+              <div className="mb-2 text-lg text-gray-300">
                 Your social medias! Please use links if possible :)
               </div>
               <div>
@@ -732,19 +732,19 @@ export default function NameForm() {
             />
           </div>
         </div>
-        <div className="flex justify-between mb-6"></div>
+        <div className="mb-6 flex justify-between"></div>
 
         <div className="mb-4">
           <a
-            href={resumeFileUrl ? resumeFileUrl : '#'}
-            className={`text-blue-500 hover:text-blue-700 ${
-              !resumeFileUrl && 'pointer-events-none'
+            href={resumeFileUrl ? resumeFileUrl : "#"}
+            className={`text-blue-200 hover:text-blue-500 ${
+              !resumeFileUrl && "pointer-events-none"
             }`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Resume:{' '}
-            {resumeFileUrl ? extractFileName(resumeFileUrl) : 'Not Uploaded'}
+            Resume:{" "}
+            {resumeFileUrl ? extractFileName(resumeFileUrl) : "Not Uploaded"}
           </a>
         </div>
         <FileDropzone
@@ -753,17 +753,17 @@ export default function NameForm() {
         />
         <div className="mb-4">
           <a
-            href={coverLetterFileUrl ? coverLetterFileUrl : '#'}
-            className={`text-blue-500 hover:text-blue-700 ${
-              !coverLetterFileUrl && 'pointer-events-none'
+            href={coverLetterFileUrl ? coverLetterFileUrl : "#"}
+            className={`text-blue-200 hover:text-blue-500 ${
+              !coverLetterFileUrl && "pointer-events-none"
             }`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Cover Letter:{' '}
+            Cover Letter:{" "}
             {coverLetterFileUrl
               ? extractFileName(coverLetterFileUrl)
-              : 'Not Uploaded'}
+              : "Not Uploaded"}
           </a>
         </div>
         <FileDropzone
@@ -771,12 +771,16 @@ export default function NameForm() {
           type={ApplicationFileTypes.COVER_LETTER}
         />
         <button
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition w-full duration-300 mt-4 mb-8"
+          className=" border-1 mb-8 mt-4 w-full rounded-lg border border-gray-400 bg-cyan-600 px-6 py-2 text-white transition duration-100 hover:bg-cyan-800"
           type="submit"
         >
           Submit
         </button>
       </form>
+      <p className="mt-4 text-gray-200">
+        If you're having any issues or have any questions, please contact Ally
+        or Val @ (916) 841-7952 / (408) 805-2888!
+      </p>
     </div>
   );
 }
