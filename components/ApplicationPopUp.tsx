@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { createPortal } from 'react-dom';
-import { createClient } from '@/utils/supabase/client';
-import { toast } from 'react-toastify';
-import Image from 'next/image';
-import { Toast } from 'react-toastify/dist/components';
+import React, { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "react-toastify";
+import Image from "next/image";
+import { Toast } from "react-toastify/dist/components";
 
 interface Application {
   id: string;
@@ -77,6 +77,8 @@ interface Case {
 interface Comment {
   active_name: string;
   comment: string;
+  interaction: string;
+  invite: string;
 }
 
 interface ApplicationPopupProps {
@@ -97,27 +99,27 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState<string>('application');
+  const [activeSection, setActiveSection] = useState<string>("application");
   const supabase = createClient();
   const [uploading, setUploading] = useState(false);
-  const [score, setScore] = useState('');
-  const [currentScore, setCurrentScore] = useState('');
+  const [score, setScore] = useState("");
+  const [currentScore, setCurrentScore] = useState("");
 
-  const [scoreResume, setScoreResume] = useState('');
-  const [activeName, setActiveName] = useState('');
-  const [comment, setComment] = useState('');
+  const [scoreResume, setScoreResume] = useState("");
+  const [activeName, setActiveName] = useState("");
+  const [comment, setComment] = useState("");
   const [prospectComments, setProspectComments] = useState<Comment[]>([]);
   const [submissionCount, setSubmissionCount] = useState(0);
 
-  const [currentScoreResume, setCurrentScoreResume] = useState(''); // State to store the current score fetched from the database
+  const [currentScoreResume, setCurrentScoreResume] = useState(""); // State to store the current score fetched from the database
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const { data, error } = await supabase
-          .from('comments')
-          .select('active_name, comment')
-          .eq('prospect_id', userID);
+          .from("comments")
+          .select("active_name, comment, interaction, invite")
+          .eq("prospect_id", userID);
 
         if (error) {
           throw error;
@@ -127,7 +129,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           setProspectComments(data);
         }
       } catch (error: any) {
-        console.error('Error fetching comments:', error.message);
+        console.error("Error fetching comments:", error.message);
       }
     };
 
@@ -146,8 +148,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     }
   };
 
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
-  const [error, setError] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [error, setError] = useState("");
   const [total, setTotal] = useState(0);
 
   const [ivAverages, setIvAverages] = useState({
@@ -173,7 +175,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     const totalScores = interviews.reduce(
       (acc, curr) => {
         const eventsCount = curr.events_attended
-          ? curr.events_attended.split(',').length
+          ? curr.events_attended.split(",").length
           : 0;
         return {
           empathy: acc.empathy + curr.empathy,
@@ -242,7 +244,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const handleScoreChange = (e: any) => {
     const value = e.target.value;
     const numValue = Number(value);
-    if (value === '' || (numValue >= 1 && numValue <= 10)) {
+    if (value === "" || (numValue >= 1 && numValue <= 10)) {
       setScore(value);
     }
   };
@@ -250,13 +252,13 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   useEffect(() => {
     const fetchCurrentScore = async () => {
       const { data, error } = await supabase
-        .from('users')
-        .select('app_score')
-        .eq('id', userID)
+        .from("users")
+        .select("app_score")
+        .eq("id", userID)
         .single();
 
       if (error) {
-        console.error('Error fetching current score:', error.message);
+        console.error("Error fetching current score:", error.message);
       } else if (data) {
         setCurrentScore(data.app_score); // Update state with the fetched score
       }
@@ -270,7 +272,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const handleScoreChangeResume = (e: any) => {
     const value = e.target.value;
     const numValue = Number(value);
-    if (value === '' || (numValue >= 1 && numValue <= 10)) {
+    if (value === "" || (numValue >= 1 && numValue <= 10)) {
       setScoreResume(value);
     }
   };
@@ -288,13 +290,13 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   useEffect(() => {
     const fetchCurrentScoreResume = async () => {
       const { data, error } = await supabase
-        .from('users')
-        .select('resume_score')
-        .eq('id', userID)
+        .from("users")
+        .select("resume_score")
+        .eq("id", userID)
         .single();
 
       if (error) {
-        console.error('Error fetching current score:', error.message);
+        console.error("Error fetching current score:", error.message);
       } else if (data) {
         setCurrentScoreResume(data.resume_score); // Update state with the fetched score
       }
@@ -306,50 +308,50 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [userID]);
 
   const handleSubmit = async () => {
-    if (score === '') {
-      toast.error('Please enter a score before submitting.');
+    if (score === "") {
+      toast.error("Please enter a score before submitting.");
       return;
     }
 
     setCurrentScore(score);
 
     const { data, error } = await supabase
-      .from('users')
+      .from("users")
       .update({ app_score: score })
-      .eq('id', userID);
+      .eq("id", userID);
 
     if (error) {
       toast.error(`Error: ${error.message}`);
     } else {
-      toast.success('Score updated successfully!');
-      setScore(''); // Optionally reset the score input after successful submission
+      toast.success("Score updated successfully!");
+      setScore(""); // Optionally reset the score input after successful submission
     }
   };
 
   const handleSubmitResume = async () => {
-    if (scoreResume === '') {
-      alert('Please enter a score before submitting.');
+    if (scoreResume === "") {
+      alert("Please enter a score before submitting.");
       return;
     }
 
     setCurrentScoreResume(scoreResume);
 
     const { data, error } = await supabase
-      .from('users')
+      .from("users")
       .update({ resume_score: scoreResume })
-      .eq('id', userID);
+      .eq("id", userID);
 
     if (error) {
       alert(`Error: ${error.message}`);
     } else {
-      alert('Score updated successfully!');
-      setScoreResume(''); // Optionally reset the score input after successful submission
+      alert("Score updated successfully!");
+      setScoreResume(""); // Optionally reset the score input after successful submission
     }
   };
 
   const handleCommentSubmit = async () => {
-    if (activeName === '' || comment === '') {
-      toast.error('Please enter a name and comment before submitting.');
+    if (activeName === "" || comment === "") {
+      toast.error("Please enter a name and comment before submitting.");
       return;
     }
 
@@ -357,7 +359,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { data, error } = await supabase.from('comments').insert([
+    const { data, error } = await supabase.from("comments").insert([
       {
         prospect_id: userID,
         active_id: user?.id,
@@ -369,33 +371,33 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     if (error) {
       toast.error(`Error: ${error.message}`);
     } else {
-      toast.success('Comment submitted.');
+      toast.success("Comment submitted.");
       setSubmissionCount((count) => count + 1);
-      setActiveName(''); // Optionally reset the score input after successful submission
-      setComment('');
+      setActiveName(""); // Optionally reset the score input after successful submission
+      setComment("");
     }
   };
 
   const uploadImage = async (event: any) => {
     setUploading(true);
-    setError('');
+    setError("");
     try {
       const file = event.target.files[0];
       if (!file) {
-        throw new Error('You must select an image to upload.');
+        throw new Error("You must select an image to upload.");
       }
 
       // Only allow image file types for upload
-      if (!file.type.startsWith('image/')) {
-        throw new Error('Invalid file type. Please select an image.');
+      if (!file.type.startsWith("image/")) {
+        throw new Error("Invalid file type. Please select an image.");
       }
 
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${userID}-${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from("avatars")
         .upload(filePath, file);
 
       if (uploadError) {
@@ -403,12 +405,12 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       }
 
       // Correctly handle the retrieval of the public URL
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
       const { data: existingEntries, error: existingError } = await supabase
-        .from('user_avatar')
-        .select('id')
-        .eq('user_id', userID);
+        .from("user_avatar")
+        .select("id")
+        .eq("user_id", userID);
 
       if (existingError) throw existingError;
 
@@ -416,15 +418,15 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
         // Assuming the first entry is the correct one to update
         const existingId = existingEntries[0].id;
         const { error: updateError } = await supabase
-          .from('user_avatar')
+          .from("user_avatar")
           .update({ avatar_url: data.publicUrl })
-          .eq('id', existingId);
+          .eq("id", existingId);
 
         if (updateError) throw updateError;
       } else {
         // Insert new entry
         const { error: insertError } = await supabase
-          .from('user_avatar')
+          .from("user_avatar")
           .insert([{ user_id: userID, avatar_url: data.publicUrl }]);
 
         if (insertError) throw insertError;
@@ -432,7 +434,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
       setAvatarUrl(data.publicUrl);
     } catch (error: any) {
-      console.error('Upload error:', error.message);
+      console.error("Upload error:", error.message);
       setError(`Upload failed: ${error.message}`);
     } finally {
       setUploading(false);
@@ -443,14 +445,14 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     const fetchAvatarUrl = async () => {
       try {
         const { data, error } = await supabase
-          .from('user_avatar')
-          .select('avatar_url')
-          .eq('user_id', userID)
+          .from("user_avatar")
+          .select("avatar_url")
+          .eq("user_id", userID)
           .single();
         if (error) throw error;
         if (data) setAvatarUrl(data.avatar_url);
       } catch (error: any) {
-        console.error('Error fetching avatar URL:', error.message);
+        console.error("Error fetching avatar URL:", error.message);
       }
     };
 
@@ -513,15 +515,15 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     const updateTot = async () => {
       if (scoreComponents.totalScore > 0) {
         const { data, error } = await supabase
-          .from('users')
+          .from("users")
           .update({ total_score: scoreComponents.totalScore })
-          .eq('id', userID);
+          .eq("id", userID);
 
         if (error) {
           alert(`Error: ${error.message}`);
         }
         if (isPIC) {
-          toast.success('Total Score Updated');
+          toast.success("Total Score Updated");
         }
       }
     };
@@ -529,9 +531,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [scoreComponents.totalScore]);
 
   return createPortal(
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
-      <div className="bg-btn-background rounded-lg shadow-xl p-6 w-full space-y-4 mx-4 overflow-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="mx-4 w-full space-y-4 overflow-auto rounded-lg bg-btn-background p-6 shadow-xl">
+        <div className="mb-4 flex flex-col items-center justify-between md:flex-row">
           <h2 className="text-2xl font-semibold">
             {application.name}'s Packet
           </h2>
@@ -539,17 +541,17 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           <div className="relative inline-block">
             {/* Image display */}
             <button
-              onClick={() => setActiveSection('avatar')}
-              className="hover:scale-[1.04] transition duration-300"
+              onClick={() => setActiveSection("avatar")}
+              className="transition duration-300 hover:scale-[1.04]"
             >
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
                   alt="Avatar"
-                  className="w-24 h-24 rounded-full object-cover"
+                  className="h-24 w-24 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-200">
                   <span className="text-gray-500">No Image</span>
                 </div>
               )}
@@ -558,53 +560,53 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
           <div>
             <button
-              onClick={() => setActiveSection('application')}
+              onClick={() => setActiveSection("application")}
               className={`px-4 py-3 ${
-                activeSection === 'application'
-                  ? 'text-blue-500 border-blue-500 border-b-2'
-                  : 'text-gray-500 border-transparent'
-              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+                activeSection === "application"
+                  ? "border-b-2 border-blue-500 text-blue-500"
+                  : "border-transparent text-gray-500"
+              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
             >
               Application
             </button>
             <button
-              onClick={() => setActiveSection('cases')}
-              className={`px-4 py-3 ml-2 ${
-                activeSection === 'cases'
-                  ? 'text-blue-500 border-blue-500 border-b-2'
-                  : 'text-gray-500 border-transparent'
-              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+              onClick={() => setActiveSection("cases")}
+              className={`ml-2 px-4 py-3 ${
+                activeSection === "cases"
+                  ? "border-b-2 border-blue-500 text-blue-500"
+                  : "border-transparent text-gray-500"
+              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
             >
               Case Study
             </button>
             <button
-              onClick={() => setActiveSection('interviews')}
-              className={`px-4 py-3 ml-2 ${
-                activeSection === 'interviews'
-                  ? 'text-blue-500 border-blue-500 border-b-2'
-                  : 'text-gray-500 border-transparent'
-              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+              onClick={() => setActiveSection("interviews")}
+              className={`ml-2 px-4 py-3 ${
+                activeSection === "interviews"
+                  ? "border-b-2 border-blue-500 text-blue-500"
+                  : "border-transparent text-gray-500"
+              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
             >
               Interview
             </button>
             <button
-              onClick={() => setActiveSection('comments')}
-              className={`px-4 py-3 ml-2 ${
-                activeSection === 'comments'
-                  ? 'text-blue-500 border-blue-500 border-b-2'
-                  : 'text-gray-500 border-transparent'
-              } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+              onClick={() => setActiveSection("comments")}
+              className={`ml-2 px-4 py-3 ${
+                activeSection === "comments"
+                  ? "border-b-2 border-blue-500 text-blue-500"
+                  : "border-transparent text-gray-500"
+              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
             >
               Comments
             </button>
             {isPIC && (
               <button
-                onClick={() => setActiveSection('scoring')}
-                className={`px-4 py-3 ml-2 ${
-                  activeSection === 'comments'
-                    ? 'text-blue-500 border-blue-500 border-b-2'
-                    : 'text-gray-500 border-transparent'
-                } font-semibold hover:text-blue-500 hover:border-blue-500 focus:outline-none`}
+                onClick={() => setActiveSection("scoring")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "comments"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
               >
                 Scoring
               </button>
@@ -615,8 +617,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
               onClick={() => handleViewDocument(application.resume)}
               className={
                 application.resume
-                  ? 'px-4 py-2 ml-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded'
-                  : 'px-4 py-2 ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold rounded'
+                  ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                  : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
               }
             >
               Resume
@@ -626,37 +628,37 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
               onClick={() => handleViewDocument(application.cover_letter)}
               className={
                 application.cover_letter
-                  ? 'px-4 py-2 ml-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded'
-                  : 'px-4 py-2 ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold rounded'
+                  ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                  : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
               }
             >
               Cover Letter
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 ml-2 bg-red-500 hover:bg-red-800 text-white font-bold rounded"
+              className="ml-2 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-800"
             >
               Close
             </button>
           </div>
         </div>
 
-        <div className="overflow-auto" style={{ maxHeight: '80vh' }}>
+        <div className="overflow-auto" style={{ maxHeight: "80vh" }}>
           <div className="space-y-4">
-            {activeSection === 'application' && (
+            {activeSection === "application" && (
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-gray-700 p-6 rounded-xl shadow-lg">
-                    <h3 className="text-2xl font-bold text-white mb-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="rounded-xl bg-gray-700 p-6 shadow-lg">
+                    <h3 className="mb-3 text-2xl font-bold text-white">
                       Personal Details
                     </h3>
-                    <ul className="list-disc pl-5 space-y-2 text-gray-200">
+                    <ul className="list-disc space-y-2 pl-5 text-gray-200">
                       <li>
-                        <span className="font-semibold">Pronouns:</span>{' '}
+                        <span className="font-semibold">Pronouns:</span>{" "}
                         {application.pronouns}
                       </li>
                       <li>
-                        <span className="font-semibold">Phone Number:</span>{' '}
+                        <span className="font-semibold">Phone Number:</span>{" "}
                         {application.phone_number}
                       </li>
                       <li>
@@ -674,49 +676,49 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                             )}
                           </ul>
                         ) : (
-                          'N/A'
+                          "N/A"
                         )}
                       </li>
                     </ul>
                   </div>
 
-                  <div className="bg-gray-700 p-6 rounded-xl shadow-lg ">
-                    <h3 className="text-2xl font-bold text-white mb-3">
+                  <div className="rounded-xl bg-gray-700 p-6 shadow-lg ">
+                    <h3 className="mb-3 text-2xl font-bold text-white">
                       Academic Details
                     </h3>
-                    <ul className="list-disc pl-5 space-y-2 text-gray-200">
+                    <ul className="list-disc space-y-2 pl-5 text-gray-200">
                       <li>
-                        <span className="font-semibold">Year:</span>{' '}
+                        <span className="font-semibold">Year:</span>{" "}
                         {application.year}
                       </li>
                       <li>
-                        <span className="font-semibold">Graduation Year:</span>{' '}
+                        <span className="font-semibold">Graduation Year:</span>{" "}
                         {application.graduation_year}
                       </li>
                       <li>
                         <span className="font-semibold">
                           Graduation Quarter:
-                        </span>{' '}
+                        </span>{" "}
                         {application.graduation_qtr}
                       </li>
                       <li>
-                        <span className="font-semibold">Major:</span>{' '}
+                        <span className="font-semibold">Major:</span>{" "}
                         {application.major}
                       </li>
                       {application.minors && (
                         <li>
-                          <span className="font-semibold">Minors:</span>{' '}
+                          <span className="font-semibold">Minors:</span>{" "}
                           {application.minors}
                         </li>
                       )}
                       <li>
-                        <span className="font-semibold">GPA:</span>{' '}
+                        <span className="font-semibold">GPA:</span>{" "}
                         {application.gpa}
                       </li>
                     </ul>
                   </div>
-                  <div className="bg-gray-700 p-6 rounded-xl shadow-lg">
-                    <h3 className="text-2xl font-bold text-white mb-3">
+                  <div className="rounded-xl bg-gray-700 p-6 shadow-lg">
+                    <h3 className="mb-3 text-2xl font-bold text-white">
                       Scoring
                     </h3>
                     <div>
@@ -802,55 +804,55 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   </div>
                 </div>
 
-                <div className="bg-gray-700 p-6 rounded-xl shadow-lg ">
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                <div className="rounded-xl bg-gray-700 p-6 shadow-lg ">
+                  <h3 className="mb-3 text-2xl font-bold text-white">
                     Long Response
                   </h3>
-                  <div className="list-disc pl-5 space-y-2 text-gray-200 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid list-disc grid-cols-1 gap-6 space-y-2 pl-5 text-gray-200 md:grid-cols-3">
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Classes
                       </div>
                       <div>{application.classes}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Extracurriculars
                       </div>
                       <div className="">{application.extracirriculars}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Accomplishment
                       </div>
                       <div className="">{application.accomplishment}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Why AKPsi
                       </div>
                       <div className="">{application.why_akpsi}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Goals
                       </div>
                       <div className="">{application.goals}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Comfort Zone
                       </div>
                       <div className="">{application.comfort_zone}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Business Idea
                       </div>
                       <div className="">{application.business}</div>
                     </div>
                     <div>
-                      <div className="font-semibold text-xl text-center mb-2">
+                      <div className="mb-2 text-center text-xl font-semibold">
                         Additional Details
                       </div>
                       <div className="">{application.additional}</div>
@@ -861,72 +863,68 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             )}
 
             {/* Cases Evaluation Section */}
-            {activeSection === 'cases' && (
+            {activeSection === "cases" && (
               <div>
-                <h3 className="font-semibold text-lg mb-2">Case Study Notes</h3>
-                <div className="flex justify-center items-center gap-4 flex-wrap mt-2 mb-4">
-                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
-                    <span className="mb-2 font-semibold text-lg">
-                      Leadership:{' '}
+                <h3 className="mb-2 text-lg font-semibold">Case Study Notes</h3>
+                <div className="mb-4 mt-2 flex flex-wrap items-center justify-center gap-4">
+                  <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
+                    <span className="mb-2 text-lg font-semibold">
+                      Leadership:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.leadership_avg.toFixed(2)} */}
-                      t
+                      {/* {averages.leadership_avg.toFixed(2)} */}t
                     </span>
                   </div>
-                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
-                    <span className="mb-2 font-semibold text-lg">
-                      Teamwork:{' '}
+                  <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
+                    <span className="mb-2 text-lg font-semibold">
+                      Teamwork:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.teamwork_avg.toFixed(2)} */}
-                      y
+                      {/* {averages.teamwork_avg.toFixed(2)} */}y
                     </span>
                   </div>
-                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
-                    <span className="mb-2 font-semibold text-lg">
-                      Analytical:{' '}
+                  <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
+                    <span className="mb-2 text-lg font-semibold">
+                      Analytical:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.analytical_avg.toFixed(2)} */}
-                      p
+                      {/* {averages.analytical_avg.toFixed(2)} */}p
                     </span>
                   </div>
-                  <div className="p-4 rounded-lg shadow-md bg-gray-600 text-center">
-                    <span className="mb-2 font-semibold text-lg">
-                      Public Speaking:{' '}
+                  <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
+                    <span className="mb-2 text-lg font-semibold">
+                      Public Speaking:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.public_speaking_avg.toFixed(2)} */}
-                      e
+                      {/* {averages.public_speaking_avg.toFixed(2)} */}e
                     </span>
                   </div>
                 </div>
                 {/* Assuming all cases have the same structure, iterate over the keys of the first case to create a layout */}
                 {cases.length > 0 &&
                   Object.keys(cases[0])
-                    .filter((key) => ['active_name'].includes(key)) // Adjust as needed to exclude irrelevant keys
+                    .filter((key) => ["active_name"].includes(key)) // Adjust as needed to exclude irrelevant keys
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-600 rounded"
+                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-4"
                       >
-                        <div className="font-semibold text-white col-span-1">
+                        <div className="col-span-1 font-semibold text-white">
                           {attribute
-                            .split('_')
+                            .split("_")
                             .map(
                               (word) =>
                                 word.charAt(0).toUpperCase() + word.slice(1)
                             )
-                            .join(' ')}
+                            .join(" ")}
                           :
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="md:col-span-1 text-white">
+                          <div key={index} className="text-white md:col-span-1">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
-                            'number'
+                            "number"
                               ? caseItem[attribute as keyof Case]
                               : caseItem[attribute as keyof Case]}
                           </div>
@@ -935,28 +933,28 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     ))}
                 {cases.length > 0 &&
                   Object.keys(cases[0])
-                    .filter((key) => ['other_actives'].includes(key)) // Adjust as needed to exclude irrelevant keys
+                    .filter((key) => ["other_actives"].includes(key)) // Adjust as needed to exclude irrelevant keys
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-600 rounded"
+                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-4"
                       >
-                        <div className="font-semibold text-white col-span-1">
+                        <div className="col-span-1 font-semibold text-white">
                           {attribute
-                            .split('_')
+                            .split("_")
                             .map(
                               (word) =>
                                 word.charAt(0).toUpperCase() + word.slice(1)
                             )
-                            .join(' ')}
+                            .join(" ")}
                           :
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="md:col-span-1 text-white">
+                          <div key={index} className="text-white md:col-span-1">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
-                            'number'
+                            "number"
                               ? caseItem[attribute as keyof Case]
                               : caseItem[attribute as keyof Case]}
                           </div>
@@ -968,34 +966,34 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .filter(
                       (key) =>
                         ![
-                          'id',
-                          'prospect',
-                          'active',
-                          'active_name',
-                          'other_actives',
+                          "id",
+                          "prospect",
+                          "active",
+                          "active_name",
+                          "other_actives",
                         ].includes(key)
                     ) // Adjust as needed to exclude irrelevant keys
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-600 rounded"
+                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-4"
                       >
-                        <div className="font-semibold text-white col-span-1">
+                        <div className="col-span-1 font-semibold text-white">
                           {attribute
-                            .split('_')
+                            .split("_")
                             .map(
                               (word) =>
                                 word.charAt(0).toUpperCase() + word.slice(1)
                             )
-                            .join(' ')}
+                            .join(" ")}
                           :
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="md:col-span-1 text-white">
+                          <div key={index} className="text-white md:col-span-1">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
-                            'number'
+                            "number"
                               ? caseItem[attribute as keyof Case]
                               : caseItem[attribute as keyof Case]}
                           </div>
@@ -1006,17 +1004,17 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             )}
 
             {/* Interview Responses Section */}
-            {activeSection === 'interviews' && (
+            {activeSection === "interviews" && (
               <div>
-                <h3 className="font-semibold text-lg mb-2">Interview Notes</h3>
-                <div className="flex justify-center items-center gap-4 flex-wrap mt-2 mb-4">
+                <h3 className="mb-2 text-lg font-semibold">Interview Notes</h3>
+                <div className="mb-4 mt-2 flex flex-wrap items-center justify-center gap-4">
                   {Object.entries(ivAverages).map(([key, value]) => (
                     <div
                       key={key}
-                      className="p-4 rounded-lg shadow-md bg-gray-600 text-center"
+                      className="rounded-lg bg-gray-600 p-4 text-center shadow-md"
                     >
-                      <span className="mb-2 font-semibold text-lg capitalize">
-                        {key}:{' '}
+                      <span className="mb-2 text-lg font-semibold capitalize">
+                        {key}:{" "}
                       </span>
                       <span className="text-md font-bold">
                         {/* {isNaN(value) ? 'N/A' : value.toFixed(2)} */}
@@ -1029,19 +1027,19 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                 {interviews.length > 0 && (
                   <>
                     {/* Manually render active_name and other_actives first if they exist */}
-                    {['active_name', 'other_actives'].map((key) => (
+                    {["active_name", "other_actives"].map((key) => (
                       <div
                         key={key}
-                        className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-700 rounded"
+                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-4"
                       >
-                        <div className="font-semibold items-center ml-2 justify-center col-span-1">
+                        <div className="col-span-1 ml-2 items-center justify-center font-semibold">
                           {key
-                            .split('_')
+                            .split("_")
                             .map(
                               (word) =>
                                 word.charAt(0).toUpperCase() + word.slice(1)
                             )
-                            .join(' ')}
+                            .join(" ")}
                           :
                         </div>
                         {interviews.map((interview, index) => (
@@ -1056,26 +1054,26 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       .filter(
                         (key) =>
                           ![
-                            'id',
-                            'prospect_id',
-                            'active_id',
-                            'active_name',
-                            'other_actives',
+                            "id",
+                            "prospect_id",
+                            "active_id",
+                            "active_name",
+                            "other_actives",
                           ].includes(key)
                       )
                       .map((question) => (
                         <div
                           key={question}
-                          className="mb-2 grid grid-cols-1 md:grid-cols-4 p-2 gap-6 bg-gray-700 rounded"
+                          className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-4"
                         >
-                          <div className="font-semibold items-center ml-2 justify-center col-span-1">
+                          <div className="col-span-1 ml-2 items-center justify-center font-semibold">
                             {question
-                              .split('_')
+                              .split("_")
                               .map(
                                 (word) =>
                                   word.charAt(0).toUpperCase() + word.slice(1)
                               )
-                              .join(' ')}
+                              .join(" ")}
                             :
                           </div>
                           {interviews.map((interview, index) => (
@@ -1090,29 +1088,29 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
               </div>
             )}
 
-            {activeSection === 'comments' && (
+            {activeSection === "comments" && (
               <div className="">
-                <h3 className="font-semibold text-xl mb-2">
-                  Prospect Comments
+                <h3 className="mb-2 text-xl font-semibold">
+                  Prospect Comment Forms
                 </h3>
-                {isPIC ? (
+                {/* {isPIC ? (
                   <>
-                    <h3 className="font-semibold text-lg mb-2">
+                    <h3 className="mb-2 text-lg font-semibold">
                       Comment Input
                     </h3>
-                    <div className="flex gap-4 flex-wrap mt-2 mb-4">
+                    <div className="mb-4 mt-2 flex flex-wrap gap-4">
                       <div className="flex items-center">
                         <input
                           type="text"
-                          className="input mt-1 py-1 px-2 mr-2 rounded text-lg text-black"
+                          className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-black"
                           placeholder="Active name"
                           value={activeName}
                           onChange={handleActiveName}
-                        />{' '}
+                        />{" "}
                         <div className="w-full">
                           <input
                             type="text"
-                            className="input mt-1 py-1 px-2 mr-2 rounded text-lg text-black"
+                            className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-black"
                             placeholder="Prospect comment"
                             value={comment}
                             onChange={handleComment}
@@ -1120,7 +1118,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         <button
                           onClick={handleCommentSubmit}
-                          className="bg-blue-500 hover:bg-blue-700 text-lg text-white font-bold mt-1 py-1 px-2 rounded"
+                          className="mt-1 rounded bg-blue-500 px-2 py-1 text-lg font-bold text-white hover:bg-blue-700"
                         >
                           Submit
                         </button>
@@ -1129,16 +1127,36 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   </>
                 ) : (
                   <></>
-                )}
+                )} */}
                 <div className="">
-                  <h3 className="font-semibold text-lg mb-2">Comments</h3>
+                  <div className="mt-4 text-lg text-white">
+                    <span className="rounded bg-gray-700 p-2 font-bold">
+                      Active:
+                    </span>
+                    <span className="ml-2 rounded bg-gray-700 p-2 font-bold">
+                      Interaction
+                    </span>
+                    <span className="ml-2 rounded bg-gray-700 p-2 font-bold">
+                      Invite?
+                    </span>
+                    <span className="font-regular ml-2 rounded bg-gray-700 p-2">
+                      Comment
+                    </span>
+                    <div className="mt-4 flex w-1/3 border-b border-gray-400"></div>
+                  </div>
                   <ul>
                     {prospectComments.map((comment, index) => (
                       <li key={index} className="mt-4 text-lg text-white">
-                        <span className="font-bold bg-gray-700 rounded p-2">
+                        <span className="rounded bg-gray-700 p-2 font-bold">
                           {comment.active_name}:
                         </span>
-                        <span className="font-regular ml-2 bg-gray-700 rounded p-2">
+                        <span className="ml-2 rounded bg-gray-700 p-2 font-bold">
+                          {comment.interaction}
+                        </span>
+                        <span className="ml-2 rounded bg-gray-700 p-2 font-bold">
+                          {comment.invite}
+                        </span>
+                        <span className="font-regular ml-2 rounded bg-gray-700 p-2">
                           {comment.comment}
                         </span>
                       </li>
@@ -1147,23 +1165,26 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                 </div>
               </div>
             )}
-            {activeSection === 'scoring' && (
+            {activeSection === "scoring" && (
               <div>
-              <h3 className="font-semibold text-xl mb-2">Prospect Scoring</h3>
-              <div>
-                <h4 className="font-semibold text-lg">Score Components</h4>
-                <ul>
-                  {Object.entries(scoreComponents.components).map(([key, { score, outOf }]) => (
-                    <li key={key}>{`${key}: ${score.toFixed(2)} / ${outOf}`}</li>
-                  ))}
-                </ul>
-                {/* <p>Total Score: {scoreComponents.totalScore.toFixed(2)}</p> */}
+                <h3 className="mb-2 text-xl font-semibold">Prospect Scoring</h3>
+                <div>
+                  <h4 className="text-lg font-semibold">Score Components</h4>
+                  <ul>
+                    {Object.entries(scoreComponents.components).map(
+                      ([key, { score, outOf }]) => (
+                        <li
+                          key={key}
+                        >{`${key}: ${score.toFixed(2)} / ${outOf}`}</li>
+                      )
+                    )}
+                  </ul>
+                  {/* <p>Total Score: {scoreComponents.totalScore.toFixed(2)}</p> */}
+                </div>
               </div>
-            </div>
-                  
             )}
 
-            {activeSection === 'avatar' && (
+            {activeSection === "avatar" && (
               <div className="flex items-center justify-center gap-8">
                 <div className="flex text-center">
                   {avatarUrl ? (
@@ -1171,12 +1192,12 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       src={avatarUrl}
                       alt="Avatar"
                       className="inline-block max-h-96 w-auto object-cover"
-                      style={{ maxHeight: '70vh' }}
+                      style={{ maxHeight: "70vh" }}
                     />
                   ) : (
                     <div
-                      className="inline-block max-h-96 w-full bg-gray-200 flex items-center justify-center"
-                      style={{ maxHeight: '70vh', width: 'auto' }}
+                      className="inline-block flex max-h-96 w-full items-center justify-center bg-gray-200"
+                      style={{ maxHeight: "70vh", width: "auto" }}
                     >
                       <span className="text-lg">No Image</span>
                     </div>
@@ -1186,7 +1207,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   <div>
                     <label
                       htmlFor="avatar-upload"
-                      className="inline-block text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded cursor-pointer"
+                      className="inline-block cursor-pointer rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                     >
                       Upload New Image
                     </label>
@@ -1212,21 +1233,21 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
       {/* Document View Modal */}
       {viewDocument && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-          <div className="relative bg-white rounded-lg w-full max-w-4xl h-3/4 overflow-auto">
-            {viewDocument.endsWith('.doc') || viewDocument.endsWith('.docx') ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="relative h-3/4 w-full max-w-4xl overflow-auto rounded-lg bg-white">
+            {viewDocument.endsWith(".doc") || viewDocument.endsWith(".docx") ? (
               // Render this iframe if viewDocument ends with .doc or .docx
               <iframe
                 src={`https://view.officeapps.live.com/op/embed.aspx?src=${viewDocument}`}
-                className="w-full h-full"
+                className="h-full w-full"
               ></iframe>
             ) : (
               // Render this iframe if it does not end with .doc or .docx
-              <iframe src={viewDocument} className="w-full h-full"></iframe>
+              <iframe src={viewDocument} className="h-full w-full"></iframe>
             )}
             <button
               onClick={() => setViewDocument(null)}
-              className="absolute top-0 right-0 mt-4 mr-4 text-lg bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
+              className="absolute right-0 top-0 mr-4 mt-4 rounded bg-red-600 px-4 py-2 text-lg font-bold text-white hover:bg-red-800"
             >
               Close
             </button>
