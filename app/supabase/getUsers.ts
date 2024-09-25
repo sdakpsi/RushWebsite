@@ -268,6 +268,32 @@ export async function getActiveSubmissions(
     return null;
   }
 
+  if (type === "interviews") {
+    const { data, error } = await supabase
+      .from(type)
+      .select("prospect_id")
+      .eq("active_id", user.id);
+
+    if (error) {
+      console.error(`Error fetching ${type} prospects:`, error.message);
+      return null;
+    }
+
+    const prospectIds = data.map((item) => item.prospect_id as string);
+
+    const { data: prospectData, error: prospectError } = await supabase
+      .from("users")
+      .select("full_name")
+      .in("id", prospectIds);
+
+    if (prospectError) {
+      console.error("Error fetching prospect data:", prospectError.message);
+      return null;
+    }
+
+    return prospectData.map((prospect) => prospect.full_name as string);
+  }
+
   const { data, error } = await supabase
     .from(type)
     .select("prospect")
