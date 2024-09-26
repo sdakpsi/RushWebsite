@@ -6,6 +6,8 @@ import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useCheckActive";
 import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
+import Checkbox from "@/components/Checkbox";
+import { v4 as uuidv4 } from "uuid";
 
 // Mirror implementation of interview page
 
@@ -24,7 +26,7 @@ function useSelectedProspect() {
   };
 }
 
-export default function Page() {
+export default function Page(this: any) {
   const { isActive, isLoading } = useActiveStatus();
   const {
     selectedProspect,
@@ -36,12 +38,17 @@ export default function Page() {
   const [comment, setComment] = useState("");
   const [interaction, setInteraction] = useState("");
   const [invite, setInvite] = useState("");
+  const [newProspectName, setNewProspectName] = useState("");
+  const [checked, setChecked] = useState(false);
+
   const supabase = createClient();
 
   const submitComment = async () => {
     if (!selectedProspect) {
-      customToast("Please select a prospect before submitting.", "error");
-      return;
+      if (checked && newProspectName.length == 0) {
+        customToast("Please enter a prospect before submitting.", "error");
+        return;
+      }
     }
 
     if (interaction === "" || invite === "" || comment === "") {
@@ -61,27 +68,52 @@ export default function Page() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      if (checked) {
+        const { data, error } = await supabase.from("comments").insert([
+          {
+            prospect_id: '666' + uuidv4().slice(3),
+            prospect_name: newProspectName,
+            active_id: user?.id,
+            active_name: user?.user_metadata.name,
+            comment: comment,
+            interaction: interaction, // Storing interaction result
+            invite: invite, // Storing invite response
+          },
+        ]);
+        setNewProspectName("");
 
-      const { data, error } = await supabase.from("comments").insert([
-        {
-          prospect_id: selectedProspect.id,
-          prospect_name: selectedProspect.full_name,
-          active_id: user?.id,
-          active_name: user?.user_metadata.name,
-          comment: comment,
-          interaction: interaction, // Storing interaction result
-          invite: invite, // Storing invite response
-        },
-      ]);
+        if (error) {
+          throw new Error(error.message);
+        }
 
-      if (error) {
-        throw new Error(error.message);
+        customToast(
+          `Submitted comment for ${newProspectName}: ${comment}`,
+          "success"
+        );
       }
+      else {
+        const { data, error } = await supabase.from("comments").insert([
+          {
+            prospect_id: selectedProspect.id,
+            prospect_name: selectedProspect.full_name,
+            active_id: user?.id,
+            active_name: user?.user_metadata.name,
+            comment: comment,
+            interaction: interaction, // Storing interaction result
+            invite: invite, // Storing invite response
+          },
+        ]);
+        
 
-      customToast(
-        `Submitted comment for ${selectedProspect.full_name}: ${comment}`,
-        "success"
-      );
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        customToast(
+          `Submitted comment for ${selectedProspect.full_name}: ${comment}`,
+          "success"
+        );
+      }
       setComment("");
       setInteraction("");
       setInvite("");
@@ -114,12 +146,30 @@ export default function Page() {
                 Selected Prospect: {selectedProspect?.full_name || "None"} -{" "}
                 {selectedProspect?.email || "None"}
               </p>
-
+              {!selectedProspect?.full_name &&
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(e) => setChecked(e.target.checked)}
+                  />
+                  <label> Manually enter prospect name?</label>
+                </div>
+              } 
               {/* Comment Input */}
-              {selectedProspect && (
+              {(selectedProspect || checked) && (
                 <div className="flex flex-col">
                   {/* Interaction Question */}
                   <div className="flex flex-col">
+                  {checked && (
+                    <textarea
+                      className="rounzded border p-1 text-gray-700"
+                      placeholder="Enter prospect name"
+                      value={newProspectName}
+                      onChange={(e) => setNewProspectName(e.target.value)}
+                      rows={1}
+                    />
+                  )}
                     <label className="mb-2 text-gray-200">
                       How was the interaction?
                     </label>
