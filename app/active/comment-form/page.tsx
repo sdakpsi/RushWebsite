@@ -161,7 +161,7 @@ export default function Page(this: any) {
                 <div className="flex flex-col">
                   {/* Interaction Question */}
                   <div className="flex flex-col">
-                  {checked && (
+                  {(checked && !selectedProspect) && (
                     <textarea
                       className="rounzded border p-1 text-gray-700"
                       placeholder="Enter prospect name"
