@@ -30,7 +30,7 @@ export default async function ProtectedPage() {
           </p>
 
           <p className="bon-vivant-text-regular mx-auto mt-4 max-w-xl text-center text-xl !leading-tight lg:text-xl">
-            Due Thursday, October 3rd at 12 PM
+            Due Thursday, October 3rd at 2 PM
           </p>
           <p className="mt-4 text-gray-500">
             If you're having any issues or have any questions, please contact

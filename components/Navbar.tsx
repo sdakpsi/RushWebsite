@@ -54,7 +54,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         <div className="hidden items-center gap-4 sm:flex">
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
-          <RCButton is_pic={isPIC} />
+          <RCButton is_active={isActive} />
           <AuthButton user={user} />
         </div>
       </div>

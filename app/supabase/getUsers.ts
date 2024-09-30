@@ -40,7 +40,7 @@ export async function getUsers() {
 export async function getInterestFormSubmissions() {
   const supabase = createClient();
 
-  let isPIC = false;
+  let isActive = false;
   let interestFormData = [];
   const {
     data: { user },
@@ -52,10 +52,10 @@ export async function getInterestFormSubmissions() {
       .select("is_active")
       .eq("id", user.id)
       .single();
-    isPIC = data?.is_active;
+    isActive = data?.is_active;
   }
 
-  if (isPIC) {
+  if (isActive) {
     const { data, error } = await supabase
       .from("interests")
       .select("*")
