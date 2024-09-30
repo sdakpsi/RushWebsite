@@ -1,9 +1,9 @@
-'use client';
-import { getInterviewProspects } from '@/app/supabase/getUsers';
-import { ProspectInterview } from '@/lib/types';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import loadingImage from './akpsilogo.png';
+"use client";
+import { getInterviewProspects } from "@/app/supabase/getUsers";
+import { ProspectInterview } from "@/lib/types";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import loadingImage from "./akpsilogo.png";
 
 interface InterviewSearchBarProps {
   selectedProspect: ProspectInterview | null;
@@ -17,7 +17,7 @@ export default function InterviewSearchBar({
   const [prospectData, setProspectData] = useState<ProspectInterview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
   const [filteredData, setFilteredData] = useState<ProspectInterview[]>([]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function InterviewSearchBar({
 
   useEffect(() => {
     const filtered =
-      searchInput === ''
+      searchInput === ""
         ? prospectData
         : prospectData.filter((prospect) =>
             prospect.full_name.toLowerCase().includes(searchInput.toLowerCase())
@@ -51,7 +51,7 @@ export default function InterviewSearchBar({
 
   const handleSelectProspect = (prospect: ProspectInterview) => {
     setSelectedProspect(prospect);
-    setSearchInput('');
+    setSearchInput("");
   };
 
   if (isLoading) {
@@ -74,20 +74,20 @@ export default function InterviewSearchBar({
       >
         Search for and select a prospect:
       </label>
-      <div className="mt-1 relative">
+      <div className="relative mt-1">
         <input
           type="text"
           name="search"
           id="search"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="shadow-sm focus:ring-indigo-500 block w-full sm:text-lg bg-gray-200 border-gray-300 rounded-md text-black"
+          className="block w-full rounded-md border-gray-300 bg-gray-200 text-black shadow-sm focus:ring-indigo-500 sm:text-lg"
         />
-        <div className="suggestions w-full bg-gray-800 mt-2 rounded-md shadow-lg">
+        <div className="suggestions mt-2 w-full rounded-md bg-gray-800 shadow-lg">
           {filteredData.slice(0, 5).map((prospect, index) => (
             <div
               key={index}
-              className="suggestion px-4 py-2 border-b border-gray-700 text-white cursor-pointer hover:bg-gray-700"
+              className="suggestion cursor-pointer border-b border-gray-700 px-4 py-2 text-white hover:bg-gray-700"
               onClick={() => handleSelectProspect(prospect)}
             >
               {prospect.full_name} - {prospect.email}

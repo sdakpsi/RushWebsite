@@ -56,6 +56,10 @@ export default function ProtectedPage() {
                 (comment: any) => comment.invite === "Yes"
               ).length;
 
+              const noInviteCount = prospectComments.filter(
+                (comment: any) => comment.invite === "No"
+              ).length;
+
               const isExpanded = expandedProspects.includes(prospectId);
 
               return (
@@ -80,6 +84,14 @@ export default function ProtectedPage() {
                         }`}
                       >
                         {yesInviteCount} yes
+                      </span>{" "}
+                      <span>|</span>{" "}
+                      <span
+                        className={`font-semibold ${
+                          noInviteCount <= 0 ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        {noInviteCount} no
                       </span>{" "}
                       | {numberOfComments}{" "}
                       {numberOfComments > 1 ? "comments" : "comment"}

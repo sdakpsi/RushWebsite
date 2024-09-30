@@ -55,12 +55,9 @@ export default async function Index() {
                   Fill out the application for consideration! <br></br>Due
                   Thursday, October 3rd at 12 PM.
                 </p>
-                <Link href="/">
-                  <button
-                    className="text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 lg:text-lg"
-                    disabled={true}
-                  >
-                    Application not currently open
+                <Link href="/application">
+                  <button className="text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
+                    Application Form
                   </button>
                 </Link>
               </>
@@ -69,9 +66,6 @@ export default async function Index() {
                 <p className="${bonVivant.className} bon-vivant-text-bold max-w-xl text-center text-xl !leading-tight lg:text-2xl">
                   Please sign in for the application. <br></br>Due Thursday,
                   October 3rd at 12 PM.
-                </p>
-                <p className="${bonVivant.className} bon-vivant-text-bold max-w-xl text-center text-xs !leading-tight">
-                  (not currently open)
                 </p>
 
                 {/* Google Sign-In Button */}
