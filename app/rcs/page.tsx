@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { getIsPIC, getInterestFormSubmissions } from "../supabase/getUsers";
+import {
+  getIsPIC,
+  getInterestFormSubmissions,
+  getIsActive,
+} from "../supabase/getUsers";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,7 +23,7 @@ export default function ProtectedPage() {
   const [interestFormData, setInterestFormData] = useState<
     InterestFormSubmission[]
   >([]);
-  const [isPIC, setIsPIC] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
@@ -27,8 +31,8 @@ export default function ProtectedPage() {
     try {
       const usersData = await getInterestFormSubmissions();
       setInterestFormData(usersData);
-      const picStatus = await getIsPIC();
-      setIsPIC(picStatus);
+      const activeStatus = await getIsActive();
+      setIsActive(activeStatus);
       setIsLoading(false); // End loading
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -63,7 +67,7 @@ export default function ProtectedPage() {
     <div className="flex w-full flex-1 items-center justify-center py-10">
       <div className="animate-in mx-8 w-full">
         <div className="text-center">
-          {isPIC ? (
+          {isActive ? (
             <div className="mt-8">
               <p className="mb-2 text-xl leading-tight lg:text-4xl">
                 Interest Form Submissions

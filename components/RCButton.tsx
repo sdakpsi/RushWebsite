@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import React, { useState, useEffect, useRef } from 'react';
+import Link from "next/link";
+import React, { useState, useEffect, useRef } from "react";
 
 interface PICButtonProps {
-  is_pic: boolean | null;
+  is_active: boolean | null;
 }
 
-const RCButton: React.FC<PICButtonProps> = ({ is_pic }) => {
-  return is_pic ? (
+const RCButton: React.FC<PICButtonProps> = ({ is_active }) => {
+  return is_active ? (
     <div className="">
       <Link href="/rcs">
-        <button className="py-2 px-4 rounded-md bg-btn-background hover:bg-btn-background-hover focus:outline-none focus:ring flex items-center">
+        <button className="flex items-center rounded-md bg-btn-background px-4 py-2 hover:bg-btn-background-hover focus:outline-none focus:ring">
           RCs
         </button>
       </Link>

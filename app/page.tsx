@@ -30,6 +30,17 @@ export default async function Index() {
             Welcome to the Alpha Kappa Psi Fall Rush 2024 Application Portal
           </p>
 
+          {/* {user ? (
+            <div className="mb-8 mt-6 rounded-md bg-sky-900 p-4 ">
+              <p className="${bonVivant.className} bon-vivant-text-bold text-md text-center !leading-tight lg:text-2xl">
+                Hello {user.user_metadata.full_name}! Bookmark this page as you
+                will be applying through here.
+              </p>
+            </div>
+          ) : (
+            <></>
+          )} */}
+
           <p className="text-left text-sm text-gray-200 lg:text-lg">
             Please fill out the interest form below to receive updates regarding
             rush!
@@ -53,7 +64,7 @@ export default async function Index() {
               <>
                 <p className="${bonVivant.className} bon-vivant-text-bold text-center text-lg !leading-tight lg:text-2xl">
                   Fill out the application for consideration! <br></br>Due
-                  Thursday, October 3rd at 12 PM.
+                  Thursday, October 3rd at 2 PM.
                 </p>
                 <Link href="/application">
                   <button className="text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
@@ -65,7 +76,7 @@ export default async function Index() {
               <>
                 <p className="${bonVivant.className} bon-vivant-text-bold max-w-xl text-center text-xl !leading-tight lg:text-2xl">
                   Please sign in for the application. <br></br>Due Thursday,
-                  October 3rd at 12 PM.
+                  October 3rd at 2 PM.
                 </p>
 
                 {/* Google Sign-In Button */}
