@@ -30,7 +30,7 @@ export default async function Index() {
             Welcome to the Alpha Kappa Psi Fall Rush 2024 Application Portal
           </p>
 
-          {/* {user ? (
+          {user ? (
             <div className="mb-8 mt-6 rounded-md bg-sky-900 p-4 ">
               <p className="${bonVivant.className} bon-vivant-text-bold text-md text-center !leading-tight lg:text-2xl">
                 Hello {user.user_metadata.full_name}! Bookmark this page as you
@@ -39,7 +39,7 @@ export default async function Index() {
             </div>
           ) : (
             <></>
-          )} */}
+          )}
 
           <p className="text-left text-sm text-gray-200 lg:text-lg">
             Please fill out the interest form below to receive updates regarding
