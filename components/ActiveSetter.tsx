@@ -44,6 +44,9 @@ export default function ActiveSetter() {
       </p>
       {isActive ? (
         <div className="flex flex-col gap-6 mt-4 justify-center items-center">
+          <NextLinkButton destination="/active/comment-form">
+            Comment Form
+          </NextLinkButton>
           <NextLinkButton destination="/active/case">
             Case Study Portal
           </NextLinkButton>
