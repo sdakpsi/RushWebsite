@@ -49,10 +49,10 @@ export async function getInterestFormSubmissions() {
   if (user) {
     const { data, error } = await supabase
       .from("users")
-      .select("is_pic")
+      .select("is_active")
       .eq("id", user.id)
       .single();
-    isPIC = data?.is_pic;
+    isPIC = data?.is_active;
   }
 
   if (isPIC) {
