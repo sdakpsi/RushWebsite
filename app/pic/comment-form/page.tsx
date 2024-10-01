@@ -74,7 +74,14 @@ export default function ProtectedPage() {
                     className="flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600"
                     onClick={() => toggleProspect(prospectId)}
                   >
-                    <span className="text-lg font-bold">{prospectName}</span>
+                    <span className="mr-2 text-lg font-bold">
+                      {prospectId.slice(0, 5) === "66666" ? (
+                        <span className="text-red-600">*</span>
+                      ) : (
+                        <></>
+                      )}{" "}
+                      {prospectName}
+                    </span>
                     <span className="text-sm">
                       <span
                         className={`font-semibold ${
