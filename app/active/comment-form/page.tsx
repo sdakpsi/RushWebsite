@@ -71,7 +71,7 @@ export default function Page(this: any) {
       if (checked) {
         const { data, error } = await supabase.from("comments").insert([
           {
-            prospect_id: '666' + uuidv4().slice(3),
+            prospect_id: "666" + uuidv4().slice(3),
             prospect_name: newProspectName,
             active_id: user?.id,
             active_name: user?.user_metadata.name,
@@ -90,8 +90,7 @@ export default function Page(this: any) {
           `Submitted comment for ${newProspectName}: ${comment}`,
           "success"
         );
-      }
-      else {
+      } else {
         const { data, error } = await supabase.from("comments").insert([
           {
             prospect_id: selectedProspect.id,
@@ -103,7 +102,6 @@ export default function Page(this: any) {
             invite: invite, // Storing invite response
           },
         ]);
-        
 
         if (error) {
           throw new Error(error.message);
@@ -146,7 +144,7 @@ export default function Page(this: any) {
                 Selected Prospect: {selectedProspect?.full_name || "None"} -{" "}
                 {selectedProspect?.email || "None"}
               </p>
-              {!selectedProspect?.full_name &&
+              {!selectedProspect?.full_name && (
                 <div>
                   <input
                     type="checkbox"
@@ -155,21 +153,21 @@ export default function Page(this: any) {
                   />
                   <label> Manually enter prospect name?</label>
                 </div>
-              } 
+              )}
               {/* Comment Input */}
               {(selectedProspect || checked) && (
                 <div className="flex flex-col">
                   {/* Interaction Question */}
                   <div className="flex flex-col">
-                  {(checked && !selectedProspect) && (
-                    <textarea
-                      className="rounzded border p-1 text-gray-700"
-                      placeholder="Enter prospect name"
-                      value={newProspectName}
-                      onChange={(e) => setNewProspectName(e.target.value)}
-                      rows={1}
-                    />
-                  )}
+                    {checked && !selectedProspect && (
+                      <textarea
+                        className="rounzded border p-1 text-gray-700"
+                        placeholder="Enter prospect name"
+                        value={newProspectName}
+                        onChange={(e) => setNewProspectName(e.target.value)}
+                        rows={1}
+                      />
+                    )}
                     <label className="mb-2 text-gray-200">
                       How was the interaction?
                     </label>
@@ -212,6 +210,12 @@ export default function Page(this: any) {
                         onClick={() => setInvite("No")}
                       >
                         No
+                      </button>
+                      <button
+                        className={`rounded px-4 py-2 ${invite === "N/A" ? "bg-blue-700" : "bg-gray-900"}`}
+                        onClick={() => setInvite("N/A")}
+                      >
+                        N/A
                       </button>
                     </div>
                   </div>
