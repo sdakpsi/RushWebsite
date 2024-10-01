@@ -71,7 +71,7 @@ export default function Page(this: any) {
       if (checked) {
         const { data, error } = await supabase.from("comments").insert([
           {
-            prospect_id: "666" + uuidv4().slice(3),
+            prospect_id: "66666" + uuidv4().slice(5),
             prospect_name: newProspectName,
             active_id: user?.id,
             active_name: user?.user_metadata.name,
