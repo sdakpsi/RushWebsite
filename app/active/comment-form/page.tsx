@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 
 // Mirror implementation of interview page
 
-import { ProspectInterview } from "@/lib/types";
+import { type ProspectInterview } from "@/lib/types";
 
 function useSelectedProspect() {
   const [selectedProspect, setSelectedProspect] =
@@ -116,6 +116,7 @@ export default function Page(this: any) {
       setInteraction("");
       setInvite("");
       setSelectedProspect(null);
+      setChecked(false);
     } catch (error: any) {
       customToast(`Error submitting comment: ${error.message}`, "error");
     } finally {
