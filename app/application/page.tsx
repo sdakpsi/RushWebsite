@@ -32,13 +32,14 @@ export default async function ProtectedPage() {
           <p className="bon-vivant-text-regular mx-auto mt-4 max-w-xl text-center text-xl !leading-tight lg:text-xl">
             Due Thursday, October 3rd at 2 PM
           </p>
-          <p className="mt-4 text-gray-500">
-            If you're having any issues or have any questions, please contact
-            Ally or Val @ (916) 841-7952 / (408) 805-2888!
-          </p>
           <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
           <div className="mb-10">
-            <NameForm />
+            {/* <NameForm /> */}
+            <p>
+              The app deadline has passed. If you are concerned about a missing
+              submission or have any questions, please contact Ally or Val @
+              (916) 841-7952 / (408) 805-2888!{" "}
+            </p>
           </div>
         </div>
       </div>
