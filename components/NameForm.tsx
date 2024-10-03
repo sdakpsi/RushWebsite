@@ -550,7 +550,7 @@ export default function NameForm() {
           </div>
           <div className="mb-4">
             <label className={textLabel} htmlFor="cumulativeGPA">
-              Cumulative GPA:
+              Cumulative GPA (/4.0):
             </label>
             <input
               className={`${smallInput} ${
@@ -568,6 +568,10 @@ export default function NameForm() {
                 Please enter a valid GPA
               </p>
             )}
+            <div className="mt-2 text-xs italic">
+              (High School GPA for Freshmen or Previous College GPA for
+              Transfers)
+            </div>
           </div>
 
           <div className="col-span-2 mb-4">
