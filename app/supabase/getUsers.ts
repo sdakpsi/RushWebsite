@@ -205,11 +205,22 @@ export async function getComments(): Promise<Comment[]> {
     .select("*")
     .order("prospect_name", { ascending: true });
 
+  const userData = await getUsers();
+
   if (error) {
     console.error("Error fetching interviews:", error.message);
     return [];
   }
-  return data;
+
+  const filteredData = data.filter((comment) => {
+    const userDataUser = userData.find(
+      (user) => user.id === comment.prospect_id
+    );
+    console.log(userDataUser);
+    return userDataUser;
+  });
+
+  return filteredData;
 }
 
 export async function getInterviewProspects(): Promise<
