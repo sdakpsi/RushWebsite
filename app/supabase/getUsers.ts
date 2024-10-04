@@ -200,7 +200,10 @@ export async function getInterviews(prospectID: string | null) {
 export async function getComments(): Promise<Comment[]> {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from("comments").select("*");
+  const { data, error } = await supabase
+    .from("comments")
+    .select("*")
+    .order("prospect_name", { ascending: true });
 
   if (error) {
     console.error("Error fetching interviews:", error.message);
