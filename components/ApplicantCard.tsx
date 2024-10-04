@@ -1,6 +1,6 @@
-import { createClient } from '@/utils/supabase/client';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import { createClient } from "@/utils/supabase/client";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface Packet {
   id: string;
@@ -26,27 +26,27 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   applicant,
   onViewApplication,
 }) => {
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [numCaseStudies, setNumCaseStudies] = useState<number>(0);
   const [caseActives, setCaseActives] = useState<string[]>([]);
 
   const [numInterviews, setNumInterviews] = useState<number>(0);
   const [interviewActives, setInterviewActives] = useState<string[]>([]);
 
-  //const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(0);
   const supabase = createClient();
   useEffect(() => {
     const fetchAvatarUrl = async () => {
       try {
         const { data, error } = await supabase
-          .from('user_avatar')
-          .select('avatar_url')
-          .eq('user_id', applicant.id)
+          .from("user_avatar")
+          .select("avatar_url")
+          .eq("user_id", applicant.id)
           .single();
         if (error) throw error;
         if (data) setAvatarUrl(data.avatar_url);
       } catch (error: any) {
-        console.error('Error fetching avatar URL:', error.message);
+        console.error("Error fetching avatar URL:", error.message);
       }
     };
 
@@ -56,12 +56,12 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
     const fetchNumCaseStudies = async () => {
       try {
         const { data, error } = await supabase
-          .from('case_studies')
-          .select('active_name') // Ensure 'active_name' is included in your select clause
-          .eq('prospect', applicant.id);
+          .from("case_studies")
+          .select("active_name") // Ensure 'active_name' is included in your select clause
+          .eq("prospect", applicant.id);
 
         if (error) {
-          console.error('Error fetching active names:', error);
+          console.error("Error fetching active names:", error);
           return;
         }
 
@@ -70,7 +70,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
         setCaseActives(names); // Setting the state with the array of names
         setNumCaseStudies(names.length);
       } catch (error: any) {
-        console.error('Error fetching number of case studies:', error.message);
+        console.error("Error fetching number of case studies:", error.message);
       }
     };
     fetchNumCaseStudies();
@@ -80,12 +80,12 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
     const fetchInterviews = async () => {
       try {
         const { data, error } = await supabase
-          .from('interviews')
-          .select('active_name') // Ensure 'active_name' is included in your select clause
-          .eq('prospect_id', applicant.id);
+          .from("interviews")
+          .select("active_name") // Ensure 'active_name' is included in your select clause
+          .eq("prospect_id", applicant.id);
 
         if (error) {
-          console.error('Error fetching active names:', error);
+          console.error("Error fetching active names:", error);
           return;
         }
 
@@ -94,29 +94,29 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
         setInterviewActives(names); // Setting the state with the array of names
         setNumInterviews(names.length);
       } catch (error: any) {
-        console.error('Error fetching number of interviews:', error.message);
+        console.error("Error fetching number of interviews:", error.message);
       }
     };
     fetchInterviews();
   }, []); // Add applicant.id as a dependency
 
-  // useEffect(() => {
-  //   const fetchTotal = async () => {
-  //     try {
-  //       const { data, error } = await supabase
-  //         .from('users')
-  //         .select('total_score')
-  //         .eq('id', applicant.id);
+  useEffect(() => {
+    const fetchTotal = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("total_score")
+          .eq("id", applicant.id);
 
-  //       if (error) throw error;
-  //       if (data) setTotal(data[0].total_score);
-  //     } catch (error: any) {
-  //       console.error('Error fetching avatar URL:', error.message);
-  //     }
-  //   };
+        if (error) throw error;
+        if (data) setTotal(data[0].total_score);
+      } catch (error: any) {
+        console.error("Error fetching avatar URL:", error.message);
+      }
+    };
 
-  //   fetchTotal();
-  // }, [applicant.id]);
+    fetchTotal();
+  }, [applicant.id]);
 
   return (
     <button
@@ -124,23 +124,23 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
         applicant.application &&
         onViewApplication(applicant.application, applicant.id)
       }
-      className="hover:scale-[1.03] transition duration-200"
+      className="transition duration-200 hover:scale-[1.03]"
     >
-      <div className="bg-btn-background rounded-lg shadow-lg p-3 m-2 flex flex-col items-start">
+      <div className="m-2 flex flex-col items-start rounded-lg bg-btn-background p-3 shadow-lg">
         <div className="flex flex-row">
           {avatarUrl ? (
             <img
               src={avatarUrl}
               alt="Avatar"
-              className="w-12 h-12 rounded-full object-cover"
+              className="h-12 w-12 rounded-full object-cover"
             />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-gray-200 text-xs pt-2 items-center justify-center">
+            <div className="h-12 w-12 items-center justify-center rounded-full bg-gray-200 pt-2 text-xs">
               <span className="text-gray-500">No Image</span>
             </div>
           )}
-          <div className="flex flex-col text-left ml-4">
-            <h3 className="font-bold text-lg">{applicant.full_name}</h3>
+          <div className="ml-4 flex flex-col text-left">
+            <h3 className="text-lg font-bold">{applicant.full_name}</h3>
             <p className="text-xs">
               <i>{applicant.email}</i>
             </p>
@@ -149,27 +149,26 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
         <div className="mt-2 text-left">
           {numCaseStudies === 3 ? (
             <p className="text-xs text-green-500">
-              {numCaseStudies} Cases: {caseActives.join(', ')}
+              {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           ) : (
             <p className="text-xs text-red-500">
-              {numCaseStudies} Cases: {caseActives.join(', ')}
+              {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           )}
           {numInterviews === 3 ? (
             <p className="text-xs text-green-500">
-              {numInterviews} IVs: {interviewActives.join(', ')}
+              {numInterviews} IVs: {interviewActives.join(", ")}
             </p>
           ) : (
             <p className="text-xs text-red-500">
-              {numInterviews} IVs: {interviewActives.join(', ')}
+              {numInterviews} IVs: {interviewActives.join(", ")}
             </p>
           )}
-          <p className="text-xs">Total Score: type shieeetttt</p>
         </div>
-        {/* <div className="mt-2">
+        <div className="mt-2">
           <span>Total Score: {total}</span>
-        </div> */}
+        </div>
       </div>
     </button>
   );

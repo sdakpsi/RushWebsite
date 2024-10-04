@@ -721,18 +721,15 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     <h3 className="mb-3 text-2xl font-bold text-white">
                       Scoring
                     </h3>
-                    <div>
-                      <p>type shiiiittt lmaooooooo</p>
-                    </div>
-                    {/* <ul className="list-disc pl-5 space-y-2 text-gray-200">
+                    <ul className="list-disc space-y-2 pl-5 text-gray-200">
                       <li>
-                        <span className="font-semibold">Case Study:</span>{' '}
+                        <span className="font-semibold">Case Study:</span>{" "}
                         {Object.values(averages)
                           .reduce((acc, cur) => acc + cur, 0)
                           .toFixed(2)}
                       </li>
                       <li>
-                        <span className="font-semibold">Interview:</span>{' '}
+                        <span className="font-semibold">Interview:</span>{" "}
                         {Object.values(ivAverages)
                           .reduce((acc, cur) => acc + cur, 0)
                           .toFixed(2)}
@@ -740,9 +737,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <li>
                         <span className="font-semibold">
                           Application Score:
-                        </span>{' '}
+                        </span>{" "}
                         <span>
-                          {currentScore !== '' ? currentScore : 'not set'}
+                          {currentScore !== "" ? currentScore : "not set"}
                         </span>
                         {isPIC ? (
                           <div className="flex items-center space-x-2">
@@ -750,14 +747,14 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                               type="text"
                               inputMode="numeric" // Helps bring up numeric keypad on mobile devices
                               pattern="[1-7]|8" // Ensures only numbers between 1 and 10 are accepted
-                              className="input mt-1 p-1 rounded text-xs text-black"
+                              className="input mt-1 rounded p-1 text-xs text-black"
                               placeholder="Enter a score (1-8)"
                               value={score}
                               onChange={handleScoreChange}
                             />
                             <button
                               onClick={handleSubmit}
-                              className="bg-blue-500 hover:bg-blue-700 text-xs text-white font-bold mt-1 py-1 px-2 rounded"
+                              className="mt-1 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white hover:bg-blue-700"
                             >
                               Submit
                             </button>
@@ -767,11 +764,11 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         )}
                       </li>
                       <li>
-                        <span className="font-semibold">Resume Score:</span>{' '}
+                        <span className="font-semibold">Resume Score:</span>{" "}
                         <span>
-                          {currentScoreResume !== ''
+                          {currentScoreResume !== ""
                             ? currentScoreResume
-                            : 'not set'}
+                            : "not set"}
                         </span>
                         {isPIC ? (
                           <div className="flex items-center space-x-2">
@@ -779,14 +776,14 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                               type="text"
                               inputMode="numeric" // Helps bring up numeric keypad on mobile devices
                               pattern="[1-7]|8" // Ensures only numbers between 1 and 10 are accepted
-                              className="input mt-1 p-1 rounded text-xs text-black"
+                              className="input mt-1 rounded p-1 text-xs text-black"
                               placeholder="Enter a score (1-8)"
                               value={scoreResume}
                               onChange={handleScoreChangeResume}
                             />
                             <button
                               onClick={handleSubmitResume}
-                              className="bg-blue-500 hover:bg-blue-700 text-xs text-white font-bold mt-1 py-1 px-2 rounded"
+                              className="mt-1 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white hover:bg-blue-700"
                             >
                               Submit
                             </button>
@@ -800,7 +797,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           Total Score: {scoreComponents.totalScore.toFixed(2)}
                         </span>
                       </li>
-                    </ul> */}
+                    </ul>
                   </div>
                 </div>
 
@@ -1017,8 +1014,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         {key}:{" "}
                       </span>
                       <span className="text-md font-bold">
-                        {/* {isNaN(value) ? 'N/A' : value.toFixed(2)} */}
-                        type shitttt
+                        {isNaN(value) ? "N/A" : value.toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -1179,7 +1175,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       )
                     )}
                   </ul>
-                  {/* <p>Total Score: {scoreComponents.totalScore.toFixed(2)}</p> */}
+                  <p>Total Score: {scoreComponents.totalScore.toFixed(2)}</p>
                 </div>
               </div>
             )}
