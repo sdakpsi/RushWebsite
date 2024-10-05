@@ -256,7 +256,7 @@ export async function getInterviewProspects(): Promise<
       .select("full_name, email, id")
       .eq("is_active", false)
       .eq("is_pic", false)
-      //.eq('cased', true) //TODO: Make this a paramter that can be passed in
+      .eq("cased", true) //TODO: Make this a paramter that can be passed in
       .order("full_name", { ascending: true });
 
     if (error) {
