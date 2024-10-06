@@ -26,7 +26,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   applicant,
   onViewApplication,
 }) => {
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  // const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [numCaseStudies, setNumCaseStudies] = useState<number>(0);
   const [caseActives, setCaseActives] = useState<string[]>([]);
 
@@ -35,23 +35,23 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
 
   const [total, setTotal] = useState(0);
   const supabase = createClient();
-  useEffect(() => {
-    const fetchAvatarUrl = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("user_avatar")
-          .select("avatar_url")
-          .eq("user_id", applicant.id)
-          .single();
-        if (error) throw error;
-        if (data) setAvatarUrl(data.avatar_url);
-      } catch (error: any) {
-        console.error("Error fetching avatar URL:", error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAvatarUrl = async () => {
+  //     try {
+  //       const { data, error } = await supabase
+  //         .from("user_avatar")
+  //         .select("avatar_url")
+  //         .eq("user_id", applicant.id)
+  //         .single();
+  //       if (error) throw error;
+  //       if (data) setAvatarUrl(data.avatar_url);
+  //     } catch (error: any) {
+  //       console.error("Error fetching avatar URL:", error.message);
+  //     }
+  //   };
 
-    fetchAvatarUrl();
-  }, [applicant.id]);
+  //   fetchAvatarUrl();
+  // }, [applicant.id]);
   useEffect(() => {
     const fetchNumCaseStudies = async () => {
       try {
@@ -128,7 +128,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
     >
       <div className="m-2 flex flex-col items-start rounded-lg bg-btn-background p-3 shadow-lg">
         <div className="flex flex-row">
-          {avatarUrl ? (
+          {/* {avatarUrl ? (
             <img
               src={avatarUrl}
               alt="Avatar"
@@ -138,7 +138,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
             <div className="h-12 w-12 items-center justify-center rounded-full bg-gray-200 pt-2 text-xs">
               <span className="text-gray-500">No Image</span>
             </div>
-          )}
+          )} */}
           <div className="ml-4 flex flex-col text-left">
             <h3 className="text-lg font-bold">{applicant.full_name}</h3>
             <p className="text-xs">
