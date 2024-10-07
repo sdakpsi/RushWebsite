@@ -146,7 +146,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
             </p>
           </div>
         </div>
-        <div className="mt-2 text-left">
+        {/* <div className="mt-2 text-left">
           {numCaseStudies === 3 ? (
             <p className="text-xs text-green-500">
               {numCaseStudies} Cases: {caseActives.join(", ")}
@@ -165,10 +165,10 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
               {numInterviews} IVs: {interviewActives.join(", ")}
             </p>
           )}
-        </div>
-        <div className="mt-2">
+        </div> */}
+        {/* <div className="mt-2">
           <span>Total Score: {total}</span>
-        </div>
+        </div> */}
       </div>
     </button>
   );
