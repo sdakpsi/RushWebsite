@@ -569,36 +569,42 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             >
               Application
             </button>
-            <button
-              onClick={() => setActiveSection("cases")}
-              className={`ml-2 px-4 py-3 ${
-                activeSection === "cases"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-500"
-              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
-            >
-              Case Study
-            </button>
-            <button
-              onClick={() => setActiveSection("interviews")}
-              className={`ml-2 px-4 py-3 ${
-                activeSection === "interviews"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-500"
-              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
-            >
-              Interview
-            </button>
-            <button
-              onClick={() => setActiveSection("comments")}
-              className={`ml-2 px-4 py-3 ${
-                activeSection === "comments"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-500"
-              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
-            >
-              Comments
-            </button>
+            {isPIC && (
+              <button
+                onClick={() => setActiveSection("cases")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "cases"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
+              >
+                Case Study
+              </button>
+            )}
+            {isPIC && (
+              <button
+                onClick={() => setActiveSection("interviews")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "interviews"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
+              >
+                Interview
+              </button>
+            )}
+            {isPIC && (
+              <button
+                onClick={() => setActiveSection("comments")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "comments"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
+              >
+                Comments
+              </button>
+            )}
             {isPIC && (
               <button
                 onClick={() => setActiveSection("scoring")}
@@ -613,27 +619,32 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             )}
           </div>
           <div>
-            <button
-              onClick={() => handleViewDocument(application.resume)}
-              className={
-                application.resume
-                  ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
-                  : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
-              }
-            >
-              Resume
-            </button>
+            {isPIC && (
+              <>
+                <button
+                  onClick={() => handleViewDocument(application.resume)}
+                  className={
+                    application.resume
+                      ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                      : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
+                  }
+                >
+                  Resume
+                </button>
 
-            <button
-              onClick={() => handleViewDocument(application.cover_letter)}
-              className={
-                application.cover_letter
-                  ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
-                  : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
-              }
-            >
-              Cover Letter
-            </button>
+                <button
+                  onClick={() => handleViewDocument(application.cover_letter)}
+                  className={
+                    application.cover_letter
+                      ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                      : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
+                  }
+                >
+                  Cover Letter
+                </button>
+              </>
+            )}
+
             <button
               onClick={onClose}
               className="ml-2 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-800"
@@ -719,9 +730,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   </div>
                   <div className="rounded-xl bg-gray-700 p-6 shadow-lg">
                     <h3 className="mb-3 text-2xl font-bold text-white">
-                      Scoring
+                      Scoring Hidden
                     </h3>
-                    <ul className="list-disc space-y-2 pl-5 text-gray-200">
+                    {/* <ul className="list-disc space-y-2 pl-5 text-gray-200">
                       <li>
                         <span className="font-semibold">Case Study:</span>{" "}
                         {Object.values(averages)
@@ -797,7 +808,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           Total Score: {scoreComponents.totalScore.toFixed(2)}
                         </span>
                       </li>
-                    </ul>
+                    </ul> */}
                   </div>
                 </div>
 
