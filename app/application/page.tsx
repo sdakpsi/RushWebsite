@@ -34,12 +34,12 @@ export default async function ProtectedPage() {
           </p>
           <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
           <div className="mb-10">
-            {/* <NameForm /> */}
-            <p>
+            <NameForm />
+            {/* <p>
               The app deadline has passed. If you are concerned about a missing
               submission or have any questions, please contact Ally or Val @
               (916) 841-7952 / (408) 805-2888!{" "}
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
