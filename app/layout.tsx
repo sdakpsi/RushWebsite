@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { createClient } from "@/utils/supabase/server";
 import { libreCaslon } from "@/fonts/fonts";
 import { bonVivant } from "@/fonts/fonts";
+import { montserrat } from "@/fonts/fonts";
 import ReactQueryProvider from "@/server/queryClientProvider";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -52,7 +53,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.className} ${libreCaslon.variable} ${bonVivant.variable}`}
+      className={`${GeistSans.className} ${libreCaslon.variable} ${bonVivant.variable} ${montserrat.variable}`}
     >
       <body className="bg-background text-foreground">
         <ReactQueryProvider>

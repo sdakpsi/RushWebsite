@@ -28,7 +28,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   }
 
   return (
-    <nav className="h-16 w-full border-b border-b-foreground/5 bg-[#11273B] px-4 sm:px-48">
+    <nav className="fixed left-0 top-0 z-50 w-full border-b-2 border-white bg-transparent px-4 pb-6 pt-6 sm:px-48">
       <div className="mt-3 flex w-full items-center justify-between">
         {/* Logo and title, adjust size for mobile */}
         <Link href="/">
