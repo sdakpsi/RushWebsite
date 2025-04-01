@@ -5,8 +5,8 @@
 @layer base {
   :root {
     --background: 200 50% 3%;
-    --btn-background: 209 55% 18%;
-    --btn-background-hover: 210 55% 11%;
+    --btn-background: #650e02;
+    --btn-background-hover: #390700;
     --foreground: 200 20% 96%;
   }
 
@@ -58,5 +58,15 @@
 
 .bon-vivant-text-bold {
   font-family: var(--font-bon-vivant);
+  font-weight: 700;
+}
+
+.montserrat-text-regular {
+  font-family: var(--font-montserrat);
+  font-weight: 400;
+}
+
+.montserrat-text-bold {
+  font-family: var(--font-montserrat);
   font-weight: 700;
 }
