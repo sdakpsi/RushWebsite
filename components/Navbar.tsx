@@ -11,6 +11,7 @@ import { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import RCButton from "./RCButton";
+import navbg from "../app/navbar-bg.png";
 
 interface NavbarProps {
   isPIC: boolean;
@@ -28,7 +29,30 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   }
 
   return (
-    <nav className="h-16 w-full border-b border-b-foreground/5 bg-[#11273B] px-4 sm:px-48">
+    // <nav
+    //   className="w-full px-4 pb-6 pt-6 sm:px-48"
+    //   style={{
+    //     backgroundImage: `url(${navbg.src})`,
+
+    //     backgroundSize: "cover",
+
+    //     backgroundPosition: "center",
+
+    //     backgroundRepeat: "no-repeat",
+    //   }}
+    // >
+    <nav
+      className="fixed left-0 top-0 z-50 w-full border-b border-white bg-transparent px-4 pb-6 pt-6 sm:px-48"
+      style={{
+        backgroundImage: `url(${navbg.src})`,
+
+        backgroundSize: "cover",
+
+        backgroundPosition: "center",
+
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="mt-3 flex w-full items-center justify-between">
         {/* Logo and title, adjust size for mobile */}
         <Link href="/">
