@@ -13,6 +13,7 @@ import { montserrat } from "@/fonts/fonts";
 import posterImage from "./image_on_page.png";
 import Image from "next/image";
 import background from "./background.png";
+import tagline from "./tagline.png";
 
 export default async function Index() {
   const supabase = createClient();
@@ -34,9 +35,13 @@ export default async function Index() {
         backgroundRepeat: "no-repeat",
       }}
     >
+      <div className="mt-24 flex items-center justify-center md:mt-16 lg:mt-8">
+        <Image src={tagline} alt="tagline" className="w-[80%] md:w-[70%]" />
+      </div>
       {/* Wrapper for the image and text */}
-      <div className="mt-12 flex flex-col items-center justify-between px-8 lg:mt-48 lg:flex-row lg:px-20">
+      <div className="mt-12 flex flex-col items-center justify-between px-8 lg:mt-4 lg:flex-row lg:px-20">
         {/* Left side: Text content */}
+
         <div className="flex w-full flex-col gap-6 text-left sm:gap-4 lg:w-2/3">
           {/* Welcome text */}
           <p className="montserrat-text-bold text-left text-xl lg:text-3xl">
@@ -60,7 +65,7 @@ export default async function Index() {
           </p>
 
           {/* Center the button */}
-          <div className="flex w-full justify-center">
+          <div className="flex w-full">
             <a href="https://forms.gle/119tXRV5Wgiu86rJ6">
               <button className="montserrat-text-regular rounded bg-btn-background p-2 px-5 text-white transition duration-100 hover:bg-btn-background-hover">
                 Interest Form
@@ -69,13 +74,13 @@ export default async function Index() {
           </div>
 
           {/* Divider line */}
-          <div className="my-6 w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent p-[1px]" />
+          <div className="my-6 w-full bg-gradient-to-r from-transparent via-foreground/30 to-transparent p-[1px]" />
 
           {/* Sign-in text and button */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col gap-4">
             {user ? (
               <>
-                <p className="montserrat-text-bold text-center text-lg !leading-tight lg:text-xl">
+                <p className="montserrat-text-bold text-lg !leading-tight lg:text-xl">
                   The application is open. <br></br>Due Thursday, April 10th at
                   2 PM.
                 </p>
@@ -101,13 +106,13 @@ export default async function Index() {
           </div>
 
           {/* Contact information */}
-          <div className="mt-4 text-left text-xs text-gray-900">
+          <div className="mt-4 text-left text-sm text-gray-900">
             If you're having any issues or have any questions, please contact
             Kristen Lee or Jessie Ha @ (732) 484-8791 / (626) 267-4161!
           </div>
 
           {/* Supabase sign-in notice */}
-          <div className="text-left text-xs text-gray-900">
+          <div className="mb-12 text-left text-sm text-gray-900">
             *When signing in, it will ask to continue to{" "}
             <span className="font-bold">kvuilkasrtgyazkvxjal.supabase.co</span>
           </div>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <footer className="w-full border-t border-t-foreground/10 p-8 flex gap-2 justify-center text-center text-xs">
+    <footer className="w-full border-t border-t-foreground/10 p-6 flex gap-2 justify-center text-center text-sm">
       <p>
         <a
           href="https://www.akpsiucsd.com"
