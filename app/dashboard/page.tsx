@@ -13,19 +13,19 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
+    <div className="flex-1 flex w-full flex-col items-center gap-20">
       <div className="w-full"></div>
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
+      <div className="animate-in flex max-w-4xl flex-1 flex-col gap-20 px-3 opacity-0">
         <div className="flex flex-col">
-          <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-2xl text-center mt-32">
+          <p className="mx-auto mt-32 max-w-2xl text-center text-3xl !leading-tight lg:text-4xl">
             Welcome to the application portal!
           </p>
-          <div className="flex mt-4 justify-center items-center">
+          <div className="mt-4 flex items-center justify-center">
             <ApplicationButton />
           </div>
-          <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+          <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
         </div>
-        <main className="flex flex-col justify-center items-center"></main>
+        <main className="flex flex-col items-center justify-center"></main>
       </div>
     </div>
   );

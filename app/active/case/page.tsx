@@ -64,7 +64,10 @@ export default function ProtectedPage() {
                     Start Case Study Form
                   </button>
                 )}
-                <PastActiveSubmission type="case_studies" showingForm={showingForm} />
+                <PastActiveSubmission
+                  type="case_studies"
+                  showingForm={showingForm}
+                />
                 <InterviewSearchBar
                   selectedProspect={selectedProspect}
                   setSelectedProspect={setSelectedProspect}

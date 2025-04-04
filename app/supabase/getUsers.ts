@@ -20,13 +20,14 @@ export async function getUsers() {
     isPIC = data?.is_pic;
   }
 
+  // .eq("cased", true) // TODO: Make this a parameter that can be passed in
+
   if (isPIC) {
     const { data, error } = await supabase
       .from("users")
       .select("*")
       .eq("is_active", false)
       .eq("is_pic", false)
-      .eq("cased", true) // TODO: Make this a parameter that can be passed in
       .order("full_name", { ascending: true });
     if (error) {
       console.error(error);
@@ -256,8 +257,9 @@ export async function getInterviewProspects(): Promise<
       .select("full_name, email, id")
       .eq("is_active", false)
       .eq("is_pic", false)
-      .eq("cased", true) //TODO: Make this a paramter that can be passed in
       .order("full_name", { ascending: true });
+
+    //       .eq("cased", true)
 
     if (error) {
       return null;

@@ -42,7 +42,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
     //   }}
     // >
     <nav
-      className="fixed left-0 top-0 z-50 w-full border-b border-white bg-transparent px-4 pb-6 pt-6 sm:px-48"
+      className="w-full border-b border-white bg-transparent px-4 pb-6 pt-6 sm:px-48"
       style={{
         backgroundImage: `url(${navbg.src})`,
 
