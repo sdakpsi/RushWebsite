@@ -19,18 +19,18 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center gap-20 bg-gradient-to-b from-[#11273B] via-[#264E72] to-[#5782A9]">
+    <div className="flex w-full flex-1 flex-col items-center gap-20 bg-[#2A1D16]">
       <div className="animate-in flex max-w-4xl flex-1 flex-col gap-20 px-3 opacity-0">
         <div className="flex flex-col">
-          <p className="bon-vivant-text-regular mx-auto mt-12 max-w-xl text-center text-3xl !leading-tight lg:text-4xl">
+          <p className="montserrat-text-bold  mx-auto mt-12 max-w-xl text-center text-3xl !leading-tight lg:text-4xl">
             UCSD Alpha Kappa Psi
           </p>
-          <p className="bon-vivant-text-regular mx-auto max-w-xl text-center text-3xl !leading-tight lg:text-4xl">
-            Fall '24 Rush Application
+          <p className="montserrat-text-bold  mx-auto max-w-xl text-center text-3xl !leading-tight lg:text-4xl">
+            Spring '25 Rush Application
           </p>
 
-          <p className="bon-vivant-text-regular mx-auto mt-4 max-w-xl text-center text-xl !leading-tight lg:text-xl">
-            Due Thursday, October 3rd at 2 PM
+          <p className="montserrat-text-regular mx-auto mt-4 max-w-xl text-center text-xl !leading-tight lg:text-xl">
+            Due Thursday, April 10th at 2 PM
           </p>
           <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
           <div className="mb-10">

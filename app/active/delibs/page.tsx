@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import React from 'react';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import ApplicantCard from '@/components/ApplicantCard';
-import ApplicationPopup from '@/components/ApplicationPopUp';
-import ActiveLoginComponent from '@/components/ActiveLoginComponent';
-import { useActiveStatus } from '@/hooks/useCheckActive';
-import { useDelibsUsers } from '@/hooks/getDelibsUsers';
-import { useApplicationView } from '@/hooks/useApplicationView';
-import { useCasesAndInterviews } from '@/hooks/getCasesAndInterviews';
+import React from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import ApplicantCard from "@/components/ApplicantCard";
+import ApplicationPopup from "@/components/ApplicationPopUp";
+import ActiveLoginComponent from "@/components/ActiveLoginComponent";
+import { useActiveStatus } from "@/hooks/useCheckActive";
+import { useDelibsUsers } from "@/hooks/getDelibsUsers";
+import { useApplicationView } from "@/hooks/useApplicationView";
+import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 
 export default function ProtectedPage() {
   const { isActive, isLoading: isActiveLoading } = useActiveStatus();
   const { usersData, isLoading: isUsersLoading } = useDelibsUsers();
-  const { 
-    currentApplicationId, 
-    currentApplication, 
-    userID, 
-    handleViewApplication, 
-    handleClosePopup 
+  const {
+    currentApplicationId,
+    currentApplication,
+    userID,
+    handleViewApplication,
+    handleClosePopup,
   } = useApplicationView();
   const { cases, interviews } = useCasesAndInterviews(userID);
 
@@ -27,16 +27,16 @@ export default function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex justify-center items-center py-10">
-      <div className="animate-in w-full mx-8">
+    <div className="flex w-full flex-1 items-center justify-center py-10">
+      <div className="animate-in mx-8 w-full">
         <div className="text-center">
-          <p className="text-xl lg:text-4xl leading-tight mb-2">
+          <p className="mb-2 text-xl leading-tight lg:text-4xl">
             Delibs Portal
           </p>
 
           {isActive ? (
             <div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {usersData.map((applicant) => (
                   <div key={applicant.id} className="flex flex-col">
                     <ApplicantCard

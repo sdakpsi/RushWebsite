@@ -35,8 +35,8 @@ export default async function Index() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="mt-24 flex items-center justify-center md:mt-16 lg:mt-8">
-        <Image src={tagline} alt="tagline" className="w-[80%] md:w-[70%]" />
+      <div className="flex items-center justify-center">
+        <Image src={tagline} alt="tagline" className="w-[80%] md:w-[60%]" />
       </div>
       {/* Wrapper for the image and text */}
       <div className="mt-12 flex flex-col items-center justify-between px-8 lg:mt-4 lg:flex-row lg:px-20">
@@ -45,7 +45,7 @@ export default async function Index() {
         <div className="flex w-full flex-col gap-6 text-left sm:gap-4 lg:w-2/3">
           {/* Welcome text */}
           <p className="montserrat-text-bold text-left text-xl lg:text-3xl">
-            Welcome to the Alpha Kappa Psi Fall Rush 2024 Application Portal
+            Welcome to the Alpha Kappa Psi Spring Rush 2025 Application Portal
           </p>
 
           {/* {user ? (
