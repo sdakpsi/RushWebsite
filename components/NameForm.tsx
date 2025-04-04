@@ -775,15 +775,15 @@ export default function NameForm() {
           type={ApplicationFileTypes.COVER_LETTER}
         />
         <button
-          className=" border-1 mb-8 mt-4 w-full rounded-lg border border-gray-400 bg-cyan-600 px-6 py-2 text-white transition duration-100 hover:bg-cyan-800"
+          className=" border-1 mb-8 mt-4 w-full rounded-lg border bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover"
           type="submit"
         >
           Submit
         </button>
       </form>
       <p className="mt-4 text-gray-200">
-        If you're having any issues or have any questions, please contact Ally
-        or Val @ (916) 841-7952 / (408) 805-2888!
+        If you're having any issues or have any questions, please contact
+        Kristen Lee or Jessie Ha @ (732) 484-8791 / (626) 267-4161!
       </p>
     </div>
   );

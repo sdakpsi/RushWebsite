@@ -730,9 +730,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   </div>
                   <div className="rounded-xl bg-gray-700 p-6 shadow-lg">
                     <h3 className="mb-3 text-2xl font-bold text-white">
-                      Scoring Hidden
+                      Scores
                     </h3>
-                    {/* <ul className="list-disc space-y-2 pl-5 text-gray-200">
+                    <ul className="list-disc space-y-2 pl-5 text-gray-200">
                       <li>
                         <span className="font-semibold">Case Study:</span>{" "}
                         {Object.values(averages)
@@ -808,7 +808,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           Total Score: {scoreComponents.totalScore.toFixed(2)}
                         </span>
                       </li>
-                    </ul> */}
+                    </ul>
                   </div>
                 </div>
 
