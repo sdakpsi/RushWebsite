@@ -1,0 +1,1 @@
+export const RUSH_YEAR = "Spring '25"
