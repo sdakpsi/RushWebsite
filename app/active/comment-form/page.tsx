@@ -76,7 +76,7 @@ export default function Page(this: any) {
             active_name: user?.user_metadata.name,
             comment: comment,
             interaction: interaction, // Storing interaction result
-            invite: "post-social-night", // Storing invite response
+            invite: "pre-social-night", // Storing invite response
           },
         ]);
         setNewProspectName("");
@@ -98,7 +98,7 @@ export default function Page(this: any) {
             active_name: user?.user_metadata.name,
             comment: comment,
             interaction: interaction, // Storing interaction result
-            invite: "post-social-night", // Storing invite response
+            invite: "pre-social-night", // Storing invite response
           },
         ]);
 
