@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server'; // Adjust the import path as necessary
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server"; // Adjust the import path as necessary
 
 export async function POST(req: NextRequest) {
-  if (req.method !== 'POST') {
+  if (req.method !== "POST") {
     return NextResponse.json(
-      { message: 'Method Not Allowed' },
+      { message: "Method Not Allowed" },
       { status: 405 }
     );
   }
@@ -13,23 +13,22 @@ export async function POST(req: NextRequest) {
   const user = userResponse.data.user;
 
   if (!user) {
-    return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
+    return NextResponse.json({ message: "No user signed in" }, { status: 401 });
   }
 
   // Check if the user has an application field set
   const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('application')
-    .eq('id', user.id);
+    .from("users")
+    .select("application")
+    .eq("id", user.id);
 
   if (userError) {
     return NextResponse.json({ error: userError.message }, { status: 400 });
   }
 
-
   if (userData[0].application === null) {
     const { data: newApplication, error: newApplicationError } = await supabase
-      .from('applications')
+      .from("applications")
       .insert([
         {
           name: user.user_metadata.name,
@@ -52,14 +51,14 @@ export async function POST(req: NextRequest) {
     const userApplication = userData[0].application;
     if (userApplication) {
       const { data: applicationData, error: applicationError } = await supabase
-        .from('applications')
-        .select('*')
-        .eq('id', userApplication)
+        .from("applications")
+        .select("*")
+        .eq("id", userApplication)
         .single();
 
       if (applicationError || !applicationData) {
         return NextResponse.json(
-          { error: applicationError?.message || 'Application not found' },
+          { error: applicationError?.message || "Application not found" },
           { status: 400 }
         );
       }
@@ -74,9 +73,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  if (req.method !== 'PUT') {
+  if (req.method !== "PUT") {
     return NextResponse.json(
-      { message: 'Method Not Allowed' },
+      { message: "Method Not Allowed" },
       { status: 405 }
     );
   }
@@ -86,7 +85,7 @@ export async function PUT(req: NextRequest) {
   const user = userResponse.data.user;
 
   if (!user) {
-    return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
+    return NextResponse.json({ message: "No user signed in" }, { status: 401 });
   }
 
   const requestBody = await req.json();
@@ -113,6 +112,7 @@ export async function PUT(req: NextRequest) {
     resumeFileUrl,
     coverLetterFileUrl,
     isSubmitting,
+    lastSubmitted,
     college,
     facebook,
     instagram,
@@ -233,38 +233,38 @@ export async function PUT(req: NextRequest) {
       : null;
 
   if (isSubmitting) {
-    updateObject.submitted = submitted;
+    updateObject["submitted"] = submittedAt;
   }
 
   const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('application')
-    .eq('id', user.id);
+    .from("users")
+    .select("application")
+    .eq("id", user.id);
 
   if (applicationId) {
     const { data, error } = await supabase
-      .from('applications')
+      .from("applications")
       .update(updateObject)
-      .eq('id', applicationId);
+      .eq("id", applicationId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     return NextResponse.json(
-      { message: 'Application updated successfully', data },
+      { message: "Application updated successfully", data },
       { status: 200 }
     );
   } else {
     const { data, error } = await supabase
-      .from('applications')
+      .from("applications")
       .update(updateObject)
-      .eq('id', userData![0].application);
+      .eq("id", userData![0].application);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     return NextResponse.json(
-      { message: 'Application updated successfully', data },
+      { message: "Application updated successfully", data },
       { status: 200 }
     );
   }
