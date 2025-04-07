@@ -29,18 +29,6 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   }
 
   return (
-    // <nav
-    //   className="w-full px-4 pb-6 pt-6 sm:px-48"
-    //   style={{
-    //     backgroundImage: `url(${navbg.src})`,
-
-    //     backgroundSize: "cover",
-
-    //     backgroundPosition: "center",
-
-    //     backgroundRepeat: "no-repeat",
-    //   }}
-    // >
     <nav
       className="w-full border-b border-white bg-transparent px-4 pb-6 pt-6 sm:px-48"
       style={{
