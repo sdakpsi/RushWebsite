@@ -14,6 +14,7 @@ import posterImage from "./image_on_page.png";
 import Image from "next/image";
 import background from "./background.png";
 import tagline from "./tagline.png";
+import { RUSH_YEAR } from "@/utils/constants";
 
 export default async function Index() {
   const supabase = createClient();
@@ -45,7 +46,7 @@ export default async function Index() {
         <div className="flex w-full flex-col gap-6 text-left sm:gap-4 lg:w-2/3">
           {/* Welcome text */}
           <p className="montserrat-text-bold text-left text-xl lg:text-3xl">
-            Welcome to the Alpha Kappa Psi Spring Rush 2025 Application Portal
+            Welcome to the Alpha Kappa Psi {RUSH_YEAR} Application Portal
           </p>
 
           {/* {user ? (
@@ -77,31 +78,23 @@ export default async function Index() {
           <div className="my-6 w-full bg-gradient-to-r from-transparent via-foreground/30 to-transparent p-[1px]" />
 
           {/* Sign-in text and button */}
-          <div className="flex flex-col gap-4">
-            {user ? (
-              <>
-                <p className="montserrat-text-bold text-lg !leading-tight lg:text-xl">
+          <div className="flex flex-col items-start gap-4">
+          <p className="montserrat-text-bold text-lg text-left lg:text-xl">
                   The application is open. <br></br>Due Thursday, April 10th at
                   2 PM.
                 </p>
+            {user ? (
+               
                 <Link href="/application">
                   <button className="montserrat-text-regular text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
                     Application Form
                   </button>
                 </Link>
-              </>
             ) : (
-              <>
-                <p className="montserrat-text-bold max-w-xl text-center text-xl !leading-tight lg:text-xl">
-                  The application is open. <br></br>Due Thursday, April 10th at
-                  2 PM.
-                </p>
-
-                {/* Google Sign-In Button */}
+          
                 <div className="flex justify-center">
                   <GoogleOAuth />
                 </div>
-              </>
             )}
           </div>
 

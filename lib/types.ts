@@ -6,6 +6,7 @@ export enum ApplicationFileTypes {
 export enum StudentYears {
   FirstYear = "First Year",
   SecondYear = "Second Year",
+  SecondYearTransfer  = "Second Year Transfer",
   ThirdYear = "Third Year",
   ThirdYearTransfer = "Third Year Transfer",
   FourthYear = "Fourth Year",
