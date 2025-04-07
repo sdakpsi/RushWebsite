@@ -33,7 +33,6 @@ export default function NameForm() {
 
       const body = JSON.stringify({
         ...applicationData,
-        lastSubmitted: new Date().toISOString(),
         isSubmitting: false,
       });
 
