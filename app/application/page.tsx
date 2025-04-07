@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import NextLinkButton from "../../components/NextLinkButton";
 import { User } from "@supabase/supabase-js"; // Ensure you import the User type
 import NameForm from "@/components/NameForm";
+import { RUSH_YEAR } from "@/utils/constants";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -26,7 +27,7 @@ export default async function ProtectedPage() {
             UCSD Alpha Kappa Psi
           </p>
           <p className="montserrat-text-bold  mx-auto max-w-xl text-center text-3xl !leading-tight lg:text-4xl">
-            Spring '25 Rush Application
+            {RUSH_YEAR} Rush Application
           </p>
 
           <p className="montserrat-text-regular mx-auto mt-4 max-w-xl text-center text-xl !leading-tight lg:text-xl">

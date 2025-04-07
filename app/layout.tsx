@@ -9,6 +9,7 @@ import { libreCaslon } from "@/fonts/fonts";
 import { bonVivant } from "@/fonts/fonts";
 import { montserrat } from "@/fonts/fonts";
 import ReactQueryProvider from "@/server/queryClientProvider";
+import { RUSH_YEAR } from "@/utils/constants";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -16,9 +17,9 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "UCSD AKPsi Fall '24 Rush Interest Form ",
+  title: `UCSD AKPsi ${RUSH_YEAR} Rush Interest Form`,
   description:
-    "Fill out the interest form for UCSD AKPsi's Fall '24 Rush here!",
+  `Fill out the interest form for UCSD AKPsi's ${RUSH_YEAR} Rush here!`
 };
 
 export default async function RootLayout({
