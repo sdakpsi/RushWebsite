@@ -19,7 +19,7 @@ export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: `UCSD AKPsi ${RUSH_YEAR} Rush`,
   description:
-  `Fill out the interest form for UCSD AKPsi's ${RUSH_YEAR} Rush here!`
+  `Website for UCSD AKPsi's ${RUSH_YEAR} Rush Application!`
 };
 
 export default async function RootLayout({
