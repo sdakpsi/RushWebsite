@@ -1,10 +1,9 @@
-import { InterviewForm, ProspectInterview } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import Select from "react-select";
-import { questions, scorableTraits } from "../lib/InterviewQuestions";
 import { createInterview } from "@/app/supabase/interview";
+import { InterviewForm, ProspectInterview } from "@/lib/types";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { questions, scorableTraits } from "../lib/InterviewQuestions";
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -168,17 +167,18 @@ export default function ActiveInterviewForm({
             {note("(Select all that apply)")}
           </label>
           <div className="flex flex-row flex-wrap justify-center gap-8">
-            {options.map((option, index) => (
-              <div key={index} className="mb-2 flex items-center">
-                <input
-                  type="checkbox"
-                  id={option.value}
-                  className="mr-1 rounded-lg"
-                  {...register(`events.${option.value}`)}
-                />
-                <label htmlFor={option.value}>{option.label}</label>
-              </div>
-            ))}
+          {options.map((option, index) => (
+    <div key={index} className="mb-2 flex items-center">
+      <input
+        type="checkbox"
+        id={option.value}
+        className="mr-1 rounded-lg"
+        {...register(`events.${option.value}`)}
+        defaultChecked={option.value === "Interview"}
+      />
+      <label htmlFor={option.value}>{option.label}</label>
+    </div>
+  ))}
           </div>
           {errors.events && (
             <p className="text-red-500">At least one event must be selected</p>
