@@ -37,6 +37,7 @@ export default function Page(this: any) {
 
   const [comment, setComment] = useState("");
   const [interaction, setInteraction] = useState("");
+  const [invite, setInvite] = useState("");
   const [newProspectName, setNewProspectName] = useState("");
   const [checked, setChecked] = useState(false);
 
@@ -50,7 +51,7 @@ export default function Page(this: any) {
       }
     }
 
-    if (interaction === "" || comment === "") {
+    if (interaction === "" || invite === "" || comment === "") {
       customToast("All fields are required.", "error");
       return;
     }
@@ -76,7 +77,7 @@ export default function Page(this: any) {
             active_name: user?.user_metadata.name,
             comment: comment,
             interaction: interaction, // Storing interaction result
-            invite: "pre-social-night", // Storing invite response
+            invite: invite, // Storing invite response
           },
         ]);
         setNewProspectName("");
@@ -98,7 +99,7 @@ export default function Page(this: any) {
             active_name: user?.user_metadata.name,
             comment: comment,
             interaction: interaction, // Storing interaction result
-            invite: "pre-social-night", // Storing invite response
+            invite: invite, // Storing invite response
           },
         ]);
 
@@ -113,6 +114,7 @@ export default function Page(this: any) {
       }
       setComment("");
       setInteraction("");
+      setInvite("");
       setSelectedProspect(null);
       setChecked(false);
     } catch (error: any) {
@@ -188,6 +190,33 @@ export default function Page(this: any) {
                         onClick={() => setInteraction("Bad")}
                       >
                         Bad
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Invite to Social Night Question */}
+                  <div className="flex flex-col text-white">
+                    <label className="mb-2 mt-4 text-gray-200">
+                      Invite to social night?
+                    </label>
+                    <div className="flex space-x-4">
+                      <button
+                        className={`rounded px-4 py-2 ${invite === "Yes" ? "bg-blue-700" : "bg-gray-900"}`}
+                        onClick={() => setInvite("Yes")}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        className={`rounded px-4 py-2 ${invite === "No" ? "bg-blue-700" : "bg-gray-900"}`}
+                        onClick={() => setInvite("No")}
+                      >
+                        No
+                      </button>
+                      <button
+                        className={`rounded px-4 py-2 ${invite === "N/A" ? "bg-blue-700" : "bg-gray-900"}`}
+                        onClick={() => setInvite("N/A")}
+                      >
+                        N/A
                       </button>
                     </div>
                   </div>
