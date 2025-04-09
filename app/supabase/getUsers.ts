@@ -213,15 +213,15 @@ export async function getComments(): Promise<Comment[]> {
     return [];
   }
 
-  const filteredData = data.filter((comment) => {
-    const userDataUser = userData.find(
-      (user) => user.id === comment.prospect_id
-    );
-    console.log(userDataUser);
-    return userDataUser;
-  });
+  // const filteredData = data.filter((comment) => {
+  //   const userDataUser = userData.find(
+  //     (user) => user.id === comment.prospect_id
+  //   );
+  //   console.log(userDataUser);
+  //   return userDataUser;
+  // });
 
-  return filteredData;
+  return data;
 }
 
 export async function getInterviewProspects(): Promise<
