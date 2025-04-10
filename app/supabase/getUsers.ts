@@ -23,16 +23,25 @@ export async function getUsers() {
   // .eq("cased", true) // TODO: Make this a parameter that can be passed in
 
   if (isPIC) {
-    const { data, error } = await supabase
+    const { data: apps, error: appsError } = await supabase
+      .from("applications")
+      .select("user_id")
+      .not("submitted", "is", null);
+
+    const validUserIds = apps?.map((app) => app.user_id) ?? [];
+
+    const { data: users, error: usersError } = await supabase
       .from("users")
       .select("*")
       .eq("is_active", false)
       .eq("is_pic", false)
+      .in("id", validUserIds)
       .order("full_name", { ascending: true });
-    if (error) {
-      console.error(error);
+
+    if (usersError) {
+      console.error(usersError);
     } else {
-      usersData = data;
+      usersData = users;
     }
   }
   return usersData;
