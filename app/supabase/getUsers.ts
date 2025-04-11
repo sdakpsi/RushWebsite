@@ -50,17 +50,17 @@ export async function getUsers() {
       "Brandon Eum",
       "Brandon Lui",
       "Brandon Thach",
-      "Britney Saw",
+      "Britney Zaw",
       "Candice Chow",
       "Christina Liao",
       "Elle Mori",
       "Emma Perez",
       "Ethan Mao",
       "Hailey Kim",
-      "Heather Jeon",
+      "Heather Heather",
       "Jacqueline He",
       "Josephine Chin",
-      "Justin Nguyễn",
+      "Justin Nguyen",
       "Kaitlyn Celis",
       "Katherine Ward",
       "Landen Leong",
@@ -70,7 +70,7 @@ export async function getUsers() {
       "Michael Chau",
       "Nathaniel Hwang",
       "Nathan Pang",
-      "Raelynn Tence",
+      "Realynn Tence",
       "Rohith Saju",
       "Ryan Cohen",
       "Samantha Fuentes",
@@ -91,6 +91,7 @@ export async function getUsers() {
       .eq("is_active", false)
       .eq("is_pic", false)
       .in("full_name", targetNames)
+      .like("email", "%.edu")
       .order("full_name", { ascending: true });
 
 
@@ -99,6 +100,9 @@ export async function getUsers() {
     } else {
       usersData = filteredUsers;
     }
+    usersData.forEach((user, index) => {
+      console.log(`${index + 1}. ${user.full_name}`);
+    });
     console.log(usersData.length);
     return usersData;
 
