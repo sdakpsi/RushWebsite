@@ -126,7 +126,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
       }
       className="transition duration-200 hover:scale-[1.03]"
     >
-      <div className="m-2 flex flex-col items-start rounded-lg bg-btn-background p-3 shadow-lg">
+      <div className="m-2 flex flex-col items-start rounded-lg bg-slate-800 p-3 shadow-lg">
         <div className="flex flex-row">
           {/* {avatarUrl ? (
             <img
@@ -146,8 +146,8 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
             </p>
           </div>
         </div>
-        {/* <div className="mt-2 text-left">
-          {numCaseStudies === 3 ? (
+        <div className="mt-2 text-left">
+          {numCaseStudies >= 3 ? (
             <p className="text-xs text-green-500">
               {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
@@ -156,7 +156,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
               {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           )}
-          {numInterviews === 3 ? (
+          {numInterviews >= 3 ? (
             <p className="text-xs text-green-500">
               {numInterviews} IVs: {interviewActives.join(", ")}
             </p>
@@ -165,10 +165,10 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
               {numInterviews} IVs: {interviewActives.join(", ")}
             </p>
           )}
-        </div> */}
-        {/* <div className="mt-2">
+        </div>
+        <div className="mt-2">
           <span>Total Score: {total}</span>
-        </div> */}
+        </div>
       </div>
     </button>
   );
