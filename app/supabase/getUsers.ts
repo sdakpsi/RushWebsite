@@ -54,7 +54,6 @@ export async function getUsers() {
       "Candice Chow",
       "Christina Liao",
       "Elle Mori",
-      "Emily Chang",
       "Emma Perez",
       "Ethan Mao",
       "Hailey Kim",
