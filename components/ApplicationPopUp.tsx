@@ -150,8 +150,13 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [error, setError] = useState("");
-  const [total, setTotal] = useState(0);
 
+  const [averages, setAverages] = useState({
+    leadership_avg: 0,
+    teamwork_avg: 0,
+    analytical_avg: 0,
+    public_speaking_avg: 0,
+  });
   const [ivAverages, setIvAverages] = useState({
     empathy: 0,
     open_minded: 0,
@@ -161,17 +166,51 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     events_attended: 0,
   });
 
-  const [averages, setAverages] = useState({
-    leadership_avg: 0,
-    teamwork_avg: 0,
-    analytical_avg: 0,
-    public_speaking_avg: 0,
-  });
   useEffect(() => {
     setIvAverages(calculateIvAverages(interviews));
   }, [interviews]);
 
   const calculateIvAverages = (interviews: Interview[]) => {
+    if (interviews.length === 3) {
+      // Calculate the average scores from the 3 interviews
+      const avgInterview = {
+        empathy:
+          (interviews[0].empathy +
+            interviews[1].empathy +
+            interviews[2].empathy) /
+          3,
+        open_minded:
+          (interviews[0].open_minded +
+            interviews[1].open_minded +
+            interviews[2].open_minded) /
+          3,
+        pledgeable:
+          (interviews[0].pledgeable +
+            interviews[1].pledgeable +
+            interviews[2].pledgeable) /
+          3,
+        motivated:
+          (interviews[0].motivated +
+            interviews[1].motivated +
+            interviews[2].motivated) /
+          3,
+        socially_aware:
+          (interviews[0].socially_aware +
+            interviews[1].socially_aware +
+            interviews[2].socially_aware) /
+          3,
+        events_attended:
+          (interviews[0].events_attended +
+            interviews[1].events_attended +
+            interviews[2].events_attended) /
+          3,
+      };
+
+      // Add this average as a fourth interview
+      interviews = [...interviews, avgInterview];
+    }
+
+    // Now proceed with normal averaging (all cases will have 4 interviews)
     const totalScores = interviews.reduce(
       (acc, curr) => {
         const eventsCount = curr.events_attended
@@ -197,11 +236,11 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     );
 
     const averages = {
-      empathy: totalScores.empathy / interviews.length,
-      open_minded: totalScores.open_minded / interviews.length,
-      pledgeable: totalScores.pledgeable / interviews.length,
-      motivated: totalScores.motivated / interviews.length,
-      socially_aware: totalScores.socially_aware / interviews.length,
+      empathy: totalScores.empathy / 4, // Always divide by 4 now
+      open_minded: totalScores.open_minded / 4,
+      pledgeable: totalScores.pledgeable / 4,
+      motivated: totalScores.motivated / 4,
+      socially_aware: totalScores.socially_aware / 4,
       events_attended: Math.ceil(
         totalScores.events_attended / interviews.length
       ),
@@ -215,6 +254,36 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [cases]);
 
   const calculateAverages = (cases: Case[]) => {
+    if (cases.length === 3) {
+      // Calculate the average scores from the 3 cases
+      const avgCase = {
+        leadership_score:
+          (cases[0].leadership_score +
+            cases[1].leadership_score +
+            cases[2].leadership_score) /
+          3,
+        teamwork_score:
+          (cases[0].teamwork_score +
+            cases[1].teamwork_score +
+            cases[2].teamwork_score) /
+          3,
+        analytical_score:
+          (cases[0].analytical_score +
+            cases[1].analytical_score +
+            cases[2].analytical_score) /
+          3,
+        public_speaking_score:
+          (cases[0].public_speaking_score +
+            cases[1].public_speaking_score +
+            cases[2].public_speaking_score) /
+          3,
+      };
+
+      // Add this average as a fourth case
+      cases = [...cases, avgCase];
+    }
+
+    // Now proceed with normal averaging (all cases will have 4 evaluators)
     const totalScores = cases.reduce(
       (acc, curr) => ({
         leadership_score: acc.leadership_score + curr.leadership_score,
@@ -230,16 +299,18 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
         public_speaking_score: 0,
       }
     );
-
     const averages = {
-      leadership_avg: totalScores.leadership_score / cases.length,
-      teamwork_avg: totalScores.teamwork_score / cases.length,
-      analytical_avg: totalScores.analytical_score / cases.length,
-      public_speaking_avg: totalScores.public_speaking_score / cases.length,
+      leadership_avg: totalScores.leadership_score / 4, // Always divide by 4 now
+      teamwork_avg: totalScores.teamwork_score / 4,
+      analytical_avg: totalScores.analytical_score / 4,
+      public_speaking_avg: totalScores.public_speaking_score / 4,
     };
 
     return averages;
   };
+
+  const numCases = cases.length;
+  const numInterviews = interviews.length;
 
   const handleScoreChange = (e: any) => {
     const value = e.target.value;
@@ -915,7 +986,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-4"
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-${numCases + 1}`}
                       >
                         <div className="col-span-1 font-semibold text-white">
                           {attribute
@@ -945,7 +1016,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-4"
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-${numCases + 1}`}
                       >
                         <div className="col-span-1 font-semibold text-white">
                           {attribute
@@ -984,7 +1055,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-4"
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-${numCases + 1}`}
                       >
                         <div className="col-span-1 font-semibold text-white">
                           {attribute
@@ -1037,7 +1108,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     {["active_name", "other_actives"].map((key) => (
                       <div
                         key={key}
-                        className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-4"
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-${numInterviews + 1}`}
                       >
                         <div className="col-span-1 ml-2 items-center justify-center font-semibold">
                           {key
@@ -1071,7 +1142,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       .map((question) => (
                         <div
                           key={question}
-                          className="mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-4"
+                          className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-${numInterviews + 1}`}
                         >
                           <div className="col-span-1 ml-2 items-center justify-center font-semibold">
                             {question
