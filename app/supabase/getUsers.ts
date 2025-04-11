@@ -38,6 +38,72 @@ export async function getUsers() {
       .in("id", validUserIds)
       .order("full_name", { ascending: true });
 
+    // Spring 2025 hotfix
+    const targetNames = [
+      "Ace Dela Cruz",
+      "Akshat Alurkar",
+      "Amrutha Velivelli",
+      "Angelina Truong",
+      "Anne Fa",
+      "Arish Sunkireddy",
+      "Arjun Yadalla",
+      "Brandon Eum",
+      "Brandon Lui",
+      "Brandon Thach",
+      "Britney Saw",
+      "Candice Chow",
+      "Christina Liao",
+      "Elle Mori",
+      "Emily Chang",
+      "Emma Perez",
+      "Ethan Mao",
+      "Hailey Kim",
+      "Heather Jeon",
+      "Jacqueline He",
+      "Josephine Chin",
+      "Justin Nguyễn",
+      "Kaitlyn Celis",
+      "Katherine Ward",
+      "Landen Leong",
+      "Maya Lu",
+      "Melody Gao",
+      "Mia Jin",
+      "Michael Chau",
+      "Nathaniel Hwang",
+      "Nathan Pang",
+      "Raelynn Tence",
+      "Rohith Saju",
+      "Ryan Cohen",
+      "Samantha Fuentes",
+      "Sasha Tien",
+      "Sienna Kauh",
+      "Stephanie Yeh",
+      "Sur Shah",
+      "Theophany Pham",
+      "Tiffany Nguyen",
+      "Vedant Maheshwari",
+      "Zoe Chung"
+    ];
+    console.log(targetNames.length);
+
+    const { data: filteredUsers, error: filteredError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("is_active", false)
+      .eq("is_pic", false)
+      .in("full_name", targetNames)
+      .order("full_name", { ascending: true });
+
+
+    if (filteredError) {
+      console.error(filteredError);
+    } else {
+      usersData = filteredUsers;
+    }
+    console.log(usersData.length);
+    return usersData;
+
+    // End spring 2025 hotfix
     if (usersError) {
       console.error(usersError);
     } else {
