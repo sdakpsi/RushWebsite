@@ -951,7 +951,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       Leadership:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.leadership_avg.toFixed(2)} */}t
+                      {averages.leadership_avg.toFixed(2)}
                     </span>
                   </div>
                   <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
@@ -959,7 +959,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       Teamwork:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.teamwork_avg.toFixed(2)} */}y
+                      {averages.teamwork_avg.toFixed(2)}
                     </span>
                   </div>
                   <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
@@ -967,7 +967,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       Analytical:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.analytical_avg.toFixed(2)} */}p
+                      {averages.analytical_avg.toFixed(2)}
                     </span>
                   </div>
                   <div className="rounded-lg bg-gray-600 p-4 text-center shadow-md">
@@ -975,7 +975,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       Public Speaking:{" "}
                     </span>
                     <span className="text-md font-bold">
-                      {/* {averages.public_speaking_avg.toFixed(2)} */}e
+                      {averages.public_speaking_avg.toFixed(2)}
                     </span>
                   </div>
                 </div>
