@@ -986,7 +986,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-${numCases + 1}`}
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-5`}
                       >
                         <div className="col-span-1 font-semibold text-white">
                           {attribute
@@ -1016,7 +1016,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-${numCases + 1}`}
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-5`}
                       >
                         <div className="col-span-1 font-semibold text-white">
                           {attribute
@@ -1055,7 +1055,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     .map((attribute) => (
                       <div
                         key={attribute}
-                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-${numCases + 1}`}
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-600 p-2 md:grid-cols-5`}
                       >
                         <div className="col-span-1 font-semibold text-white">
                           {attribute
@@ -1108,7 +1108,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     {["active_name", "other_actives"].map((key) => (
                       <div
                         key={key}
-                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-${numInterviews + 1}`}
+                        className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-5`}
                       >
                         <div className="col-span-1 ml-2 items-center justify-center font-semibold">
                           {key
@@ -1142,7 +1142,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       .map((question) => (
                         <div
                           key={question}
-                          className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-${numInterviews + 1}`}
+                          className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-5`}
                         >
                           <div className="col-span-1 ml-2 items-center justify-center font-semibold">
                             {question
