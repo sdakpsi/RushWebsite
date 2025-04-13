@@ -1141,13 +1141,16 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           className={`mb-2 grid grid-cols-1 gap-6 rounded bg-gray-700 p-2 md:grid-cols-5`}
                         >
                           <div className="col-span-1 ml-2 items-center justify-center font-semibold">
-                            {question
-                              .split("_")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1)
-                              )
-                              .join(" ")}
+                            {question === "learning_about"
+                              ? "Achievement"
+                              : question
+                                  .split("_")
+                                  .map(
+                                    (word) =>
+                                      word.charAt(0).toUpperCase() +
+                                      word.slice(1)
+                                  )
+                                  .join(" ")}
                             :
                           </div>
                           {interviews.map((interview, index) => (
