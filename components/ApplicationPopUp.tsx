@@ -640,39 +640,42 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             >
               Application
             </button>
-
-            <button
-              onClick={() => setActiveSection("cases")}
-              className={`ml-2 px-4 py-3 ${
-                activeSection === "cases"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-500"
-              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
-            >
-              Case Study
-            </button>
-
-            <button
-              onClick={() => setActiveSection("interviews")}
-              className={`ml-2 px-4 py-3 ${
-                activeSection === "interviews"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-500"
-              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
-            >
-              Interview
-            </button>
-
-            <button
-              onClick={() => setActiveSection("comments")}
-              className={`ml-2 px-4 py-3 ${
-                activeSection === "comments"
-                  ? "border-b-2 border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-500"
-              } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
-            >
-              Comments
-            </button>
+            {isPIC && (
+              <button
+                onClick={() => setActiveSection("cases")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "cases"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
+              >
+                Case Study
+              </button>
+            )}
+            {isPIC && (
+              <button
+                onClick={() => setActiveSection("interviews")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "interviews"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
+              >
+                Interview
+              </button>
+            )}
+            {isPIC && (
+              <button
+                onClick={() => setActiveSection("comments")}
+                className={`ml-2 px-4 py-3 ${
+                  activeSection === "comments"
+                    ? "border-b-2 border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500"
+                } font-semibold hover:border-blue-500 hover:text-blue-500 focus:outline-none`}
+              >
+                Comments
+              </button>
+            )}
 
             {isPIC && (
               <button
@@ -688,29 +691,31 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             )}
           </div>
           <div>
-            <>
-              <button
-                onClick={() => handleViewDocument(application.resume)}
-                className={
-                  application.resume
-                    ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
-                    : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
-                }
-              >
-                Resume
-              </button>
+            {isPIC && (
+              <>
+                <button
+                  onClick={() => handleViewDocument(application.resume)}
+                  className={
+                    application.resume
+                      ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                      : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
+                  }
+                >
+                  Resume
+                </button>
 
-              <button
-                onClick={() => handleViewDocument(application.cover_letter)}
-                className={
-                  application.cover_letter
-                    ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
-                    : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
-                }
-              >
-                Cover Letter
-              </button>
-            </>
+                <button
+                  onClick={() => handleViewDocument(application.cover_letter)}
+                  className={
+                    application.cover_letter
+                      ? "ml-2 rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                      : "ml-2 rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
+                  }
+                >
+                  Cover Letter
+                </button>
+              </>
+            )}
 
             <button
               onClick={onClose}
@@ -799,83 +804,85 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     <h3 className="mb-3 text-2xl font-bold text-white">
                       Scores
                     </h3>
-                    <ul className="list-disc space-y-2 pl-5 text-gray-200">
-                      <li>
-                        <span className="font-semibold">Case Study:</span>{" "}
-                        {Object.values(averages)
-                          .reduce((acc, cur) => acc + cur, 0)
-                          .toFixed(2)}
-                      </li>
-                      <li>
-                        <span className="font-semibold">Interview:</span>{" "}
-                        {Object.values(ivAverages)
-                          .reduce((acc, cur) => acc + cur, 0)
-                          .toFixed(2)}
-                      </li>
-                      <li>
-                        <span className="font-semibold">
-                          Application Score:
-                        </span>{" "}
-                        <span>
-                          {currentScore !== "" ? currentScore : "not set"}
-                        </span>
-                        {isPIC ? (
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="text"
-                              inputMode="numeric" // Helps bring up numeric keypad on mobile devices
-                              pattern="[1-7]|8" // Ensures only numbers between 1 and 10 are accepted
-                              className="input mt-1 rounded p-1 text-xs text-black"
-                              placeholder="Enter a score (1-8)"
-                              value={score}
-                              onChange={handleScoreChange}
-                            />
-                            <button
-                              onClick={handleSubmit}
-                              className="mt-1 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white hover:bg-blue-700"
-                            >
-                              Submit
-                            </button>
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </li>
-                      <li>
-                        <span className="font-semibold">Resume Score:</span>{" "}
-                        <span>
-                          {currentScoreResume !== ""
-                            ? currentScoreResume
-                            : "not set"}
-                        </span>
-                        {isPIC ? (
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="text"
-                              inputMode="numeric" // Helps bring up numeric keypad on mobile devices
-                              pattern="[1-7]|8" // Ensures only numbers between 1 and 10 are accepted
-                              className="input mt-1 rounded p-1 text-xs text-black"
-                              placeholder="Enter a score (1-8)"
-                              value={scoreResume}
-                              onChange={handleScoreChangeResume}
-                            />
-                            <button
-                              onClick={handleSubmitResume}
-                              className="mt-1 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white hover:bg-blue-700"
-                            >
-                              Submit
-                            </button>
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </li>
-                      <li>
-                        <span className="font-semibold">
-                          Total Score: {scoreComponents.totalScore.toFixed(2)}
-                        </span>
-                      </li>
-                    </ul>
+                    {isPIC && (
+                      <ul className="list-disc space-y-2 pl-5 text-gray-200">
+                        <li>
+                          <span className="font-semibold">Case Study:</span>{" "}
+                          {Object.values(averages)
+                            .reduce((acc, cur) => acc + cur, 0)
+                            .toFixed(2)}
+                        </li>
+                        <li>
+                          <span className="font-semibold">Interview:</span>{" "}
+                          {Object.values(ivAverages)
+                            .reduce((acc, cur) => acc + cur, 0)
+                            .toFixed(2)}
+                        </li>
+                        <li>
+                          <span className="font-semibold">
+                            Application Score:
+                          </span>{" "}
+                          <span>
+                            {currentScore !== "" ? currentScore : "not set"}
+                          </span>
+                          {isPIC ? (
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="text"
+                                inputMode="numeric" // Helps bring up numeric keypad on mobile devices
+                                pattern="[1-7]|8" // Ensures only numbers between 1 and 10 are accepted
+                                className="input mt-1 rounded p-1 text-xs text-black"
+                                placeholder="Enter a score (1-8)"
+                                value={score}
+                                onChange={handleScoreChange}
+                              />
+                              <button
+                                onClick={handleSubmit}
+                                className="mt-1 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white hover:bg-blue-700"
+                              >
+                                Submit
+                              </button>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </li>
+                        <li>
+                          <span className="font-semibold">Resume Score:</span>{" "}
+                          <span>
+                            {currentScoreResume !== ""
+                              ? currentScoreResume
+                              : "not set"}
+                          </span>
+                          {isPIC ? (
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="text"
+                                inputMode="numeric" // Helps bring up numeric keypad on mobile devices
+                                pattern="[1-7]|8" // Ensures only numbers between 1 and 10 are accepted
+                                className="input mt-1 rounded p-1 text-xs text-black"
+                                placeholder="Enter a score (1-8)"
+                                value={scoreResume}
+                                onChange={handleScoreChangeResume}
+                              />
+                              <button
+                                onClick={handleSubmitResume}
+                                className="mt-1 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white hover:bg-blue-700"
+                              >
+                                Submit
+                              </button>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </li>
+                        <li>
+                          <span className="font-semibold">
+                            Total Score: {scoreComponents.totalScore.toFixed(2)}
+                          </span>
+                        </li>
+                      </ul>
+                    )}
                   </div>
                 </div>
 
