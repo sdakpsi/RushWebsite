@@ -1,1 +1,1 @@
-export const RUSH_YEAR = "Spring '25"
+export const RUSH_YEAR = "Fall '25"
