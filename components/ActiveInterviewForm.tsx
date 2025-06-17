@@ -2,9 +2,9 @@ import { createInterview } from "@/app/supabase/interview";
 import { InterviewForm, ProspectInterview } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { questions, scorableTraits } from "../lib/InterviewQuestions";
 import { createClient } from '@/utils/supabase/client';
+import customToast from '@/components/CustomToast';
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -77,13 +77,13 @@ export default function ActiveInterviewForm({
     setIsSubmitting(true);
     try {
       await createInterview(data, selectedProspect);
-      toast.success("Form submitted successfully");
+      customToast("Form submitted successfully", "success");
       setSelectedProspect(null);
       localStorage.removeItem("selectedProspect");
       setShowingForm(false);
       localStorage.removeItem("formData");
     } catch (error) {
-      toast.error("Error uploading interview form: " + error);
+      customToast("Error uploading interview form: " + error, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -93,7 +93,7 @@ export default function ActiveInterviewForm({
       (error: any) => error.message || "An error occurred"
     );
     const errorMessageString = errorMessages.join(", ");
-    toast.error(`Form submission errors: ${errorMessageString}`);
+    customToast(`Form submission errors: ${errorMessageString}`, "error");
   };
 
   const handleBack = () => {

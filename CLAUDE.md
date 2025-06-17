@@ -99,8 +99,31 @@ The rush year is configured in `/utils/constants.ts` with `RUSH_YEAR` constant.
 ### Form Validation
 Forms use react-hook-form with TypeScript interfaces defined in `/lib/types.ts` for type safety and validation.
 
+### User Notifications
+**IMPORTANT: Use CustomToast for all notifications**
+- **Import**: `import customToast from '@/components/CustomToast';`
+- **Usage**: `customToast(message, type)` where type is 'success', 'error', 'info', or 'warning'
+- **DO NOT use**: `react-toastify` toast directly - always use the CustomToast wrapper
+- **Styling**: CustomToast provides consistent dark theme styling with proper fonts
+- **Examples**:
+  ```typescript
+  customToast('Operation successful!', 'success');
+  customToast('Something went wrong', 'error');
+  customToast('Loading data...', 'info');
+  customToast('Please check your input', 'warning');
+  ```
+
+### Case Study Forms
+The application supports both single and multiple case study form workflows:
+- **Single Form Mode**: Traditional one-at-a-time approach
+- **Multiple Forms Mode**: Tab-based interface for evaluating multiple prospects
+- **Edit Functionality**: Existing submissions can be edited rather than duplicated
+- **Auto-population**: Active names are automatically filled from authenticated user
+- **Status Tracking**: Visual indicators for form completion and submission states
+
 ### Styling Conventions
 - TailwindCSS utility classes for styling
 - Custom fonts loaded from `/fonts/fonts.ts`
 - Responsive design with mobile-first approach
 - CSS modules used sparingly for specific components
+- Dark theme with blue accent colors for consistency
