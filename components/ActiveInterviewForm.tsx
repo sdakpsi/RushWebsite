@@ -1,9 +1,10 @@
 import { createInterview } from "@/app/supabase/interview";
 import { InterviewForm, ProspectInterview } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { questions, scorableTraits } from "../lib/InterviewQuestions";
+import { createClient } from '@/utils/supabase/client';
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -27,10 +28,13 @@ export default function ActiveInterviewForm({
   setIsSubmitting,
 }: ActiveInterviewFormProps) {
   const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+  const [currentUserName, setCurrentUserName] = useState<string>('');
+  
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: savedFormData,
@@ -46,6 +50,23 @@ export default function ActiveInterviewForm({
 
   // Watch all form fields
   const formData = watch();
+
+  // Fetch current user's name and auto-populate
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user && user.user_metadata?.name) {
+        const userName = user.user_metadata.name;
+        setCurrentUserName(userName);
+        // Always set the user's name, overriding any existing value
+        setValue('name', userName, { shouldValidate: true });
+      }
+    };
+
+    fetchUserName();
+  }, [setValue]);
 
   useEffect(() => {
     // Save form data to local storage on change
@@ -111,7 +132,8 @@ export default function ActiveInterviewForm({
           <input
             type="text"
             id="name"
-            className="flex-grow rounded-lg p-1 text-base text-black"
+            className="flex-grow rounded-lg p-1 text-base text-black bg-gray-100 cursor-not-allowed"
+            readOnly
             {...register("name", {
               required: "Name is required",
             })}
