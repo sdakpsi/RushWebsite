@@ -4,8 +4,8 @@ import { useMultipleCaseForms, CaseFormInstance } from '@/hooks/useMultipleCaseF
 import CaseStudyTabs from './CaseStudyTabs';
 import ActiveCaseStudyForm from './ActiveCaseStudyForm';
 import InterviewSearchBar from './InterviewSearchBar';
-import { createCaseStudy } from '@/app/supabase/interview';
-import { toast } from 'react-toastify';
+import { createOrUpdateCaseStudy, getExistingCaseStudy } from '@/app/supabase/interview';
+import customToast from '@/components/CustomToast';
 
 interface MultipleCaseStudyManagerProps {
   showingManager: boolean;
@@ -25,19 +25,63 @@ export default function MultipleCaseStudyManager({
     updateFormData,
     updateFormStatus,
     removeForm,
-    completedFormsCount,
-    clearAllForms,
-    isSubmittingAll,
-    setIsSubmittingAll
+    clearAllForms
   } = useMultipleCaseForms();
 
   const [showProspectSelector, setShowProspectSelector] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<ProspectInterview | null>(null);
 
-  const handleAddForm = (prospect: ProspectInterview) => {
-    const formId = addForm(prospect);
-    setShowProspectSelector(false);
-    setSelectedProspect(null);
+  const handleAddForm = async (prospect: ProspectInterview) => {
+    try {
+      // Check if form already exists for this prospect
+      const existingForm = forms.find(form => form.prospect.id === prospect.id);
+      if (existingForm) {
+        setActiveFormId(existingForm.id);
+        setShowProspectSelector(false);
+        setSelectedProspect(null);
+        customToast(`Form for ${prospect.full_name} is already open`, 'info');
+        return;
+      }
+
+      // Check for existing submission in database
+      const existingSubmission = await getExistingCaseStudy(prospect.id);
+      
+      let formId;
+      if (existingSubmission) {
+        // Load existing submission data
+        const existingData = {
+          name: existingSubmission.active_name,
+          otherActives: existingSubmission.other_actives,
+          leadership_score: existingSubmission.leadership_score,
+          teamwork_score: existingSubmission.teamwork_score,
+          publicSpeaking_score: existingSubmission.public_speaking_score,
+          analytical_score: existingSubmission.analytical_score,
+          leadership_comments: existingSubmission.leadership_comments,
+          teamwork_comments: existingSubmission.teamwork_comments,
+          publicSpeaking_comments: existingSubmission.public_speaking_comments,
+          analytical_comments: existingSubmission.analytical_comments,
+          additionalComments: existingSubmission.additional,
+          role: existingSubmission.role,
+          thoughts: existingSubmission.thoughts,
+        };
+
+        formId = addForm(prospect, existingData, existingSubmission.id);
+        customToast(`Loading existing case study for ${prospect.full_name}`, 'info');
+      } else {
+        formId = addForm(prospect);
+        customToast(`Created new form for ${prospect.full_name}`, 'success');
+      }
+
+      setShowProspectSelector(false);
+      setSelectedProspect(null);
+    } catch (error) {
+      console.error('Error checking for existing submission:', error);
+      // Fall back to creating new form
+      const formId = addForm(prospect);
+      setShowProspectSelector(false);
+      setSelectedProspect(null);
+      customToast('Could not check for existing submission, created new form', 'warning');
+    }
   };
 
   const handleTabClose = (formId: string) => {
@@ -51,50 +95,20 @@ export default function MultipleCaseStudyManager({
     updateFormStatus(formId, 'submitting');
     
     try {
-      await createCaseStudy(form.formData as any, form.prospect);
+      const result = await createOrUpdateCaseStudy(form.formData as any, form.prospect, form.existingSubmissionId);
       updateFormStatus(formId, 'submitted');
-      toast.success(`Case study for ${form.prospect.full_name} submitted successfully`);
+      
+      if (result.isUpdate) {
+        customToast(`Case study for ${form.prospect.full_name} updated successfully`, 'success');
+      } else {
+        customToast(`Case study for ${form.prospect.full_name} submitted successfully`, 'success');
+      }
     } catch (error) {
       updateFormStatus(formId, 'error');
-      toast.error(`Error submitting case study for ${form.prospect.full_name}: ${error}`);
+      customToast(`Error saving case study for ${form.prospect.full_name}: ${error}`, 'error');
     }
   };
 
-  const handleBulkSubmit = async () => {
-    const completedForms = forms.filter(form => form.status === 'completed');
-    if (completedForms.length === 0) {
-      toast.warning('No completed forms to submit');
-      return;
-    }
-
-    setIsSubmittingAll(true);
-    const results = [];
-
-    for (const form of completedForms) {
-      updateFormStatus(form.id, 'submitting');
-      
-      try {
-        await createCaseStudy(form.formData as any, form.prospect);
-        updateFormStatus(form.id, 'submitted');
-        results.push({ success: true, name: form.prospect.full_name });
-      } catch (error) {
-        updateFormStatus(form.id, 'error');
-        results.push({ success: false, name: form.prospect.full_name, error });
-      }
-    }
-
-    setIsSubmittingAll(false);
-
-    const successCount = results.filter(r => r.success).length;
-    const errorCount = results.filter(r => !r.success).length;
-
-    if (successCount > 0) {
-      toast.success(`${successCount} case studies submitted successfully`);
-    }
-    if (errorCount > 0) {
-      toast.error(`${errorCount} case studies failed to submit`);
-    }
-  };
 
   const handleBack = () => {
     setShowingManager(false);
@@ -107,10 +121,10 @@ export default function MultipleCaseStudyManager({
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={handleBack}
-          className="px-4 py-2 text-white bg-gray-700 rounded hover:bg-gray-600"
-        >
-          ← Back to Portal
-        </button>
+          className="px-4 py-2 text-base rounded-lg text-white border-none cursor-pointer hover:bg-gray-700"
+          >
+            &lt; Back{' '}
+          </button>
         
         <h1 className="text-2xl font-semibold text-center text-white absolute left-1/2 transform -translate-x-1/2">
           Multiple Case Studies
@@ -120,17 +134,8 @@ export default function MultipleCaseStudyManager({
           {forms.length > 0 && (
             <>
               <span className="px-3 py-2 text-sm bg-blue-600 text-white rounded">
-                {completedFormsCount}/{forms.length} completed
+                {forms.length} form{forms.length !== 1 ? 's' : ''} open
               </span>
-              {completedFormsCount > 0 && (
-                <button
-                  onClick={handleBulkSubmit}
-                  disabled={isSubmittingAll}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-                >
-                  {isSubmittingAll ? 'Submitting...' : `Submit All (${completedFormsCount})`}
-                </button>
-              )}
               <button
                 onClick={clearAllForms}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -147,7 +152,7 @@ export default function MultipleCaseStudyManager({
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium text-white">Add New Case Study</h2>
           <button
-            onClick={() => setShowProspectSelector(!showProspectSelector)}
+            onClick={() => setShowProspectSelector(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             + Add Another Form
@@ -203,9 +208,11 @@ export default function MultipleCaseStudyManager({
             formData={activeForm.formData}
             onFormDataChange={(data) => updateFormData(activeForm.id, data)}
             onFormSubmit={() => handleFormSubmit(activeForm.id)}
-            onFormComplete={() => updateFormStatus(activeForm.id, 'completed')}
+            onFormClose={() => handleTabClose(activeForm.id)}
             isSubmitting={activeForm.status === 'submitting'}
             isMultiFormContext={true}
+            existingSubmissionId={activeForm.existingSubmissionId}
+            isEditing={activeForm.isEditing}
           />
         </div>
       )}

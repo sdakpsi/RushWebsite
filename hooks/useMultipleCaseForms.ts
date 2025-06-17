@@ -7,6 +7,8 @@ export interface CaseFormInstance {
   formData: Partial<CaseStudyForm>;
   status: 'editing' | 'completed' | 'submitting' | 'submitted' | 'error';
   lastUpdated: Date;
+  existingSubmissionId?: string;
+  isEditing?: boolean;
 }
 
 const STORAGE_KEY = 'multipleCaseForms';
@@ -14,7 +16,6 @@ const STORAGE_KEY = 'multipleCaseForms';
 export function useMultipleCaseForms() {
   const [forms, setForms] = useState<CaseFormInstance[]>([]);
   const [activeFormId, setActiveFormId] = useState<string | null>(null);
-  const [isSubmittingAll, setIsSubmittingAll] = useState(false);
 
   // Load forms from localStorage on mount
   useEffect(() => {
@@ -49,7 +50,7 @@ export function useMultipleCaseForms() {
   }, [forms]);
 
   // Add a new form for a prospect
-  const addForm = useCallback((prospect: ProspectInterview) => {
+  const addForm = useCallback((prospect: ProspectInterview, existingData?: Partial<CaseStudyForm>, existingSubmissionId?: string) => {
     // Check if form already exists for this prospect
     const existingForm = forms.find(form => form.prospect.id === prospect.id);
     if (existingForm) {
@@ -61,9 +62,11 @@ export function useMultipleCaseForms() {
     const newForm: CaseFormInstance = {
       id: newFormId,
       prospect,
-      formData: {},
+      formData: existingData || {},
       status: 'editing',
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
+      existingSubmissionId,
+      isEditing: !!existingSubmissionId
     };
 
     setForms(prev => [...prev, newForm]);
@@ -121,22 +124,12 @@ export function useMultipleCaseForms() {
     return forms.filter(form => form.status === status);
   }, [forms]);
 
-  // Check if all forms are completed (ready to submit)
-  const allFormsCompleted = forms.length > 0 && forms.every(form => 
-    form.status === 'completed' || form.status === 'submitted'
-  );
-
   // Clear all forms
   const clearAllForms = useCallback(() => {
     setForms([]);
     setActiveFormId(null);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
-
-  // Get completed forms count
-  const completedFormsCount = forms.filter(form => 
-    form.status === 'completed' || form.status === 'submitted'
-  ).length;
 
   return {
     forms,
@@ -148,10 +141,6 @@ export function useMultipleCaseForms() {
     updateFormStatus,
     removeForm,
     getFormsByStatus,
-    allFormsCompleted,
-    completedFormsCount,
-    clearAllForms,
-    isSubmittingAll,
-    setIsSubmittingAll
+    clearAllForms
   };
 }

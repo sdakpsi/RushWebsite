@@ -3,9 +3,9 @@ import { useEffect, useState, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { questions, scorableTraits } from '../lib/InterviewQuestions';
-import { createCaseStudy, createInterview } from '@/app/supabase/interview';
-import { toast } from 'react-toastify';
+import { createCaseStudy, createInterview, createOrUpdateCaseStudy, getExistingCaseStudy } from '@/app/supabase/interview';
 import { caseStudyData } from '@/lib/CaseStudyQuestions';
+import customToast from '@/components/CustomToast';
 import { createClient } from '@/utils/supabase/client';
 
 interface ActiveInterviewFormProps {
@@ -18,8 +18,12 @@ interface ActiveInterviewFormProps {
   onFormDataChange?: (data: Partial<CaseStudyForm>) => void;
   onFormSubmit?: () => void;
   onFormComplete?: () => void;
+  onFormClose?: () => void;
   isSubmitting?: boolean;
   isMultiFormContext?: boolean;
+  // New props for edit mode
+  existingSubmissionId?: string;
+  isEditing?: boolean;
 }
 export default function ActiveCaseStudyForm({
   selectedProspect,
@@ -30,15 +34,20 @@ export default function ActiveCaseStudyForm({
   onFormDataChange,
   onFormSubmit,
   onFormComplete,
+  onFormClose,
   isSubmitting: externalIsSubmitting,
-  isMultiFormContext = false
+  isMultiFormContext = false,
+  existingSubmissionId,
+  isEditing: initialIsEditing = false
 }: ActiveInterviewFormProps) {
-  const storageKey = isMultiFormContext ? null : 'formDataCase';
+  const storageKey = isMultiFormContext ? null : `formDataCase_${selectedProspect.id}`;
   const savedFormData = storageKey ? JSON.parse(localStorage.getItem(storageKey) || '{}') : {};
   const initialFormData = externalFormData || savedFormData;
   const isUserTypingRef = useRef(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const [currentUserName, setCurrentUserName] = useState<string>('');
+  const [isEditing, setIsEditing] = useState(initialIsEditing);
+  const [submissionId, setSubmissionId] = useState(existingSubmissionId);
   
   const {
     register,
@@ -69,6 +78,52 @@ export default function ActiveCaseStudyForm({
 
     fetchUserName();
   }, [setValue]);
+
+  // Check for existing submission and load data if found
+  useEffect(() => {
+    const checkExistingSubmission = async () => {
+      if (!isMultiFormContext && !initialIsEditing) {
+        try {
+          const existingSubmission = await getExistingCaseStudy(selectedProspect.id);
+          
+          if (existingSubmission) {
+            // Found existing submission, switch to edit mode
+            setIsEditing(true);
+            setSubmissionId(existingSubmission.id);
+            
+            // Load existing data into form
+            const existingData = {
+              name: existingSubmission.active_name,
+              otherActives: existingSubmission.other_actives,
+              leadership_score: existingSubmission.leadership_score,
+              teamwork_score: existingSubmission.teamwork_score,
+              publicSpeaking_score: existingSubmission.public_speaking_score,
+              analytical_score: existingSubmission.analytical_score,
+              leadership_comments: existingSubmission.leadership_comments,
+              teamwork_comments: existingSubmission.teamwork_comments,
+              publicSpeaking_comments: existingSubmission.public_speaking_comments,
+              analytical_comments: existingSubmission.analytical_comments,
+              additionalComments: existingSubmission.additional,
+              role: existingSubmission.role,
+              thoughts: existingSubmission.thoughts,
+            };
+
+            // Set form values
+            Object.keys(existingData).forEach(key => {
+              setValue(key as keyof CaseStudyForm, existingData[key as keyof typeof existingData]);
+            });
+
+            customToast(`Loading existing case study for ${selectedProspect.full_name}`, 'info');
+          }
+        } catch (error) {
+          console.error('Error checking for existing submission:', error);
+          // Continue with new submission if error occurs
+        }
+      }
+    };
+
+    checkExistingSubmission();
+  }, [selectedProspect.id, setValue, isMultiFormContext, initialIsEditing]);
 
   // Handle user typing detection
   const handleUserInput = () => {
@@ -116,6 +171,19 @@ export default function ActiveCaseStudyForm({
     }
   }, []); // Empty dependency array - only run once on mount
 
+  // Reset form when prospect changes (only for single form context)
+  useEffect(() => {
+    if (!isMultiFormContext && !isEditing) {
+      // Clear form data when switching to a different prospect
+      const formKeys = Object.keys(watch());
+      formKeys.forEach(key => {
+        if (key !== 'name') { // Keep the active name
+          setValue(key as keyof CaseStudyForm, '');
+        }
+      });
+    }
+  }, [selectedProspect.id, isMultiFormContext, isEditing, setValue, watch]);
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -126,35 +194,50 @@ export default function ActiveCaseStudyForm({
   }, []);
 
   const onSubmit = async (data: CaseStudyForm) => {
-    if (isMultiFormContext) {
-      // In multi-form context, mark as complete and let parent handle submission
-      if (onFormComplete) {
-        onFormComplete();
-      }
-      toast.success('Form marked as complete! You can submit it from the main panel.');
-      return;
+    // Handle submission for both single and multi-form contexts
+    const isCurrentlySubmitting = externalIsSubmitting || false;
+    
+    if (setIsSubmitting && !isMultiFormContext) setIsSubmitting(true);
+    if (onFormSubmit && isMultiFormContext) {
+      // Notify parent that submission is starting
+      onFormSubmit();
     }
 
-    // Single form context - handle submission directly
-    if (setIsSubmitting) setIsSubmitting(true);
     try {
-      await createCaseStudy(data, selectedProspect);
-      toast.success('Form submitted successfully');
-      if (setSelectedProspect) setSelectedProspect(null);
-      localStorage.removeItem('selectedProspectCase');
-      if (setShowingForm) setShowingForm(false);
-      localStorage.removeItem('formDataCase');
+      const result = await createOrUpdateCaseStudy(data, selectedProspect, submissionId);
+      
+      if (result.isUpdate) {
+        customToast('Case study updated successfully!', 'success');
+      } else {
+        customToast('Case study submitted successfully!', 'success');
+        // If it was a new submission, switch to edit mode for future changes
+        setIsEditing(true);
+      }
+      
+      if (!isMultiFormContext) {
+        // Single form context - reset form
+        if (setSelectedProspect) setSelectedProspect(null);
+        localStorage.removeItem('selectedProspectCase');
+        if (setShowingForm) setShowingForm(false);
+        if (storageKey) localStorage.removeItem(storageKey);
+      } else {
+        // Multi-form context - close form after submission
+        if (onFormClose) {
+          onFormClose();
+        }
+      }
+      
     } catch (error) {
-      toast.error('Error uploading interview form: ' + error);
+      customToast('Error saving case study: ' + error, 'error');
     } finally {
-      if (setIsSubmitting) setIsSubmitting(false);
+      if (setIsSubmitting && !isMultiFormContext) setIsSubmitting(false);
     }
   };
 
   const onError = (errors: any) => {
     const errorMessages = Object.values(errors).map((error: any) => error.message || 'An error occurred');
     const errorMessageString = errorMessages.join(', ');
-    toast.error(`Form submission errors: ${errorMessageString}`);
+    customToast(`Form submission errors: ${errorMessageString}`, 'error');
   };
 
   const handleBack = () => {
@@ -165,6 +248,7 @@ export default function ActiveCaseStudyForm({
     if (setSelectedProspect) setSelectedProspect(null);
     localStorage.removeItem('selectedProspectCase');
     if (setShowingForm) setShowingForm(false);
+    // Don't remove form data on back - let user resume if they come back to same prospect
   };
 
   const isCurrentlySubmitting = externalIsSubmitting || false;
@@ -176,14 +260,16 @@ export default function ActiveCaseStudyForm({
           <button
             type="button"
             onClick={() => handleBack()}
-            className="px-4 py-2 text-base rounded-lg text-white border-none cursor-pointer"
+            className="px-4 py-2 text-base rounded-lg text-white border-none cursor-pointer hover:bg-gray-700"
           >
             &lt; Back{' '}
           </button>
         )}
-        <h1 className="text-2xl text-center text-white">
-          Case Study: {selectedProspect.full_name}
-        </h1>
+        <div className="text-center">
+          <h1 className="text-2xl text-white">
+            Case Study: {selectedProspect.full_name}
+          </h1>
+        </div>
         <div></div>
       </div>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -257,7 +343,6 @@ export default function ActiveCaseStudyForm({
               <div className="mt-1">
                 <select
                   className="p-2.5 text-base rounded-lg text-black"
-                  onChange={handleUserInput}
                   {...register(`${trait.label}_score`, {
                     required: `Please select a value for ${trait.name}`,
                   })}
@@ -306,10 +391,10 @@ export default function ActiveCaseStudyForm({
               }`}
             >
               {isCurrentlySubmitting 
-                ? 'Submitting...' 
-                : isMultiFormContext 
-                  ? 'Mark as Complete' 
-                  : 'Submit'
+                ? (isEditing ? 'Updating...' : 'Submitting...') 
+                : isEditing 
+                  ? 'Update Case Study'
+                  : 'Submit Case Study'
               }
             </button>
         </div>
