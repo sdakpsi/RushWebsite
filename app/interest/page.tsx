@@ -191,7 +191,7 @@ const InterestForm = () => {
 
         <div className="lg:text-md libre-caslon-text-regular mb-8 px-2 text-left text-sm text-white">
           Hello! Thank you for taking interest in UCSD Alpha Kappa Psi's Fall
-          2024 Rush Week. The brothers of Alpha Kappa Psi are looking forward to
+          2025 Rush Week. The brothers of Alpha Kappa Psi are looking forward to
           see you during Week 1 of Fall Quarter. We hope that you are just as
           excited for this journey as we are!
           <br />
@@ -214,10 +214,10 @@ const InterestForm = () => {
           Email:{" "}
           <a
             target="_blank"
-            href="mailto:akpfall2024@gmail.com"
+            href="mailto:akpfall2025@gmail.com"
             className="underline"
           >
-            akpfall2024@gmail.com
+            akpfall2025@gmail.com
           </a>
         </div>
       </div>
@@ -226,7 +226,7 @@ const InterestForm = () => {
           Align Your Stars
         </h1>
         <h2 className="bon-vivant-text-regular mb-8 text-center text-xl text-blue-200">
-          Alpha Kappa Psi | Fall 2024 Rush
+          Alpha Kappa Psi | Fall 2025 Rush
         </h2>
         <form onSubmit={handleSubmit} className="w-full space-y-6">
           <div>
