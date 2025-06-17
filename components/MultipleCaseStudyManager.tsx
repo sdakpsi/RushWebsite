@@ -133,9 +133,6 @@ export default function MultipleCaseStudyManager({
         <div className="flex gap-2">
           {forms.length > 0 && (
             <>
-              <span className="px-3 py-2 text-sm bg-blue-600 text-white rounded">
-                {forms.length} form{forms.length !== 1 ? 's' : ''} open
-              </span>
               <button
                 onClick={clearAllForms}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -172,9 +169,9 @@ export default function MultipleCaseStudyManager({
                 </span>
                 <button
                   onClick={() => handleAddForm(selectedProspect)}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  className="px-4 py-2 rounded bg-blue-500 font-bold text-white hover:bg-blue-700"
                 >
-                  Create Form
+                  Start Case Study Form
                 </button>
                 <button
                   onClick={() => {
