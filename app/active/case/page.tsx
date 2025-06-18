@@ -64,7 +64,7 @@ export default function ProtectedPage() {
                       className="rounded bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700 transition-colors"
                       onClick={() => setShowingMultipleForms(true)}
                     >
-                      Multiple Forms Mode
+                      Multiple Forms
                     </button>
                     <button
                       className="rounded bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 transition-colors"
@@ -73,12 +73,12 @@ export default function ProtectedPage() {
                       }}
                       disabled
                     >
-                      Classic Single Form
+                      Single Form
                     </button>
                   </div>
                   <p className="text-sm text-gray-600 text-center max-w-2xl">
-                    Use <strong>Multiple Forms Mode</strong> to evaluate multiple prospects at once with tabs and bulk submission.
-                    Or use <strong>Classic Single Form</strong> for the traditional one-at-a-time approach.
+                    Use <strong>Multiple Forms</strong> to evaluate multiple prospects at once with tabs.
+                    Or use <strong>Single Form</strong> for the traditional one-at-a-time approach.
                   </p>
                 </div>
 
