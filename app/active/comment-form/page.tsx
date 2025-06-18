@@ -8,6 +8,9 @@ import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
 import Checkbox from "@/components/Checkbox";
 import { v4 as uuidv4 } from "uuid";
+import { getUsersForComments } from "@/app/supabase/getUsers";
+import ProspectGrid from "@/components/ProspectGrid";
+import { useEffect } from "react";
 
 // Mirror implementation of interview page
 
@@ -35,11 +38,36 @@ export default function Page(this: any) {
     setIsSubmitting,
   } = useSelectedProspect();
 
+  const [viewMode, setViewMode] = useState<'search' | 'grid'>('search');
   const [comment, setComment] = useState("");
   const [interaction, setInteraction] = useState("");
   const [invite, setInvite] = useState("");
   const [newProspectName, setNewProspectName] = useState("");
   const [checked, setChecked] = useState(false);
+  const [prospects, setProspects] = useState<Array<{id: string, full_name: string, email: string}>>([]);
+  const [prospectsLoading, setProspectsLoading] = useState(false);
+
+  useEffect(() => {
+    if (viewMode === 'grid' && prospects.length === 0) {
+      const fetchProspects = async () => {
+        setProspectsLoading(true);
+        try {
+          const data = await getUsersForComments();
+          if (data) {
+            setProspects(data);
+          }
+        } catch (error) {
+          console.error("Error fetching prospects:", error);
+        } finally {
+          setProspectsLoading(false);
+        }
+      };
+      fetchProspects();
+    } else if (viewMode === 'search') {
+      // Clear loading state when switching back to search
+      setProspectsLoading(false);
+    }
+  }, [viewMode, prospects.length]);
 
   const supabase = createClient();
 
@@ -93,8 +121,8 @@ export default function Page(this: any) {
       } else {
         const { data, error } = await supabase.from("comments").insert([
           {
-            prospect_id: selectedProspect.id,
-            prospect_name: selectedProspect.full_name,
+            prospect_id: selectedProspect?.id,
+            prospect_name: selectedProspect?.full_name,
             active_id: user?.id,
             active_name: user?.user_metadata.name,
             comment: comment,
@@ -108,7 +136,7 @@ export default function Page(this: any) {
         }
 
         customToast(
-          `Submitted comment for ${selectedProspect.full_name}: ${comment}`,
+          `Submitted comment for ${selectedProspect?.full_name}: ${comment}`,
           "success"
         );
       }
@@ -132,20 +160,61 @@ export default function Page(this: any) {
     <div className="flex w-full items-center justify-center">
       <div className="animate-in w-full max-w-4xl opacity-0">
         {isActive ? (
-          <div className="container mx-auto px-4 pt-6">
+          <div className="container mx-auto px-4 pt-6 pb-8">
             <div className="flex flex-col space-y-6">
               <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
                 Prospect Comment Form
               </h1>
-              <InterviewSearchBar
-                selectedProspect={selectedProspect}
-                setSelectedProspect={setSelectedProspect}
-              />
+
+              <div className="flex flex-col items-center space-y-4">
+                <div className="flex gap-4">
+                  <button
+                    className={`rounded px-6 py-3 font-semibold text-white transition-colors ${
+                      viewMode === 'search'
+                        ? 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-gray-600 hover:bg-gray-700'
+                    }`}
+                    onClick={() => setViewMode('search')}
+                  >
+                     View
+                  </button>
+                  <button
+                    className={`rounded px-6 py-3 font-semibold text-white transition-colors ${
+                      viewMode === 'grid'
+                        ? 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-gray-600 hover:bg-gray-700'
+                    }`}
+                    onClick={() => setViewMode('grid')}
+                  >
+                    Grid View
+                  </button>
+                </div>
+                <p className="text-sm text-gray-400 text-center max-w-2xl">
+                  Use <strong>Search View</strong> to search for prospects manually.
+                  Or use <strong>Grid View</strong> to browse all prospects in a grid layout.
+                </p>
+              </div>
+              {viewMode === 'search' && (
+                <InterviewSearchBar
+                  selectedProspect={selectedProspect}
+                  setSelectedProspect={setSelectedProspect}
+                />
+              )}
+              
+              {viewMode === 'grid' && (
+                <ProspectGrid
+                  prospects={prospects || []}
+                  selectedProspect={selectedProspect}
+                  onSelectProspect={setSelectedProspect}
+                  isLoading={prospectsLoading}
+                />
+              )}
+
               <p className="text-md text-left md:text-2xl">
                 Selected Prospect: {selectedProspect?.full_name || "None"} -{" "}
                 {selectedProspect?.email || "None"}
               </p>
-              {!selectedProspect?.full_name && (
+              {!selectedProspect?.full_name && viewMode !== "grid" && (
                 <div>
                   <input
                     type="checkbox"
@@ -155,9 +224,22 @@ export default function Page(this: any) {
                   <label> Manually enter prospect name?</label>
                 </div>
               )}
+
+              {/* Back to Grid button when prospect is selected in grid mode */}
+              {viewMode === 'grid' && selectedProspect && (
+                <div className="flex justify-center">
+                  <button
+                    className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 transition-colors"
+                    onClick={() => setSelectedProspect(null)}
+                  >
+                     Back to Grid
+                  </button>
+                </div>
+              )}
+
               {/* Comment Input */}
               {(selectedProspect || checked) && (
-                <div className="flex flex-col">
+                <div className="flex flex-col" data-comment-form>
                   {/* Interaction Question */}
                   <div className="flex flex-col">
                     {checked && !selectedProspect && (
