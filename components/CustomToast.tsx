@@ -1,4 +1,3 @@
-import { bonVivant } from '@/fonts/fonts';
 import { toast, ToastOptions } from 'react-toastify';
 
 const customToast = (
@@ -17,7 +16,6 @@ const customToast = (
       lineHeight: '1.4', // Adjust line height for readability
       padding: '10px 15px', // Add some padding
     },
-    className: `${bonVivant.className} bon-vivant-text-regular`,
     progressStyle: { background: '#3b82f6' }, // light blue progress bar
     autoClose: 3000,
   };
