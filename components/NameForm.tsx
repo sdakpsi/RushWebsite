@@ -18,7 +18,7 @@ import {
   UCSDQuarters,
 } from "@/lib/types";
 import { formatTimestamp, extractFileName } from "@/utils/format";
-import { toast } from "react-toastify";
+import customToast from "./CustomToast";
 import { delay } from "@/utils/delay";
 import { smallInput, textLabel, largeInput } from "./NameForm.styles";
 import LoadingSpinner from "./LoadingSpinner";
@@ -301,11 +301,11 @@ export default function NameForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isGraduationYearValid) {
-      toast.error("Graduation year is invalid.");
+      customToast("Graduation year is invalid.", "error");
       return;
     }
     if (!isCumulativeGPAValid) {
-      toast.error("Cumulative GPA is invalid.");
+      customToast("Cumulative GPA is invalid.", "error");
       return;
     }
 
@@ -335,7 +335,7 @@ export default function NameForm() {
       .filter((field) => !field.value)
       .map((field) => field.name);
     if (emptyFields.length > 0) {
-      toast.error(`Empty fields: ${emptyFields.join(", ")}`);
+      customToast(`Empty fields: ${emptyFields.join(", ")}`, "error");
       return;
     } else {
       setSubmitting(true);
@@ -356,15 +356,16 @@ export default function NameForm() {
         });
         if (response.ok) {
           setLastSubmitted(formatTimestamp(new Date()));
-          toast.success(
-            "Application submitted! Thanks for taking the time to submit an application :)"
+          customToast(
+            "Application submitted! Thanks for taking the time to submit an application :)",
+            "success"
           );
         } else {
-          toast.error("Failed to submit application");
+          customToast("Failed to submit application", "error");
         }
       } catch (error) {
         console.error("Error submitting application:", error);
-        toast.error("An error occurred while submitting the application");
+        customToast("An error occurred while submitting the application", "error");
       } finally {
         setSubmitting(false);
       }

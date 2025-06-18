@@ -1,5 +1,5 @@
 'use client';
-import { toast } from 'react-toastify';
+import customToast from '@/components/CustomToast';
 import React, { useState } from 'react';
 export default function ActiveLoginComponent() {
   const [inputValue, setInputValue] = useState<string>('');
@@ -14,13 +14,13 @@ export default function ActiveLoginComponent() {
     if (inputValue === process.env.NEXT_PUBLIC_ACTIVE_PASSWORD) {
       markAsActive(); 
     } else {
-      toast.error('Incorrect password. Please try again.');
+      customToast('Incorrect password. Please try again.', "error");
     }
   };
 
   const markAsActive = async () => {
     await fetch('/api/is-active', { method: 'POST' });
-    toast.success('You have been marked as active!');
+    customToast('You have been marked as active!', "success");
     window.location.reload(); 
   };
 
