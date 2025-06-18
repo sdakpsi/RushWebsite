@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "react-toastify";
 import Image from "next/image";
-import { Toast } from "react-toastify/dist/components";
 
 interface Application {
   id: string;
