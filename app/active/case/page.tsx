@@ -9,6 +9,9 @@ import { useActiveStatus } from "@/hooks/useCheckActive";
 import { useSelectedProspect } from "@/hooks/useSelectedProspect";
 import { useFormAnimation } from "@/hooks/useFormAnimation";
 import PastActiveSubmission from "@/components/PastActiveSubmission";
+import { loadCaseStudyFormData } from "@/app/supabase/interview";
+import customToast from "@/components/CustomToast";
+import { CaseStudyForm } from "@/lib/types";
 
 export default function ProtectedPage() {
   const { isActive, isLoading } = useActiveStatus();
@@ -21,10 +24,41 @@ export default function ProtectedPage() {
   const { showingForm, setShowingForm, animationClass, animationKey } =
     useFormAnimation();
   const [showingMultipleForms, setShowingMultipleForms] = useState(false);
+  const [preloadedFormData, setPreloadedFormData] = useState<Partial<CaseStudyForm> | undefined>(undefined);
+  const [formSubmissionId, setFormSubmissionId] = useState(undefined);
+  const [isFormEditing, setIsFormEditing] = useState(false);
 
   useEffect(() => {
     console.log("showingForm", showingForm);
   }, [showingForm]);
+
+  const handleStartCaseStudyForm = async () => {
+    if (!selectedProspect) return;
+    
+    try {
+      const formData = await loadCaseStudyFormData(selectedProspect.id);
+      
+      if (formData.exists) {
+        setPreloadedFormData(formData.data);
+        setFormSubmissionId(formData.submissionId);
+        setIsFormEditing(formData.isEditing);
+        customToast(`Loading existing case study for ${selectedProspect.full_name}`, 'info');
+      } else {
+        setPreloadedFormData(undefined);
+        setFormSubmissionId(undefined);
+        setIsFormEditing(false);
+      }
+      
+      setShowingForm(true);
+    } catch (error) {
+      console.error('Error loading case study data:', error);
+      // Still show the form even if loading fails
+      setPreloadedFormData(undefined);
+      setFormSubmissionId(undefined);
+      setIsFormEditing(false);
+      setShowingForm(true);
+    }
+  };
   
   if (isLoading || isSubmitting) {
     return <LoadingSpinner />;
@@ -50,6 +84,9 @@ export default function ProtectedPage() {
                   setSelectedProspect={setSelectedProspect}
                   setShowingForm={setShowingForm}
                   setIsSubmitting={setIsSubmitting}
+                  preloadedData={preloadedFormData}
+                  existingSubmissionId={formSubmissionId}
+                  isEditing={isFormEditing}
                 />
               </div>
             ) : (
@@ -89,7 +126,7 @@ export default function ProtectedPage() {
                 {selectedProspect && (
                   <button
                     className="self-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                    onClick={() => setShowingForm(true)}
+                    onClick={handleStartCaseStudyForm}
                   >
                     Start Case Study Form
                   </button>

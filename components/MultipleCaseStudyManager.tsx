@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { debounce } from 'lodash';
 import { ProspectInterview } from '@/lib/types';
 import { useMultipleCaseForms, CaseFormInstance } from '@/hooks/useMultipleCaseForms';
 import CaseStudyTabs from './CaseStudyTabs';
 import ActiveCaseStudyForm from './ActiveCaseStudyForm';
 import InterviewSearchBar from './InterviewSearchBar';
-import { createOrUpdateCaseStudy, getExistingCaseStudy } from '@/app/supabase/interview';
+import { createOrUpdateCaseStudy, getExistingCaseStudy, autoSaveCaseStudy } from '@/app/supabase/interview';
 import customToast from '@/components/CustomToast';
 
 interface MultipleCaseStudyManagerProps {
@@ -30,6 +31,104 @@ export default function MultipleCaseStudyManager({
 
   const [showProspectSelector, setShowProspectSelector] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<ProspectInterview | null>(null);
+  const [lastKeyPress, setLastKeyPress] = useState<{ key: string; time: number } | null>(null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<{[formId: string]: {saving: boolean, lastSaved?: string}}>({});
+
+  // Auto-save for multiple forms - simpler approach
+  const debouncedAutoSave = useCallback(
+    debounce(async (formId: string, formData: any, prospect: ProspectInterview, existingSubmissionId?: string) => {
+      // Don't auto-save if form is empty or only has the user's name
+      const hasContent = Object.entries(formData).some(([key, value]) => 
+        key !== 'name' && value && value.toString().trim() !== ''
+      );
+      
+      if (!hasContent) return;
+
+      setAutoSaveStatus(prev => ({
+        ...prev,
+        [formId]: { saving: true, lastSaved: prev[formId]?.lastSaved }
+      }));
+      
+      try {
+        const result = await autoSaveCaseStudy(formData, prospect, existingSubmissionId);
+        
+        setAutoSaveStatus(prev => ({
+          ...prev,
+          [formId]: { saving: false, lastSaved: new Date().toLocaleTimeString() }
+        }));
+      } catch (error) {
+        console.error('Auto-save failed for form:', formId, error);
+        setAutoSaveStatus(prev => ({
+          ...prev,
+          [formId]: { saving: false, lastSaved: prev[formId]?.lastSaved }
+        }));
+      }
+    }, 1000), // 1 second delay like single form
+    []
+  );
+
+  // Create a wrapper for form data change that triggers auto-save
+  const handleFormDataChangeWithAutoSave = useCallback((formId: string, data: any, prospect: ProspectInterview, existingSubmissionId?: string) => {
+    updateFormData(formId, data);
+    debouncedAutoSave(formId, data, prospect, existingSubmissionId);
+  }, [updateFormData, debouncedAutoSave]);
+
+  // Keyboard navigation with debouncing
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    // Only handle arrow keys when there are forms and no input/textarea is focused
+    if (forms.length === 0 || 
+        document.activeElement?.tagName === 'INPUT' || 
+        document.activeElement?.tagName === 'TEXTAREA' ||
+        document.activeElement?.tagName === 'SELECT') {
+      return;
+    }
+
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      
+      const now = Date.now();
+      const debounceTime = 150; // 150ms debounce
+      
+      // Check if this is a repeated key press within the debounce time
+      if (lastKeyPress && 
+          lastKeyPress.key === event.key && 
+          now - lastKeyPress.time < debounceTime) {
+        return;
+      }
+      
+      setLastKeyPress({ key: event.key, time: now });
+      
+      const currentIndex = forms.findIndex(form => form.id === activeFormId);
+      if (currentIndex === -1) return;
+
+      let nextIndex;
+      if (event.key === 'ArrowLeft') {
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : forms.length - 1;
+      } else {
+        nextIndex = currentIndex < forms.length - 1 ? currentIndex + 1 : 0;
+      }
+
+      const nextForm = forms[nextIndex];
+      if (nextForm) {
+        setActiveFormId(nextForm.id);
+      }
+    }
+  }, [forms, activeFormId, setActiveFormId, lastKeyPress]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedAutoSave.cancel();
+    };
+  }, [debouncedAutoSave]);
+
 
   const handleAddForm = async (prospect: ProspectInterview) => {
     try {
@@ -152,7 +251,7 @@ export default function MultipleCaseStudyManager({
             onClick={() => setShowProspectSelector(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            + Add Another Form
+            + Add Form
           </button>
         </div>
         
@@ -194,6 +293,7 @@ export default function MultipleCaseStudyManager({
         activeFormId={activeFormId}
         onTabClick={setActiveFormId}
         onTabClose={handleTabClose}
+        autoSaveStatus={autoSaveStatus}
       />
 
       {/* Active Form */}
@@ -204,6 +304,10 @@ export default function MultipleCaseStudyManager({
             selectedProspect={activeForm.prospect}
             formData={activeForm.formData}
             onFormDataChange={(data) => updateFormData(activeForm.id, data)}
+            onFieldChange={(formData) => {
+              // Use the fresh form data passed from the form
+              debouncedAutoSave(activeForm.id, formData, activeForm.prospect, activeForm.existingSubmissionId);
+            }}
             onFormSubmit={() => handleFormSubmit(activeForm.id)}
             onFormClose={() => handleTabClose(activeForm.id)}
             isSubmitting={activeForm.status === 'submitting'}

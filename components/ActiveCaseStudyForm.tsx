@@ -1,12 +1,14 @@
 import { CaseStudyForm, InterviewForm, ProspectInterview } from '@/lib/types';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
+import { debounce } from 'lodash';
 import { questions, scorableTraits } from '../lib/InterviewQuestions';
-import { createCaseStudy, createInterview, createOrUpdateCaseStudy, getExistingCaseStudy } from '@/app/supabase/interview';
+import { createCaseStudy, createInterview, createOrUpdateCaseStudy, getExistingCaseStudy, autoSaveCaseStudy } from '@/app/supabase/interview';
 import { caseStudyData } from '@/lib/CaseStudyQuestions';
 import customToast from '@/components/CustomToast';
 import { createClient } from '@/utils/supabase/client';
+import { formatTimestamp } from '@/utils/format';
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -16,6 +18,7 @@ interface ActiveInterviewFormProps {
   // New props for multi-form context
   formData?: Partial<CaseStudyForm>;
   onFormDataChange?: (data: Partial<CaseStudyForm>) => void;
+  onFieldChange?: (formData: Partial<CaseStudyForm>) => void;
   onFormSubmit?: () => void;
   onFormComplete?: () => void;
   onFormClose?: () => void;
@@ -24,6 +27,7 @@ interface ActiveInterviewFormProps {
   // New props for edit mode
   existingSubmissionId?: string;
   isEditing?: boolean;
+  preloadedData?: Partial<CaseStudyForm>;
 }
 export default function ActiveCaseStudyForm({
   selectedProspect,
@@ -38,17 +42,36 @@ export default function ActiveCaseStudyForm({
   isSubmitting: externalIsSubmitting,
   isMultiFormContext = false,
   existingSubmissionId,
-  isEditing: initialIsEditing = false
+  isEditing: initialIsEditing = false,
+  onFieldChange,
+  preloadedData
 }: ActiveInterviewFormProps) {
   const storageKey = isMultiFormContext ? null : `formDataCase_${selectedProspect.id}`;
   const savedFormData = storageKey ? JSON.parse(localStorage.getItem(storageKey) || '{}') : {};
-  const initialFormData = externalFormData || savedFormData;
+  
+  // Initialize form data based on context
+  const getInitialFormData = () => {
+    if (preloadedData) {
+      return preloadedData;
+    }
+    if (externalFormData) {
+      return externalFormData;
+    }
+    if (savedFormData && Object.keys(savedFormData).length > 0) {
+      return savedFormData;
+    }
+    return {};
+  };
+  
+  const initialFormData = getInitialFormData();
   const isUserTypingRef = useRef(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const [currentUserName, setCurrentUserName] = useState<string>('');
   const [isEditing, setIsEditing] = useState(initialIsEditing);
   const [submissionId, setSubmissionId] = useState(existingSubmissionId);
-  
+  const [isAutoSaving, setIsAutoSaving] = useState<boolean>(false);
+  const [lastAutoSaved, setLastAutoSaved] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -62,12 +85,48 @@ export default function ActiveCaseStudyForm({
   // Watch all form fields
   const currentFormData = watch();
 
+  // Auto-save functionality - only triggers on actual changes
+  const debouncedAutoSave = useCallback(
+    debounce(async () => {
+      // Only auto-save if not in multi-form context (handled separately)
+      if (isMultiFormContext) return;
+
+      const formData = watch(); // Get fresh form data
+
+      // Don't auto-save if form is empty or only has the user's name
+      const hasContent = Object.entries(formData).some(([key, value]) =>
+        key !== 'name' && value && value.toString().trim() !== ''
+      );
+
+      if (!hasContent) return;
+
+      setIsAutoSaving(true);
+
+      try {
+        const result = await autoSaveCaseStudy(formData, selectedProspect, submissionId);
+
+        // If this was a new submission, store the ID for future updates
+        if (!submissionId && result.data && result.data[0]) {
+          setSubmissionId(result.data[0].id);
+          setIsEditing(true);
+        }
+
+        setLastAutoSaved(formatTimestamp(new Date()));
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+        // Don't show error toast for auto-save failures - too intrusive
+      } finally {
+        setIsAutoSaving(false);
+      }
+    }, 1000), // 1 second delay like NameForm
+    [selectedProspect, submissionId, isMultiFormContext, watch]
+  );
+
   // Fetch current user's name and auto-populate
   useEffect(() => {
     const fetchUserName = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
       if (user && user.user_metadata?.name) {
         const userName = user.user_metadata.name;
         setCurrentUserName(userName);
@@ -79,62 +138,17 @@ export default function ActiveCaseStudyForm({
     fetchUserName();
   }, [setValue]);
 
-  // Check for existing submission and load data if found
-  useEffect(() => {
-    const checkExistingSubmission = async () => {
-      if (!isMultiFormContext && !initialIsEditing) {
-        try {
-          const existingSubmission = await getExistingCaseStudy(selectedProspect.id);
-          
-          if (existingSubmission) {
-            // Found existing submission, switch to edit mode
-            setIsEditing(true);
-            setSubmissionId(existingSubmission.id);
-            
-            // Load existing data into form
-            const existingData = {
-              name: existingSubmission.active_name,
-              otherActives: existingSubmission.other_actives,
-              leadership_score: existingSubmission.leadership_score,
-              teamwork_score: existingSubmission.teamwork_score,
-              publicSpeaking_score: existingSubmission.public_speaking_score,
-              analytical_score: existingSubmission.analytical_score,
-              leadership_comments: existingSubmission.leadership_comments,
-              teamwork_comments: existingSubmission.teamwork_comments,
-              publicSpeaking_comments: existingSubmission.public_speaking_comments,
-              analytical_comments: existingSubmission.analytical_comments,
-              additionalComments: existingSubmission.additional,
-              role: existingSubmission.role,
-              thoughts: existingSubmission.thoughts,
-            };
-
-            // Set form values
-            Object.keys(existingData).forEach(key => {
-              setValue(key as keyof CaseStudyForm, existingData[key as keyof typeof existingData]);
-            });
-
-            customToast(`Loading existing case study for ${selectedProspect.full_name}`, 'info');
-          }
-        } catch (error) {
-          console.error('Error checking for existing submission:', error);
-          // Continue with new submission if error occurs
-        }
-      }
-    };
-
-    checkExistingSubmission();
-  }, [selectedProspect.id, setValue, isMultiFormContext, initialIsEditing]);
 
   // Handle user typing detection
   const handleUserInput = () => {
     if (isMultiFormContext) {
       isUserTypingRef.current = true;
-      
+
       // Clear existing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
-      
+
       // Set new timeout to mark typing as finished
       typingTimeoutRef.current = setTimeout(() => {
         isUserTypingRef.current = false;
@@ -149,7 +163,7 @@ export default function ActiveCaseStudyForm({
       const timeoutId = setTimeout(() => {
         onFormDataChange(currentFormData);
       }, 100); // Reduced debounce time
-      
+
       return () => clearTimeout(timeoutId);
     } else if (storageKey) {
       // In single form context, save to localStorage
@@ -157,12 +171,52 @@ export default function ActiveCaseStudyForm({
     }
   }, [currentFormData, isMultiFormContext, onFormDataChange, storageKey]);
 
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedAutoSave.cancel();
+    };
+  }, [debouncedAutoSave]);
+
+  // Custom register that includes auto-save
+  const registerWithAutoSave = (fieldName: string, options?: any) => {
+    const registration = register(fieldName, options);
+
+    return {
+      ...registration,
+      onChange: (e: any) => {
+        // Call the original onChange first
+        registration.onChange(e);
+
+        // Then trigger auto-save or field change callback
+        if (isMultiFormContext) {
+          // Use setTimeout to get updated form data after the onChange
+          setTimeout(() => {
+            const freshData = watch();
+            if (onFormDataChange) {
+              onFormDataChange(freshData);
+            }
+            if (onFieldChange) {
+              onFieldChange(freshData);
+            }
+          }, 0);
+        } else if (!isMultiFormContext) {
+          // Use setTimeout to get updated form data after the onChange
+          setTimeout(() => {
+            debouncedAutoSave();
+          }, 0);
+        }
+      }
+    };
+  };
+
   // Initial form data setup only - no ongoing updates to prevent interference
   useEffect(() => {
     if (isMultiFormContext && externalFormData && Object.keys(externalFormData).length > 0) {
       // Only set initial values, don't continuously update
       const hasCurrentData = Object.keys(currentFormData).some(key => currentFormData[key as keyof CaseStudyForm]);
-      
+
       if (!hasCurrentData) {
         Object.keys(externalFormData).forEach(key => {
           setValue(key as keyof CaseStudyForm, externalFormData[key as keyof CaseStudyForm]);
@@ -196,7 +250,7 @@ export default function ActiveCaseStudyForm({
   const onSubmit = async (data: CaseStudyForm) => {
     // Handle submission for both single and multi-form contexts
     const isCurrentlySubmitting = externalIsSubmitting || false;
-    
+
     if (setIsSubmitting && !isMultiFormContext) setIsSubmitting(true);
     if (onFormSubmit && isMultiFormContext) {
       // Notify parent that submission is starting
@@ -205,7 +259,7 @@ export default function ActiveCaseStudyForm({
 
     try {
       const result = await createOrUpdateCaseStudy(data, selectedProspect, submissionId);
-      
+
       if (result.isUpdate) {
         customToast('Case study updated successfully!', 'success');
       } else {
@@ -213,7 +267,7 @@ export default function ActiveCaseStudyForm({
         // If it was a new submission, switch to edit mode for future changes
         setIsEditing(true);
       }
-      
+
       if (!isMultiFormContext) {
         // Single form context - reset form
         if (setSelectedProspect) setSelectedProspect(null);
@@ -226,7 +280,7 @@ export default function ActiveCaseStudyForm({
           onFormClose();
         }
       }
-      
+
     } catch (error) {
       customToast('Error saving case study: ' + error, 'error');
     } finally {
@@ -269,6 +323,11 @@ export default function ActiveCaseStudyForm({
           <h1 className="text-2xl text-white">
             Case Study: {selectedProspect.full_name}
           </h1>
+          {!isMultiFormContext && (
+            <div className="text-sm text-gray-400 mt-1">
+              {isAutoSaving ? "Auto-saving..." : lastAutoSaved && `Last saved: ${lastAutoSaved}`}
+            </div>
+          )}
         </div>
         <div></div>
       </div>
@@ -287,9 +346,8 @@ export default function ActiveCaseStudyForm({
             })}
           />
           {errors.name && (
-            <p className="text-red-500">{`${
-              errors.name.message ?? 'Required!'
-            }`}</p>
+            <p className="text-red-500">{`${errors.name.message ?? 'Required!'
+              }`}</p>
           )}
         </div>
         <div className="mb-5">
@@ -301,14 +359,13 @@ export default function ActiveCaseStudyForm({
             id="otherActives"
             className="w-full p-2.5 rounded-lg text-base text-black"
             onInput={handleUserInput}
-            {...register('otherActives', {
+            {...registerWithAutoSave('otherActives', {
               required: 'Other Actives on Panel is required',
             })}
           />
           {errors.otherActives && (
-            <p className="text-red-500">{`${
-              errors.otherActives.message ?? 'Required!'
-            }`}</p>
+            <p className="text-red-500">{`${errors.otherActives.message ?? 'Required!'
+              }`}</p>
           )}
         </div>
 
@@ -317,20 +374,19 @@ export default function ActiveCaseStudyForm({
           {caseStudyData.map((question, index) => (
             <div key={index} className="mb-5">
               <label htmlFor={question.name} className="block mb-2">
-              {index <= 3 ? `${question.name} Comments` : question.name}
+                {index <= 3 ? `${question.name} Comments` : question.name}
               </label>
               <textarea
                 id={question.name}
                 className="w-full p-2.5 text-base text-black rounded-lg"
                 onInput={handleUserInput}
-                {...register(index <= 3 ? `${question.label}_comments` : question.label, {
+                {...registerWithAutoSave(index <= 3 ? `${question.label}_comments` : question.label, {
                   required: `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`
                 })}
               ></textarea>
-             {errors[index <= 3 ? `${question.label}_comments` : question.label] && (
-                <p className="text-red-500">{`${
-                  errors[index <= 3 ? `${question.label}_comments` : question.label]?.message || 'Required!'
-                }`}</p>
+              {errors[index <= 3 ? `${question.label}_comments` : question.label] && (
+                <p className="text-red-500">{`${errors[index <= 3 ? `${question.label}_comments` : question.label]?.message || 'Required!'
+                  }`}</p>
               )}{' '}
             </div>
           ))}
@@ -343,7 +399,7 @@ export default function ActiveCaseStudyForm({
               <div className="mt-1">
                 <select
                   className="p-2.5 text-base rounded-lg text-black"
-                  {...register(`${trait.label}_score`, {
+                  {...registerWithAutoSave(`${trait.label}_score`, {
                     required: `Please select a value for ${trait.name}`,
                   })}
                 >
@@ -356,47 +412,44 @@ export default function ActiveCaseStudyForm({
                 </select>
               </div>
               {errors[`${trait.label}_score`] && (
-                <p className="text-red-500">{`${
-                  errors[`${trait.label}_score`]?.message || 'Required!'
-                }`}</p>
+                <p className="text-red-500">{`${errors[`${trait.label}_score`]?.message || 'Required!'
+                  }`}</p>
               )}
             </div>
           ))}
         </div>
         <div className="mt-5">
-              <label htmlFor={"additionalComments"} className="block mb-2">
-                Additional Comments
-              </label>
-              <textarea
-                id={"additionalComments"}
-                className="w-full p-2.5 text-base text-black rounded-lg"
-                onInput={handleUserInput}
-                {...register("additionalComments", {
-                })}
-              ></textarea>
-              {errors["additionalComments"] && (
-                <p className="text-red-500">{`${
-                  errors["additionalComments"]?.message || 'Required!'
-                }`}</p>
-              )}{' '}
-            </div>
+          <label htmlFor={"additionalComments"} className="block mb-2">
+            Additional Comments
+          </label>
+          <textarea
+            id={"additionalComments"}
+            className="w-full p-2.5 text-base text-black rounded-lg"
+            onInput={handleUserInput}
+            {...register("additionalComments", {
+            })}
+          ></textarea>
+          {errors["additionalComments"] && (
+            <p className="text-red-500">{`${errors["additionalComments"]?.message || 'Required!'
+              }`}</p>
+          )}{' '}
+        </div>
         <div className="mt-4">
-            <button
-              type="submit"
-              disabled={isCurrentlySubmitting}
-              className={`px-5 rounded-xl py-2.5 text-base border-none cursor-pointer disabled:opacity-50 ${
-                isMultiFormContext 
-                  ? 'bg-green-600 hover:bg-green-700 text-white' 
-                  : 'bg-blue-500 hover:bg-blue-700 text-black'
+          <button
+            type="submit"
+            disabled={isCurrentlySubmitting}
+            className={`px-5 rounded-xl py-2.5 text-base border-none cursor-pointer disabled:opacity-50 ${isMultiFormContext
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-blue-500 hover:bg-blue-700 text-black'
               }`}
-            >
-              {isCurrentlySubmitting 
-                ? (isEditing ? 'Updating...' : 'Submitting...') 
-                : isEditing 
-                  ? 'Update Case Study'
-                  : 'Submit Case Study'
-              }
-            </button>
+          >
+            {isCurrentlySubmitting
+              ? (isEditing ? 'Updating...' : 'Submitting...')
+              : isEditing
+                ? 'Update Case Study'
+                : 'Submit Case Study'
+            }
+          </button>
         </div>
       </form>
     </div>
