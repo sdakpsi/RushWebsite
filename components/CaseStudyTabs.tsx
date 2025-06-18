@@ -6,6 +6,7 @@ interface CaseStudyTabsProps {
   activeFormId: string | null;
   onTabClick: (formId: string) => void;
   onTabClose: (formId: string) => void;
+  autoSaveStatus?: {[formId: string]: {saving: boolean, lastSaved?: string}};
 }
 
 const getStatusColor = (status: CaseFormInstance["status"]) => {
@@ -44,6 +45,7 @@ export default function CaseStudyTabs({
   activeFormId,
   onTabClick,
   onTabClose,
+  autoSaveStatus = {},
 }: CaseStudyTabsProps) {
   if (forms.length === 0) return null;
 
@@ -79,7 +81,15 @@ export default function CaseStudyTabs({
             >
               {form.prospect.full_name}
             </span>
+            {autoSaveStatus[form.id]?.saving && (
+              <span className="text-xs text-grey-400 ml-1">Saving...</span>
+            )}
           </div>
+          {autoSaveStatus[form.id]?.lastSaved && !autoSaveStatus[form.id]?.saving && (
+            <div className="text-xs text-gray-400 truncate max-w-20" title={`Last saved: ${autoSaveStatus[form.id]?.lastSaved}`}>
+              {autoSaveStatus[form.id]?.lastSaved}
+            </div>
+          )}
 
           <button
             onClick={(e) => {
