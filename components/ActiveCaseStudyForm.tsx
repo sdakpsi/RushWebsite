@@ -1,14 +1,20 @@
-import { CaseStudyForm, InterviewForm, ProspectInterview } from '@/lib/types';
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
-import { debounce } from 'lodash';
-import { questions, scorableTraits } from '../lib/InterviewQuestions';
-import { createCaseStudy, createInterview, createOrUpdateCaseStudy, getExistingCaseStudy, autoSaveCaseStudy } from '@/app/supabase/interview';
-import { caseStudyData } from '@/lib/CaseStudyQuestions';
-import customToast from '@/components/CustomToast';
-import { createClient } from '@/utils/supabase/client';
-import { formatTimestamp } from '@/utils/format';
+import { CaseStudyForm, InterviewForm, ProspectInterview } from "@/lib/types";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { Controller, useForm } from "react-hook-form";
+import Select from "react-select";
+import { debounce } from "lodash";
+import { questions, scorableTraits } from "../lib/InterviewQuestions";
+import {
+  createCaseStudy,
+  createInterview,
+  createOrUpdateCaseStudy,
+  getExistingCaseStudy,
+  autoSaveCaseStudy,
+} from "@/app/supabase/interview";
+import { caseStudyData } from "@/lib/CaseStudyQuestions";
+import customToast from "@/components/CustomToast";
+import { createClient } from "@/utils/supabase/client";
+import { formatTimestamp } from "@/utils/format";
 
 interface ActiveInterviewFormProps {
   selectedProspect: ProspectInterview;
@@ -44,11 +50,15 @@ export default function ActiveCaseStudyForm({
   existingSubmissionId,
   isEditing: initialIsEditing = false,
   onFieldChange,
-  preloadedData
+  preloadedData,
 }: ActiveInterviewFormProps) {
-  const storageKey = isMultiFormContext ? null : `formDataCase_${selectedProspect.id}`;
-  const savedFormData = storageKey ? JSON.parse(localStorage.getItem(storageKey) || '{}') : {};
-  
+  const storageKey = isMultiFormContext
+    ? null
+    : `formDataCase_${selectedProspect.id}`;
+  const savedFormData = storageKey
+    ? JSON.parse(localStorage.getItem(storageKey) || "{}")
+    : {};
+
   // Initialize form data based on context
   const getInitialFormData = () => {
     if (preloadedData) {
@@ -62,11 +72,11 @@ export default function ActiveCaseStudyForm({
     }
     return {};
   };
-  
+
   const initialFormData = getInitialFormData();
   const isUserTypingRef = useRef(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
-  const [currentUserName, setCurrentUserName] = useState<string>('');
+  const [currentUserName, setCurrentUserName] = useState<string>("");
   const [isEditing, setIsEditing] = useState(initialIsEditing);
   const [submissionId, setSubmissionId] = useState(existingSubmissionId);
   const [isAutoSaving, setIsAutoSaving] = useState<boolean>(false);
@@ -94,8 +104,9 @@ export default function ActiveCaseStudyForm({
       const formData = watch(); // Get fresh form data
 
       // Don't auto-save if form is empty or only has the user's name
-      const hasContent = Object.entries(formData).some(([key, value]) =>
-        key !== 'name' && value && value.toString().trim() !== ''
+      const hasContent = Object.entries(formData).some(
+        ([key, value]) =>
+          key !== "name" && value && value.toString().trim() !== ""
       );
 
       if (!hasContent) return;
@@ -103,7 +114,11 @@ export default function ActiveCaseStudyForm({
       setIsAutoSaving(true);
 
       try {
-        const result = await autoSaveCaseStudy(formData, selectedProspect, submissionId);
+        const result = await autoSaveCaseStudy(
+          formData,
+          selectedProspect,
+          submissionId
+        );
 
         // If this was a new submission, store the ID for future updates
         if (!submissionId && result.data && result.data[0]) {
@@ -113,7 +128,7 @@ export default function ActiveCaseStudyForm({
 
         setLastAutoSaved(formatTimestamp(new Date()));
       } catch (error) {
-        console.error('Auto-save failed:', error);
+        console.error("Auto-save failed:", error);
         // Don't show error toast for auto-save failures - too intrusive
       } finally {
         setIsAutoSaving(false);
@@ -126,18 +141,19 @@ export default function ActiveCaseStudyForm({
   useEffect(() => {
     const fetchUserName = async () => {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user && user.user_metadata?.name) {
         const userName = user.user_metadata.name;
         setCurrentUserName(userName);
         // Always set the user's name, overriding any existing value
-        setValue('name', userName, { shouldValidate: true });
+        setValue("name", userName, { shouldValidate: true });
       }
     };
 
     fetchUserName();
   }, [setValue]);
-
 
   // Handle user typing detection
   const handleUserInput = () => {
@@ -170,7 +186,6 @@ export default function ActiveCaseStudyForm({
       localStorage.setItem(storageKey, JSON.stringify(currentFormData));
     }
   }, [currentFormData, isMultiFormContext, onFormDataChange, storageKey]);
-
 
   // Cleanup debounced function on unmount
   useEffect(() => {
@@ -207,19 +222,28 @@ export default function ActiveCaseStudyForm({
             debouncedAutoSave();
           }, 0);
         }
-      }
+      },
     };
   };
 
   // Initial form data setup only - no ongoing updates to prevent interference
   useEffect(() => {
-    if (isMultiFormContext && externalFormData && Object.keys(externalFormData).length > 0) {
+    if (
+      isMultiFormContext &&
+      externalFormData &&
+      Object.keys(externalFormData).length > 0
+    ) {
       // Only set initial values, don't continuously update
-      const hasCurrentData = Object.keys(currentFormData).some(key => currentFormData[key as keyof CaseStudyForm]);
+      const hasCurrentData = Object.keys(currentFormData).some(
+        (key) => currentFormData[key as keyof CaseStudyForm]
+      );
 
       if (!hasCurrentData) {
-        Object.keys(externalFormData).forEach(key => {
-          setValue(key as keyof CaseStudyForm, externalFormData[key as keyof CaseStudyForm]);
+        Object.keys(externalFormData).forEach((key) => {
+          setValue(
+            key as keyof CaseStudyForm,
+            externalFormData[key as keyof CaseStudyForm]
+          );
         });
       }
     }
@@ -230,9 +254,10 @@ export default function ActiveCaseStudyForm({
     if (!isMultiFormContext && !isEditing) {
       // Clear form data when switching to a different prospect
       const formKeys = Object.keys(watch());
-      formKeys.forEach(key => {
-        if (key !== 'name') { // Keep the active name
-          setValue(key as keyof CaseStudyForm, '');
+      formKeys.forEach((key) => {
+        if (key !== "name") {
+          // Keep the active name
+          setValue(key as keyof CaseStudyForm, "");
         }
       });
     }
@@ -258,12 +283,16 @@ export default function ActiveCaseStudyForm({
     }
 
     try {
-      const result = await createOrUpdateCaseStudy(data, selectedProspect, submissionId);
+      const result = await createOrUpdateCaseStudy(
+        data,
+        selectedProspect,
+        submissionId
+      );
 
       if (result.isUpdate) {
-        customToast('Case study updated successfully!', 'success');
+        customToast("Case study updated successfully!", "success");
       } else {
-        customToast('Case study submitted successfully!', 'success');
+        customToast("Case study submitted successfully!", "success");
         // If it was a new submission, switch to edit mode for future changes
         setIsEditing(true);
       }
@@ -271,7 +300,7 @@ export default function ActiveCaseStudyForm({
       if (!isMultiFormContext) {
         // Single form context - reset form
         if (setSelectedProspect) setSelectedProspect(null);
-        localStorage.removeItem('selectedProspectCase');
+        localStorage.removeItem("selectedProspectCase");
         if (setShowingForm) setShowingForm(false);
         if (storageKey) localStorage.removeItem(storageKey);
       } else {
@@ -280,18 +309,19 @@ export default function ActiveCaseStudyForm({
           onFormClose();
         }
       }
-
     } catch (error) {
-      customToast('Error saving case study: ' + error, 'error');
+      customToast("Error saving case study: " + error, "error");
     } finally {
       if (setIsSubmitting && !isMultiFormContext) setIsSubmitting(false);
     }
   };
 
   const onError = (errors: any) => {
-    const errorMessages = Object.values(errors).map((error: any) => error.message || 'An error occurred');
-    const errorMessageString = errorMessages.join(', ');
-    customToast(`Form submission errors: ${errorMessageString}`, 'error');
+    const errorMessages = Object.values(errors).map(
+      (error: any) => error.message || "An error occurred"
+    );
+    const errorMessageString = errorMessages.join(", ");
+    customToast(`Form submission errors: ${errorMessageString}`, "error");
   };
 
   const handleBack = () => {
@@ -300,7 +330,7 @@ export default function ActiveCaseStudyForm({
       return;
     }
     if (setSelectedProspect) setSelectedProspect(null);
-    localStorage.removeItem('selectedProspectCase');
+    localStorage.removeItem("selectedProspectCase");
     if (setShowingForm) setShowingForm(false);
     // Don't remove form data on back - let user resume if they come back to same prospect
   };
@@ -308,15 +338,15 @@ export default function ActiveCaseStudyForm({
   const isCurrentlySubmitting = externalIsSubmitting || false;
 
   return (
-    <div className="bg-black text-white p-5">
-      <div className="flex items-center justify-between mb-5">
+    <div className="bg-black p-5 text-white">
+      <div className="mb-5 flex items-center justify-between">
         {!isMultiFormContext && (
           <button
             type="button"
             onClick={() => handleBack()}
-            className="px-4 py-2 text-base rounded-lg text-white border-none cursor-pointer hover:bg-gray-700"
+            className="cursor-pointer rounded-lg border-none px-4 py-2 text-base text-white hover:bg-gray-700"
           >
-            &lt; Back{' '}
+            &lt; Back{" "}
           </button>
         )}
         <div className="text-center">
@@ -324,8 +354,10 @@ export default function ActiveCaseStudyForm({
             Case Study: {selectedProspect.full_name}
           </h1>
           {!isMultiFormContext && (
-            <div className="text-sm text-gray-400 mt-1">
-              {isAutoSaving ? "Auto-saving..." : lastAutoSaved && `Last saved: ${lastAutoSaved}`}
+            <div className="mt-1 text-sm text-gray-400">
+              {isAutoSaving
+                ? "Auto-saving..."
+                : lastAutoSaved && `Last saved: ${lastAutoSaved}`}
             </div>
           )}
         </div>
@@ -333,39 +365,41 @@ export default function ActiveCaseStudyForm({
       </div>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="mb-5">
-          <label htmlFor="name" className="block mb-2">
+          <label htmlFor="name" className="mb-2 block">
             Active Name
           </label>
           <input
             type="text"
             id="name"
-            className="w-full p-2.5 rounded-lg text-base text-black bg-gray-100 cursor-not-allowed"
+            className="w-full cursor-not-allowed rounded-lg bg-gray-100 p-2.5 text-base text-black"
             readOnly
-            {...register('name', {
-              required: 'Name is required',
+            {...register("name", {
+              required: "Name is required",
             })}
           />
           {errors.name && (
-            <p className="text-red-500">{`${errors.name.message ?? 'Required!'
-              }`}</p>
+            <p className="text-red-500">{`${
+              errors.name.message ?? "Required!"
+            }`}</p>
           )}
         </div>
         <div className="mb-5">
-          <label htmlFor="otherActives" className="block mb-2">
+          <label htmlFor="otherActives" className="mb-2 block">
             Other Actives on Panel
           </label>
           <input
             type="text"
             id="otherActives"
-            className="w-full p-2.5 rounded-lg text-base text-black"
+            className="w-full rounded-lg p-2.5 text-base text-black"
             onInput={handleUserInput}
-            {...registerWithAutoSave('otherActives', {
-              required: 'Other Actives on Panel is required',
+            {...registerWithAutoSave("otherActives", {
+              required: "Other Actives on Panel is required",
             })}
           />
           {errors.otherActives && (
-            <p className="text-red-500">{`${errors.otherActives.message ?? 'Required!'
-              }`}</p>
+            <p className="text-red-500">{`${
+              errors.otherActives.message ?? "Required!"
+            }`}</p>
           )}
         </div>
 
@@ -373,32 +407,40 @@ export default function ActiveCaseStudyForm({
           {/* im like the look at me using a loop n shi */}
           {caseStudyData.map((question, index) => (
             <div key={index} className="mb-5">
-              <label htmlFor={question.name} className="block mb-2">
+              <label htmlFor={question.name} className="mb-2 block">
                 {index <= 3 ? `${question.name} Comments` : question.name}
               </label>
               <textarea
                 id={question.name}
-                className="w-full p-2.5 text-base text-black rounded-lg"
+                className="w-full rounded-lg p-2.5 text-base text-black"
                 onInput={handleUserInput}
-                {...registerWithAutoSave(index <= 3 ? `${question.label}_comments` : question.label, {
-                  required: `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`
-                })}
+                {...registerWithAutoSave(
+                  index <= 3 ? `${question.label}_comments` : question.label,
+                  {
+                    required: `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`,
+                  }
+                )}
               ></textarea>
-              {errors[index <= 3 ? `${question.label}_comments` : question.label] && (
-                <p className="text-red-500">{`${errors[index <= 3 ? `${question.label}_comments` : question.label]?.message || 'Required!'
-                  }`}</p>
-              )}{' '}
+              {errors[
+                index <= 3 ? `${question.label}_comments` : question.label
+              ] && (
+                <p className="text-red-500">{`${
+                  errors[
+                    index <= 3 ? `${question.label}_comments` : question.label
+                  ]?.message || "Required!"
+                }`}</p>
+              )}{" "}
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-evenly">
+        <div className="flex flex-col justify-evenly sm:flex-row">
           {caseStudyData.slice(0, 4).map((trait) => (
             <div key={trait.label} className="mb-5">
               <label>{trait.name + " Score"}</label>
               <div className="mt-1">
                 <select
-                  className="p-2.5 text-base rounded-lg text-black"
+                  className="rounded-lg p-2.5 text-base text-black"
                   {...registerWithAutoSave(`${trait.label}_score`, {
                     required: `Please select a value for ${trait.name}`,
                   })}
@@ -412,43 +454,43 @@ export default function ActiveCaseStudyForm({
                 </select>
               </div>
               {errors[`${trait.label}_score`] && (
-                <p className="text-red-500">{`${errors[`${trait.label}_score`]?.message || 'Required!'
-                  }`}</p>
+                <p className="text-red-500">{`${
+                  errors[`${trait.label}_score`]?.message || "Required!"
+                }`}</p>
               )}
             </div>
           ))}
         </div>
         <div className="mt-5">
-          <label htmlFor={"additionalComments"} className="block mb-2">
+          <label htmlFor={"additionalComments"} className="mb-2 block">
             Additional Comments
           </label>
           <textarea
             id={"additionalComments"}
-            className="w-full p-2.5 text-base text-black rounded-lg"
+            className="w-full rounded-lg p-2.5 text-base text-black"
             onInput={handleUserInput}
-            {...register("additionalComments", {
-            })}
+            {...register("additionalComments", {})}
           ></textarea>
           {errors["additionalComments"] && (
-            <p className="text-red-500">{`${errors["additionalComments"]?.message || 'Required!'
-              }`}</p>
-          )}{' '}
+            <p className="text-red-500">{`${
+              errors["additionalComments"]?.message || "Required!"
+            }`}</p>
+          )}{" "}
         </div>
         <div className="mt-4">
           <button
             type="submit"
             disabled={isCurrentlySubmitting}
-            className={`px-5 rounded-xl py-2.5 text-base border-none cursor-pointer disabled:opacity-50 ${isMultiFormContext
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-blue-500 hover:bg-blue-700 text-black'
-              }`}
+            className={`} cursor-pointer rounded-xl border-none bg-blue-500 px-5 py-2.5 text-base text-black hover:bg-blue-700
+              disabled:opacity-50`}
           >
             {isCurrentlySubmitting
-              ? (isEditing ? 'Updating...' : 'Submitting...')
+              ? isEditing
+                ? "Updating..."
+                : "Submitting..."
               : isEditing
-                ? 'Update Case Study'
-                : 'Submit Case Study'
-            }
+                ? "Update Case Study"
+                : "Submit Case Study"}
           </button>
         </div>
       </form>

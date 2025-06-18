@@ -424,3 +424,105 @@ export async function getActiveSubmissions(
 
   return prospectData.map((prospect) => prospect.full_name as string);
 }
+
+export async function getActiveSubmissionsWithStatus(
+  type: "interviews" | "case_studies"
+): Promise<Array<{name: string, status: 'complete' | 'incomplete', id: string}> | null> {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("is_pic, is_active")
+    .eq("id", user.id)
+    .single();
+
+  if (userError || (!userData?.is_pic && !userData?.is_active)) {
+    return null;
+  }
+
+  if (type === "interviews") {
+    const { data, error } = await supabase
+      .from(type)
+      .select("prospect_id")
+      .eq("active_id", user.id);
+
+    if (error) {
+      console.error(`Error fetching ${type} prospects:`, error.message);
+      return null;
+    }
+
+    const prospectIds = data.map((item) => item.prospect_id as string);
+
+    const { data: prospectData, error: prospectError } = await supabase
+      .from("users")
+      .select("id, full_name")
+      .in("id", prospectIds);
+
+    if (prospectError) {
+      console.error("Error fetching prospect data:", prospectError.message);
+      return null;
+    }
+
+    // For interviews, assume all are complete (no draft logic implemented yet)
+    return prospectData.map((prospect) => ({
+      name: prospect.full_name as string,
+      status: 'complete' as const,
+      id: prospect.id as string
+    }));
+  }
+
+  // For case studies, check for incomplete submissions
+  const { data, error } = await supabase
+    .from(type)
+    .select("prospect, leadership_score, teamwork_score, public_speaking_score, analytical_score, leadership_comments, teamwork_comments, public_speaking_comments, analytical_comments, role, thoughts")
+    .eq("active", user.id);
+
+  if (error) {
+    console.error(`Error fetching ${type} prospects:`, error.message);
+    return null;
+  }
+
+  const prospectIds = data.map((item) => item.prospect as string);
+
+  const { data: prospectData, error: prospectError } = await supabase
+    .from("users")
+    .select("id, full_name")
+    .in("id", prospectIds);
+
+  if (prospectError) {
+    console.error("Error fetching prospect data:", prospectError.message);
+    return null;
+  }
+
+  // Check each submission for completeness
+  return prospectData.map((prospect) => {
+    const submission = data.find(item => item.prospect === prospect.id);
+    
+    // Consider incomplete if any required field is missing/empty
+    const isIncomplete = !submission || 
+      !submission.leadership_score || 
+      !submission.teamwork_score || 
+      !submission.public_speaking_score || 
+      !submission.analytical_score ||
+      !submission.leadership_comments?.trim() ||
+      !submission.teamwork_comments?.trim() ||
+      !submission.public_speaking_comments?.trim() ||
+      !submission.analytical_comments?.trim() ||
+      !submission.role?.trim() ||
+      !submission.thoughts?.trim();
+
+    return {
+      name: prospect.full_name as string,
+      status: isIncomplete ? 'incomplete' as const : 'complete' as const,
+      id: prospect.id as string
+    };
+  });
+}
