@@ -38,75 +38,6 @@ export async function getUsers() {
       .in("id", validUserIds)
       .order("full_name", { ascending: true });
 
-    // Spring 2025 hotfix
-    const targetNames = [
-      "Ace Dela Cruz",
-      "Akshat Alurkar",
-      "Amrutha Velivelli",
-      "Angelina Truong",
-      "Anne Fa",
-      "Arish Sunkireddy",
-      "Arjun Yadalla",
-      "Brandon Eum",
-      "Brandon Lui",
-      "Brandon Thach",
-      "Britney Zaw",
-      "Candice Chow",
-      "Christina Liao",
-      "Elle Mori",
-      "Emma Perez",
-      "Ethan Mao",
-      "Hailey Kim",
-      "Heather Heather",
-      "Jacqueline He",
-      "Josephine Chin",
-      "Justin Nguyen",
-      "Kaitlyn Celis",
-      "Katherine Ward",
-      "Landen Leong",
-      "Maya Lu",
-      "Melody Gao",
-      "Mia Jin",
-      "Michael Chau",
-      "Nathaniel Hwang",
-      "Nathan Pang",
-      "Realynn Tence",
-      "Rohith Saju",
-      "Ryan Cohen",
-      "Samantha Fuentes",
-      "Sasha Tien",
-      "Sienna Kauh",
-      "Stephanie Yeh",
-      "Sur Shah",
-      "Theophany Pham",
-      "Tiffany Nguyen",
-      "Vedant Maheshwari",
-      "Zoe Chung"
-    ];
-    console.log(targetNames.length);
-
-    const { data: filteredUsers, error: filteredError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("is_active", false)
-      .eq("is_pic", false)
-      .in("full_name", targetNames)
-      .like("email", "%.edu")
-      .order("full_name", { ascending: true });
-
-
-    if (filteredError) {
-      console.error(filteredError);
-    } else {
-      usersData = filteredUsers;
-    }
-    usersData.forEach((user, index) => {
-      console.log(`${index + 1}. ${user.full_name}`);
-    });
-    console.log(usersData.length);
-    return usersData;
-
-    // End spring 2025 hotfix
     if (usersError) {
       console.error(usersError);
     } else {
@@ -425,6 +356,48 @@ export async function getActiveSubmissions(
   return prospectData.map((prospect) => prospect.full_name as string);
 }
 
+export async function getUsersForComments(): Promise<Array<{id: string, full_name: string, email: string}> | null> {
+  const supabase = createClient();
+  let hasPerms = false;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("is_pic, is_active")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error checking permissions:", error.message);
+      return null;
+    }
+
+    if (data?.is_pic || data?.is_active) {
+      hasPerms = true;
+    }
+  }
+
+  // User is marked active, proceed to get all prospects (same logic as getInterviewProspects)
+  if (hasPerms) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, full_name, email")
+      .eq("is_active", false)
+      .eq("is_pic", false)
+      .order("full_name", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching users for comments:", error.message);
+      return null;
+    }
+    return data;
+  }
+  return null;
+}
+
 export async function getActiveSubmissionsWithStatus(
   type: "interviews" | "case_studies"
 ): Promise<Array<{name: string, status: 'complete' | 'incomplete', id: string}> | null> {
@@ -526,3 +499,4 @@ export async function getActiveSubmissionsWithStatus(
     };
   });
 }
+
