@@ -190,8 +190,8 @@ export default function Page(this: any) {
                   </button>
                 </div>
                 <p className="text-sm text-gray-400 text-center max-w-2xl">
-                  Use <strong>Search View</strong> to search for prospects manually.
-                  Or use <strong>Grid View</strong> to browse all prospects in a grid layout.
+                  Use <strong>Search View</strong> to search for prospects manually. <br></br>
+                  Use <strong>Grid View</strong> to browse all prospects in a grid layout.
                 </p>
               </div>
               {viewMode === 'search' && (
