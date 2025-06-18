@@ -1,5 +1,5 @@
 "use client";
-import { getActiveSubmissions } from "@/app/supabase/getUsers";
+import { getActiveSubmissions, getActiveSubmissionsWithStatus } from "@/app/supabase/getUsers";
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
@@ -17,8 +17,8 @@ export default function PastActiveSubmission({
     error,
     refetch,
   } = useQuery({
-    queryKey: [`${type}Submissions`, showingForm],
-    queryFn: () => getActiveSubmissions(type),
+    queryKey: [`${type}SubmissionsWithStatus`, showingForm],
+    queryFn: () => getActiveSubmissionsWithStatus(type),
   });
 
   useEffect(() => {
@@ -41,8 +41,8 @@ export default function PastActiveSubmission({
     <div className="mb-6">
       <label className="block text-xl font-medium text-gray-200">
         {type === "case_studies"
-          ? "Your past Case Study Submissions"
-          : "Your past Interview Submissions"}
+          ? "Your Case Studies:"
+          : "Your Interviews:"}
       </label>
       <div className="relative mt-1">
         {prospectData && prospectData.length > 0 ? (
@@ -50,10 +50,18 @@ export default function PastActiveSubmission({
             {prospectData.map((prospect, index) => (
               <li
                 key={index}
-                className="mx-4 my-2 shadow-lg"
-                // className="m-2 rounded-lg bg-btn-background p-3 shadow-lg"
+                className="mx-4 my-2 p-3 rounded-lg bg-gray-800 border border-gray-700 shadow-lg flex items-center justify-between"
               >
-                {prospect}
+                <span className="text-white">{prospect.name}</span>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    prospect.status === 'complete'
+                      ? 'bg-green-900 text-green-200 border border-green-700'
+                      : 'bg-yellow-900 text-yellow-200 border border-yellow-700'
+                  }`}
+                >
+                  {prospect.status === 'complete' ? '✓ Complete' : '⧖ In Progress'}
+                </span>
               </li>
             ))}
           </ul>
