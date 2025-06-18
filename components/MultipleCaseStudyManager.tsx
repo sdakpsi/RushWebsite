@@ -75,6 +75,18 @@ export default function MultipleCaseStudyManager({
 
   // Keyboard navigation with debouncing
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    // Handle ESC key to unfocus inputs
+    if (event.key === 'Escape') {
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && (activeElement.tagName === 'INPUT' || 
+                           activeElement.tagName === 'TEXTAREA' ||
+                           activeElement.tagName === 'SELECT')) {
+        activeElement.blur();
+        event.preventDefault();
+        return;
+      }
+    }
+
     // Only handle arrow keys when there are forms and no input/textarea is focused
     if (forms.length === 0 || 
         document.activeElement?.tagName === 'INPUT' || 
@@ -228,7 +240,8 @@ export default function MultipleCaseStudyManager({
         <h1 className="text-2xl font-semibold text-center text-white absolute left-1/2 transform -translate-x-1/2">
           Multiple Case Studies
         </h1>
-        
+
+       
         <div className="flex gap-2">
           {forms.length > 0 && (
             <>
@@ -241,6 +254,14 @@ export default function MultipleCaseStudyManager({
             </>
           )}
         </div>
+      </div>
+
+      {/* Tooltip description */}
+      <div className="text-center mb-4">
+        <p className="text-sm text-gray-400 max-w-2xl mx-auto">
+          Use <strong>arrow keys</strong> to navigate between tabs when not typing :3. <br></br>
+          Press <strong>esc</strong> to unfocus while typing and allow the arrow keys to be used. <br></br>
+        </p>
       </div>
 
       {/* Add New Form Section */}

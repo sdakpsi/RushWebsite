@@ -39,7 +39,7 @@ export default function ProtectedPage() {
       const formData = await loadCaseStudyFormData(selectedProspect.id);
       
       if (formData.exists) {
-        setPreloadedFormData(formData.data);
+        setPreloadedFormData(formData.data!);
         setFormSubmissionId(formData.submissionId);
         setIsFormEditing(formData.isEditing);
         customToast(`Loading existing case study for ${selectedProspect.full_name}`, 'info');
@@ -97,12 +97,7 @@ export default function ProtectedPage() {
                 
                 <div className="flex flex-col items-center space-y-4">
                   <div className="flex gap-4">
-                    <button
-                      className="rounded bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700 transition-colors"
-                      onClick={() => setShowingMultipleForms(true)}
-                    >
-                      Multiple Forms
-                    </button>
+                   
                     <button
                       className="rounded bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 transition-colors"
                       onClick={() => {
@@ -112,10 +107,16 @@ export default function ProtectedPage() {
                     >
                       Single Form
                     </button>
+                    <button
+                      className="rounded bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700 transition-colors"
+                      onClick={() => setShowingMultipleForms(true)}
+                    >
+                      Multiple Forms
+                    </button>
                   </div>
                   <p className="text-sm text-gray-600 text-center max-w-2xl">
+                    Use <strong>Single Form</strong> for the traditional one-at-a-time approach.<br></br>
                     Use <strong>Multiple Forms</strong> to evaluate multiple prospects at once with tabs.
-                    Or use <strong>Single Form</strong> for the traditional one-at-a-time approach.
                   </p>
                 </div>
 
