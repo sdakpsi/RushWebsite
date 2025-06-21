@@ -5,13 +5,15 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ApplicantCard from "@/components/ApplicantCard";
 import ApplicationPopup from "@/components/ApplicationPopUp";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useCheckActive";
+import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useDelibsUsers } from "@/hooks/getDelibsUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
+import ActiveQueueControls from "@/components/ActiveQueueControls";
+import PICQueueView from "@/components/PICQueueView";
 
 export default function ProtectedPage() {
-  const { isActive, isLoading: isActiveLoading } = useActiveStatus();
+  const { isActive, isPIC, isLoading: isActiveLoading } = useActiveStatus();
   const { usersData, isLoading: isUsersLoading } = useDelibsUsers();
   const {
     currentApplicationId,
@@ -36,6 +38,19 @@ export default function ProtectedPage() {
 
           {isActive ? (
             <div>
+              {/* Queue Controls for Active Members */}
+              {usersData.length > 0 && (
+                <div className="mb-6 mt-6">
+                  <ActiveQueueControls userId={userID} />
+                </div>
+              )}
+              {/* Queue Management for PICs */}
+              {isPIC && usersData.length > 0 && (
+                <div className="mb-6 mt-6">
+                  <PICQueueView />
+                </div>
+              )}
+
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {usersData.map((applicant) => (
                   <div key={applicant.id} className="flex flex-col">

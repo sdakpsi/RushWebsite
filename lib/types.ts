@@ -148,3 +148,30 @@ export interface Comment {
   interaction: string | null;
   invite: string | null;
 }
+
+export enum QueueType {
+  POSITIVE = 'positive',
+  NEGATIVE = 'negative',
+  COMMENT = 'comment'
+}
+
+export enum QueueStatus {
+  PENDING = 'pending',
+  SPEAKING = 'speaking',
+  COMPLETED = 'completed'
+}
+
+export interface DelibQueueEntry {
+  id: string;
+  user_id: string;
+  queue_type: QueueType;
+  status: QueueStatus;
+  created_at: string;
+  completed_at: string | null;
+  position: number | null;
+  session_id: string | null;
+  user?: {
+    full_name: string;
+    email: string;
+  };
+}
