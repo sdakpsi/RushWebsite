@@ -14,6 +14,75 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
+    // Parse request body
+    const { entry_id, self_remove } = await req.json();
+
+    if (self_remove) {
+      console.log('Self-remove attempt by user ID:', user.id);
+      
+      // First check what entries exist for this user
+      const { data: allEntries, error: queryError } = await supabase
+        .from('delib_queue')
+        .select('*')
+        .eq('user_id', user.id);
+      
+      console.log('All entries for user:', allEntries);
+      
+      // Check pending/speaking entries specifically
+      const { data: activeEntries, error: activeError } = await supabase
+        .from('delib_queue')
+        .select('*')
+        .eq('user_id', user.id)
+        .in('status', [QueueStatus.PENDING, QueueStatus.SPEAKING]);
+        
+      console.log('Active entries for user:', activeEntries);
+      console.log('QueueStatus values:', { PENDING: QueueStatus.PENDING, SPEAKING: QueueStatus.SPEAKING });
+
+      // Try updating by specific ID instead of user_id
+      if (activeEntries && activeEntries.length > 0) {
+        const entryToUpdate = activeEntries[0]; // Get the first active entry
+        console.log('Updating entry by ID:', entryToUpdate.id);
+        
+        const { data: updatedEntries, error: updateError } = await supabase
+          .from('delib_queue')
+          .update({ 
+            status: QueueStatus.COMPLETED,
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', entryToUpdate.id)
+          .select('*');
+
+        console.log('Update by ID result:', { updatedEntries, updateError });
+
+        if (updateError) {
+          return NextResponse.json({ error: 'Failed to remove yourself from queue' }, { status: 400 });
+        }
+
+        if (updatedEntries && updatedEntries.length > 0) {
+          return NextResponse.json({ 
+            message: 'Successfully removed yourself from queue',
+            entries: updatedEntries 
+          }, { status: 200 });
+        }
+      }
+
+      // If we get here, the update failed
+      console.log('Update failed - no entries were updated');
+
+      if (updateError) {
+        return NextResponse.json({ error: 'Failed to remove yourself from queue' }, { status: 400 });
+      }
+
+      if (!updatedEntries || updatedEntries.length === 0) {
+        return NextResponse.json({ error: 'You are not currently in the queue' }, { status: 404 });
+      }
+
+      return NextResponse.json({ 
+        message: 'Successfully removed yourself from queue',
+        entries: updatedEntries 
+      }, { status: 200 });
+    }
+
     // Check if user is PIC (only PICs can remove others from queue)
     const { data: userData, error: userError } = await supabase
       .from('users')
@@ -28,9 +97,6 @@ export async function POST(req: NextRequest) {
     if (!userData?.is_pic) {
       return NextResponse.json({ error: 'Only PIC members can remove from queue' }, { status: 403 });
     }
-
-    // Parse request body
-    const { entry_id } = await req.json();
 
     if (!entry_id) {
       return NextResponse.json({ error: 'Entry ID is required' }, { status: 400 });

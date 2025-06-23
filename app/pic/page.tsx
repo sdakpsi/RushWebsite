@@ -10,6 +10,7 @@ import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import { useDelibsSubmission } from "@/hooks/useDelibsSubmission";
 import { useSearchAndSort } from "@/hooks/useSearchAndSort";
+import { useCurrentWave } from "@/hooks/useCurrentWave";
 
 export default function ProtectedPage() {
   const { isPIC, isLoading: isPICLoading } = useActiveStatus();
@@ -35,8 +36,14 @@ export default function ProtectedPage() {
     sortUsers,
     filteredUsersData,
   } = useSearchAndSort(usersData);
+  const { currentWaveCount, currentWaveNames, isLoading: isWaveLoading, refetch: refetchWave } = useCurrentWave();
 
-  if (isPICLoading || isUsersLoading || isCasesInterviewsLoading) {
+  const handleSubmitDelibsWithRefresh = async () => {
+    await handleSubmitDelibs();
+    refetchWave();
+  };
+
+  if (isPICLoading || isUsersLoading || isCasesInterviewsLoading || isWaveLoading) {
     return <LoadingSpinner />;
   }
 
@@ -45,10 +52,35 @@ export default function ProtectedPage() {
       <div className="animate-in mx-8 w-full">
         <div className="text-center">
           <p className="mb-2 text-xl leading-tight lg:text-4xl">PIC Portal</p>
+          <div className="mb-4 space-y-3">
+            <div>
+              <p className="text-lg text-gray-300 mb-1">
+                Current Wave ({currentWaveCount} applicant{currentWaveCount !== 1 ? 's' : ''}):
+              </p>
+              {currentWaveCount > 0 && (
+                <div className="text-sm text-gray-400 max-w-2xl mx-auto">
+                  {currentWaveNames.join(', ')}
+                </div>
+              )}
+            </div>
+            <div>
+              <p className="text-lg text-blue-300 mb-1">
+                Selected for Next Wave ({selectedApplicants.length} applicant{selectedApplicants.length !== 1 ? 's' : ''}):
+              </p>
+              {selectedApplicants.length > 0 && (
+                <div className="text-sm text-blue-400 max-w-2xl mx-auto">
+                  {selectedApplicants.map(id => {
+                    const applicant = filteredUsersData.find(user => user.id === id);
+                    return applicant?.full_name;
+                  }).filter(Boolean).join(', ')}
+                </div>
+              )}
+            </div>
+          </div>
 
           {isPIC ? (
             <div>
-              <div className="flex w-full items-center justify-center">
+              <div className="flex w-full flex-col items-center justify-center">
                 <div className="mb-4 flex w-full max-w-md items-center">
                   <input
                     type="text"
@@ -57,19 +89,21 @@ export default function ProtectedPage() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-grow rounded-lg border px-4 py-2 text-gray-700 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                </div>
+                <div className="flex gap-4">
                   <button
-                    className="ml-8 rounded-lg bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                    onClick={handleSubmitDelibs}
+                    className="rounded-lg bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                    onClick={handleSubmitDelibsWithRefresh}
                   >
-                    DELIBS
+                    Submit Wave
+                  </button>
+                  <button
+                    className="rounded-lg bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                    onClick={sortUsers}
+                  >
+                    Sort By {sortType === "name" ? "Score" : "Name"}
                   </button>
                 </div>
-                <button
-                  className="ml-4 rounded-lg bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
-                  onClick={sortUsers}
-                >
-                  Sort by {sortType === "name" ? "score" : "name"}
-                </button>
               </div>
 
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
