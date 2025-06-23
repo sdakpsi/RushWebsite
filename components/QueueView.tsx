@@ -1,17 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { QueueType, QueueStatus } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import { useQueueRealtime } from "@/hooks/useQueueRealtime";
+import { createClient } from "@/utils/supabase/client";
 
-interface PICQueueViewProps {
+interface QueueViewProps {
   onQueueUpdate?: () => void;
+  isPic?: boolean;
 }
 
-const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
+const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => {
   const { queue, isLoading, error, refetch, pendingCount } = useQueueRealtime();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // Get current user on mount
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
+
 
   // Remove person from queue (called from top of queue)
   const handleRemoveFromQueue = async (entryId: string) => {
@@ -35,6 +50,10 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
 
       customToast('Removed from queue', 'success');
       
+      // Trigger immediate refresh after update
+      refetch();
+      setLastRefresh(new Date());
+      
       if (onQueueUpdate) {
         onQueueUpdate();
       }
@@ -42,6 +61,54 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
       console.error('Error removing from queue:', error);
       customToast(
         error instanceof Error ? error.message : 'Failed to remove from queue',
+        'error'
+      );
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Remove self from queue
+  const handleRemoveSelfFromQueue = async () => {
+    if (isUpdating || !currentUserId) return;
+    
+    console.log('Starting self-removal. Current user ID:', currentUserId);
+    console.log('Queue entries visible in UI:', queue.map(q => ({ id: q.id, user_id: q.user_id, status: q.status })));
+    
+    setIsUpdating(true);
+    
+    try {
+      console.log('Sending request to /api/queue/remove with self_remove: true');
+      const response = await fetch('/api/queue/remove', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ self_remove: true }),
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log('Error response data:', errorData);
+        throw new Error(errorData.error || 'Failed to remove yourself from queue');
+      }
+
+      customToast('Removed yourself from queue', 'success');
+      
+      // Trigger immediate refresh after update
+      await refetch();
+      setLastRefresh(new Date());
+      
+      if (onQueueUpdate) {
+        onQueueUpdate();
+      }
+    } catch (error) {
+      console.error('Error removing self from queue:', error);
+      customToast(
+        error instanceof Error ? error.message : 'Failed to remove yourself from queue',
         'error'
       );
     } finally {
@@ -74,6 +141,10 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
 
       customToast('Marked as speaking', 'success');
       
+      // Trigger immediate refresh after update
+      refetch();
+      setLastRefresh(new Date());
+      
       if (onQueueUpdate) {
         onQueueUpdate();
       }
@@ -92,24 +163,24 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
   const getQueueTypeDisplay = (queueType: QueueType) => {
     switch (queueType) {
       case QueueType.POSITIVE:
-        return { icon: "", text: "Pro", color: "text-green-400" };
+        return { icon: "", text: "PRO", color: "text-green-400" };
       case QueueType.NEGATIVE:
-        return { icon: "", text: "Con", color: "text-red-400" };
+        return { icon: "", text: "CON", color: "text-red-400" };
       case QueueType.COMMENT:
-        return { icon: "", text: "Comment", color: "text-blue-400" };
+        return { icon: "", text: "COMMENT", color: "text-blue-400" };
       default:
-        return { icon: "", text: "Unknown", color: "text-gray-400" };
+        return { icon: "", text: "UNKNOWN", color: "text-gray-400" };
     }
   };
 
   const getStatusDisplay = (status: QueueStatus) => {
     switch (status) {
       case QueueStatus.PENDING:
-        return { text: "Waiting", color: "bg-yellow-600" };
+        return { text: "WAITING", color: "bg-yellow-600" };
       case QueueStatus.SPEAKING:
-        return { text: "Speaking", color: "bg-green-600" };
+        return { text: "SPEAKING", color: "bg-green-600" };
       case QueueStatus.COMPLETED:
-        return { text: "Completed", color: "bg-gray-600" };
+        return { text: "COMPLETED", color: "bg-gray-600" };
       default:
         return { text: "Unknown", color: "bg-gray-600" };
     }
@@ -152,13 +223,21 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
     <div className="bg-background rounded-lg p-6 border border-foreground/20">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-foreground">Queue Management</h2>
-        <button
-          onClick={refetch}
-          disabled={isUpdating}
-          className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 disabled:opacity-50"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center space-x-3">
+          <span className="text-xs text-slate-400">
+            Last updated: {lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          </span>
+          <button
+            onClick={() => {
+              refetch();
+              setLastRefresh(new Date());
+            }}
+            disabled={isUpdating}
+            className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 disabled:opacity-50"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       {queue.length === 0 ? (
@@ -171,15 +250,18 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
             const typeDisplay = getQueueTypeDisplay(entry.queue_type);
             const statusDisplay = getStatusDisplay(entry.status);
             const isFirst = index === 0;
+            const isCurrentUser = currentUserId === entry.user_id;
             
             return (
               <div
                 key={entry.id}
                 className={`p-4 rounded-lg border ${
                   isFirst 
-                    ? 'bg-slate-700 border-blue-500 shadow-lg' 
+                    ? 'bg-slate-750 border-blue-500 shadow-lg' 
                     : 'bg-slate-750 border-slate-600'
-                } ${entry.status === QueueStatus.SPEAKING ? 'ring-2 ring-green-500' : ''}`}
+                } ${entry.status === QueueStatus.SPEAKING ? 'ring-2 ring-green-500' : ''} ${
+                  isCurrentUser ? 'ring-2 ring-purple-500' : ''
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -188,8 +270,13 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
                       <div>
                         <div className="font-semibold text-white">
                           {entry.user?.full_name || 'Unknown User'}
+                          {isCurrentUser && (
+                            <span className="ml-2 px-1 py-0.5 bg-purple-600 text-white text-xs rounded">
+                              YOU
+                            </span>
+                          )}
                         </div>
-                        <div className={`text-sm ${typeDisplay.color}`}>
+                        <div className={`text-xs ${typeDisplay.color} font-bold`}>
                           {typeDisplay.text}
                         </div>
                       </div>
@@ -204,30 +291,45 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
                       </span>
                       {isFirst && (
                         <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">
-                          NEXT
+                          NEXT UP
                         </span>
                       )}
                     </div>
                   </div>
 
                   <div className="flex space-x-2">
-                    {entry.status === QueueStatus.PENDING && (
+                    {isCurrentUser ? (
+                      // Self-removal button for current user
                       <button
-                        onClick={() => handleSetSpeaking(entry.id)}
+                        onClick={handleRemoveSelfFromQueue}
                         disabled={isUpdating}
-                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                        className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
                       >
-                        Speaking
+                        Remove Myself
                       </button>
+                    ) : (
+                      // PIC controls for other users
+                      <>
+                        {entry.status === QueueStatus.PENDING && (
+                          <button
+                            onClick={() => handleSetSpeaking(entry.id)}
+                            disabled={isUpdating}
+                            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                          >
+                            Speaking
+                          </button>
+                        )}
+                       {isPic && ( 
+                        <button
+                          onClick={() => handleRemoveFromQueue(entry.id)}
+                          disabled={isUpdating}
+                          className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                        >
+                          Remove
+                        </button>
+                      )}
+                      </>
                     )}
-                    
-                    <button
-                      onClick={() => handleRemoveFromQueue(entry.id)}
-                      disabled={isUpdating}
-                      className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-                    >
-                      Remove
-                    </button>
                   </div>
                 </div>
               </div>
@@ -243,4 +345,4 @@ const PICQueueView: React.FC<PICQueueViewProps> = ({ onQueueUpdate }) => {
   );
 };
 
-export default PICQueueView;
+export default QueueView;
