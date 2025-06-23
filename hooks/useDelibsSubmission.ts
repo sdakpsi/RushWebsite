@@ -16,6 +16,10 @@ export function useDelibsSubmission() {
     });
   };
 
+  const clearSelections = () => {
+    setSelectedApplicants([]);
+  };
+
   const handleSubmitDelibs = async () => {
     try {
       const { data: delibsData, error: fetchError } = await supabase
@@ -48,5 +52,5 @@ export function useDelibsSubmission() {
     }
   };
 
-  return { selectedApplicants, toggleApplicantSelection, handleSubmitDelibs };
+  return { selectedApplicants, toggleApplicantSelection, handleSubmitDelibs, clearSelections };
 }
