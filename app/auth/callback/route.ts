@@ -11,7 +11,16 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) {
+        console.error('Auth callback error:', error);
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+    } catch (error) {
+      console.error('Auth callback exception:', error);
+      return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
+    }
   }
 
   // URL to redirect to after sign up process completes
