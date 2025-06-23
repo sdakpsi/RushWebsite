@@ -96,7 +96,7 @@ export const useQueueRealtime = () => {
       )
       .subscribe((status) => {
         console.log('Subscription status:', status);
-        if (status === 'SUBSCRIPTION_ERROR') {
+        if (status === 'CHANNEL_ERROR') {
           setError('Real-time connection failed');
         }
       });

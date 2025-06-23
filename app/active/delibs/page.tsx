@@ -10,7 +10,7 @@ import { useDelibsUsers } from "@/hooks/getDelibsUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import ActiveQueueControls from "@/components/ActiveQueueControls";
-import PICQueueView from "@/components/PICQueueView";
+import QueueView from "@/components/QueueView";
 
 export default function ProtectedPage() {
   const { isActive, isPIC, isLoading: isActiveLoading } = useActiveStatus();
@@ -45,9 +45,9 @@ export default function ProtectedPage() {
                 </div>
               )}
               {/* Queue Management for PICs */}
-              {isPIC && usersData.length > 0 && (
+              {usersData.length > 0 && (
                 <div className="mb-6 mt-6">
-                  <PICQueueView />
+                  <QueueView isPic={isPIC}/>
                 </div>
               )}
 

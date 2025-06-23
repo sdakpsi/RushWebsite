@@ -72,11 +72,11 @@ const ActiveQueueControls: React.FC<ActiveQueueControlsProps> = ({
   const getButtonText = (queueType: QueueType) => {
     switch (queueType) {
       case QueueType.POSITIVE:
-        return "Pro";
+        return "PRO";
       case QueueType.NEGATIVE:
-        return "Con";
+        return "CON";
       case QueueType.COMMENT:
-        return "Comment";
+        return "COMMENT";
       default:
         return "Raise Hand";
     }

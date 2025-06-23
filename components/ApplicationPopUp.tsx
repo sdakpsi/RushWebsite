@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { createClient } from "@/utils/supabase/client";
-import { toast } from "react-toastify";
+import customToast from "./CustomToast";
 import Image from "next/image";
 
 interface Application {
@@ -171,42 +171,55 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const calculateIvAverages = (interviews: Interview[]) => {
     if (interviews.length === 3) {
-      // Calculate the average scores from the 3 interviews
-      const avgInterview = {
-        empathy:
-          (interviews[0].empathy +
-            interviews[1].empathy +
-            interviews[2].empathy) /
-          3,
-        open_minded:
-          (interviews[0].open_minded +
-            interviews[1].open_minded +
-            interviews[2].open_minded) /
-          3,
-        pledgeable:
-          (interviews[0].pledgeable +
-            interviews[1].pledgeable +
-            interviews[2].pledgeable) /
-          3,
-        motivated:
-          (interviews[0].motivated +
-            interviews[1].motivated +
-            interviews[2].motivated) /
-          3,
-        socially_aware:
-          (interviews[0].socially_aware +
-            interviews[1].socially_aware +
-            interviews[2].socially_aware) /
-          3,
-        events_attended:
-          (interviews[0].events_attended +
-            interviews[1].events_attended +
-            interviews[2].events_attended) /
-          3,
-      };
+      // Check if all three interviews exist before accessing them
+      if (interviews[0] && interviews[1] && interviews[2]) {
+        // Calculate the average scores from the 3 interviews
+        const avgInterview: Interview = {
+          active_name: "Average",
+          other_actives: "",
+          about_yourself: "",
+          career_interests: "",
+          instance_for_friend: "",
+          failure_overcome: "",
+          disagreement_handled: "",
+          handling_criticism: "",
+          learning_about: "",
+          silly_question: null,
+          questions_and_commitments: "",
+          why_give_bid: "",
+          most_influential: "",
+          more_questions: "",
+          events_attended: "Average",
+          empathy:
+            (interviews[0].empathy +
+              interviews[1].empathy +
+              interviews[2].empathy) /
+            3,
+          open_minded:
+            (interviews[0].open_minded +
+              interviews[1].open_minded +
+              interviews[2].open_minded) /
+            3,
+          pledgeable:
+            (interviews[0].pledgeable +
+              interviews[1].pledgeable +
+              interviews[2].pledgeable) /
+            3,
+          motivated:
+            (interviews[0].motivated +
+              interviews[1].motivated +
+              interviews[2].motivated) /
+            3,
+          socially_aware:
+            (interviews[0].socially_aware +
+              interviews[1].socially_aware +
+              interviews[2].socially_aware) /
+            3,
+        };
 
-      // Add this average as a fourth interview
-      interviews = [...interviews, avgInterview];
+        // Add this average as a fourth interview
+        interviews = [...interviews, avgInterview];
+      }
     }
 
     // Now proceed with normal averaging (all cases will have 4 interviews)
@@ -254,32 +267,45 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const calculateAverages = (cases: Case[]) => {
     if (cases.length === 3) {
-      // Calculate the average scores from the 3 cases
-      const avgCase = {
-        leadership_score:
-          (cases[0].leadership_score +
-            cases[1].leadership_score +
-            cases[2].leadership_score) /
-          3,
-        teamwork_score:
-          (cases[0].teamwork_score +
-            cases[1].teamwork_score +
-            cases[2].teamwork_score) /
-          3,
-        analytical_score:
-          (cases[0].analytical_score +
-            cases[1].analytical_score +
-            cases[2].analytical_score) /
-          3,
-        public_speaking_score:
-          (cases[0].public_speaking_score +
-            cases[1].public_speaking_score +
-            cases[2].public_speaking_score) /
-          3,
-      };
+      // Check if all three cases exist before accessing them
+      if (cases[0] && cases[1] && cases[2]) {
+        // Calculate the average scores from the 3 cases
+        const avgCase: Case = {
+          id: "average",
+          prospect: "",
+          active: "Average",
+          leadership_comments: "",
+          teamwork_comments: "",
+          analytical_comments: "",
+          public_speaking_comments: "",
+          role: "",
+          thoughts: "",
+          additional: "",
+          leadership_score:
+            (cases[0].leadership_score +
+              cases[1].leadership_score +
+              cases[2].leadership_score) /
+            3,
+          teamwork_score:
+            (cases[0].teamwork_score +
+              cases[1].teamwork_score +
+              cases[2].teamwork_score) /
+            3,
+          analytical_score:
+            (cases[0].analytical_score +
+              cases[1].analytical_score +
+              cases[2].analytical_score) /
+            3,
+          public_speaking_score:
+            (cases[0].public_speaking_score +
+              cases[1].public_speaking_score +
+              cases[2].public_speaking_score) /
+            3,
+        };
 
-      // Add this average as a fourth case
-      cases = [...cases, avgCase];
+        // Add this average as a fourth case
+        cases = [...cases, avgCase];
+      }
     }
 
     // Now proceed with normal averaging (all cases will have 4 evaluators)
@@ -379,7 +405,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const handleSubmit = async () => {
     if (score === "") {
-      toast.error("Please enter a score before submitting.");
+      customToast("Please enter a score before submitting.", "error");
       return;
     }
 
@@ -391,9 +417,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       .eq("id", userID);
 
     if (error) {
-      toast.error(`Error: ${error.message}`);
+      customToast(`Error: ${error.message}`, "error");
     } else {
-      toast.success("Score updated successfully!");
+      customToast("Score updated successfully!", "success");
       setScore(""); // Optionally reset the score input after successful submission
     }
   };
@@ -421,7 +447,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const handleCommentSubmit = async () => {
     if (activeName === "" || comment === "") {
-      toast.error("Please enter a name and comment before submitting.");
+      customToast("Please enter a name and comment before submitting.", "error");
       return;
     }
 
@@ -439,9 +465,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     ]);
 
     if (error) {
-      toast.error(`Error: ${error.message}`);
+      customToast(`Error: ${error.message}`, "error");
     } else {
-      toast.success("Comment submitted.");
+      customToast("Comment submitted.", "success");
       setSubmissionCount((count) => count + 1);
       setActiveName(""); // Optionally reset the score input after successful submission
       setComment("");
@@ -486,13 +512,15 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
       if (existingEntries && existingEntries.length > 0) {
         // Assuming the first entry is the correct one to update
-        const existingId = existingEntries[0].id;
-        const { error: updateError } = await supabase
-          .from("user_avatar")
-          .update({ avatar_url: data.publicUrl })
-          .eq("id", existingId);
+        const existingEntry = existingEntries[0];
+        if (existingEntry && existingEntry.id) {
+          const { error: updateError } = await supabase
+            .from("user_avatar")
+            .update({ avatar_url: data.publicUrl })
+            .eq("id", existingEntry.id);
 
-        if (updateError) throw updateError;
+          if (updateError) throw updateError;
+        }
       } else {
         // Insert new entry
         const { error: insertError } = await supabase
@@ -591,9 +619,6 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
         if (error) {
           alert(`Error: ${error.message}`);
-        }
-        if (isPIC) {
-          toast.success("Total Score Updated");
         }
       }
     };
@@ -982,7 +1007,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   </div>
                 </div>
                 {/* Assuming all cases have the same structure, iterate over the keys of the first case to create a layout */}
-                {cases.length > 0 &&
+                {cases.length > 0 && cases[0] &&
                   Object.keys(cases[0])
                     .filter((key) => ["active_name"].includes(key)) // Adjust as needed to exclude irrelevant keys
                     .map((attribute) => (
@@ -1012,7 +1037,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         ))}
                       </div>
                     ))}
-                {cases.length > 0 &&
+                {cases.length > 0 && cases[0] &&
                   Object.keys(cases[0])
                     .filter((key) => ["other_actives"].includes(key)) // Adjust as needed to exclude irrelevant keys
                     .map((attribute) => (
@@ -1042,7 +1067,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         ))}
                       </div>
                     ))}
-                {cases.length > 0 &&
+                {cases.length > 0 && cases[0] &&
                   Object.keys(cases[0])
                     .filter(
                       (key) =>
@@ -1104,7 +1129,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   ))}
                 </div>
                 {/* Create an array of unique keys/questions from the first interview (assuming all interviews have the same keys) */}
-                {interviews.length > 0 && (
+                {interviews.length > 0 && interviews[0] && (
                   <>
                     {/* Manually render active_name and other_actives first if they exist */}
                     {["active_name", "other_actives"].map((key) => (
