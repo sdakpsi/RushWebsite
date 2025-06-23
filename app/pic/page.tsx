@@ -27,7 +27,7 @@ export default function ProtectedPage() {
     interviews,
     isLoading: isCasesInterviewsLoading,
   } = useCasesAndInterviews(userID);
-  const { selectedApplicants, toggleApplicantSelection, handleSubmitDelibs } =
+  const { selectedApplicants, toggleApplicantSelection, handleSubmitDelibs, clearSelections } =
     useDelibsSubmission();
   const {
     searchQuery,
@@ -102,6 +102,12 @@ export default function ProtectedPage() {
                     onClick={sortUsers}
                   >
                     Sort By {sortType === "name" ? "Score" : "Name"}
+                  </button>
+                  <button
+                    className="rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
+                    onClick={clearSelections}
+                  >
+                    Clear Selections
                   </button>
                 </div>
               </div>
