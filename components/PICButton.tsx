@@ -56,6 +56,7 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
                 Comment Forms
               </Link>
             </li>
+            {/* 
             <li>
               <Link
                 href="/pic/click-this"
@@ -64,6 +65,7 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
                 click this!
               </Link>
             </li>
+            */}
           </ul>
         </div>
       )}
