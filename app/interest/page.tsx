@@ -5,6 +5,7 @@ import logo from "../../components/akpsilogo.png";
 import { InterestForm as InterestFormType } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import background from "../background.png";
+import { RUSH_YEAR } from "@/utils/constants";
 
 interface ShootingStar {
   id: number;
@@ -190,8 +191,7 @@ const InterestForm = () => {
         </div>
 
         <div className="lg:text-md libre-caslon-text-regular mb-8 px-2 text-left text-sm text-white">
-          Hello! Thank you for taking interest in UCSD Alpha Kappa Psi's Fall
-          2025 Rush Week. The brothers of Alpha Kappa Psi are looking forward to
+          Hello! Thank you for taking interest in UCSD Alpha Kappa Psi's {RUSH_YEAR} Rush Week. The brothers of Alpha Kappa Psi are looking forward to
           see you during Week 1 of Fall Quarter. We hope that you are just as
           excited for this journey as we are!
           <br />
@@ -226,7 +226,7 @@ const InterestForm = () => {
           Align Your Stars
         </h1>
         <h2 className="bon-vivant-text-regular mb-8 text-center text-xl text-blue-200">
-          Alpha Kappa Psi | Fall 2025 Rush
+          Alpha Kappa Psi | {RUSH_YEAR} Rush
         </h2>
         <form onSubmit={handleSubmit} className="w-full space-y-6">
           <div>
