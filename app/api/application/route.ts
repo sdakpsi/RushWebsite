@@ -89,6 +89,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
   }
 
+  const requestBody = await req.json();
   const {
     applicationId,
     firstName,
@@ -117,47 +118,119 @@ export async function PUT(req: NextRequest) {
     instagram,
     linkedIn,
     tiktok,
-  } = await req.json();
-  let socialMediasObject: Record<string, string> | undefined = undefined;
-  const socialFields = { facebook, instagram, linkedIn, tiktok };
-  const hasSocialMedia = Object.values(socialFields).some((value) => value);
-
-  if (hasSocialMedia) {
-    socialMediasObject = {};
-    for (const [key, value] of Object.entries(socialFields)) {
-      if (value) {
-        socialMediasObject[key] = value;
-      }
-    }
-  }
-
-  const name = firstName + ' ' + lastName;
-  const submitted = isSubmitting ? new Date() : null;
-  let updateObject = {
-    name,
-    pronouns,
-    phone_number: phoneNumber,
-    year: yearInCollege,
-    graduation_qtr: graduationQuarter,
-    graduation_year: graduationYear || null,
-    major,
-    minors: minor || '',
-    gpa: cumulativeGPA || null,
-    classes: currentClasses,
-    extracirriculars: extracurricularActivities,
-    accomplishment: proudAccomplishment,
-    why_akpsi: joinReason,
-    goals: lifeGoals,
-    comfort_zone: comfortZone,
-    social_media: socialMediasObject,
-    business: businessType,
-    additional: additionalDetails,
-    resume: resumeFileUrl,
-    cover_letter: coverLetterFileUrl,
-    college,
-    submitted,
+    isPartialUpdate,
+  } = requestBody;
+  let updateObject: any = {
     last_updated: new Date(),
   };
+
+  if (isPartialUpdate) {
+    // Map frontend field names to database column names for partial updates
+    const fieldMapping: Record<string, string> = {
+      firstName: 'name',
+      lastName: 'name', 
+      pronouns: 'pronouns',
+      phoneNumber: 'phone_number',
+      yearInCollege: 'year',
+      graduationYear: 'graduation_year',
+      graduationQuarter: 'graduation_qtr',
+      major: 'major',
+      minor: 'minors',
+      cumulativeGPA: 'gpa',
+      currentClasses: 'classes',
+      extracurricularActivities: 'extracirriculars',
+      proudAccomplishment: 'accomplishment',
+      joinReason: 'why_akpsi',
+      lifeGoals: 'goals',
+      comfortZone: 'comfort_zone',
+      businessType: 'business',
+      additionalDetails: 'additional',
+      resumeFileUrl: 'resume',
+      coverLetterFileUrl: 'cover_letter',
+      college: 'college',
+      facebook: 'social_media',
+      instagram: 'social_media',
+      linkedIn: 'social_media',
+      tiktok: 'social_media',
+    };
+
+    // Handle name field specially (combination of firstName + lastName)
+    if (firstName !== undefined || lastName !== undefined) {
+      const currentFirstName = firstName || '';
+      const currentLastName = lastName || '';
+      updateObject.name = `${currentFirstName} ${currentLastName}`.trim();
+    }
+
+    // Handle social media fields specially
+    const socialFields = ['facebook', 'instagram', 'linkedIn', 'tiktok'];
+    if (socialFields.some(field => requestBody[field] !== undefined)) {
+      const socialMediasObject: Record<string, string> = {};
+      socialFields.forEach(field => {
+        if (requestBody[field]) {
+          socialMediasObject[field] = requestBody[field];
+        }
+      });
+      if (Object.keys(socialMediasObject).length > 0) {
+        updateObject.social_media = socialMediasObject;
+      }
+    }
+
+    // Handle other fields
+    Object.keys(requestBody).forEach(key => {
+      if (key !== 'applicationId' && key !== 'isSubmitting' && key !== 'lastSubmitted' && key !== 'isPartialUpdate' && key !== 'firstName' && key !== 'lastName' && !socialFields.includes(key)) {
+        const dbField = fieldMapping[key] || key;
+        if (requestBody[key] !== undefined) {
+          updateObject[dbField] = requestBody[key] === '' ? null : requestBody[key];
+        }
+      }
+    });
+  } else {
+    // Full update (existing logic)
+    let socialMediasObject: Record<string, string> | undefined = undefined;
+    const socialFields = { facebook, instagram, linkedIn, tiktok };
+    const hasSocialMedia = Object.values(socialFields).some((value) => value);
+
+    if (hasSocialMedia) {
+      socialMediasObject = {};
+      for (const [key, value] of Object.entries(socialFields)) {
+        if (value) {
+          socialMediasObject[key] = value;
+        }
+      }
+    }
+
+    const name = firstName + " " + lastName;
+    updateObject = {
+      name,
+      pronouns,
+      phone_number: phoneNumber,
+      year: yearInCollege,
+      graduation_qtr: graduationQuarter,
+      graduation_year: graduationYear || null,
+      major,
+      minors: minor || "",
+      gpa: cumulativeGPA || null,
+      classes: currentClasses,
+      extracirriculars: extracurricularActivities,
+      accomplishment: proudAccomplishment,
+      why_akpsi: joinReason,
+      goals: lifeGoals,
+      comfort_zone: comfortZone,
+      social_media: socialMediasObject,
+      business: businessType,
+      additional: additionalDetails,
+      resume: resumeFileUrl,
+      cover_letter: coverLetterFileUrl,
+      college,
+      last_updated: new Date(),
+    };
+  }
+
+  const submittedAt = isSubmitting
+    ? new Date()
+    : lastSubmitted
+      ? new Date(lastSubmitted)
+      : null;
 
   if (isSubmitting) {
     updateObject.submitted = submitted;

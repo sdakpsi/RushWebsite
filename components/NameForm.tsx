@@ -25,16 +25,57 @@ import LoadingSpinner from "./LoadingSpinner";
 export default function NameForm() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [applicationId, setApplicationId] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [pronouns, setPronouns] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [yearInCollege, setYearInCollege] = useState<string>("");
+  const [graduationYear, setGraduationYear] = useState<number | null>(null);
+  const [isGraduationYearValid, setIsGraduationYearValid] = useState<boolean>(true);
+  const [isCumulativeGPAValid, setIsCumulativeGPAValid] = useState<boolean>(true);
+  const [graduationQuarter, setGraduationQuarter] = useState<string>("");
+  const [major, setMajor] = useState<string>("");
+  const [minor, setMinor] = useState<string>("");
+  const [cumulativeGPA, setCumulativeGPA] = useState<string>("");
+  const [currentClasses, setCurrentClasses] = useState<string>("");
+  const [extracurricularActivities, setExtracurricularActivities] = useState<string>("");
+  const [proudAccomplishment, setProudAccomplishment] = useState<string>("");
+  const [joinReason, setJoinReason] = useState<string>("");
+  const [lifeGoals, setLifeGoals] = useState<string>("");
+  const [comfortZone, setComfortZone] = useState<string>("");
+  const [businessType, setBusinessType] = useState<string>("");
+  const [additionalDetails, setAdditionalDetails] = useState<string>("");
+  const [resumeFileUrl, setResumeFileUrl] = useState<string>("");
+  const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>("");
+  const [lastSubmitted, setLastSubmitted] = useState<string | null>(null);
+  const [facebook, setFacebook] = useState<string>("");
+  const [instagram, setInstagram] = useState<string>("");
+  const [linkedIn, setLinkedIn] = useState<string>("");
+  const [tiktok, setTiktok] = useState<string>("");
+  const [college, setCollege] = useState<string>("");
 
   const debouncedSave = useCallback(
     debounce(async () => {
+      if (changedFields.size === 0) return;
+      
       setIsSaving(true);
       const applicationData = formStateRef.current;
+      
+      // Create partial update object with only changed fields
+      const changedData: any = { applicationId: applicationData.applicationId };
+      
+      changedFields.forEach(field => {
+        changedData[field] = applicationData[field as keyof typeof applicationData];
+      });
 
       const body = JSON.stringify({
-        ...applicationData,
-        lastSubmitted: new Date().toISOString(),
+        ...changedData,
         isSubmitting: false,
+        isPartialUpdate: true,
       });
 
       try {
@@ -51,13 +92,14 @@ export default function NameForm() {
         }
 
         setLastSaved(formatTimestamp(new Date()));
+        setChangedFields(new Set()); // Clear changed fields after successful save
       } catch (error) {
         console.error("Error saving application data:", error);
       } finally {
         setIsSaving(false);
       }
     }, 1000),
-    []
+    [changedFields]
   );
 
   useEffect(() => {
@@ -115,43 +157,6 @@ export default function NameForm() {
     fetchData();
   }, []);
 
-  /**
-   * States for user application forms
-   */
-  const [lastSaved, setLastSaved] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [applicationId, setApplicationId] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [pronouns, setPronouns] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [yearInCollege, setYearInCollege] = useState<string>("");
-  const [graduationYear, setGraduationYear] = useState<number | null>(null);
-  const [isGraduationYearValid, setIsGraduationYearValid] =
-    useState<boolean>(true);
-  const [isCumulativeGPAValid, setIsCumulativeGPAValid] =
-    useState<boolean>(true);
-  const [graduationQuarter, setGraduationQuarter] = useState<string>("");
-  const [major, setMajor] = useState<string>("");
-  const [minor, setMinor] = useState<string>("");
-  const [cumulativeGPA, setCumulativeGPA] = useState<string>("");
-  const [currentClasses, setCurrentClasses] = useState<string>("");
-  const [extracurricularActivities, setExtracurricularActivities] =
-    useState<string>("");
-  const [proudAccomplishment, setProudAccomplishment] = useState<string>("");
-  const [joinReason, setJoinReason] = useState<string>("");
-  const [lifeGoals, setLifeGoals] = useState<string>("");
-  const [comfortZone, setComfortZone] = useState<string>("");
-  const [businessType, setBusinessType] = useState<string>("");
-  const [additionalDetails, setAdditionalDetails] = useState<string>("");
-  const [resumeFileUrl, setResumeFileUrl] = useState<string>("");
-  const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>("");
-  const [lastSubmitted, setLastSubmitted] = useState<string | null>(null);
-  const [facebook, setFacebook] = useState<string>("");
-  const [instagram, setInstagram] = useState<string>("");
-  const [linkedIn, setLinkedIn] = useState<string>("");
-  const [tiktok, setTiktok] = useState<string>("");
-  const [college, setCollege] = useState<string>("");
 
   const formStateRef = useRef<ApplicationFormState>({
     applicationId,
@@ -241,6 +246,12 @@ export default function NameForm() {
   ]);
 
   useEffect(() => {
+    if (resumeFileUrl) {
+      setChangedFields(prev => new Set(prev).add('resumeFileUrl'));
+    }
+    if (coverLetterFileUrl) {
+      setChangedFields(prev => new Set(prev).add('coverLetterFileUrl'));
+    }
     debouncedSave();
   }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
 
@@ -255,6 +266,7 @@ export default function NameForm() {
 
     if (isValid || value === "") {
       setGraduationYear(value ? numberValue : null);
+      setChangedFields(prev => new Set(prev).add('graduationYear'));
     }
   };
 
@@ -269,17 +281,19 @@ export default function NameForm() {
 
     if (isValid || value === "") {
       setCumulativeGPA(value);
+      setChangedFields(prev => new Set(prev).add('cumulativeGPA'));
     }
   };
 
   const handleChange =
-    (setState: React.Dispatch<React.SetStateAction<string>>) =>
+    (setState: React.Dispatch<React.SetStateAction<string>>, fieldName: string) =>
     (
       event: ChangeEvent<
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >
     ) => {
       setState(event.target.value);
+      setChangedFields(prev => new Set(prev).add(fieldName));
       debouncedSave();
     };
 
@@ -389,7 +403,7 @@ export default function NameForm() {
               id="firstName"
               type="text"
               value={firstName}
-              onChange={handleChange(setFirstName)}
+              onChange={handleChange(setFirstName, 'firstName')}
               placeholder="Enter your first name"
             />
           </div>
@@ -402,7 +416,7 @@ export default function NameForm() {
               id="lastName"
               type="text"
               value={lastName}
-              onChange={handleChange(setLastName)}
+              onChange={handleChange(setLastName, 'lastName')}
               placeholder="Enter your last name"
             />
           </div>
@@ -415,7 +429,7 @@ export default function NameForm() {
               id="pronouns"
               type="text"
               value={pronouns}
-              onChange={handleChange(setPronouns)}
+              onChange={handleChange(setPronouns, 'pronouns')}
               placeholder="Enter your preferred pronouns"
             />
           </div>
@@ -429,7 +443,7 @@ export default function NameForm() {
               id="phoneNumber"
               type="tel"
               value={phoneNumber}
-              onChange={handleChange(setPhoneNumber)}
+              onChange={handleChange(setPhoneNumber, 'phoneNumber')}
               placeholder="Enter your phone number"
             />
           </div>
@@ -441,7 +455,7 @@ export default function NameForm() {
               className={smallInput}
               id="yearInCollege"
               value={yearInCollege}
-              onChange={handleChange(setYearInCollege)}
+              onChange={handleChange(setYearInCollege, 'yearInCollege')}
             >
               <option value="">Select Year</option>
               {Object.values(StudentYears).map((year) => (
@@ -459,7 +473,7 @@ export default function NameForm() {
               className={smallInput}
               id="college"
               value={college}
-              onChange={handleChange(setCollege)}
+              onChange={handleChange(setCollege, 'college')}
             >
               <option value="">Select College</option>
               {Object.values(UCSDColleges).map((college) => (
@@ -497,7 +511,7 @@ export default function NameForm() {
               className={smallInput}
               id="graduationQuarter"
               value={graduationQuarter}
-              onChange={handleChange(setGraduationQuarter)}
+              onChange={handleChange(setGraduationQuarter, 'graduationQuarter')}
             >
               {" "}
               <option value="">Select Quarter</option>
@@ -517,7 +531,7 @@ export default function NameForm() {
               id="major"
               type="text"
               value={major}
-              onChange={handleChange(setMajor)}
+              onChange={handleChange(setMajor, 'major')}
               placeholder="Enter your major"
             />
           </div>
@@ -530,7 +544,7 @@ export default function NameForm() {
               id="minor"
               type="text"
               value={minor}
-              onChange={handleChange(setMinor)}
+              onChange={handleChange(setMinor, 'minor')}
               placeholder="Enter your minor"
             />
           </div>
@@ -571,7 +585,7 @@ export default function NameForm() {
                   id="facebook"
                   type="text"
                   value={facebook}
-                  onChange={handleChange(setFacebook)}
+                  onChange={handleChange(setFacebook, 'facebook')}
                   placeholder="Facebook"
                 />
               </div>
@@ -584,7 +598,7 @@ export default function NameForm() {
                   id="instagram"
                   type="text"
                   value={instagram}
-                  onChange={handleChange(setInstagram)}
+                  onChange={handleChange(setInstagram, 'instagram')}
                   placeholder="Instagram"
                 />
               </div>
@@ -597,7 +611,7 @@ export default function NameForm() {
                   id="linkedIn"
                   type="text"
                   value={linkedIn}
-                  onChange={handleChange(setLinkedIn)}
+                  onChange={handleChange(setLinkedIn, 'linkedIn')}
                   placeholder="LinkedIn"
                 />
               </div>
@@ -610,7 +624,7 @@ export default function NameForm() {
                   id="tiktok"
                   type="text"
                   value={tiktok}
-                  onChange={handleChange(setTiktok)}
+                  onChange={handleChange(setTiktok, 'tiktok')}
                   placeholder="TikTok"
                 />
               </div>
@@ -624,7 +638,7 @@ export default function NameForm() {
               className={largeInput}
               id="currentClasses"
               value={currentClasses}
-              onChange={handleChange(setCurrentClasses)}
+              onChange={handleChange(setCurrentClasses, 'currentClasses')}
               placeholder="Enter your classes"
               rows={4}
             />
@@ -639,7 +653,7 @@ export default function NameForm() {
               className={largeInput}
               id="extracurricularActivities"
               value={extracurricularActivities}
-              onChange={handleChange(setExtracurricularActivities)}
+              onChange={handleChange(setExtracurricularActivities, 'extracurricularActivities')}
               placeholder="Enter your activities"
               rows={4}
             />
@@ -653,7 +667,7 @@ export default function NameForm() {
               className={largeInput}
               id="proudAccomplishment"
               value={proudAccomplishment}
-              onChange={handleChange(setProudAccomplishment)}
+              onChange={handleChange(setProudAccomplishment, 'proudAccomplishment')}
               placeholder="Enter your accomplishment"
               rows={4}
             />
@@ -668,7 +682,7 @@ export default function NameForm() {
               className={largeInput}
               id="joinReason"
               value={joinReason}
-              onChange={handleChange(setJoinReason)}
+              onChange={handleChange(setJoinReason, 'joinReason')}
               placeholder="Enter your reasons"
               rows={4}
             />
@@ -683,7 +697,7 @@ export default function NameForm() {
               className={largeInput}
               id="lifeGoals"
               value={lifeGoals}
-              onChange={handleChange(setLifeGoals)}
+              onChange={handleChange(setLifeGoals, 'lifeGoals')}
               placeholder="Enter your goals"
               rows={4}
             />
@@ -698,7 +712,7 @@ export default function NameForm() {
               className={largeInput}
               id="comfortZone"
               value={comfortZone}
-              onChange={handleChange(setComfortZone)}
+              onChange={handleChange(setComfortZone, 'comfortZone')}
               placeholder="Enter your experience"
               rows={4}
             />
@@ -712,7 +726,7 @@ export default function NameForm() {
               className={largeInput}
               id="businessType"
               value={businessType}
-              onChange={handleChange(setBusinessType)}
+              onChange={handleChange(setBusinessType, 'businessType')}
               placeholder="Enter your business idea"
               rows={4}
             />
@@ -726,7 +740,7 @@ export default function NameForm() {
               className={largeInput}
               id="additionalDetails"
               value={additionalDetails}
-              onChange={handleChange(setAdditionalDetails)}
+              onChange={handleChange(setAdditionalDetails, 'additionalDetails')}
               placeholder="Enter additional details"
               rows={4}
             />
