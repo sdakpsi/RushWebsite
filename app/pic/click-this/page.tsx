@@ -254,7 +254,7 @@ const CongratulationsPage = () => {
                 textShadow: { repeat: Infinity, duration: 3 },
               }}
             >
-              Gamma Alpha PIC
+              Gamma Beta PIC
             </motion.h1>
 
             {/* Animated underline */}
