@@ -12,7 +12,7 @@ interface CaseStudyTabsProps {
 const getStatusColor = (status: CaseFormInstance["status"]) => {
   switch (status) {
     case "editing":
-      return "border-green-500 bg-green-900 text-green-100";
+      return "border-blue-500 bg-blue-900 text-blue-100";
     case "completed":
       return "border-green-500 bg-green-900 text-green-100";
     case "submitting":

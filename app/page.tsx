@@ -14,7 +14,7 @@ import posterImage from "./image_on_page.png";
 import Image from "next/image";
 import background from "./background.png";
 import tagline from "./tagline.png";
-import { RUSH_YEAR } from "@/utils/constants";
+import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
 
 export default async function Index() {
   const supabase = createClient();
@@ -99,8 +99,7 @@ export default async function Index() {
 
           {/* Contact information */}
           <div className="mt-4 text-left text-sm text-gray-900">
-            If you're having any issues or have any questions, please contact
-            Kristen Lee or Jessie Ha @ (732) 484-8791 / (626) 267-4161!
+            If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
           </div>
 
           {/* Supabase sign-in notice */}

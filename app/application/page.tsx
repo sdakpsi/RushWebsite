@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import NextLinkButton from "../../components/NextLinkButton";
 import { User } from "@supabase/supabase-js"; // Ensure you import the User type
 import NameForm from "@/components/NameForm";
-import { RUSH_YEAR } from "@/utils/constants";
+import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -35,12 +35,12 @@ export default async function ProtectedPage() {
           </p>
           <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
           <div className="mb-10">
-            {/* <NameForm /> */}
-            <p>
+            <NameForm/> 
+            {/*<p>
               The app deadline has passed. If you are concerned about a missing
-              submission or have any questions, please contact Kristen Lee or Jessie Ha @
-              (732) 484-8791 / (626) 267-4161!
+              submission or have any questions, please {RUSH_CHAIR_INFO}!
             </p>
+            */}
           </div>
         </div>
       </div>

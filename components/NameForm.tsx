@@ -22,6 +22,7 @@ import customToast from "./CustomToast";
 import { delay } from "@/utils/delay";
 import { smallInput, textLabel, largeInput } from "./NameForm.styles";
 import LoadingSpinner from "./LoadingSpinner";
+import { RUSH_CHAIR_INFO } from "@/utils/constants";
 export default function NameForm() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -797,8 +798,7 @@ export default function NameForm() {
         </button>
       </form>
       <p className="mt-4 text-gray-200">
-        If you're having any issues or have any questions, please contact
-        Kristen Lee or Jessie Ha @ (732) 484-8791 / (626) 267-4161!
+        If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
       </p>
     </div>
   );
