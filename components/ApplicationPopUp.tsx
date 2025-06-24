@@ -701,7 +701,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   >
                     Comments
                   </button>
-                  {isPIC && (<button
+                  <button
                     onClick={() => setActiveSection("scoring")}
                     className={`px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
                       activeSection === "scoring"
@@ -710,7 +710,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     }`}
                   >
                     Scoring
-                  </button>)}
+                  </button>
                 </>
               )}
             </div>
