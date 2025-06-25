@@ -34,7 +34,7 @@ export default function GoogleOAuth() {
       className="sm:text-md montserrat-text-regular flex items-center justify-center rounded border bg-btn-background px-4 py-2 text-sm text-white shadow-sm hover:bg-btn-background-hover"
       onClick={handleSignInWithGoogle}
     >
-      Sign in with Google
+      Login
     </button>
   );
 }

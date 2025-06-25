@@ -23,10 +23,13 @@ export default function MainPageContent() {
 
   return (
     <div className="flex flex-col items-start gap-4">
+                {(isActive || hasPhoto) && (
+
       <p className="montserrat-text-bold text-left text-lg lg:text-xl">
         {/* The application is now closed. */}
         <br></br>Due Thursday, April 10th at 2 PM.
       </p>
+                )}
       
       {user ? (
         <>
