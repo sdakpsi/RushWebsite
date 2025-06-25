@@ -12,10 +12,23 @@ import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
+  
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
+    return redirect("/");
+  }
+
+  // Check if user has uploaded a photo (required for application)
+  const { data: userData } = await supabase
+    .from("users")
+    .select("is_active, photo_url")
+    .eq("id", user.id)
+    .single();
+
+  // Redirect non-active users without photos back to main page
+  if (!userData?.is_active && !userData?.photo_url) {
     return redirect("/");
   }
 

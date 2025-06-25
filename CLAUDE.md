@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Build production application
 - `npm run start` - Start production server
 
-**IMPORTANT: NEVER run `npm run dev` or `npm run start` - the user will always test the application themselves.**
+**IMPORTANT: NEVER run `npm run dev` or `npm run start` or `npm run build` - the user will always test the application themselves.**
 
 ## Architecture Overview
 
