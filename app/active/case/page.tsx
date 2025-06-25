@@ -12,10 +12,12 @@ import PastActiveSubmission from "@/components/PastActiveSubmission";
 import { loadCaseStudyFormData } from "@/app/supabase/interview";
 import customToast from "@/components/CustomToast";
 import { CaseStudyForm } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { getInterviewProspects } from "@/app/supabase/clientQueries";
+import { getActiveSubmissionsWithStatus } from "@/app/supabase/getUsers";
 
 export default function ProtectedPage() {
   const { isActive, isLoading } = useActiveStatus();
-  const [hasLoaded, setHasLoaded] = useState(false);
   const {
     selectedProspect,
     setSelectedProspect,
@@ -61,15 +63,32 @@ export default function ProtectedPage() {
     }
   };
   
-  // Track when loading is complete to prevent flickering
-  useEffect(() => {
-    if (!isLoading) {
-      setHasLoaded(true);
-    }
-  }, [isLoading]);
+  // Preload data for child components to prevent individual spinners
+  const { data: prospectsData, isLoading: isProspectsLoading } = useQuery({
+    queryKey: ['interviewProspects'],
+    queryFn: async () => {
+      const prospects = await getInterviewProspects();
+      if (!prospects || prospects.length === 0) {
+        return [];
+      }
+      return prospects;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    enabled: isActive, // Only fetch if user is active
+  });
 
-  // Show spinner only during initial auth check, not after first load
-  if (isLoading && !hasLoaded) {
+  const { data: submissionsData, isLoading: isSubmissionsLoading } = useQuery({
+    queryKey: ['case_studiesSubmissionsWithStatus', showingForm],
+    queryFn: () => getActiveSubmissionsWithStatus('case_studies'),
+    enabled: isActive, // Only fetch if user is active
+  });
+
+  // Unified loading state - show spinner only when auth is loading or when both child data is loading
+  const isChildDataLoading = isActive && (isProspectsLoading || isSubmissionsLoading);
+  
+  // Show spinner only during initial auth check or when child data is loading
+  if (isLoading || isChildDataLoading) {
     return <LoadingSpinner />;
   }
 
@@ -149,10 +168,14 @@ export default function ProtectedPage() {
                 <PastActiveSubmission
                   type="case_studies"
                   showingForm={showingForm}
+                  preloadedData={submissionsData || undefined}
+                  isPreloaded={true}
                 />
                 <InterviewSearchBar
                   selectedProspect={selectedProspect}
                   setSelectedProspect={setSelectedProspect}
+                  preloadedData={prospectsData}
+                  isPreloaded={true}
                 />
               </div>
             )}

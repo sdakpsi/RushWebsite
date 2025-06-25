@@ -7,11 +7,15 @@ import { useQuery } from "@tanstack/react-query";
 interface InterviewSearchBarProps {
   selectedProspect: ProspectInterview | null;
   setSelectedProspect: (prospect: ProspectInterview) => void;
+  preloadedData?: ProspectInterview[];
+  isPreloaded?: boolean;
 }
 
 export default function InterviewSearchBar({
   selectedProspect,
   setSelectedProspect,
+  preloadedData,
+  isPreloaded = false,
 }: InterviewSearchBarProps) {
   const [searchInput, setSearchInput] = useState("");
 
@@ -29,11 +33,16 @@ export default function InterviewSearchBar({
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    enabled: !isPreloaded, // Don't fetch if data is preloaded
   });
 
+  // Use preloaded data if available, otherwise use query data
+  const finalProspectData = isPreloaded ? preloadedData : prospectData;
+  const finalIsLoading = isPreloaded ? false : isLoading;
+
   const filteredData = searchInput === "" 
-    ? (prospectData || [])
-    : (prospectData || []).filter((prospect) =>
+    ? (finalProspectData || [])
+    : (finalProspectData || []).filter((prospect) =>
         prospect.full_name.toLowerCase().includes(searchInput.toLowerCase())
       );
 
@@ -42,7 +51,7 @@ export default function InterviewSearchBar({
     setSearchInput("");
   };
 
-  if (isLoading) {
+  if (finalIsLoading) {
     return <div className="">Loading prospects...</div>;
   }
 
@@ -56,7 +65,7 @@ export default function InterviewSearchBar({
     );
   }
 
-  if (!prospectData || prospectData.length === 0) {
+  if (!finalProspectData || finalProspectData.length === 0) {
     return (
       <div className="mb-6">
         <div className="text-yellow-400 text-center p-4 bg-yellow-900/20 rounded-md">

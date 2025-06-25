@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Build production application
 - `npm run start` - Start production server
 
+**IMPORTANT: NEVER run `npm run dev` or `npm run start` - the user will always test the application themselves.**
+
 ## Architecture Overview
 
 This is a Next.js 14+ application for UCSD AKPsi's rush process, built with the App Router and TypeScript. The application uses Supabase for authentication and database operations.

@@ -26,32 +26,53 @@ export async function getUsers() {
   }
 
   if (isPIC) {
-    const { data: apps, error: appsError } = await supabase
-      .from("applications")
-      .select("user_id")
-      .not("submitted", "is", null);
-
-    if (appsError) {
-      console.error("Error fetching applications:", appsError.message);
-      return [];
-    }
-
-    const validUserIds = apps?.map((app) => app.user_id) ?? [];
-
-    const { data: users, error: usersError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("is_active", false)
-      .eq("is_pic", false)
-      .in("id", validUserIds)
-      .order("full_name", { ascending: true });
-
-    if (usersError) {
-      console.error("Error fetching users:", usersError.message);
-      return [];
-    }
+    // Check if TESTING mode is enabled
+    const isTesting = process.env.NEXT_PUBLIC_TESTING === 'true';
     
-    usersData = users || [];
+    if (isTesting) {
+      // In testing mode, return all non-active, non-PIC users regardless of application status
+      const { data: users, error: usersError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("is_active", false)
+        .eq("is_pic", false)
+        .order("full_name", { ascending: true });
+
+      if (usersError) {
+        console.error("Error fetching users in testing mode:", usersError.message);
+        return [];
+      }
+      
+      usersData = users || [];
+    } else {
+      // Production mode - only return users with submitted applications
+      const { data: apps, error: appsError } = await supabase
+        .from("applications")
+        .select("user_id")
+        .not("submitted", "is", null);
+
+      if (appsError) {
+        console.error("Error fetching applications:", appsError.message);
+        return [];
+      }
+
+      const validUserIds = apps?.map((app) => app.user_id) ?? [];
+
+      const { data: users, error: usersError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("is_active", false)
+        .eq("is_pic", false)
+        .in("id", validUserIds)
+        .order("full_name", { ascending: true });
+
+      if (usersError) {
+        console.error("Error fetching users:", usersError.message);
+        return [];
+      }
+      
+      usersData = users || [];
+    }
   }
   
   return usersData;
@@ -182,4 +203,67 @@ export async function getInterviews(prospectID: string) {
     return [];
   }
   return data || [];
+}
+
+// Optimized queries for ApplicantCard
+export async function getApplicantAvatar(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_avatar")
+    .select("avatar_url")
+    .eq("user_id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching avatar URL:", error.message);
+    return null;
+  }
+  return data?.avatar_url || null;
+}
+
+export async function getApplicantCaseStudies(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("case_studies")
+    .select("active_name")
+    .eq("prospect", userId);
+
+  if (error) {
+    console.error("Error fetching case studies:", error.message);
+    return [];
+  }
+  return data || [];
+}
+
+export async function getApplicantInterviews(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("interviews")
+    .select("active_name")
+    .eq("prospect_id", userId);
+
+  if (error) {
+    console.error("Error fetching interviews:", error.message);
+    return [];
+  }
+  return data || [];
+}
+
+export async function getApplicantTotalScore(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("total_score")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching total score:", error.message);
+    return null;
+  }
+  return data?.total_score || 0;
 }
