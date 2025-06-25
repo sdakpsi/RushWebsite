@@ -1,67 +1,76 @@
 "use client";
-import { getInterviewProspects } from "@/app/supabase/getUsers";
+import { getInterviewProspects } from "@/app/supabase/clientQueries";
 import { ProspectInterview } from "@/lib/types";
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import loadingImage from "./akpsilogo.png";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 interface InterviewSearchBarProps {
   selectedProspect: ProspectInterview | null;
   setSelectedProspect: (prospect: ProspectInterview) => void;
+  preloadedData?: ProspectInterview[];
+  isPreloaded?: boolean;
 }
 
 export default function InterviewSearchBar({
   selectedProspect,
   setSelectedProspect,
+  preloadedData,
+  isPreloaded = false,
 }: InterviewSearchBarProps) {
-  const [prospectData, setProspectData] = useState<ProspectInterview[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [filteredData, setFilteredData] = useState<ProspectInterview[]>([]);
 
-  useEffect(() => {
-    const getInterviewProspectData = async () => {
-      try {
-        const data = await getInterviewProspects();
-        if (data) {
-          setProspectData(data);
-          setFilteredData(data); // Initialize filteredData with all prospects
-        } else {
-          setError(true); // If no data is returned, set error to true
-        }
-      } catch (error) {
-        setError(true); // Catch any errors during fetch and set error to true
-      } finally {
-        setIsLoading(false); // Ensure loading state is disabled after fetch attempt
+  const { data: prospectData, isLoading, error } = useQuery({
+    queryKey: ['interviewProspects'],
+    queryFn: async () => {
+      const prospects = await getInterviewProspects();
+      // If no prospects returned, check if user has permissions
+      if (!prospects || prospects.length === 0) {
+        // This could be due to no prospects existing or permission issues
+        // We'll just return empty array and let the component handle it
+        return [];
       }
-    };
-    getInterviewProspectData();
-  }, []);
+      return prospects;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    enabled: !isPreloaded, // Don't fetch if data is preloaded
+  });
 
-  useEffect(() => {
-    const filtered =
-      searchInput === ""
-        ? prospectData
-        : prospectData.filter((prospect) =>
-            prospect.full_name.toLowerCase().includes(searchInput.toLowerCase())
-          );
-    setFilteredData(filtered);
-  }, [searchInput, prospectData]);
+  // Use preloaded data if available, otherwise use query data
+  const finalProspectData = isPreloaded ? preloadedData : prospectData;
+  const finalIsLoading = isPreloaded ? false : isLoading;
+
+  const filteredData = searchInput === "" 
+    ? (finalProspectData || [])
+    : (finalProspectData || []).filter((prospect) =>
+        prospect.full_name.toLowerCase().includes(searchInput.toLowerCase())
+      );
 
   const handleSelectProspect = (prospect: ProspectInterview) => {
     setSelectedProspect(prospect);
     setSearchInput("");
   };
 
-  if (isLoading) {
+  if (finalIsLoading) {
     return <div className="">Loading prospects...</div>;
   }
 
   if (error) {
     return (
-      <div>
-        There was an error fetching the prospects, please try refreshing.
+      <div className="mb-6">
+        <div className="text-red-400 text-center p-4 bg-red-900/20 rounded-md">
+          There was an error fetching the prospects, please try refreshing.
+        </div>
+      </div>
+    );
+  }
+
+  if (!finalProspectData || finalProspectData.length === 0) {
+    return (
+      <div className="mb-6">
+        <div className="text-yellow-400 text-center p-4 bg-yellow-900/20 rounded-md">
+          No prospects available for interviews at this time.
+        </div>
       </div>
     );
   }

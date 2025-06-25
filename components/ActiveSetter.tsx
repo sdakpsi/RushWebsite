@@ -1,37 +1,12 @@
-'use client';
-import { createClient } from '@/utils/supabase/client';
-import React, { useEffect, useState } from 'react';
-import NextLinkButton from './NextLinkButton';
-import ActiveLoginComponent from './ActiveLoginComponent';
-import { redirect } from 'next/navigation';
-import { getIsActive } from '@/app/supabase/getUsers';
-import LoadingSpinner from './LoadingSpinner';
+"use client";
+import React from "react";
+import NextLinkButton from "./NextLinkButton";
+import ActiveLoginComponent from "./ActiveLoginComponent";
+import { useActiveStatus } from "@/hooks/useActiveStatus";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function ActiveSetter() {
-  const supabase = createClient();
-
-  const [isActive, setIsActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Initialize loading state
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true); // Begin loading
-      try {
-        const activeStatus = await getIsActive();
-        setIsActive(activeStatus);
-        setIsLoading(false); // End loading
-      } catch (error) {
-        setIsLoading(false); // End loading
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // if (!user) {
-  //   return redirect('/');
-  // }
+  const { isActive, isLoading } = useActiveStatus();
 
   if (isLoading) {
     return <LoadingSpinner />; // Placeholder for a loading state
@@ -39,11 +14,11 @@ export default function ActiveSetter() {
 
   return (
     <div>
-      <p className="text-xl lg:text-4xl !leading-tight text-center mb-2">
+      <p className="mb-2 text-center text-xl !leading-tight lg:text-4xl">
         Active Portal
       </p>
       {isActive ? (
-        <div className="flex flex-col gap-6 mt-4 justify-center items-center">
+        <div className="mt-4 flex flex-col items-center justify-center gap-6">
           <NextLinkButton destination="/active/comment-form">
             Comment Form
           </NextLinkButton>
@@ -58,7 +33,7 @@ export default function ActiveSetter() {
           </NextLinkButton>
         </div>
       ) : (
-        <div className="flex mt-8 justify-center items-center">
+        <div className="mt-8 flex items-center justify-center">
           <ActiveLoginComponent />
         </div>
       )}

@@ -2,14 +2,32 @@ import React from 'react';
 import Image from 'next/image';
 import loadingImage from './akpsilogo.png';
 
-const LoadingSpinner: React.FC = () => {
+interface LoadingSpinnerProps {
+  size?: 'small' | 'medium' | 'large';
+  fullScreen?: boolean;
+}
+
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
+  size = 'large', 
+  fullScreen = true 
+}) => {
+  const sizeClasses = {
+    small: 'h-6 w-6',
+    medium: 'h-12 w-12', 
+    large: 'h-20 w-20'
+  };
+
+  const containerClasses = fullScreen 
+    ? "fixed inset-0 flex items-center justify-center bg-black/20 z-50"
+    : "flex items-center justify-center p-4";
+
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    <div className={containerClasses}>
       <Image
         src={loadingImage}
         alt="Loading..."
-        className="animate-spin h-20 w-20" // Tailwind CSS classes for size and spin animation
-        style={{ animation: 'spin 2s linear infinite' }} // Inline style for non-Tailwind CSS users
+        className={`animate-spin ${sizeClasses[size]}`}
+        style={{ animation: 'spin 2s linear infinite' }}
       />
     </div>
   );

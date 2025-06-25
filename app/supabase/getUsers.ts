@@ -17,7 +17,13 @@ export async function getUsers() {
       .select("is_pic")
       .eq("id", user.id)
       .single();
-    isPIC = data?.is_pic;
+    
+    if (error) {
+      console.error("Error checking PIC status in getUsers:", error.message);
+      return [];
+    }
+    
+    isPIC = data?.is_pic || false;
   }
 
   // .eq("cased", true) // TODO: Make this a parameter that can be passed in
@@ -27,6 +33,11 @@ export async function getUsers() {
       .from("applications")
       .select("user_id")
       .not("submitted", "is", null);
+
+    if (appsError) {
+      console.error("Error fetching applications:", appsError.message);
+      return [];
+    }
 
     const validUserIds = apps?.map((app) => app.user_id) ?? [];
 
@@ -39,11 +50,13 @@ export async function getUsers() {
       .order("full_name", { ascending: true });
 
     if (usersError) {
-      console.error(usersError);
-    } else {
-      usersData = users;
+      console.error("Error fetching users:", usersError.message);
+      return [];
     }
+    
+    usersData = users || [];
   }
+  
   return usersData;
 }
 
@@ -118,13 +131,24 @@ export async function getIsPIC() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log('🔍 getIsPIC: User ID:', user?.id);
+
   if (user) {
     const { data, error } = await supabase
       .from("users")
       .select("is_pic")
       .eq("id", user.id)
       .single();
-    isPIC = data?.is_pic;
+    
+    console.log('🔍 getIsPIC: Query result:', { data, error: error?.message });
+    
+    if (error) {
+      console.error("Error checking PIC status:", error.message);
+      return false;
+    }
+    
+    isPIC = data?.is_pic || false;
+    console.log('🔍 getIsPIC: Final result:', isPIC);
   }
 
   return isPIC;
@@ -135,13 +159,20 @@ export async function getIsActive() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  
   if (user) {
     const { data, error } = await supabase
       .from("users")
       .select("is_active, is_pic")
       .eq("id", user.id)
       .single();
-    return data?.is_active || data?.is_pic;
+    
+    if (error) {
+      console.error("Error checking active status:", error.message);
+      return false;
+    }
+    
+    return (data?.is_active || data?.is_pic) || false;
   }
   return false;
 }
@@ -233,49 +264,52 @@ export async function getComments(): Promise<Comment[]> {
   return data;
 }
 
-export async function getInterviewProspects(): Promise<
-  ProspectInterview[] | null
-> {
+export async function getInterviewProspects(): Promise<ProspectInterview[]> {
   const supabase = createClient();
   let hasPerms = false;
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    const { data, error } = await supabase
-      .from("users")
-      .select("is_pic, is_active")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    console.error("User not authenticated for interview prospects");
+    return [];
+  }
 
-    if (error) {
-      console.error("Error checking permissions:", error.message);
-      return null;
-    }
+  const { data, error } = await supabase
+    .from("users")
+    .select("is_pic, is_active")
+    .eq("id", user.id)
+    .single();
 
-    if (data?.is_pic || data?.is_active) {
-      hasPerms = true;
-    }
+  if (error) {
+    console.error("Error checking permissions:", error.message);
+    return [];
+  }
+
+  if (data?.is_pic || data?.is_active) {
+    hasPerms = true;
+  }
+
+  if (!hasPerms) {
+    console.error("User lacks permissions to view interview prospects");
+    return [];
   }
 
   // User is marked active, proceed to get interview prospects
-  if (hasPerms) {
-    const { data, error } = await supabase
-      .from("users")
-      .select("full_name, email, id")
-      .eq("is_active", false)
-      .eq("is_pic", false)
-      .order("full_name", { ascending: true });
+  const { data: prospects, error: prospectsError } = await supabase
+    .from("users")
+    .select("full_name, email, id")
+    .eq("is_active", false)
+    .eq("is_pic", false)
+    .order("full_name", { ascending: true });
 
-    //       .eq("cased", true)
-
-    if (error) {
-      return null;
-    }
-    return data;
+  if (prospectsError) {
+    console.error("Error fetching prospects:", prospectsError.message);
+    return [];
   }
-  return null;
+
+  return prospects || [];
 }
 
 export async function getActiveSubmissions(

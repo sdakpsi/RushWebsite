@@ -1,6 +1,11 @@
-import { createClient } from "@/utils/supabase/client";
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { 
+  getApplicantAvatar,
+  getApplicantCaseStudies,
+  getApplicantInterviews,
+  getApplicantTotalScore
+} from "@/app/supabase/clientQueries";
 
 interface Packet {
   id: string;
@@ -26,97 +31,40 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   applicant,
   onViewApplication,
 }) => {
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
-  const [numCaseStudies, setNumCaseStudies] = useState<number>(0);
-  const [caseActives, setCaseActives] = useState<string[]>([]);
+  // Use React Query for optimized caching
+  const { data: avatarUrl } = useQuery({
+    queryKey: ['avatar', applicant.id],
+    queryFn: () => getApplicantAvatar(applicant.id),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+  });
 
-  const [numInterviews, setNumInterviews] = useState<number>(0);
-  const [interviewActives, setInterviewActives] = useState<string[]>([]);
+  const { data: caseStudiesData = [] } = useQuery({
+    queryKey: ['caseStudies', applicant.id],
+    queryFn: () => getApplicantCaseStudies(applicant.id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
-  const [total, setTotal] = useState(0);
-  const supabase = createClient();
-  useEffect(() => {
-    const fetchAvatarUrl = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("user_avatar")
-          .select("avatar_url")
-          .eq("user_id", applicant.id)
-          .single();
-        if (error) throw error;
-        if (data) setAvatarUrl(data.avatar_url);
-      } catch (error: any) {
-        console.error("Error fetching avatar URL:", error.message);
-      }
-    };
+  const { data: interviewsData = [] } = useQuery({
+    queryKey: ['interviews', applicant.id],
+    queryFn: () => getApplicantInterviews(applicant.id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
-    fetchAvatarUrl();
-  }, [applicant.id]);
-  useEffect(() => {
-    const fetchNumCaseStudies = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("case_studies")
-          .select("active_name") // Ensure 'active_name' is included in your select clause
-          .eq("prospect", applicant.id);
+  const { data: totalScore = 0 } = useQuery({
+    queryKey: ['totalScore', applicant.id],
+    queryFn: () => getApplicantTotalScore(applicant.id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
-        if (error) {
-          console.error("Error fetching active names:", error);
-          return;
-        }
-
-        // Assuming 'data' is an array of objects where each object contains 'active_name'
-        const names = data.map((item) => item.active_name);
-        setCaseActives(names); // Setting the state with the array of names
-        setNumCaseStudies(names.length);
-      } catch (error: any) {
-        console.error("Error fetching number of case studies:", error.message);
-      }
-    };
-    fetchNumCaseStudies();
-  }, []); // Add applicant.id as a dependency
-
-  useEffect(() => {
-    const fetchInterviews = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("interviews")
-          .select("active_name") // Ensure 'active_name' is included in your select clause
-          .eq("prospect_id", applicant.id);
-
-        if (error) {
-          console.error("Error fetching active names:", error);
-          return;
-        }
-
-        // Assuming 'data' is an array of objects where each object contains 'active_name'
-        const names = data.map((item) => item.active_name);
-        setInterviewActives(names); // Setting the state with the array of names
-        setNumInterviews(names.length);
-      } catch (error: any) {
-        console.error("Error fetching number of interviews:", error.message);
-      }
-    };
-    fetchInterviews();
-  }, []); // Add applicant.id as a dependency
-
-  useEffect(() => {
-    const fetchTotal = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("total_score")
-          .eq("id", applicant.id);
-
-        if (error) throw error;
-        if (data) setTotal(data[0].total_score);
-      } catch (error: any) {
-        console.error("Error fetching avatar URL:", error.message);
-      }
-    };
-
-    fetchTotal();
-  }, [applicant.id]);
+  // Derive computed values (commented out since not currently used in UI)
+  // const caseActives = caseStudiesData.map(item => item.active_name);
+  // const numCaseStudies = caseActives.length;
+  // const interviewActives = interviewsData.map(item => item.active_name);
+  // const numInterviews = interviewActives.length;
 
   return (
     <button
@@ -167,7 +115,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
           )}
         </div>
         <div className="mt-2">
-          <span>Total Score: {total}</span>
+          <span>Total Score: {totalScore}</span>
         </div> */}
       </div>
     </button>

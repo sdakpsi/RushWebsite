@@ -5,13 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
 import customToast from "./CustomToast";
 
+interface PastActiveSubmissionProps {
+  type: "interviews" | "case_studies";
+  showingForm: boolean;
+  preloadedData?: { name: string; status: "complete" | "incomplete"; id: string; }[];
+  isPreloaded?: boolean;
+}
+
 export default function PastActiveSubmission({
   type,
   showingForm,
-}: {
-  type: "interviews" | "case_studies";
-  showingForm: boolean;
-}) {
+  preloadedData,
+  isPreloaded = false,
+}: PastActiveSubmissionProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
@@ -24,7 +30,12 @@ export default function PastActiveSubmission({
   } = useQuery({
     queryKey: [`${type}SubmissionsWithStatus`, showingForm],
     queryFn: () => getActiveSubmissionsWithStatus(type),
+    enabled: !isPreloaded, // Don't fetch if data is preloaded
   });
+
+  // Use preloaded data if available, otherwise use query data
+  const finalProspectData = isPreloaded ? preloadedData : prospectData;
+  const finalIsLoading = isPreloaded ? false : isLoading;
 
   useEffect(() => {
     void refetch();
@@ -80,7 +91,7 @@ export default function PastActiveSubmission({
     setConfirmDeleteId(null);
   };
 
-  if (isLoading) {
+  if (finalIsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -100,9 +111,9 @@ export default function PastActiveSubmission({
           : "Your Interviews:"}
       </label>
       <div className="relative mt-1">
-        {prospectData && prospectData.length > 0 ? (
+        {finalProspectData && finalProspectData.length > 0 ? (
           <ul>
-            {prospectData.map((prospect, index) => (
+            {finalProspectData.map((prospect, index) => (
               <li
                 key={index}
                 className="mx-4 my-2 p-3 rounded-lg bg-gray-800 border border-gray-700 shadow-lg flex items-center justify-between"
@@ -152,7 +163,7 @@ export default function PastActiveSubmission({
             <p className="text-gray-300 mb-6">
               Are you sure you want to delete the case study for{' '}
               <span className="font-semibold">
-                {prospectData?.find(p => p.id === confirmDeleteId)?.name}
+                {finalProspectData?.find(p => p.id === confirmDeleteId)?.name}
               </span>
               ? This action cannot be undone. No like fr this CANNOT be undone, PIC cannot help you after this.
             </p>
@@ -165,7 +176,7 @@ export default function PastActiveSubmission({
               </button>
               <button
                 onClick={() => {
-                  const prospect = prospectData?.find(p => p.id === confirmDeleteId);
+                  const prospect = finalProspectData?.find(p => p.id === confirmDeleteId);
                   if (prospect) {
                     handleConfirmDelete(confirmDeleteId, prospect.name);
                   }

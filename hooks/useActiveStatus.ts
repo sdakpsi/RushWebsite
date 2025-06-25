@@ -1,21 +1,24 @@
-import { useState, useEffect } from 'react';
-import { getIsPIC, getIsActive } from '@/app/supabase/getUsers';
+import { useQuery } from '@tanstack/react-query';
+import { getIsPIC, getIsActive } from '@/app/supabase/clientQueries';
 
 export function useActiveStatus() {
-  const [isPIC, setIsPIC] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: isPIC = false, isLoading: picLoading } = useQuery({
+    queryKey: ['userIsPIC'],
+    queryFn: getIsPIC,
+    staleTime: 15 * 60 * 1000, // 15 minutes - roles rarely change
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
-  useEffect(() => {
-    const checkStatus = async () => {
-      const picStatus = await getIsPIC();
-      const activeStatus = await getIsActive();
-      setIsPIC(picStatus);
-      setIsActive(activeStatus);
-      setIsLoading(false);
-    };
-    checkStatus();
-  }, []);
+  const { data: isActive = false, isLoading: activeLoading } = useQuery({
+    queryKey: ['userIsActive'],
+    queryFn: getIsActive,
+    staleTime: 15 * 60 * 1000, // 15 minutes - roles rarely change
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  const isLoading = picLoading || activeLoading;
 
   return { isPIC, isActive, isLoading };
 }

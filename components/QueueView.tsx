@@ -5,6 +5,7 @@ import { QueueType, QueueStatus } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import { useQueueRealtime } from "@/hooks/useQueueRealtime";
 import { createClient } from "@/utils/supabase/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface QueueViewProps {
   onQueueUpdate?: () => void;
@@ -13,9 +14,89 @@ interface QueueViewProps {
 
 const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => {
   const { queue, isLoading, error, refetch, pendingCount } = useQueueRealtime();
-  const [isUpdating, setIsUpdating] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const removeFromQueueMutation = useMutation({
+    mutationFn: async (entryId: string) => {
+      const response = await fetch('/api/queue/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entry_id: entryId }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to remove from queue');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      customToast('Removed from queue', 'success');
+      refetch();
+      setLastRefresh(new Date());
+      if (onQueueUpdate) onQueueUpdate();
+    },
+    onError: (error: Error) => {
+      customToast(error.message, 'error');
+    },
+  });
+
+  const removeSelfFromQueueMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/queue/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ self_remove: true }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to remove from queue');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      customToast('Removed yourself from queue', 'success');
+      refetch();
+      setLastRefresh(new Date());
+      if (onQueueUpdate) onQueueUpdate();
+    },
+    onError: (error: Error) => {
+      customToast(error.message, 'error');
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ entryId, status }: { entryId: string; status: QueueStatus }) => {
+      const response = await fetch('/api/queue/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entry_id: entryId, status }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update status');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      customToast('Status updated', 'success');
+      refetch();
+      setLastRefresh(new Date());
+      if (onQueueUpdate) onQueueUpdate();
+    },
+    onError: (error: Error) => {
+      customToast(error.message, 'error');
+    },
+  });
+
+  const isUpdating = removeFromQueueMutation.isPending || removeSelfFromQueueMutation.isPending || updateStatusMutation.isPending;
 
   // Get current user on mount
   useEffect(() => {
@@ -29,134 +110,21 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
 
 
   // Remove person from queue (called from top of queue)
-  const handleRemoveFromQueue = async (entryId: string) => {
+  const handleRemoveFromQueue = (entryId: string) => {
     if (isUpdating) return;
-    
-    setIsUpdating(true);
-    
-    try {
-      const response = await fetch('/api/queue/remove', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ entry_id: entryId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to remove from queue');
-      }
-
-      customToast('Removed from queue', 'success');
-      
-      // Trigger immediate refresh after update
-      refetch();
-      setLastRefresh(new Date());
-      
-      if (onQueueUpdate) {
-        onQueueUpdate();
-      }
-    } catch (error) {
-      console.error('Error removing from queue:', error);
-      customToast(
-        error instanceof Error ? error.message : 'Failed to remove from queue',
-        'error'
-      );
-    } finally {
-      setIsUpdating(false);
-    }
+    removeFromQueueMutation.mutate(entryId);
   };
 
   // Remove self from queue
-  const handleRemoveSelfFromQueue = async () => {
+  const handleRemoveSelfFromQueue = () => {
     if (isUpdating || !currentUserId) return;
-    
-    console.log('Starting self-removal. Current user ID:', currentUserId);
-    console.log('Queue entries visible in UI:', queue.map(q => ({ id: q.id, user_id: q.user_id, status: q.status })));
-    
-    setIsUpdating(true);
-    
-    try {
-      console.log('Sending request to /api/queue/remove with self_remove: true');
-      const response = await fetch('/api/queue/remove', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ self_remove: true }),
-      });
-
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log('Error response data:', errorData);
-        throw new Error(errorData.error || 'Failed to remove yourself from queue');
-      }
-
-      customToast('Removed yourself from queue', 'success');
-      
-      // Trigger immediate refresh after update
-      await refetch();
-      setLastRefresh(new Date());
-      
-      if (onQueueUpdate) {
-        onQueueUpdate();
-      }
-    } catch (error) {
-      console.error('Error removing self from queue:', error);
-      customToast(
-        error instanceof Error ? error.message : 'Failed to remove yourself from queue',
-        'error'
-      );
-    } finally {
-      setIsUpdating(false);
-    }
+    removeSelfFromQueueMutation.mutate();
   };
 
   // Mark person as speaking
-  const handleSetSpeaking = async (entryId: string) => {
+  const handleSetSpeaking = (entryId: string) => {
     if (isUpdating) return;
-    
-    setIsUpdating(true);
-    
-    try {
-      const response = await fetch('/api/queue/update-status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          entry_id: entryId, 
-          status: QueueStatus.SPEAKING 
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update status');
-      }
-
-      customToast('Marked as speaking', 'success');
-      
-      // Trigger immediate refresh after update
-      refetch();
-      setLastRefresh(new Date());
-      
-      if (onQueueUpdate) {
-        onQueueUpdate();
-      }
-    } catch (error) {
-      console.error('Error updating status:', error);
-      customToast(
-        error instanceof Error ? error.message : 'Failed to update status',
-        'error'
-      );
-    } finally {
-      setIsUpdating(false);
-    }
+    updateStatusMutation.mutate({ entryId, status: QueueStatus.SPEAKING });
   };
 
 

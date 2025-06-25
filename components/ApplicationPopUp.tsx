@@ -86,6 +86,7 @@ interface ApplicationPopupProps {
   interviews: Interview[];
   userID: string;
   isPIC: boolean;
+  isLoadingCasesInterviews?: boolean;
   onClose: () => void;
 }
 
@@ -95,6 +96,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   interviews,
   userID,
   isPIC,
+  isLoadingCasesInterviews = false,
   onClose,
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);

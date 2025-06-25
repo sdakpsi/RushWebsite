@@ -80,11 +80,10 @@ export default async function Index() {
           {/* Sign-in text and button */}
           <div className="flex flex-col items-start gap-4">
             <p className="montserrat-text-bold text-left text-lg lg:text-xl">
-              The application is now closed.
-              {/* <br></br>Due Thursday, April 10th at
-                  2 PM. */}
+             {/* The application is now closed. */}
+              <br></br>Due Thursday, April 10th at 2 PM.
             </p>
-            {/* {user ? (
+            {user ? (
               <Link href="/application">
                 <button className="montserrat-text-regular text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
                   Application Form
@@ -94,7 +93,7 @@ export default async function Index() {
               <div className="flex justify-center">
                 <GoogleOAuth />
               </div>
-            )} */}
+            )}
           </div>
 
           {/* Contact information */}
