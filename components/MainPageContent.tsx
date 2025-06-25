@@ -33,17 +33,23 @@ export default function MainPageContent() {
       
       {user ? (
         <>
-
-
+          {/* Show application button for active users or users with photos */}
+          {(isActive || hasPhoto) && (
+            <Link href="/application">
+              <button className="montserrat-text-regular text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
+                Application Form
+              </button>
+            </Link>
+          )}
           {/* Show photo upload for non-active users */}
           {!isActive && (
             <div className="mb-6 w-full max-w-md">
-              <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+              <div className="bg-btn-background p-6 rounded-lg shadow-lg">
                 <div className="text-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  <h3 className="text-lg font-semibold text-white mb-2">
                     {hasPhoto ? "Update Your Photo" : "Complete Your Profile"}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-white">
                     {hasPhoto 
                       ? "You can change your photo anytime" 
                       : "Please upload a photo of yourself to continue with your application"
@@ -53,15 +59,6 @@ export default function MainPageContent() {
                 <PhotoUploadWrapper existingPhotoUrl={photoUrl} />
               </div>
             </div>
-          )}
-
-          {/* Show application button for active users or users with photos */}
-          {(isActive || hasPhoto) && (
-            <Link href="/application">
-              <button className="montserrat-text-regular text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
-                Application Form
-              </button>
-            </Link>
           )}
         </>
       ) : (
