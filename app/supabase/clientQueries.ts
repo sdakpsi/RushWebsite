@@ -267,3 +267,42 @@ export async function getApplicantTotalScore(userId: string) {
   }
   return data?.total_score || 0;
 }
+
+export async function getCurrentUserData() {
+  const supabase = createClient();
+  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  // Get user data including photo_url from database
+  const { data, error } = await supabase
+    .from("users")
+    .select("is_active, is_pic, photo_url")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching user data:", error.message);
+    throw error;
+  }
+
+  const hasPhoto = !!data?.photo_url;
+  const photoUrl = data?.photo_url;
+
+  const result = {
+    user,
+    userData: data,
+    isActive: !!data?.is_active,
+    isPIC: !!data?.is_pic,
+    hasPhoto,
+    photoUrl
+  };
+
+  console.log('getCurrentUserData result:', result);
+  return result;
+}

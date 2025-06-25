@@ -135,6 +135,7 @@ export interface Packet {
   active_case_studies: string | null;
   active_interviews: string | null;
   total_score: number | null;
+  photo_url: string | null;
 }
 
 export interface Comment {

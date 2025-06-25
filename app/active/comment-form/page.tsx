@@ -44,7 +44,7 @@ export default function Page(this: any) {
   const [invite, setInvite] = useState("");
   const [newProspectName, setNewProspectName] = useState("");
   const [checked, setChecked] = useState(false);
-  const [prospects, setProspects] = useState<Array<{id: string, full_name: string, email: string}>>([]);
+  const [prospects, setProspects] = useState<Array<{id: string, full_name: string, email: string, photo_url?: string}>>([]);
   const [prospectsLoading, setProspectsLoading] = useState(false);
 
   useEffect(() => {
@@ -158,7 +158,7 @@ export default function Page(this: any) {
 
   return (
     <div className="flex w-full items-center justify-center">
-      <div className="animate-in w-full max-w-4xl opacity-0">
+      <div className="animate-in w-full max-w-7xl opacity-0">
         {isActive ? (
           <div className="container mx-auto px-4 pt-6 pb-8">
             <div className="flex flex-col space-y-6">
@@ -191,7 +191,7 @@ export default function Page(this: any) {
                 </div>
                 <p className="text-sm text-gray-400 text-center max-w-2xl">
                   Use <strong>Search View</strong> to search for prospects manually. <br></br>
-                  Use <strong>Grid View</strong> to browse all prospects in a grid layout.
+                  Use <strong>Grid View</strong> to browse all prospects in a grid layout and see their photos.
                 </p>
               </div>
               {viewMode === 'search' && (

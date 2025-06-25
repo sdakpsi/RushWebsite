@@ -418,7 +418,7 @@ export async function getUsersForComments(): Promise<Array<{id: string, full_nam
   if (hasPerms) {
     const { data, error } = await supabase
       .from("users")
-      .select("id, full_name, email")
+      .select("id, full_name, email, photo_url")
       .eq("is_active", false)
       .eq("is_pic", false)
       .order("full_name", { ascending: true });

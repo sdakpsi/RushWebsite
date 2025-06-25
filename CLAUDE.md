@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Build production application
 - `npm run start` - Start production server
 
-**IMPORTANT: NEVER run `npm run dev` or `npm run start` - the user will always test the application themselves.**
+**IMPORTANT: NEVER run `npm run dev` or `npm run start` or `npm run build` - the user will always test the application themselves.**
 
 ## Architecture Overview
 
@@ -72,6 +72,13 @@ React Query is used for client-side data fetching and caching, particularly in:
 - Form submissions
 - Real-time data updates
 - User interaction tracking
+
+**IMPORTANT: Always use React Query for client-side data fetching**
+- Create custom hooks in `/hooks` that use React Query's `useQuery` and `useMutation`
+- Use existing client query functions from `/app/supabase/clientQueries.ts`
+- Follow the pattern of existing hooks like `useCurrentUser`, `useActiveStatus`, etc.
+- Always invalidate relevant queries after mutations using `queryClient.invalidateQueries()`
+- Prefer React Query over direct Supabase client calls in components for consistency and caching
 
 ### File Upload System
 File uploads (resumes, cover letters) are handled through:

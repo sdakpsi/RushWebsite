@@ -153,7 +153,7 @@ export default function ProtectedPage() {
   );
 
   return (
-    <div className="flex w-full flex-1 items-center justify-center bg-gray-900 py-10 text-gray-200">
+    <div className="flex w-full flex-1 items-center justify-center bg-black py-10 text-gray-200">
       <div className="animate-in mx-8 w-full max-w-6xl">
         <div className="mb-8 text-center">
           <p className="text-3xl font-semibold leading-tight text-gray-50 lg:text-4xl">

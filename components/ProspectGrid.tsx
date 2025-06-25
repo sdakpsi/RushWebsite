@@ -3,7 +3,7 @@ import ProspectCard from './ProspectCard';
 import { type ProspectInterview } from '@/lib/types';
 
 interface ProspectGridProps {
-  prospects: Array<{id: string, full_name: string, email: string}>;
+  prospects: Array<{id: string, full_name: string, email: string, photo_url?: string}>;
   selectedProspect: ProspectInterview | null;
   onSelectProspect: (prospect: ProspectInterview) => void;
   isLoading?: boolean;
@@ -23,7 +23,7 @@ export default function ProspectGrid({
     prospect.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleProspectClick = (prospect: {id: string, full_name: string, email: string}) => {
+  const handleProspectClick = (prospect: {id: string, full_name: string, email: string, photo_url?: string}) => {
     // Convert to ProspectInterview format
     const prospectInterview: ProspectInterview = {
       id: prospect.id,
@@ -48,21 +48,24 @@ export default function ProspectGrid({
     <div className="space-y-4">
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {/* Loading skeleton cards */}
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="rounded-lg bg-gray-800 p-1 shadow-lg animate-pulse">
-              <div className="flex items-center justify-between rounded-lg px-4 py-2 bg-gray-700">
-                <div className="flex flex-col space-y-1 flex-1">
-                  <div className="h-5 bg-gray-600 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-600 rounded w-1/2"></div>
+          {Array.from({ length: 9 }).map((_, index) => (
+            <div key={index} className="rounded-lg bg-gray-800 p-2 shadow-lg animate-pulse">
+              <div className="flex items-center justify-between rounded-lg px-6 py-4 bg-gray-700">
+                <div className="flex items-center space-x-4 flex-1">
+                  <div className="w-16 h-16 bg-gray-600 rounded-full"></div>
+                  <div className="flex flex-col space-y-2 flex-1">
+                    <div className="h-6 bg-gray-600 rounded w-3/4"></div>
+                    <div className="h-5 bg-gray-600 rounded w-1/2"></div>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : filteredProspects.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredProspects.map(prospect => (
             <ProspectCard
               key={prospect.id}
