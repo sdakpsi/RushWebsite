@@ -5,7 +5,7 @@ import ActiveCaseStudyForm from "@/components/ActiveCaseStudyForm";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import MultipleCaseStudyManager from "@/components/MultipleCaseStudyManager";
-import { useActiveStatus } from "@/hooks/useCheckActive";
+import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useSelectedProspect } from "@/hooks/useSelectedProspect";
 import { useFormAnimation } from "@/hooks/useFormAnimation";
 import PastActiveSubmission from "@/components/PastActiveSubmission";
@@ -15,6 +15,7 @@ import { CaseStudyForm } from "@/lib/types";
 
 export default function ProtectedPage() {
   const { isActive, isLoading } = useActiveStatus();
+  const [hasLoaded, setHasLoaded] = useState(false);
   const {
     selectedProspect,
     setSelectedProspect,
@@ -60,7 +61,15 @@ export default function ProtectedPage() {
     }
   };
   
-  if (isLoading || isSubmitting) {
+  // Track when loading is complete to prevent flickering
+  useEffect(() => {
+    if (!isLoading) {
+      setHasLoaded(true);
+    }
+  }, [isLoading]);
+
+  // Show spinner only during initial auth check, not after first load
+  if (isLoading && !hasLoaded) {
     return <LoadingSpinner />;
   }
 
@@ -68,7 +77,12 @@ export default function ProtectedPage() {
     <div className="flex w-full items-center justify-center">
       <div className="animate-in w-full max-w-6xl opacity-0">
         {isActive ? (
-          <div className="container mx-auto px-4 pt-6">
+          <div className="container mx-auto px-4 pt-6 relative">
+            {isSubmitting && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
+                <LoadingSpinner size="medium" fullScreen={false} />
+              </div>
+            )}
             {showingMultipleForms ? (
               <MultipleCaseStudyManager
                 showingManager={showingMultipleForms}

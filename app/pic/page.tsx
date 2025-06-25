@@ -43,7 +43,9 @@ export default function ProtectedPage() {
     refetchWave();
   };
 
-  if (isPICLoading || isUsersLoading || isCasesInterviewsLoading || isWaveLoading) {
+  // Only show spinner for critical loading states
+  // Don't include cases/interviews loading since it depends on user selection
+  if (isPICLoading || isUsersLoading || isWaveLoading) {
     return <LoadingSpinner />;
   }
 
@@ -136,10 +138,11 @@ export default function ProtectedPage() {
                 {currentApplication && (
                   <ApplicationPopup
                     application={currentApplication}
-                    cases={cases}
-                    interviews={interviews}
+                    cases={cases || []}
+                    interviews={interviews || []}
                     userID={userID}
                     isPIC={isPIC}
+                    isLoadingCasesInterviews={isCasesInterviewsLoading}
                     onClose={handleClosePopup}
                   />
                 )}

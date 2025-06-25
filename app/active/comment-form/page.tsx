@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useCheckActive";
+import { useActiveStatus } from "@/hooks/useActiveStatus";
 import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
 import Checkbox from "@/components/Checkbox";
