@@ -68,7 +68,7 @@ export default async function Index() {
 
           {/* Center the button */}
           <div className="flex w-full">
-            <a href="https://forms.gle/119tXRV5Wgiu86rJ6">
+            <a href="/interest">
               <button className="montserrat-text-regular rounded bg-btn-background p-2 px-5 text-white transition duration-100 hover:bg-btn-background-hover">
                 Interest Form
               </button>
