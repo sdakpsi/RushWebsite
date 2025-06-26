@@ -69,7 +69,7 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
 
   return (
     <Dropzone
-      onDrop={(acceptedFiles) => uploadFileToSupabase(acceptedFiles[0])}
+      onDrop={(acceptedFiles) => acceptedFiles[0] && uploadFileToSupabase(acceptedFiles[0])}
     >
       {({ getRootProps, getInputProps }) => (
         <section className="flex items-center justify-center p-6">

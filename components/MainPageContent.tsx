@@ -87,7 +87,9 @@ export default function MainPageContent() {
             <p className="text-sm text-muted-foreground mb-4">
               Please sign in with your Google account to access the application portal.
             </p>
-            <GoogleOAuth />
+            <div className="flex justify-center">
+              <GoogleOAuth />
+            </div>
           </div>
         </div>
       )}

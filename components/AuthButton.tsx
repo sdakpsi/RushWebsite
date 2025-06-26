@@ -4,6 +4,8 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import Image from 'next/image';
 
 interface AuthButtonProps {
   user: User | null;
@@ -35,6 +37,8 @@ const handleSignInWithGoogle = async () => {
 };
 
 const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
+  const { photoUrl, hasPhoto } = useCurrentUser();
+  
   const signOut = async () => {
     // Call the sign-out API route
     await fetch('/api/signout', { method: 'POST' });
@@ -44,10 +48,20 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   return user ? (
     <div className="flex items-center gap-4">
       <div className="hidden items-center gap-3 sm:flex">
-        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center ring-1 ring-border/20">
-          <span className="text-sm font-semibold text-primary">
-            {user.user_metadata.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
-          </span>
+        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center ring-1 ring-border/20 overflow-hidden">
+          {hasPhoto && photoUrl ? (
+            <Image
+              src={photoUrl}
+              alt="User profile"
+              width={40}
+              height={40}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-sm font-semibold text-primary">
+              {user.user_metadata.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+            </span>
+          )}
         </div>
         <span className="text-sm text-white-foreground max-w-32 truncate font-medium">
           {user.user_metadata.name || user.email}

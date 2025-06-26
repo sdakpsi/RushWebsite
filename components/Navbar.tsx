@@ -45,7 +45,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
             alt="UCSD AKPsi Logo"
             width={40}
             height={40}
-            className="rounded-lg group-hover:scale-110 transition-transform duration-200"
+            className="rounded-lg group-hover:scale-110 group-hover:rotate-[145deg] transition-transform duration-500 ease-out"
           />
           <div className="flex flex-col">
             <span className="hidden font-semibold text-foreground sm:block xl:text-lg">
