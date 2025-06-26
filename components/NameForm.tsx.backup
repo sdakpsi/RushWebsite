@@ -387,6 +387,7 @@ export default function NameForm() {
       </div>
       <form onSubmit={handleSubmit} className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="space-y-12">
+          {/* Personal Information Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
               <h2 className="text-2xl font-bold text-foreground">Personal Information</h2>
@@ -768,51 +769,45 @@ export default function NameForm() {
               rows={4}
                 />
               </div>
-          </div>
+        </div>
+        <div className="mb-6 flex justify-between"></div>
 
-          {/* File Upload Section */}
-          <div className="space-y-6">
-            <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-foreground">Documents</h2>
-              <p className="text-muted-foreground">Please upload your resume and cover letter.</p>
-            </div>
-
-            <div className="mb-4">
-              <a
-                href={resumeFileUrl ? resumeFileUrl : "#"}
-                className={`text-blue-200 hover:text-blue-500 ${
-                  !resumeFileUrl && "pointer-events-none"
-                }`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Resume:{" "}
-                {resumeFileUrl ? extractFileName(resumeFileUrl) : "Not Uploaded"}
-              </a>
-            </div>
-            <FileDropzone
-              setFileUrl={setResumeFileUrl}
-              type={ApplicationFileTypes.RESUME}
-            />
-            <div className="mb-4">
-              <a
-                href={coverLetterFileUrl ? coverLetterFileUrl : "#"}
-                className={`text-blue-200 hover:text-blue-500 ${
-                  !coverLetterFileUrl && "pointer-events-none"
-                }`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Cover Letter:{" "}
-                {coverLetterFileUrl
-                  ? extractFileName(coverLetterFileUrl)
-                  : "Not Uploaded"}
-              </a>
-            </div>
-            <FileDropzone
-              setFileUrl={setCoverLetterFileUrl}
-              type={ApplicationFileTypes.COVER_LETTER}
-            />
+        <div className="mb-4">
+          <a
+            href={resumeFileUrl ? resumeFileUrl : "#"}
+            className={`text-blue-200 hover:text-blue-500 ${
+              !resumeFileUrl && "pointer-events-none"
+            }`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Resume:{" "}
+            {resumeFileUrl ? extractFileName(resumeFileUrl) : "Not Uploaded"}
+          </a>
+        </div>
+        <FileDropzone
+          setFileUrl={setResumeFileUrl}
+          type={ApplicationFileTypes.RESUME}
+        />
+        <div className="mb-4">
+          <a
+            href={coverLetterFileUrl ? coverLetterFileUrl : "#"}
+            className={`text-blue-200 hover:text-blue-500 ${
+              !coverLetterFileUrl && "pointer-events-none"
+            }`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Cover Letter:{" "}
+            {coverLetterFileUrl
+              ? extractFileName(coverLetterFileUrl)
+              : "Not Uploaded"}
+          </a>
+        </div>
+        <FileDropzone
+          setFileUrl={setCoverLetterFileUrl}
+          type={ApplicationFileTypes.COVER_LETTER}
+        />
           </div>
 
           {/* Submit Section */}

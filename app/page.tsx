@@ -1,116 +1,225 @@
-import DeployButton from "../components/DeployButton";
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
-import ConnectSupabaseSteps from "@/components/tutorial/ConnectSupabaseSteps";
-import SignUpUserSteps from "@/components/tutorial/SignUpUserSteps";
-import Header from "@/components/Header";
-import GoogleOAuth from "@/components/GoogleOAuth";
-import { redirect } from "next/navigation";
+"use client";
+
 import Link from "next/link";
-import Timer from "@/components/Timer";
-import { bonVivant } from "@/fonts/fonts";
-import { montserrat } from "@/fonts/fonts";
-import posterImage from "./image_on_page.png";
 import Image from "next/image";
 import background from "./background.png";
 import tagline from "./tagline.png";
-import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
 import MainPageContent from "@/components/MainPageContent";
+import { currentTheme } from "@/utils/theme";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
-export default async function Index() {
-  const supabase = createClient();
+export default function Index() {
+  const { isActive, isLoading, user } = useCurrentUser();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Only show loading for authenticated users
+  if (isLoading && user) {
+    return (
+      <div className="relative min-h-screen w-full overflow-hidden">
+        {/* Background with dark theme overlay */}
+        <div
+          className="absolute inset-0 z-0 bg-background"
+          style={{
+            backgroundImage: `url(${background.src})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
 
-  return (
-    <div
-      className="relative flex min-h-screen w-full flex-1 flex-col text-black"
-      style={{
-        backgroundImage: `url(${background.src})`,
-
-        backgroundSize: "cover",
-
-        backgroundPosition: "center",
-
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="flex items-center justify-center">
-        <Image src={tagline} alt="tagline" className="w-[80%] md:w-[60%]" />
+        {/* Loading state */}
+        <div className="relative z-20 flex min-h-screen flex-col items-center justify-center">
+          <div className="animate-pulse space-y-6 text-center">
+            <div className="mx-auto h-16 w-16 rounded-full bg-primary/20"></div>
+            <div className="space-y-2">
+              <div className="mx-auto h-6 w-48 rounded bg-muted"></div>
+              <div className="mx-auto h-4 w-32 rounded bg-muted/60"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      {/* Wrapper for the image and text */}
-      <div className="mt-12 flex flex-col items-center justify-between px-8 lg:mt-4 lg:flex-row lg:px-20">
-        {/* Left side: Text content */}
+    );
+  }
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Background with dark theme overlay */}
+      <div
+        className="absolute inset-0 z-0 bg-background"
+        style={{
+          backgroundImage: `url(${background.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
 
-        <div className="flex w-full flex-col gap-6 text-left sm:gap-4 lg:w-2/3">
-          {/* Welcome text */}
-          <p className="montserrat-text-bold text-left text-xl lg:text-3xl">
-            Welcome to the Alpha Kappa Psi {RUSH_YEAR} Application Portal
-          </p>
+      {/* Floating elements for visual interest */}
+      <div className="absolute inset-0 z-10 overflow-hidden">
+        <div className="absolute -left-24 -top-24 h-96 w-96 animate-float rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl" />
+        <div
+          className="absolute -bottom-24 -right-24 h-96 w-96 animate-float rounded-full bg-gradient-to-tl from-accent/20 to-transparent blur-3xl"
+          style={{ animationDelay: "3s" }}
+        />
+      </div>
 
-          {/* {user ? (
-            <div className="mb-8 mt-6 rounded-md bg-sky-900 p-4 ">
-              <p className="${bonVivant.className} bon-vivant-text-bold text-md text-center !leading-tight lg:text-2xl">
-                Hello {user.user_metadata.full_name}! Bookmark this page as you
-                will be applying through here.
+      {/* Main content area */}
+      <div className="relative z-20 flex min-h-screen flex-col">
+        {/* Hero Section */}
+        <section className="flex flex-1 items-center justify-center px-4 py-12">
+          <div className="mx-auto max-w-7xl">
+            {/* Tagline */}
+            <div className="mb-12 flex animate-slide-down justify-center">
+              <Image
+                src={tagline}
+                alt="tagline"
+                className="h-auto w-[85%] max-w-4xl md:w-[70%]"
+                priority
+              />
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
+              {/* Welcome Section */}
+              <div className="lg:col-span-2">
+                <div className="card glass animate-slide-up">
+                  <div className="card-header">
+                    <h1 className="card-title bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                      {isActive ? (
+                        "Active Member Dashboard"
+                      ) : (
+                        `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`
+                      )}
+                    </h1>
+                  </div>
+
+                  <div className="card-content space-y-6">
+                    {isActive ? (
+                      // Active user content
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground">
+                          Access your active member tools and resources.
+                        </p>
+                        
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Link href="/active/comment-form">
+                            <button className="btn-secondary w-full hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-200">
+                              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-1l-4 4z" />
+                              </svg>
+                              Comment Forms
+                            </button>
+                          </Link>
+                          
+                          <Link href="/active/case">
+                            <button className="btn-secondary w-full hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200">
+                              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              Case Studies
+                            </button>
+                          </Link>
+                          
+                          <Link href="/active/interview">
+                            <button className="btn-secondary w-full hover:bg-purple-500 hover:text-white hover:border-purple-500 transition-all duration-200">
+                              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                              </svg>
+                              Interviews
+                            </button>
+                          </Link>
+                          
+                          <Link href="/active/delibs">
+                            <button className="btn-secondary w-full hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all duration-200">
+                              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
+                              Delibs
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
+                      // Non-active user content
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground">
+                          Please fill out the interest form below to receive
+                          updates regarding rush!
+                        </p>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-col gap-3 sm:flex-row">
+                          <Link href="/interest" className="flex-1">
+                            <button className="btn-primary w-full transform transition-all">
+                              Interest Form
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Main Page Content */}
+                    <MainPageContent />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Timer Card (when enabled) */}
+                {/* <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                  <div className="card-header">
+                    <h3 className="card-title text-center">⏰ Rush Countdown</h3>
+                  </div>
+                  <div className="card-content">
+                    <Timer />
+                  </div>
+                </div> */}
+
+                {/* Quick Links */}
+                <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">Quick Links</h3>
+                  </div>
+                  <div className="card-content space-y-3">
+                    <a
+                      href={currentTheme.branding.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline w-full"
+                    >
+                      Official Website
+                    </a>
+                  </div>
+                </div>
+
+                {/* Contact Info */}
+                <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">Need Help?</h3>
+                  </div>
+                  <div className="card-content">
+                    <p className="text-sm text-muted-foreground">
+                      If you're having any issues or have questions, please{" "}
+                      {currentTheme.branding.rushChairs}!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Notice */}
+            <div
+              className="mt-12 animate-fade-in text-center"
+              style={{ animationDelay: "0.8s" }}
+            >
+              <p className="text-xs text-muted-foreground">
+                *When signing in, it will ask to continue to{" "}
+                <span className="font-mono font-medium">
+                  kvuilkasrtgyazkvxjal.supabase.co
+                </span>
               </p>
             </div>
-          ) : (
-            <></>
-          )} */}
-
-          <p className="text-left text-sm text-black lg:text-lg">
-            Please fill out the interest form below to receive updates regarding
-            rush!
-          </p>
-
-          {/* Center the button */}
-          <div className="flex w-full">
-            <a href="/interest">
-              <button className="montserrat-text-regular rounded bg-btn-background p-2 px-5 text-white transition duration-100 hover:bg-btn-background-hover">
-                Interest Form
-              </button>
-            </a>
           </div>
-
-          {/* Divider line */}
-          <div className="my-6 w-full bg-gradient-to-r from-transparent via-foreground/30 to-transparent p-[1px]" />
-
-          {/* Sign-in text and button */}
-          <MainPageContent />
-
-          {/* Contact information */}
-          <div className="mt-4 text-left text-sm text-gray-900">
-            If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
-          </div>
-
-          {/* Supabase sign-in notice */}
-          <div className="mb-12 text-left text-sm text-gray-900">
-            *When signing in, it will ask to continue to{" "}
-            <span className="font-bold">kvuilkasrtgyazkvxjal.supabase.co</span>
-          </div>
-        </div>
-
-        {/* Right side: Image and Timer */}
-        <div className="mt-12 flex flex-col items-center lg:ml-12 lg:mt-0">
-          {/* <Image
-            src={posterImage}
-            width={300}
-            height={300}
-            alt="logo"
-            className="mb-4"
-          /> */}
-
-          {/* Timer */}
-          {/* <p className="${bonVivant.className} bon-vivant-text-regular mt-6 text-lg">
-            Countdown to Rush!
-          </p>
-          <div className="mb-6 mt-2 flex w-full justify-center lg:mb-0">
-            <Timer />
-          </div> */}
-        </div>
+        </section>
       </div>
     </div>
   );

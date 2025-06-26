@@ -13,6 +13,7 @@ import {
 } from "@/app/supabase/interview";
 import { caseStudyData } from "@/lib/CaseStudyQuestions";
 import customToast from "@/components/CustomToast";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { createClient } from "@/utils/supabase/client";
 import { formatTimestamp } from "@/utils/format";
 
@@ -338,7 +339,12 @@ export default function ActiveCaseStudyForm({
   const isCurrentlySubmitting = externalIsSubmitting || false;
 
   return (
-    <div className="bg-black p-5 text-white">
+    <div className="bg-black p-5 text-white relative">
+      {isCurrentlySubmitting && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
+          <LoadingSpinner size="medium" fullScreen={false} />
+        </div>
+      )}
       <div className="mb-5 flex items-center justify-between">
         {!isMultiFormContext && (
           <button

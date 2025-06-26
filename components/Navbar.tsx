@@ -3,13 +3,12 @@
 import AuthButton from "@/components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import ActiveButton from "./ActiveButton";
-import Link from "next/link";
 import PICButton from "./PICButton";
 import logo from "./akpsilogo.png";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import RCButton from "./RCButton";
 import navbg from "../app/navbar-bg.png";
 
@@ -22,47 +21,61 @@ interface NavbarProps {
 export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
-  const isInterestPage = pathname.endsWith("/interest");
+  const isInterestPage = pathname?.endsWith("/interest");
   if (isInterestPage) {
     return null;
   }
 
   return (
-    <nav
-      className="w-full border-b border-white bg-transparent px-4 pb-6 pt-6 sm:px-48"
-      style={{
-        backgroundImage: `url(${navbg.src})`,
-
-        backgroundSize: "cover",
-
-        backgroundPosition: "center",
-
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="mt-3 flex w-full items-center justify-between">
-        {/* Logo and title, adjust size for mobile */}
-        <Link href="/">
-          <div className="flex cursor-pointer flex-row items-center">
-            <Image
-              src={logo}
-              alt="logo"
-              width={40}
-              height={40}
-              className="sm:mr-3 sm:w-[2rem]"
-            ></Image>
-            <span className="hidden xl:block xl:text-xl">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
+        {/* Logo and title */}
+        <div 
+          className="group flex items-center space-x-3 cursor-pointer"
+          onClick={() => {
+            if (pathname !== '/') {
+              router.push('/');
+            }
+          }}
+        >
+          <Image
+            src={logo}
+            alt="UCSD AKPsi Logo"
+            width={40}
+            height={40}
+            className="rounded-lg group-hover:scale-110 group-hover:rotate-[145deg] transition-transform duration-500 ease-out"
+          />
+          <div className="flex flex-col">
+            <span className="hidden font-semibold text-foreground sm:block xl:text-lg">
               UCSD Alpha Kappa Psi
-            </span>{" "}
+            </span>
+            <span className="hidden text-xs text-muted-foreground sm:block">
+              Professional Business Fraternity
+            </span>
           </div>
-        </Link>
-        <div className="flex flex-row gap-3 sm:hidden">
-          <ActiveButton is_active={isActive} />
-          <AuthButton user={user} />
-          {/* Add any additional buttons or links you want in the mobile menu here */}
         </div>
-        {/* Items to show on large screens */}
+
+        {/* Mobile Navigation */}
+        <div className="flex items-center gap-3 sm:hidden">
+          <ActiveButton is_active={isActive} />
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="btn-ghost p-3 rounded-xl"
+            aria-label="Toggle mobile menu"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        {/* Desktop Navigation */}
         <div className="hidden items-center gap-4 sm:flex">
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
@@ -71,7 +84,18 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         </div>
       </div>
 
-      {/* Mobile Menu, hidden by default, shown when menu is toggled */}
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="border-t border-border bg-background/95 backdrop-blur-lg sm:hidden">
+          <div className="container px-6 py-6">
+            <div className="flex flex-col space-y-4">
+              <PICButton is_pic={isPIC} />
+              <RCButton is_active={isActive} />
+              <AuthButton user={user} />
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

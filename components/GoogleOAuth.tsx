@@ -31,10 +31,10 @@ export default function GoogleOAuth() {
 
   return (
     <button
-      className="sm:text-md montserrat-text-regular flex items-center justify-center rounded border bg-btn-background px-4 py-2 text-sm text-white shadow-sm hover:bg-btn-background-hover"
+      className="text-sm text-muted-foreground flex items-center justify-center rounded border bg-btn-background px-4 py-2 text-sm text-white shadow-sm hover:bg-btn-background-hover"
       onClick={handleSignInWithGoogle}
     >
-      Login
+      Login with Google
     </button>
   );
 }

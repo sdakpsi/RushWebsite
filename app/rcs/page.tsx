@@ -11,6 +11,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import customToast from "@/components/CustomToast";
 
 interface InterestFormSubmission {
   created_at: string;
@@ -46,7 +47,7 @@ export default function ProtectedPage() {
 
   const copyToClipboard = (data: string) => {
     navigator.clipboard.writeText(data);
-    toast.success("Copied to clipboard!");
+    customToast("Copied to clipboard!", "success");
   };
 
   const copyEmails = () => {

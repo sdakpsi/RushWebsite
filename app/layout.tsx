@@ -10,6 +10,7 @@ import { bonVivant } from "@/fonts/fonts";
 import { montserrat } from "@/fonts/fonts";
 import ReactQueryProvider from "@/server/queryClientProvider";
 import NavigationLoader from "@/components/NavigationLoader";
+import ScrollRestoration from "@/components/ScrollRestoration";
 import { RUSH_YEAR } from "@/utils/constants";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -60,6 +61,7 @@ export default async function RootLayout({
       <body className="bg-background text-foreground">
         <ReactQueryProvider>
           <NavigationLoader />
+          <ScrollRestoration />
           <main className="flex min-h-screen flex-col items-center">
             <ToastContainer />
             <Navbar isPIC={isPIC} isActive={isActive} user={user} />

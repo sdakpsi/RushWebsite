@@ -1,2 +1,7 @@
-export const RUSH_YEAR = "Fall '25"
-export const RUSH_CHAIR_INFO = "contact Kristen Lee or Jessie Ha @ (732) 484-8791 / (626) 267-4161"
+import { currentTheme } from './theme';
+
+// Import from theme system for easy updates
+export const RUSH_YEAR = currentTheme.branding.rushYear;
+export const RUSH_CHAIR_INFO = currentTheme.branding.rushChairs;
+export const ORGANIZATION_NAME = currentTheme.branding.organization;
+export const ORGANIZATION_WEBSITE = currentTheme.branding.website;

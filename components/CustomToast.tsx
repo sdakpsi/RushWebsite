@@ -4,33 +4,111 @@ const customToast = (
   message: string,
   type: 'success' | 'error' | 'info' | 'warning' = 'info'
 ) => {
-  const toastOptions: ToastOptions = {
-    style: {
-      background: '#0f172a', // Darker blue background (Tailwind's slate-900)
-      color: '#ffffff', // white text
-      border: '1px solid #3b82f6', // Light blue border (Tailwind's blue-500)
-      borderRadius: '6px', // Rounded corners
-      maxWidth: '400px', // Limit the maximum width
-      whiteSpace: 'wrap', // Allow text wrapping
-      overflow: 'hidden', // Hide overflow
-      lineHeight: '1.4', // Adjust line height for readability
-      padding: '10px 15px', // Add some padding
-    },
-    progressStyle: { background: '#3b82f6' }, // light blue progress bar
-    autoClose: 3000,
+  // Get CSS custom properties for theme colors
+  const getThemeColor = (property: string) => {
+    if (typeof window !== 'undefined') {
+      return getComputedStyle(document.documentElement).getPropertyValue(property).trim();
+    }
+    return '';
   };
+
+  // Base toast options with sleek styling
+  const baseToastOptions: ToastOptions = {
+    style: {
+      background: `hsl(${getThemeColor('--background')})`,
+      color: `hsl(${getThemeColor('--foreground')})`,
+      border: `1px solid hsl(${getThemeColor('--border')})`,
+      borderRadius: '0.75rem', // rounded-xl
+      maxWidth: '420px',
+      minHeight: '60px',
+      whiteSpace: 'pre-wrap',
+      overflow: 'hidden',
+      lineHeight: '1.5',
+      padding: '16px 20px',
+      fontSize: '14px',
+      fontWeight: '500',
+      boxShadow: `
+        0 10px 15px -3px hsl(${getThemeColor('--shadow-color')} / 0.4),
+        0 4px 6px -4px hsl(${getThemeColor('--shadow-color')} / 0.4)
+      `,
+      backdropFilter: 'blur(8px)',
+      position: 'relative',
+    },
+    autoClose: 4000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  };
+
+  // Type-specific styling
+  const getTypeSpecificOptions = (toastType: string): Partial<ToastOptions> => {
+    switch (toastType) {
+      case 'success':
+        return {
+          style: {
+            ...baseToastOptions.style,
+            borderLeft: `4px solid hsl(${getThemeColor('--success')})`,
+          },
+          progressStyle: { 
+            background: `hsl(${getThemeColor('--success')})`,
+            height: '3px',
+          },
+        };
+      case 'error':
+        return {
+          style: {
+            ...baseToastOptions.style,
+            borderLeft: `4px solid hsl(${getThemeColor('--destructive')})`,
+          },
+          progressStyle: { 
+            background: `hsl(${getThemeColor('--destructive')})`,
+            height: '3px',
+          },
+        };
+      case 'warning':
+        return {
+          style: {
+            ...baseToastOptions.style,
+            borderLeft: `4px solid hsl(${getThemeColor('--warning')})`,
+          },
+          progressStyle: { 
+            background: `hsl(${getThemeColor('--warning')})`,
+            height: '3px',
+          },
+        };
+      default: // info
+        return {
+          style: {
+            ...baseToastOptions.style,
+            borderLeft: `4px solid hsl(${getThemeColor('--primary')})`,
+          },
+          progressStyle: { 
+            background: `hsl(${getThemeColor('--primary')})`,
+            height: '3px',
+          },
+        };
+    }
+  };
+
+  // Merge base options with type-specific options
+  const finalOptions = {
+    ...baseToastOptions,
+    ...getTypeSpecificOptions(type),
+  };
+
   switch (type) {
     case 'success':
-      toast.success(message, toastOptions);
+      toast.success(message, finalOptions);
       break;
     case 'error':
-      toast.error(message, toastOptions);
+      toast.error(message, finalOptions);
       break;
     case 'warning':
-      toast.warning(message, toastOptions);
+      toast.warning(message, finalOptions);
       break;
     default:
-      toast.info(message, toastOptions);
+      toast.info(message, finalOptions);
   }
 };
 

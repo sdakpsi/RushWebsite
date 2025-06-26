@@ -4,40 +4,288 @@
 
 @layer base {
   :root {
-    --background: 200 50% 3%;
-    --btn-background: #650e02;
-    --btn-background-hover: #390700;
-    --foreground: 200 20% 96%;
+    /* Dark Theme Colors - Easily changeable for future rushes */
+    --primary: 220 70% 60%;        /* Bright blue for dark theme */
+    --primary-foreground: 0 0% 100%;  /* Text on primary */
+    --secondary: 217 33% 17%;      /* Dark secondary background */
+    --secondary-foreground: 210 40% 98%;  /* Light text on secondary */
+    --accent: 216 12% 15%;         /* Dark accent color */
+    --accent-foreground: 210 40% 98%;   /* Light text on accent */
+    --background: 222 84% 5%;      /* Very dark background */
+    --foreground: 210 40% 98%;     /* Light text color */
+    --muted: 217 33% 17%;          /* Dark muted background */
+    --muted-foreground: 215 20% 65%;    /* Muted text */
+    --border: 217 33% 17%;         /* Dark border color */
+    --input: 217 33% 17%;          /* Dark input background */
+    --ring: 220 70% 60%;           /* Bright focus ring */
+    --destructive: 0 84% 60%;      /* Error/destructive */
+    --destructive-foreground: 0 0% 100%;  /* Text on destructive */
+    
+    /* Button Colors */
+    --btn-background: 220 70% 60%;
+    --btn-background-hover: 220 70% 55%;
+    --btn-foreground: 0 0% 100%;
+    --btn-secondary: 217 33% 17%;
+    --btn-secondary-hover: 217 33% 20%;
+    --btn-secondary-foreground: 210 40% 98%;
+    
+    /* Gradient Colors */
+    --gradient-from: 220 70% 60%;
+    --gradient-to: 260 70% 60%;
+    
+    /* Success/Warning/Info Colors - Brighter for dark theme */
+    --success: 142 76% 50%;
+    --warning: 38 92% 60%;
+    --info: 199 89% 58%;
+    
+    /* Shadow Colors - Darker shadows for dark theme */
+    --shadow-color: 0 0% 0%;
+    --shadow-elevation-low: 0 1px 2px 0 hsl(var(--shadow-color) / 0.2);
+    --shadow-elevation-medium: 0 4px 6px -1px hsl(var(--shadow-color) / 0.3), 0 2px 4px -2px hsl(var(--shadow-color) / 0.3);
+    --shadow-elevation-high: 0 10px 15px -3px hsl(var(--shadow-color) / 0.4), 0 4px 6px -4px hsl(var(--shadow-color) / 0.4);
+    
+    /* Typography Scale */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    
+    /* Spacing Scale */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.125rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-full: 9999px;
   }
 
-  /* @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 200 50% 3%;
-      --btn-background: 200 10% 9%;
-      --btn-background-hover: 200 10% 12%;
-      --foreground: 200 20% 96%;
-    }
-  } */
+  /* Dark theme - can be activated for future rushes */
+  .dark {
+    --primary: 220 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 84% 5%;
+    --secondary-foreground: 210 40% 98%;
+    --accent: 216 12% 10%;
+    --accent-foreground: 210 40% 98%;
+    --background: 222 84% 5%;
+    --foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 220 70% 60%;
+    --btn-background: 220 70% 60%;
+    --btn-background-hover: 220 70% 55%;
+    --shadow-color: 0 0% 0%;
+  }
 }
 
 @layer base {
   * {
-    @apply border-foreground/20;
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+  
+  h1 {
+    @apply text-4xl lg:text-5xl;
+  }
+  
+  h2 {
+    @apply text-3xl lg:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+  
+  h4 {
+    @apply text-xl lg:text-2xl;
+  }
+  
+  h5 {
+    @apply text-lg lg:text-xl;
+  }
+  
+  h6 {
+    @apply text-base lg:text-lg;
   }
 }
 
+@layer components {
+  /* Modern Button Styles */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground hover:bg-primary/90 shadow-elevation-low hover:shadow-elevation-medium;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border;
+  }
+  
+  .btn-ghost {
+    @apply btn hover:bg-accent hover:text-accent-foreground;
+  }
+  
+  .btn-outline {
+    @apply btn border border-border bg-transparent hover:bg-accent hover:text-accent-foreground;
+  }
+  
+  .btn-destructive {
+    @apply btn bg-destructive text-destructive-foreground hover:bg-destructive/90;
+  }
+  
+  /* Card Styles */
+  .card {
+    @apply rounded-xl border border-border bg-background p-6 shadow-elevation-low;
+  }
+  
+  .card-header {
+    @apply flex flex-col space-y-1.5 pb-4;
+  }
+  
+  .card-title {
+    @apply text-2xl font-semibold leading-none tracking-tight;
+  }
+  
+  .card-description {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  .card-content {
+    @apply pt-0;
+  }
+  
+  /* Input Styles */
+  .input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  /* Modern Gradient Backgrounds */
+  .gradient-bg {
+    @apply bg-gradient-to-br from-primary/10 via-background to-secondary/20;
+  }
+  
+  .gradient-hero {
+    @apply bg-gradient-to-br from-primary/20 via-background to-accent/30;
+  }
+  
+  /* Glass Effect - Updated for dark theme */
+  .glass {
+    @apply backdrop-blur-sm bg-background/80 border border-border/20;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-sm bg-background/90 border border-border/30;
+  }
+}
+
+/* Enhanced Animations */
 .animate-in {
-  animation: animateIn 0.3s ease 0.15s both;
+  animation: animateIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-down {
+  animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 @keyframes animateIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
@@ -52,10 +300,10 @@
 
 @keyframes progressGlow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 5px hsl(var(--primary) / 0.5);
   }
   50% {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(147, 51, 234, 0.4);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--gradient-to) / 0.4);
   }
 }
 
