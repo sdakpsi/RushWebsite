@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 interface AuthButtonProps {
@@ -38,11 +40,29 @@ const handleSignInWithGoogle = async () => {
 
 const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   const { photoUrl, hasPhoto } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const router = useRouter();
   
   const signOut = async () => {
-    // Call the sign-out API route
-    await fetch('/api/signout', { method: 'POST' });
-    window.location.href = '/';
+    try {
+      // Call the sign-out API route
+      await fetch('/api/signout', { method: 'POST' });
+      
+      // Clear all React Query cache to reset user state
+      queryClient.clear();
+      
+      // Navigate to home page without page reload
+      router.push('/');
+      
+      // Optional: Small delay to ensure state is cleared
+      setTimeout(() => {
+        router.refresh();
+      }, 100);
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Fallback to page reload if there's an error
+      window.location.href = '/';
+    }
   };
 
   return user ? (

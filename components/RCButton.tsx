@@ -15,7 +15,7 @@ const RCButton: React.FC<PICButtonProps> = ({ is_active }) => {
     <div 
     className="group flex items-center space-x-3 cursor-pointer"
     onClick={() => {
-      router.push('rcs');
+      router.push('/rcs');
       
     }}
     >

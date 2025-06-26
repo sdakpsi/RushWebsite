@@ -20,10 +20,12 @@ export default function MainPageContent() {
       </div>
     );
   }
-
+  if (isActive) {
+    return
+  }
   return (
     <div className="space-y-6">
-      {(isActive || hasPhoto) && (
+      {(hasPhoto) && (
         <div className="rounded-lg bg-info/10 border border-info/20 p-4">
           <div className="flex items-center space-x-2">
             <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,7 +41,7 @@ export default function MainPageContent() {
       {user ? (
         <div className="space-y-4">
           {/* Show application button for active users or users with photos */}
-          {(isActive || hasPhoto) && (
+          {(hasPhoto) && (
             <Link href="/application" className="inline-block">
               <button className="btn-primary w-full sm:w-auto">
                 <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
