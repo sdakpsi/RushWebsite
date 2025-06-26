@@ -60,7 +60,7 @@ export default async function Index() {
                       {/* Action Buttons */}
                       <div className="flex flex-col gap-3 sm:flex-row">
                         <Link href="/interest" className="flex-1">
-                          <button className="btn-primary w-full transform transition-all hover:scale-105">
+                          <button className="btn-primary w-full transform transition-all">
                             Interest Form
                           </button>
                         </Link>
@@ -73,7 +73,7 @@ export default async function Index() {
                         <span className="w-full border-t border-muted" />
                       </div>
                       <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground">Application Portal</span>
+                        <span className="px-2 text-muted-foreground">Application Portal</span>
                       </div>
                     </div>
 
