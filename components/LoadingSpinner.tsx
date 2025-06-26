@@ -69,7 +69,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             </div>
           </div>
           <p className="text-sm text-muted-foreground animate-pulse">
-            Preparing your experience
+            Fetching data...
           </p>
         </div>
       )}

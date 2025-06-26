@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { toast } from 'react-toastify';
+import customToast from '@/components/CustomToast';
 
 export function useDelibsSubmission() {
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
@@ -44,11 +44,11 @@ export function useDelibsSubmission() {
 
       if (insertError) throw insertError;
 
-      toast.success('Delibs submitted successfully');
+      customToast('Delibs submitted successfully', 'success');
       setSelectedApplicants([]);
     } catch (error) {
       console.error('Error handling delibs:', error);
-      toast.error('Failed to handle delibs');
+      customToast('Failed to handle delibs', 'error');
     }
   };
 

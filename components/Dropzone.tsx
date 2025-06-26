@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { toast } from "react-toastify";
 import { ApplicationFileTypes } from "@/lib/types";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import customToast from "./CustomToast";
 
 interface FileDropzoneProps {
   type: ApplicationFileTypes;
@@ -59,7 +60,7 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
       }
     } catch (error: any) {
       console.error("Upload error:", error.message);
-      toast.error(`Upload failed: ${error.message}`);
+      customToast(`Upload failed: ${error.message}`, "error");
     } finally {
       setUploading(false);
     }

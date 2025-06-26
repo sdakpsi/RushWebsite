@@ -96,7 +96,7 @@ export default function ProtectedPage() {
     <div className="flex w-full items-center justify-center">
       <div className="animate-in w-full max-w-6xl opacity-0">
         {isActive ? (
-          <div className="container mx-auto px-4 pt-6 relative">
+          <div className="container mx-auto px-4 pt-6 pb-24 relative">
             {isSubmitting && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
                 <LoadingSpinner size="medium" fullScreen={false} />
