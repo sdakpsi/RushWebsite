@@ -1,60 +1,86 @@
 export default async function Page() {
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <div className="flex flex-col gap-8 sm:gap-16 items-center">
-          <div className="text-3xl lg:text-4xl leading-tight mx-auto max-w-3xl text-center mt-32">
-            UCSD AKPsi Application Terms of Service
+    <div className="min-h-screen bg-gradient-bg">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-float" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-accent/20 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+      </div>
+
+      <div className="relative z-10 container py-12">
+        <div className="animate-slide-up max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <svg className="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-4">
+              Terms of Service
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              UCSD AKPsi Application
+            </p>
           </div>
-          <div className="text-lg text-left mx-auto max-w-xl">
-            <div className="mb-4 text-gray-300">
-              These Terms of Service govern your use of the application portal
-              for Alpha Kappa Psi at the University of California, San Diego
-              (UCSD). By accessing or using the portal, you agree to be bound by
-              these terms.
-            </div>
-            <div className="font-bold mb-2">Use of the Portal</div>
-            <div className="mb-4 text-gray-300">
-              The portal is intended for personal and non-commercial use. You
-              agree not to misuse the portal or help anyone else do so.
-            </div>
-            <div className="font-bold mb-2">Your Commitments</div>
-            <div className="ml-4 mb-4 text-gray-300">
-              <li>
-                You must provide accurate information during the application
-                process.
-              </li>
-              <li>
-                You agree not to share your login credentials or let anyone else
-                access your account.
-              </li>
-            </div>
-            <div className="font-bold mb-2">Rights and Ownership</div>
-            <div className="mb-4 text-gray-300">
-              All rights, title, and interest in and to the portal (including
-              all intellectual property rights) are and will remain the
-              exclusive property of UCSD AKPsi and its licensors.
-            </div>
-            <div className="font-bold mb-2">Limitation of Liability</div>
-            <div className="mb-4 text-gray-300">
-              To the extent permitted by law, UCSD and UCSD AKPsi will not be liable for any
-              indirect, incidental, special, consequential or punitive damages,
-              or any loss of profits or revenues, whether incurred directly or
-              indirectly.
-            </div>
-            <div className="font-bold mb-2">Amendments</div>
-            <div className="mb-4 text-gray-300">
-              We reserve the right to modify these Terms of Service at any time.
-              Your continued use of the portal after any such modification
-              constitutes your acceptance of the new Terms of Service.
-            </div>
-            <div className="font-bold mb-2">Contact Us</div>
-            <div className="mb-4 text-gray-300">
-              If you have any questions about these Terms of Service, please
-              contact us via the information provided on our website.
+
+          {/* Content */}
+          <div className="card glass">
+            <div className="card-content">
+              <div className="text-lg text-left space-y-6">
+                <div className="text-muted-foreground">
+                  These Terms of Service govern your use of the application portal for Alpha Kappa Psi at the University of California, San Diego (UCSD). By accessing or using the portal, you agree to be bound by these terms.
+                </div>
+                
+                <div>
+                  <h3 className="font-bold mb-2 text-foreground">Use of the Portal</h3>
+                  <p className="text-muted-foreground">
+                    The portal is intended for personal and non-commercial use. You agree not to misuse the portal or help anyone else do so.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-bold mb-2 text-foreground">Your Commitments</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                    <li>You must provide accurate information during the application process.</li>
+                    <li>You agree not to share your login credentials or let anyone else access your account.</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="font-bold mb-2 text-foreground">Rights and Ownership</h3>
+                  <p className="text-muted-foreground">
+                    All rights, title, and interest in and to the portal (including all intellectual property rights) are and will remain the exclusive property of UCSD AKPsi and its licensors.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-bold mb-2 text-foreground">Limitation of Liability</h3>
+                  <p className="text-muted-foreground">
+                    To the extent permitted by law, UCSD and UCSD AKPsi will not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-bold mb-2 text-foreground">Amendments</h3>
+                  <p className="text-muted-foreground">
+                    We reserve the right to modify these Terms of Service at any time. Your continued use of the portal after any such modification constitutes your acceptance of the new Terms of Service.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-bold mb-2 text-foreground">Contact Us</h3>
+                  <p className="text-muted-foreground">
+                    If you have any questions about these Terms of Service, please contact us via the information provided on our website.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+
+          <div className="flex items-center justify-center mt-8">
+            <button className="btn-primary">I Agree to the Terms</button>
+          </div>
         </div>
       </div>
     </div>

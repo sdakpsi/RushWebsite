@@ -1,116 +1,140 @@
-import DeployButton from "../components/DeployButton";
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
-import ConnectSupabaseSteps from "@/components/tutorial/ConnectSupabaseSteps";
-import SignUpUserSteps from "@/components/tutorial/SignUpUserSteps";
-import Header from "@/components/Header";
-import GoogleOAuth from "@/components/GoogleOAuth";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import Timer from "@/components/Timer";
-import { bonVivant } from "@/fonts/fonts";
-import { montserrat } from "@/fonts/fonts";
-import posterImage from "./image_on_page.png";
 import Image from "next/image";
 import background from "./background.png";
 import tagline from "./tagline.png";
-import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
 import MainPageContent from "@/components/MainPageContent";
+import { currentTheme } from "@/utils/theme";
 
 export default async function Index() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   return (
-    <div
-      className="relative flex min-h-screen w-full flex-1 flex-col text-black"
-      style={{
-        backgroundImage: `url(${background.src})`,
-
-        backgroundSize: "cover",
-
-        backgroundPosition: "center",
-
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="flex items-center justify-center">
-        <Image src={tagline} alt="tagline" className="w-[80%] md:w-[60%]" />
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Background with dark theme overlay */}
+      <div
+        className="absolute inset-0 z-0 bg-background"
+        style={{
+          backgroundImage: `url(${background.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+      
+      {/* Floating elements for visual interest */}
+      <div className="absolute inset-0 z-10 overflow-hidden">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-float" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-accent/20 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
       </div>
-      {/* Wrapper for the image and text */}
-      <div className="mt-12 flex flex-col items-center justify-between px-8 lg:mt-4 lg:flex-row lg:px-20">
-        {/* Left side: Text content */}
 
-        <div className="flex w-full flex-col gap-6 text-left sm:gap-4 lg:w-2/3">
-          {/* Welcome text */}
-          <p className="montserrat-text-bold text-left text-xl lg:text-3xl">
-            Welcome to the Alpha Kappa Psi {RUSH_YEAR} Application Portal
-          </p>
+      {/* Main content area */}
+      <div className="relative z-20 flex min-h-screen flex-col">
+        {/* Hero Section */}
+        <section className="flex flex-1 items-center justify-center px-4 py-12">
+          <div className="mx-auto max-w-7xl">
+            {/* Tagline */}
+            <div className="mb-12 flex justify-center animate-slide-down">
+              <Image 
+                src={tagline} 
+                alt="tagline" 
+                className="h-auto w-[85%] max-w-4xl md:w-[70%]" 
+                priority
+              />
+            </div>
 
-          {/* {user ? (
-            <div className="mb-8 mt-6 rounded-md bg-sky-900 p-4 ">
-              <p className="${bonVivant.className} bon-vivant-text-bold text-md text-center !leading-tight lg:text-2xl">
-                Hello {user.user_metadata.full_name}! Bookmark this page as you
-                will be applying through here.
+            {/* Main Content Grid */}
+            <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
+              {/* Welcome Section */}
+              <div className="lg:col-span-2">
+                <div className="card glass animate-slide-up">
+                  <div className="card-header">
+                    <h1 className="card-title bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                      Welcome to {currentTheme.branding.organization} {currentTheme.branding.rushYear} Application Portal
+                    </h1>
+                  </div>
+                  
+                  <div className="card-content space-y-6">
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground">
+                        Please fill out the interest form below to receive updates regarding rush!
+                      </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col gap-3 sm:flex-row">
+                        <Link href="/interest" className="flex-1">
+                          <button className="btn-primary w-full transform transition-all hover:scale-105">
+                            Interest Form
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-muted" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">Application Portal</span>
+                      </div>
+                    </div>
+
+                    {/* Main Page Content */}
+                    <MainPageContent />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Timer Card (when enabled) */}
+                {/* <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                  <div className="card-header">
+                    <h3 className="card-title text-center">⏰ Rush Countdown</h3>
+                  </div>
+                  <div className="card-content">
+                    <Timer />
+                  </div>
+                </div> */}
+
+                {/* Quick Links */}
+                <div className="card animate-slide-up" style={{ animationDelay: '0.4s' }}>
+                  <div className="card-header">
+                    <h3 className="card-title">Quick Links</h3>
+                  </div>
+                  <div className="card-content space-y-3">
+                    <a 
+                      href={currentTheme.branding.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline w-full"
+                    >
+                      Official Website
+                    </a>
+                  </div>
+                </div>
+
+                {/* Contact Info */}
+                <div className="card animate-slide-up" style={{ animationDelay: '0.6s' }}>
+                  <div className="card-header">
+                    <h3 className="card-title">Need Help?</h3>
+                  </div>
+                  <div className="card-content">
+                    <p className="text-sm text-muted-foreground">
+                      If you're having any issues or have questions, please {currentTheme.branding.rushChairs}!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Notice */}
+            <div className="mt-12 text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <p className="text-xs text-muted-foreground">
+                *When signing in, it will ask to continue to{" "}
+                <span className="font-mono font-medium">kvuilkasrtgyazkvxjal.supabase.co</span>
               </p>
             </div>
-          ) : (
-            <></>
-          )} */}
-
-          <p className="text-left text-sm text-black lg:text-lg">
-            Please fill out the interest form below to receive updates regarding
-            rush!
-          </p>
-
-          {/* Center the button */}
-          <div className="flex w-full">
-            <a href="/interest">
-              <button className="montserrat-text-regular rounded bg-btn-background p-2 px-5 text-white transition duration-100 hover:bg-btn-background-hover">
-                Interest Form
-              </button>
-            </a>
           </div>
-
-          {/* Divider line */}
-          <div className="my-6 w-full bg-gradient-to-r from-transparent via-foreground/30 to-transparent p-[1px]" />
-
-          {/* Sign-in text and button */}
-          <MainPageContent />
-
-          {/* Contact information */}
-          <div className="mt-4 text-left text-sm text-gray-900">
-            If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
-          </div>
-
-          {/* Supabase sign-in notice */}
-          <div className="mb-12 text-left text-sm text-gray-900">
-            *When signing in, it will ask to continue to{" "}
-            <span className="font-bold">kvuilkasrtgyazkvxjal.supabase.co</span>
-          </div>
-        </div>
-
-        {/* Right side: Image and Timer */}
-        <div className="mt-12 flex flex-col items-center lg:ml-12 lg:mt-0">
-          {/* <Image
-            src={posterImage}
-            width={300}
-            height={300}
-            alt="logo"
-            className="mb-4"
-          /> */}
-
-          {/* Timer */}
-          {/* <p className="${bonVivant.className} bon-vivant-text-regular mt-6 text-lg">
-            Countdown to Rush!
-          </p>
-          <div className="mb-6 mt-2 flex w-full justify-center lg:mb-0">
-            <Timer />
-          </div> */}
-        </div>
+        </section>
       </div>
     </div>
   );

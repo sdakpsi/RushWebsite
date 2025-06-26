@@ -29,41 +29,50 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   }
 
   return (
-    <nav
-      className="w-full border-b border-white bg-transparent px-4 pb-6 pt-6 sm:px-48"
-      style={{
-        backgroundImage: `url(${navbg.src})`,
-
-        backgroundSize: "cover",
-
-        backgroundPosition: "center",
-
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="mt-3 flex w-full items-center justify-between">
-        {/* Logo and title, adjust size for mobile */}
-        <Link href="/">
-          <div className="flex cursor-pointer flex-row items-center">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between px-4">
+        {/* Logo and title */}
+        <Link href="/" className="flex items-center space-x-3 transition-opacity hover:opacity-80">
+          <div className="relative">
             <Image
               src={logo}
-              alt="logo"
+              alt="UCSD AKPsi Logo"
               width={40}
               height={40}
-              className="sm:mr-3 sm:w-[2rem]"
-            ></Image>
-            <span className="hidden xl:block xl:text-xl">
+              className="rounded-lg shadow-sm"
+            />
+            <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 transition-opacity group-hover:opacity-100" />
+          </div>
+          <div className="flex flex-col">
+            <span className="hidden font-semibold text-foreground sm:block xl:text-lg">
               UCSD Alpha Kappa Psi
-            </span>{" "}
+            </span>
+            <span className="hidden text-xs text-muted-foreground sm:block">
+              Professional Business Fraternity
+            </span>
           </div>
         </Link>
-        <div className="flex flex-row gap-3 sm:hidden">
+
+        {/* Mobile Navigation */}
+        <div className="flex items-center gap-2 sm:hidden">
           <ActiveButton is_active={isActive} />
-          <AuthButton user={user} />
-          {/* Add any additional buttons or links you want in the mobile menu here */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="btn-ghost p-2"
+            aria-label="Toggle mobile menu"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
-        {/* Items to show on large screens */}
-        <div className="hidden items-center gap-4 sm:flex">
+
+        {/* Desktop Navigation */}
+        <div className="hidden items-center gap-2 sm:flex">
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
           <RCButton is_active={isActive} />
@@ -71,7 +80,18 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         </div>
       </div>
 
-      {/* Mobile Menu, hidden by default, shown when menu is toggled */}
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="border-t border-border bg-background/95 backdrop-blur-lg sm:hidden">
+          <div className="container px-4 py-4">
+            <div className="flex flex-col space-y-3">
+              <PICButton is_pic={isPIC} />
+              <RCButton is_active={isActive} />
+              <AuthButton user={user} />
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

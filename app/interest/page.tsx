@@ -4,7 +4,6 @@ import Image from "next/image";
 import logo from "../../components/akpsilogo.png";
 import { InterestForm as InterestFormType } from "@/lib/types";
 import customToast from "@/components/CustomToast";
-import background from "../background.png";
 import { RUSH_YEAR } from "@/utils/constants";
 
 interface ShootingStar {
@@ -68,230 +67,172 @@ const InterestForm = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setShootingStars((prev) => [
-        ...prev.slice(-4), // Keep last 5 shooting stars
+        ...prev.slice(-5),
         { id: Date.now(), delay: Math.random() * 5 },
       ]);
-    }, 2000); // New shooting star every 2 seconds
+    }, 2000);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((previousFormData) => {
-      return {
-        // ... spread operator -> copy all the properties from the previous form data
-        ...previousFormData,
-        [name]: value,
-      };
-    });
+    setFormData((previousFormData) => ({
+      ...previousFormData,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    // Prepare form data
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
 
-    // Validate required fields
-    if (
-      (!data.name && !data.email) ||
-      (data.name === "" && data.email === "")
-    ) {
-      customToast("Name and email cannot be empty", "error");
-      return;
-    }
-
-    if (data.name === "") {
-      customToast("Name cannot be empty", "error");
-      return;
-    }
-
-    if (data.email === "") {
-      customToast("Email cannot be empty", "error");
+    if (!data.name || !data.email) {
+      customToast("Name and email are required", "error");
+      setIsSubmitting(false);
       return;
     }
 
     const nameWords = (data.name as string).trim().split(/\s+/);
     if (nameWords.length < 2) {
       customToast("Please enter your full name (first and last name)", "error");
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      // Make API call
       const response = await fetch("/api/interest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      // Check if response is ok, handle errors
       if (response.ok) {
         customToast("Interest form submitted!", "success");
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-        });
+        setFormData({ name: "", email: "", phone: "" });
       } else {
-        // If response is not ok, extract error message from the response
         const errorData = await response.json();
-        if (errorData.message) {
-          customToast(errorData.message, "error");
-        } else {
-          customToast("Error submitting the form. Please try again.", "error");
-        }
+        customToast(errorData.message || "Error submitting form", "error");
       }
-    } catch (error: any) {
-      // Handle any network or unexpected errors
-      customToast(`An error occurred: ${error.message}`, "error");
+    } catch (error) {
+      customToast(`An error occurred: ${error}`, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isSubmitting) {
-    return <div>Submitting...</div>;
-  }
-
   return (
-    <div
-      className="relative flex min-h-screen w-screen flex-col items-center justify-center overflow-hidden p-4"
-      style={{
-        backgroundImage: `url(${background.src})`,
+    <div className="min-h-screen bg-gradient-bg relative overflow-hidden">
+      {/* Starfield background */}
+      <div className="absolute inset-0 bg-background">
+        {stars.map((star) => (
+          <Star key={star.id} {...star} />
+        ))}
+        {shootingStars.map((star) => (
+          <ShootingStar key={star.id} delay={star.delay} />
+        ))}
+      </div>
 
-        backgroundSize: "cover",
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-float" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-accent/20 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+      </div>
 
-        backgroundPosition: "center",
-
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="absolute inset-0 z-0 bg-black opacity-20"></div>
-      {stars.map((star) => (
-        <Star key={star.id} {...star} />
-      ))}
-      {shootingStars.map((star) => (
-        <ShootingStar key={star.id} delay={star.delay} />
-      ))}
-      <div className="relative mt-4 max-w-md">
-        <div className="mb-8 flex flex-row items-center justify-center">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+        {/* Header */}
+        <div className="text-center mb-8 animate-slide-down">
           <Image
             src={logo}
-            alt="logo"
-            width={80}
-            height={80}
-            className="mb-4"
+            alt="UCSD Alpha Kappa Psi Logo"
+            width={100}
+            height={100}
+            className="mx-auto mb-4"
           />
-          <span className="bon-vivant-text-bold ml-4 text-lg text-white lg:text-2xl">
-            UCSD Alpha Kappa Psi
-          </span>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-2">
+            {RUSH_YEAR} Rush Interest Form
+          </h1>
+          <p className="text-muted-foreground">
+            Thank you for taking interest in UCSD Alpha Kappa Psi
+          </p>
         </div>
 
-        <div className="lg:text-md libre-caslon-text-regular mb-8 px-2 text-left text-sm text-white">
-          Hello! Thank you for taking interest in UCSD Alpha Kappa Psi's {RUSH_YEAR} Rush Week. The brothers of Alpha Kappa Psi are looking forward to
-          see you during Week 1 of Fall Quarter. We hope that you are just as
-          excited for this journey as we are!
-          <br />
-          <br />
-          Please fill out this form so we can keep you updated about our
-          upcoming rush events and details. Feel free to contact us on our
-          social media if you have any questions!
-          <br />
-          <br />
-          For questions –<br />
-          Instagram:{" "}
-          <a
-            target="_blank"
-            href="https://www.instagram.com/ucsdakpsi"
-            className="underline"
-          >
-            @ucsdakpsi
-          </a>
-          <br />
-          Email:{" "}
-          <a
-            target="_blank"
-            href="mailto:akpfall2025@gmail.com"
-            className="underline"
-          >
-            akpfall2025@gmail.com
-          </a>
+        {/* Form Container */}
+        <div className="card glass w-full max-w-md animate-slide-up">
+          <div className="card-header text-center">
+            <h2 className="card-title">Join Our Rush</h2>
+            <p className="card-description">
+              Fill out this form to stay updated on rush events
+            </p>
+          </div>
+          <div className="card-content">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                  Phone Number (Optional)
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="(123) 456-7890"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary w-full"
+              >
+                {isSubmitting ? "Submitting..." : "Submit Interest Form"}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-      <div className="relative z-10 max-w-md rounded-lg bg-cyan-950 bg-opacity-50 p-8 backdrop-blur-sm md:w-full">
-        <h1 className="bon-vivant-text-bold mb-6 text-center text-3xl font-bold text-white">
-          Align Your Stars
-        </h1>
-        <h2 className="bon-vivant-text-regular mb-8 text-center text-xl text-blue-200">
-          Alpha Kappa Psi | {RUSH_YEAR} Rush
-        </h2>
-        <form onSubmit={handleSubmit} className="w-full space-y-6">
-          <div>
-            <label
-              htmlFor="name"
-              className="bon-vivant-text-bold mb-2 block text-blue-200"
-            >
-              Your full name*
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="bon-vivant-text-regular w-full rounded bg-cyan-900 bg-opacity-50 p-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              placeholder="Your name"
-            />
-          </div>
 
-          <div>
-            <label
-              htmlFor="email"
-              className="bon-vivant-text-bold mb-2 block text-blue-200"
-            >
-              Email*
-            </label>
-
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="bon-vivant-text-regular w-full rounded bg-cyan-900 bg-opacity-50 p-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              placeholder="Your@email.com"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="phone"
-              className="bon-vivant-text-bold mb-2 block text-blue-200"
-            >
-              Phone
-            </label>
-
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="bon-vivant-text-regular mb-3 w-full rounded bg-cyan-900 bg-opacity-50 p-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              placeholder="(123) 456-7890"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="bon-vivant-text-regular w-full rounded bg-cyan-800 px-4 py-2 font-bold text-white transition duration-300 hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          >
-            Submit
-          </button>
-        </form>
+        {/* Contact Info */}
+        <div className="text-center mt-8 text-sm text-muted-foreground animate-fade-in">
+          <p>Questions? Follow us on Instagram <a href="https://www.instagram.com/ucsdakpsi" target="_blank" className="text-primary hover:underline">@ucsdakpsi</a></p>
+          <p>Or email us at <a href="mailto:akpfall2025@gmail.com" className="text-primary hover:underline">akpfall2025@gmail.com</a></p>
+        </div>
       </div>
     </div>
   );

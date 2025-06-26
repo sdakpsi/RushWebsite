@@ -14,56 +14,81 @@ export default function MainPageContent() {
     return (
       <div className="flex flex-col items-start gap-4">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
-          <div className="h-10 bg-gray-200 rounded w-32"></div>
+          <div className="h-8 bg-muted rounded w-48 mb-4"></div>
+          <div className="h-10 bg-muted rounded w-32"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-start gap-4">
-                {(isActive || hasPhoto) && (
-
-      <p className="montserrat-text-bold text-left text-lg lg:text-xl">
-        {/* The application is now closed. */}
-        <br></br>Due Thursday, April 10th at 2 PM.
-      </p>
-                )}
+    <div className="space-y-6">
+      {(isActive || hasPhoto) && (
+        <div className="rounded-lg bg-info/10 border border-info/20 p-4">
+          <div className="flex items-center space-x-2">
+            <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="font-semibold text-info">
+              Application Due: Thursday, April 10th at 2 PM
+            </p>
+          </div>
+        </div>
+      )}
       
       {user ? (
-        <>
+        <div className="space-y-4">
           {/* Show application button for active users or users with photos */}
           {(isActive || hasPhoto) && (
-            <Link href="/application">
-              <button className="montserrat-text-regular text-md rounded bg-btn-background px-6 py-2 text-white transition duration-300 hover:bg-btn-background-hover lg:text-lg">
-                Application Form
+            <Link href="/application" className="inline-block">
+              <button className="btn-primary w-full sm:w-auto">
+                <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Complete Application
               </button>
             </Link>
           )}
+          
           {/* Show photo upload for non-active users */}
           {!isActive && (
-            <div className="mb-6 w-full max-w-md">
-              <div className="bg-btn-background p-6 rounded-lg shadow-lg">
-                <div className="text-center mb-4">
-                  <h3 className="text-lg font-semibold text-white mb-2">
-                    {hasPhoto ? "Update Your Photo" : "Complete Your Profile"}
-                  </h3>
-                  <p className="text-sm text-white">
-                    {hasPhoto 
-                      ? "You can change your photo anytime" 
-                      : "Please upload a photo of yourself to continue with your application"
-                    }
-                  </p>
+            <div className="card glass">
+              <div className="card-header text-center">
+                <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
                 </div>
+                <h3 className="card-title text-lg">
+                  {hasPhoto ? "Update Your Photo" : "Complete Your Profile"}
+                </h3>
+                <p className="card-description">
+                  {hasPhoto 
+                    ? "You can change your photo anytime" 
+                    : "Please upload a photo of yourself to continue with your application"
+                  }
+                </p>
+              </div>
+              <div className="card-content">
                 <PhotoUploadWrapper existingPhotoUrl={photoUrl} />
               </div>
             </div>
           )}
-        </>
+        </div>
       ) : (
-        <div className="flex justify-center">
-          <GoogleOAuth />
+        <div className="text-center">
+          <div className="mx-auto max-w-md">
+            <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <svg className="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m0 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Sign In to Continue</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Please sign in with your Google account to access the application portal.
+            </p>
+            <GoogleOAuth />
+          </div>
         </div>
       )}
     </div>

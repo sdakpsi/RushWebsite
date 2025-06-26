@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Dropzone from "react-dropzone";
 import { createClient } from "@/utils/supabase/client";
 import customToast from '@/components/CustomToast';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface PhotoUploadProps {
   onPhotoUploaded: (url: string) => void;
@@ -129,7 +130,7 @@ export default function PhotoUpload({ onPhotoUploaded, existingPhotoUrl }: Photo
               <input {...getInputProps()} />
               {uploading && (
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                  <LoadingSpinner size="medium" fullScreen={false} />
                   <p className="text-lg text-gray-700">Uploading photo...</p>
                 </div>
               )}

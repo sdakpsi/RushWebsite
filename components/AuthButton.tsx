@@ -42,24 +42,31 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   };
 
   return user ? (
-    <div className="flex text-xs lg:text-lg items-center gap-4">
-      {user.user_metadata.name}
-      <button
-        onClick={signOut}
-        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
-      >
-        Logout
+    <div className="flex items-center gap-3">
+      <div className="hidden items-center gap-2 sm:flex">
+        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+          <span className="text-sm font-medium text-primary">
+            {user.user_metadata.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+          </span>
+        </div>
+        <span className="text-sm text-muted-foreground max-w-24 truncate">
+          {user.user_metadata.name || user.email}
+        </span>
+      </div>
+      <button onClick={signOut} className="btn-ghost">
+        <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span className="hidden sm:inline">Logout</span>
       </button>
     </div>
   ) : (
-    <div className="flex items-center gap-4">
-      <button
-        onClick={handleSignInWithGoogle}
-        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
-      >
-        Login
-      </button>
-    </div>
+    <button onClick={handleSignInWithGoogle} className="btn-primary">
+      <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m0 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+      </svg>
+      Login
+    </button>
   );
 };
 

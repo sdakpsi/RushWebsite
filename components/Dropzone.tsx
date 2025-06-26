@@ -4,6 +4,7 @@ import Dropzone from "react-dropzone";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "react-toastify";
 import { ApplicationFileTypes } from "@/lib/types";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface FileDropzoneProps {
   type: ApplicationFileTypes;
@@ -76,7 +77,12 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
             className="flex w-full max-w-xl cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-400 bg-gray-100 p-6 hover:border-gray-500"
           >
             <input {...getInputProps()} />
-            {uploading && <p className="text-lg text-gray-700">Uploading...</p>}
+            {uploading && (
+              <div className="text-center space-y-4">
+                <LoadingSpinner size="medium" fullScreen={false} />
+                <p className="text-lg text-gray-700">Uploading...</p>
+              </div>
+            )}
             {!uploading && fileName && (
               <p className="text-md text-green-500">Uploaded: {fileName}</p>
             )}
