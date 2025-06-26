@@ -30,7 +30,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
+      <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
         {/* Logo and title */}
         <Link href="/" className="flex items-center space-x-3 transition-opacity hover:opacity-80">
           <div className="relative">
@@ -54,11 +54,11 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         </Link>
 
         {/* Mobile Navigation */}
-        <div className="flex items-center gap-2 sm:hidden">
+        <div className="flex items-center gap-3 sm:hidden">
           <ActiveButton is_active={isActive} />
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="btn-ghost p-2"
+            className="btn-ghost p-3 rounded-xl"
             aria-label="Toggle mobile menu"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,7 +72,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-2 sm:flex">
+        <div className="hidden items-center gap-4 sm:flex">
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
           <RCButton is_active={isActive} />
@@ -83,8 +83,8 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="border-t border-border bg-background/95 backdrop-blur-lg sm:hidden">
-          <div className="container px-4 py-4">
-            <div className="flex flex-col space-y-3">
+          <div className="container px-6 py-6">
+            <div className="flex flex-col space-y-4">
               <PICButton is_pic={isPIC} />
               <RCButton is_active={isActive} />
               <AuthButton user={user} />
