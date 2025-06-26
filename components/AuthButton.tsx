@@ -49,7 +49,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
             {user.user_metadata.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
           </span>
         </div>
-        <span className="text-sm text-muted-foreground max-w-32 truncate font-medium">
+        <span className="text-sm text-white-foreground max-w-32 truncate font-medium">
           {user.user_metadata.name || user.email}
         </span>
       </div>

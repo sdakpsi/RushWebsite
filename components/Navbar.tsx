@@ -3,13 +3,12 @@
 import AuthButton from "@/components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import ActiveButton from "./ActiveButton";
-import Link from "next/link";
 import PICButton from "./PICButton";
 import logo from "./akpsilogo.png";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import RCButton from "./RCButton";
 import navbg from "../app/navbar-bg.png";
 
@@ -22,8 +21,9 @@ interface NavbarProps {
 export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
-  const isInterestPage = pathname.endsWith("/interest");
+  const isInterestPage = pathname?.endsWith("/interest");
   if (isInterestPage) {
     return null;
   }
@@ -32,17 +32,21 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
         {/* Logo and title */}
-        <Link href="/" className="flex items-center space-x-3 transition-opacity hover:opacity-80">
-          <div className="relative">
-            <Image
-              src={logo}
-              alt="UCSD AKPsi Logo"
-              width={40}
-              height={40}
-              className="rounded-lg shadow-sm"
-            />
-            <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 transition-opacity group-hover:opacity-100" />
-          </div>
+        <div 
+          className="group flex items-center space-x-3 cursor-pointer"
+          onClick={() => {
+            if (pathname !== '/') {
+              router.push('/');
+            }
+          }}
+        >
+          <Image
+            src={logo}
+            alt="UCSD AKPsi Logo"
+            width={40}
+            height={40}
+            className="rounded-lg group-hover:scale-110 transition-transform duration-200"
+          />
           <div className="flex flex-col">
             <span className="hidden font-semibold text-foreground sm:block xl:text-lg">
               UCSD Alpha Kappa Psi
@@ -51,7 +55,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
               Professional Business Fraternity
             </span>
           </div>
-        </Link>
+        </div>
 
         {/* Mobile Navigation */}
         <div className="flex items-center gap-3 sm:hidden">
