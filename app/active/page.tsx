@@ -45,12 +45,6 @@ export default async function ProtectedPage() {
 
           {/* Active Member Tools */}
           <div className="card glass">
-            <div className="card-header">
-              <h2 className="card-title">Active Member Tools</h2>
-              <p className="card-description">
-                Access active member features and manage rush activities.
-              </p>
-            </div>
             <div className="card-content">
               <ActiveSetter />
             </div>

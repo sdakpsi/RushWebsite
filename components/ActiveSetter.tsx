@@ -14,9 +14,7 @@ export default function ActiveSetter() {
 
   return (
     <div>
-      <p className="mb-2 text-center text-xl !leading-tight lg:text-4xl">
-        Active Portal
-      </p>
+    
       {isActive ? (
         <div className="mt-4 flex flex-col items-center justify-center gap-6">
           <NextLinkButton destination="/active/comment-form">

@@ -188,6 +188,14 @@ export default function Index() {
                     >
                       Official Website
                     </a>
+                    <a
+                      href="https://www.instagram.com/ucsdakpsi/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline w-full"
+                    >
+                      Instagram
+                    </a>
                   </div>
                 </div>
 

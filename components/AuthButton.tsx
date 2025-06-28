@@ -39,7 +39,7 @@ const handleSignInWithGoogle = async () => {
 };
 
 const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
-  const { photoUrl, hasPhoto } = useCurrentUser();
+  const { photoUrl, hasPhoto, isActive, isPIC } = useCurrentUser();
   const queryClient = useQueryClient();
   const router = useRouter();
   
@@ -68,8 +68,20 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   return user ? (
     <div className="flex items-center gap-4">
       <div className="hidden items-center gap-3 sm:flex">
-        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center ring-1 ring-border/20 overflow-hidden">
-          {hasPhoto && photoUrl ? (
+        <div className={`h-10 w-10 rounded-xl flex items-center justify-center ring-1 ring-border/20 overflow-hidden shadow-lg ${
+          isPIC ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 shadow-purple-500/30' :
+          isActive ? 'bg-gradient-to-br from-blue-500 via-cyan-600 to-blue-700 shadow-blue-500/30' :
+          'bg-gradient-to-br from-primary/20 to-accent/20'
+        }`}>
+          {isPIC ? (
+            <span className="text-xs font-black text-white">
+              PIC
+            </span>
+          ) : isActive ? (
+            <span className="text-[0.5rem] font-black text-white leading-none">
+              ACTIVE
+            </span>
+          ) : hasPhoto && photoUrl ? (
             <Image
               src={photoUrl}
               alt="User profile"
@@ -97,7 +109,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   ) : (
     <button onClick={handleSignInWithGoogle} className="btn-primary px-6 py-2.5 rounded-xl shadow-elevation-medium hover:shadow-elevation-high transition-all duration-200">
       <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m0 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
       </svg>
       Login
     </button>
