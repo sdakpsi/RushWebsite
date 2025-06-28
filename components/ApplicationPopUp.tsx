@@ -628,7 +628,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [scoreComponents.totalScore]);
 
   return createPortal(
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-75 pt-8 pb-8">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-75 pt-8 pb-8">
       <div className="mx-4 w-full max-w-8xl space-y-4 overflow-auto rounded-xl bg-gray-900 p-6 shadow-2xl border border-gray-700" style={{ maxHeight: 'calc(100vh - 4rem)' }}>
         <div className="mb-6 space-y-4">
           {/* Header Row */}
@@ -1363,7 +1363,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
       {/* Document View Modal */}
       {viewDocument && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-90">
           <div className="relative h-5/6 w-full max-w-6xl overflow-auto rounded-xl bg-gray-900 border border-gray-700 shadow-2xl">
             <div className="h-full w-full rounded-lg overflow-hidden">
               {viewDocument.endsWith(".doc") || viewDocument.endsWith(".docx") ? (

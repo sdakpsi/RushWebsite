@@ -24,7 +24,7 @@ interface Packet {
 
 interface ApplicantCardProps {
   applicant: Packet;
-  onViewApplication: (applicationId: string, userId: string) => void; // Add onViewApplication function prop
+  onViewApplication: (applicationId: string, userId: string) => void;
 }
 
 const ApplicantCard: React.FC<ApplicantCardProps> = ({
@@ -60,11 +60,11 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
     refetchOnWindowFocus: false,
   });
 
-  // Derive computed values (commented out since not currently used in UI)
-  // const caseActives = caseStudiesData.map(item => item.active_name);
-  // const numCaseStudies = caseActives.length;
-  // const interviewActives = interviewsData.map(item => item.active_name);
-  // const numInterviews = interviewActives.length;
+  // Derive computed values
+  const caseActives = caseStudiesData.map(item => item.active_name);
+  const numCaseStudies = caseActives.length;
+  const interviewActives = interviewsData.map(item => item.active_name);
+  const numInterviews = interviewActives.length;
 
   return (
     <button
@@ -94,7 +94,8 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
             </p>
           </div>
         </div>
-        {/* <div className="mt-2 text-left">
+        {/* Score and evaluation data */}
+        <div className="mt-2 text-left">
           {numCaseStudies >= 3 ? (
             <p className="text-xs text-green-500">
               {numCaseStudies} Cases: {caseActives.join(", ")}
@@ -106,17 +107,17 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
           )}
           {numInterviews >= 3 ? (
             <p className="text-xs text-green-500">
-              {numInterviews} IVs: {interviewActives.join(", ")}
+              {numInterviews} Interviews: {interviewActives.join(", ")}
             </p>
           ) : (
             <p className="text-xs text-red-500">
-              {numInterviews} IVs: {interviewActives.join(", ")}
+              {numInterviews} Interviews: {interviewActives.join(", ")}
             </p>
           )}
         </div>
         <div className="mt-2">
           <span>Total Score: {totalScore}</span>
-        </div> */}
+        </div>
       </div>
     </button>
   );
