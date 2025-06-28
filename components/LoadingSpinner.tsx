@@ -68,9 +68,6 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
               <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground animate-pulse">
-            Working...
-          </p>
         </div>
       )}
     </div>

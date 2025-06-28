@@ -14,7 +14,7 @@ import { useCurrentWave } from "@/hooks/useCurrentWave";
 
 export default function ProtectedPage() {
   const { isPIC, isLoading: isPICLoading } = useActiveStatus();
-  const { usersData, isLoading: isUsersLoading } = usePICUsers();
+  const { usersData, avatarMap, isLoading: isUsersLoading } = usePICUsers();
   const {
     currentApplicationId,
     currentApplication,
@@ -120,6 +120,7 @@ export default function ProtectedPage() {
                     <ApplicantCard
                       applicant={applicant}
                       onViewApplication={handleViewApplication}
+                      avatarUrl={avatarMap[applicant.id] || null}
                     />
                     <button
                       className={`ml-2 ${

@@ -45,29 +45,22 @@ export async function getUsers() {
       
       usersData = users || [];
     } else {
-      // Production mode - only return users with submitted applications
-      const { data: apps, error: appsError } = await supabase
-        .from("applications")
-        .select("user_id")
-        .not("submitted", "is", null);
-
-      if (appsError) {
-        console.error("Error fetching applications:", appsError.message);
-        return [];
-      }
-
-      const validUserIds = apps?.map((app) => app.user_id) ?? [];
-
+      // Production mode - use JOIN query for better performance
       const { data: users, error: usersError } = await supabase
         .from("users")
-        .select("*")
+        .select(`
+          *,
+          applications!inner(
+            submitted
+          )
+        `)
         .eq("is_active", false)
         .eq("is_pic", false)
-        .in("id", validUserIds)
+        .not("applications.submitted", "is", null)
         .order("full_name", { ascending: true });
 
       if (usersError) {
-        console.error("Error fetching users:", usersError.message);
+        console.error("Error fetching users with applications:", usersError.message);
         return [];
       }
       
@@ -205,7 +198,32 @@ export async function getInterviews(prospectID: string) {
   return data || [];
 }
 
-// Optimized queries for ApplicantCard
+// Bulk query functions for better performance
+export async function getBulkAvatars(userIds: string[]) {
+  if (userIds.length === 0) return {};
+  
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_avatar")
+    .select("user_id, avatar_url")
+    .in("user_id", userIds);
+
+  if (error) {
+    console.error("Error fetching bulk avatars:", error.message);
+    return {};
+  }
+  
+  // Convert to lookup object
+  const avatarMap: { [key: string]: string | null } = {};
+  data?.forEach(item => {
+    avatarMap[item.user_id] = item.avatar_url;
+  });
+  
+  return avatarMap;
+}
+
+// Optimized queries for ApplicantCard (kept for backwards compatibility)
 export async function getApplicantAvatar(userId: string) {
   const supabase = createClient();
 
