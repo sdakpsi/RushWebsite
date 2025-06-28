@@ -350,9 +350,9 @@ export default function ActiveCaseStudyForm({
           <button
             type="button"
             onClick={() => handleBack()}
-            className="cursor-pointer rounded-lg border-none px-4 py-2 text-base text-white hover:bg-gray-700"
+            className="cursor-pointer rounded-lg border-none bg-gray-700 px-4 py-2 text-base text-white"
           >
-            &lt; Back{" "}
+            &#x276E; Back{" "}
           </button>
         )}
         <div className="text-center">
