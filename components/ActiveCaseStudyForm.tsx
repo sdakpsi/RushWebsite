@@ -339,13 +339,14 @@ export default function ActiveCaseStudyForm({
   const isCurrentlySubmitting = externalIsSubmitting || false;
 
   return (
-    <div className="bg-black p-5 text-white relative">
-      {isCurrentlySubmitting && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
-          <LoadingSpinner size="medium" fullScreen={false} />
-        </div>
-      )}
-      <div className="mb-5 flex items-center justify-between">
+    <div className="bg-black text-white relative">
+      <div className="p-5">
+        {isCurrentlySubmitting && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
+            <LoadingSpinner size="medium" fullScreen={false} />
+          </div>
+        )}
+        <div className="mb-5 flex items-center justify-between">
         {!isMultiFormContext && (
           <button
             type="button"
@@ -356,9 +357,11 @@ export default function ActiveCaseStudyForm({
           </button>
         )}
         <div className="text-center">
+        {!isMultiFormContext && (
           <h1 className="text-2xl text-white">
             Case Study: {selectedProspect.full_name}
           </h1>
+        )}
           {!isMultiFormContext && (
             <div className="mt-1 text-sm text-gray-400">
               {isAutoSaving
@@ -500,6 +503,7 @@ export default function ActiveCaseStudyForm({
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 }

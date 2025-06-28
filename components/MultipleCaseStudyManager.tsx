@@ -317,6 +317,17 @@ export default function MultipleCaseStudyManager({
         autoSaveStatus={autoSaveStatus}
       />
 
+      {/* Sticky prospect header for page scrolling */}
+      {activeForm && (
+        <div className="sticky top-24 z-40 bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 shadow-lg mb-4">
+          <div className="flex items-center justify-center">
+            <span className="text-white font-semibold text-lg">
+              Case Study: {activeForm.prospect.full_name}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Active Form */}
       {activeForm && (
         <div className="border border-gray-700 rounded-lg bg-black">
