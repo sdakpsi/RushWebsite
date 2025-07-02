@@ -61,6 +61,14 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
                 Comment Forms
               </Link>
             </li>
+            <li>
+              <Link
+                href="/pic/analytics"
+                className="block px-4 py-3 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-colors duration-150"
+              >
+                Analytics
+              </Link>
+            </li>
           </ul>
         </div>
       )}
