@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useProspectComments } from "@/hooks/useProspectComments";
 
@@ -9,14 +10,13 @@ export default function ProtectedPage() {
   const { isPIC, isLoading: isPICLoading } = useActiveStatus();
   const { commentsData, isLoading: isUsersLoading } = useProspectComments();
 
-  const [expandedProspects, setExpandedProspects] = useState<string[]>([]);
+  const [expandedProspects, setExpandedProspects] = useState<{[key: string]: boolean}>({});
 
   const toggleProspect = (prospectId: string) => {
-    setExpandedProspects((prev) =>
-      prev.includes(prospectId)
-        ? prev.filter((id) => id !== prospectId)
-        : [...prev, prospectId]
-    );
+    setExpandedProspects((prev) => ({
+      ...prev,
+      [prospectId]: !prev[prospectId]
+    }));
   };
 
   if (isPICLoading || isUsersLoading) {
@@ -72,12 +72,12 @@ export default function ProtectedPage() {
             (c: any) => c.invite === "No"
           ).length;
           const numberOfComments = prospectComments.length;
-          const isExpanded = expandedProspects.includes(prospectId);
+          const isExpanded = expandedProspects[prospectId] || false;
 
           return (
             <div
               key={prospectId}
-              className={`rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl`}
+              className="relative rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl"
             >
               <div
                 className="flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600"
@@ -111,7 +111,7 @@ export default function ProtectedPage() {
               </div>
 
               {isExpanded && (
-                <div className="mt-2 space-y-2">
+                <div className="absolute top-full left-0 right-0 z-10 mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600">
                   {prospectComments.map((comment: any) => (
                     <div
                       key={comment.id}
@@ -153,27 +153,29 @@ export default function ProtectedPage() {
   );
 
   return (
-    <div className="flex w-full flex-1 items-center justify-center bg-black py-10 text-gray-200">
-      <div className="animate-in mx-8 w-full max-w-6xl">
-        <div className="mb-8 text-center">
-          <p className="text-3xl font-semibold leading-tight text-gray-50 lg:text-4xl">
-            PIC Portal: Prospect Comment Forms
-          </p>
-        </div>
-
+    <div className="flex w-full items-center justify-center">
+      <div className="animate-in w-full max-w-6xl opacity-0">
         {isPIC ? (
-          <>
-            {renderSection(
-              "✅ Prospects with 2+ Yes Invites",
-              sections.twoPlusYes
-            )}
-            {renderSection("🟡 Prospects with 1 Yes Invite", sections.oneYes)}
-            {renderSection("❌ Prospects with 0 Yes Invites", sections.zeroYes)}
-            {renderSection("🔗 Not Linked Comment Forms", sections.notLinked)}
-          </>
+          <div className="container mx-auto px-4 pt-6 pb-24 relative">
+            <div className="flex flex-col space-y-6">
+              <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
+                Prospect Comment Forms
+              </h1>
+
+              <div className="space-y-10">
+                {renderSection(
+                  "Prospects with 2+ Yes Invites",
+                  sections.twoPlusYes
+                )}
+                {renderSection("Prospects with 1 Yes Invite", sections.oneYes)}
+                {renderSection("Prospects with 0 Yes Invites", sections.zeroYes)}
+                {renderSection("Uninked Comment Forms", sections.notLinked)}
+              </div>
+            </div>
+          </div>
         ) : (
-          <div className="mt-8 text-center">
-            <p>You are not on PIC.</p>
+          <div className="mt-8 flex items-center justify-center">
+            <ActiveLoginComponent />
           </div>
         )}
       </div>
