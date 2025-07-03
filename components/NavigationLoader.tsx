@@ -106,10 +106,7 @@ export default function NavigationLoader() {
                   globalSetLoading(true);
                 }
                 
-                // Add visual feedback to clicked link
-                link.style.opacity = '0.7';
-                link.style.transform = 'scale(0.98)';
-                link.style.transition = 'all 0.1s ease';
+             
               }
             }
           } catch (error) {

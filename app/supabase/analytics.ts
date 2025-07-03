@@ -152,11 +152,13 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
 
     // Process comments data
     comments?.forEach(comment => {
-      const date = new Date(comment.created_at).toISOString().split('T')[0];
-      const dayData = dateMap.get(date);
-      if (dayData) {
-        dayData.commentsCount++;
-        dayData.totalEvaluations++;
+      if (comment.created_at) {
+        const date = new Date(comment.created_at).toISOString().split('T')[0];
+        const dayData = dateMap.get(date);
+        if (dayData) {
+          dayData.commentsCount++;
+          dayData.totalEvaluations++;
+        }
       }
     });
 

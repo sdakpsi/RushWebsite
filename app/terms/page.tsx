@@ -1,4 +1,26 @@
-export default async function Page() {
+"use client";
+
+import React from "react";
+import { useRouter } from "next/navigation";
+import customToast from '@/components/CustomToast';
+
+export default function Page() {
+  const router = useRouter();
+
+  const handleAgree = () => {
+    // Store agreement in localStorage
+    localStorage.setItem('terms_agreed', 'true');
+    localStorage.setItem('terms_agreed_at', new Date().toISOString());
+    
+    // Show success message
+    customToast('Terms of Service accepted successfully!', 'success');
+    
+    // Redirect to application page after a short delay
+    setTimeout(() => {
+      router.push('/application');
+    }, 1000);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-bg">
       {/* Background Elements */}
@@ -79,7 +101,12 @@ export default async function Page() {
           </div>
 
           <div className="flex items-center justify-center mt-8">
-            <button className="btn-primary">I Agree to the Terms</button>
+            <button 
+              onClick={handleAgree}
+              className="btn-primary hover:scale-105 transition-transform duration-200"
+            >
+              I Agree to the Terms
+            </button>
           </div>
         </div>
       </div>
