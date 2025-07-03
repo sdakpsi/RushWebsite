@@ -129,10 +129,10 @@ export default function ProtectedPage() {
                 </h1>
                 
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="flex gap-4">
+                  <div className="flex gap-2 sm:gap-4 w-full max-w-md">
                    
                     <button
-                      className="rounded bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 transition-colors"
+                      className="flex-1 rounded-lg bg-blue-600 px-4 py-3 sm:px-6 font-semibold text-white hover:bg-blue-700 transition-all duration-200 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => {
                         // Keep the original single form mode
                       }}
@@ -141,7 +141,7 @@ export default function ProtectedPage() {
                       Single Form
                     </button>
                     <button
-                      className="rounded bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700 transition-colors"
+                      className="flex-1 rounded-lg bg-green-600 px-4 py-3 sm:px-6 font-semibold text-white hover:bg-green-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg"
                       onClick={() => setShowingMultipleForms(true)}
                     >
                       Multiple Forms
@@ -159,7 +159,7 @@ export default function ProtectedPage() {
                 </p>
                 {selectedProspect && (
                   <button
-                    className="self-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                    className="self-center rounded-lg bg-blue-500 px-6 py-4 font-bold text-white hover:bg-blue-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg text-lg"
                     onClick={handleStartCaseStudyForm}
                   >
                     Start Case Study Form

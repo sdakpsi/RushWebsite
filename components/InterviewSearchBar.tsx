@@ -79,30 +79,40 @@ export default function InterviewSearchBar({
     <div className="mb-6">
       <label
         htmlFor="search"
-        className="block text-xl font-medium text-gray-200"
+        className="block text-lg sm:text-xl font-medium text-gray-200 mb-3"
       >
         Search for and select a prospect:
       </label>
-      <div className="relative mt-1">
+      <div className="relative">
         <input
           type="text"
           name="search"
           id="search"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="block w-full rounded-md border-gray-300 bg-gray-200 text-black shadow-sm focus:ring-indigo-500 sm:text-lg"
+          placeholder="Type prospect name..."
+          className="block w-full rounded-lg border-2 border-gray-300 bg-gray-200 text-black shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-4 text-base transition-all duration-200"
+          style={{ fontSize: '16px' }} // Prevents zoom on iOS
         />
-        <div className="suggestions mt-2 w-full rounded-md bg-gray-800 shadow-lg">
-          {filteredData.slice(0, 5).map((prospect, index) => (
-            <div
-              key={index}
-              className="suggestion cursor-pointer border-b border-gray-700 px-4 py-2 text-white hover:bg-gray-700"
-              onClick={() => handleSelectProspect(prospect)}
-            >
-              {prospect.full_name} - {prospect.email}
-            </div>
-          ))}
-        </div>
+        {searchInput && (
+          <div className="suggestions mt-2 w-full rounded-lg bg-gray-800 shadow-xl border border-gray-600 overflow-hidden">
+            {filteredData.slice(0, 5).map((prospect, index) => (
+              <div
+                key={index}
+                className="suggestion cursor-pointer border-b border-gray-700 last:border-b-0 px-4 py-4 text-white hover:bg-gray-700 active:bg-gray-600 transition-all duration-150 touch-manipulation active:scale-[0.98]"
+                onClick={() => handleSelectProspect(prospect)}
+              >
+                <div className="font-medium text-base">{prospect.full_name}</div>
+                <div className="text-sm text-gray-400">{prospect.email}</div>
+              </div>
+            ))}
+            {filteredData.length === 0 && searchInput && (
+              <div className="px-4 py-4 text-gray-400 text-center">
+                No prospects found matching "{searchInput}"
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

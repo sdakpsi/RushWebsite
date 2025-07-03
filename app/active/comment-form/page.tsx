@@ -167,26 +167,26 @@ export default function Page(this: any) {
               </h1>
 
               <div className="flex flex-col items-center space-y-4">
-                <div className="flex gap-4">
+                <div className="flex gap-2 sm:gap-4 w-full max-w-md">
                   <button
-                    className={`rounded px-6 py-3 font-semibold text-white transition-colors ${
+                    className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold text-white transition-all duration-200 touch-manipulation active:scale-95 ${
                       viewMode === 'search'
-                        ? 'bg-blue-600 hover:bg-blue-700'
+                        ? 'bg-blue-600 hover:bg-blue-700 shadow-lg'
                         : 'bg-gray-600 hover:bg-gray-700'
                     }`}
                     onClick={() => setViewMode('search')}
                   >
-                     View
+                    Search
                   </button>
                   <button
-                    className={`rounded px-6 py-3 font-semibold text-white transition-colors ${
+                    className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold text-white transition-all duration-200 touch-manipulation active:scale-95 ${
                       viewMode === 'grid'
-                        ? 'bg-blue-600 hover:bg-blue-700'
+                        ? 'bg-blue-600 hover:bg-blue-700 shadow-lg'
                         : 'bg-gray-600 hover:bg-gray-700'
                     }`}
                     onClick={() => setViewMode('grid')}
                   >
-                    Grid View
+                    Grid
                   </button>
                 </div>
                 <p className="text-sm text-gray-400 text-center max-w-2xl">
@@ -210,10 +210,32 @@ export default function Page(this: any) {
                 />
               )}
 
-              <p className="text-md text-left md:text-2xl">
-                Selected Prospect: {selectedProspect?.full_name || "None"} -{" "}
-                {selectedProspect?.email || "None"}
-              </p>
+              {selectedProspect ? (
+                <div className="bg-green-100 border-2 border-green-500 rounded-lg p-4 w-full max-w-2xl mx-auto">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-green-800 mb-1">
+                      Selected Prospect
+                    </div>
+                    <div className="text-xl font-bold text-green-900">
+                      {selectedProspect.full_name}
+                    </div>
+                    <div className="text-sm text-green-700">
+                      {selectedProspect.email}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 w-full max-w-2xl mx-auto">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-yellow-800 mb-1">
+                      No Prospect Selected
+                    </div>
+                    <div className="text-sm text-yellow-700">
+                      Please select a prospect from {viewMode === 'search' ? 'search' : 'grid'} above
+                    </div>
+                  </div>
+                </div>
+              )}
               {!selectedProspect?.full_name && viewMode !== "grid" && (
                 <div>
                   <input
@@ -229,10 +251,10 @@ export default function Page(this: any) {
               {viewMode === 'grid' && selectedProspect && (
                 <div className="flex justify-center">
                   <button
-                    className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 transition-colors"
+                    className="rounded-lg bg-gray-600 px-6 py-3 text-white font-medium hover:bg-gray-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-md"
                     onClick={() => setSelectedProspect(null)}
                   >
-                     Back to Grid
+                    Back to Grid
                   </button>
                 </div>
               )}
@@ -254,21 +276,33 @@ export default function Page(this: any) {
                     <label className="mb-2 text-gray-200">
                       How was the interaction?
                     </label>
-                    <div className="flex space-x-4 text-white">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
                       <button
-                        className={`rounded px-4 py-2 ${interaction === "Good" ? "bg-blue-700" : "bg-gray-900"}`}
+                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                          interaction === "Good" 
+                            ? "bg-green-600 shadow-lg border-2 border-green-400" 
+                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                        }`}
                         onClick={() => setInteraction("Good")}
                       >
                         Good
                       </button>
                       <button
-                        className={`rounded px-4 py-2 ${interaction === "Neutral" ? "bg-blue-700" : "bg-gray-900"}`}
+                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                          interaction === "Neutral" 
+                            ? "bg-yellow-600 shadow-lg border-2 border-yellow-400" 
+                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                        }`}
                         onClick={() => setInteraction("Neutral")}
                       >
                         Neutral
                       </button>
                       <button
-                        className={`rounded px-4 py-2 ${interaction === "Bad" ? "bg-blue-700" : "bg-gray-900"}`}
+                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                          interaction === "Bad" 
+                            ? "bg-red-600 shadow-lg border-2 border-red-400" 
+                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                        }`}
                         onClick={() => setInteraction("Bad")}
                       >
                         Bad
@@ -281,21 +315,33 @@ export default function Page(this: any) {
                     <label className="mb-2 mt-4 text-gray-200">
                       Invite to social night?
                     </label>
-                    <div className="flex space-x-4">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
                       <button
-                        className={`rounded px-4 py-2 ${invite === "Yes" ? "bg-blue-700" : "bg-gray-900"}`}
+                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                          invite === "Yes" 
+                            ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
+                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                        }`}
                         onClick={() => setInvite("Yes")}
                       >
                         Yes
                       </button>
                       <button
-                        className={`rounded px-4 py-2 ${invite === "No" ? "bg-blue-700" : "bg-gray-900"}`}
+                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                          invite === "No" 
+                            ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
+                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                        }`}
                         onClick={() => setInvite("No")}
                       >
                         No
                       </button>
                       <button
-                        className={`rounded px-4 py-2 ${invite === "N/A" ? "bg-blue-700" : "bg-gray-900"}`}
+                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                          invite === "N/A" 
+                            ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
+                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                        }`}
                         onClick={() => setInvite("N/A")}
                       >
                         N/A
@@ -306,16 +352,22 @@ export default function Page(this: any) {
                     Explain the interaction (minimum 5 words):
                   </label>
                   <textarea
-                    className="rounded border p-2 text-gray-700"
-                    placeholder="Be detailed, this will be used in delibs!"
+                    className="rounded-lg border-2 border-gray-300 p-4 text-gray-700 text-base leading-relaxed resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                    placeholder="Be detailed, this will be used in delibs! Include what you talked about, their responses, and your overall impression."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
+                    rows={5}
+                    style={{ fontSize: '16px' }} // Prevents zoom on iOS
                   />
+                  <div className="mt-2 text-xs text-gray-400">
+                    Word count: {comment.trim() ? comment.trim().split(/\s+/).length : 0} (minimum 5 words)
+                  </div>
                   <button
-                    className="mb-4 mt-4 self-center rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+                    className="mb-4 mt-6 self-center rounded-lg bg-blue-600 px-8 py-4 text-white font-semibold text-lg hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={submitComment}
+                    disabled={isSubmitting}
                   >
-                    Submit Comment
+                    {isSubmitting ? "Submitting..." : "Submit Comment"}
                   </button>
                 </div>
               )}

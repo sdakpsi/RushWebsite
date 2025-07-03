@@ -29,7 +29,7 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
   return is_pic ? (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 shadow-elevation-low hover:shadow-elevation-medium transition-all duration-200"
+        className="flex items-center rounded-xl bg-primary text-primary-foreground px-5 py-3 text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 shadow-elevation-low hover:shadow-elevation-medium transition-all duration-200 touch-manipulation active:scale-95"
         onClick={() => setIsOpen(!isOpen)}
       >
         PIC
@@ -48,7 +48,8 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
             <li>
               <Link
                 href="/pic"
-                className="block px-4 py-3 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-colors duration-150"
+                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                onClick={() => setIsOpen(false)}
               >
                 Prospects Page
               </Link>
@@ -56,7 +57,8 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
             <li>
               <Link
                 href="/pic/comment-form"
-                className="block px-4 py-3 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-colors duration-150"
+                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                onClick={() => setIsOpen(false)}
               >
                 Comment Forms
               </Link>
@@ -64,7 +66,8 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
             <li>
               <Link
                 href="/pic/analytics"
-                className="block px-4 py-3 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-colors duration-150"
+                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                onClick={() => setIsOpen(false)}
               >
                 Analytics
               </Link>

@@ -111,7 +111,7 @@ export default function ProtectedPage() {
               </div>
 
               {isExpanded && (
-                <div className="absolute top-full left-0 right-0 z-10 mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600">
+                <div className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600">
                   {prospectComments.map((comment: any) => (
                     <div
                       key={comment.id}
@@ -156,7 +156,7 @@ export default function ProtectedPage() {
     <div className="flex w-full items-center justify-center">
       <div className="animate-in w-full max-w-6xl opacity-0">
         {isPIC ? (
-          <div className="container mx-auto px-4 pt-6 pb-24 relative">
+          <div className="container mx-auto px-4 pt-6 pb-32 relative">
             <div className="flex flex-col space-y-6">
               <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
                 Prospect Comment Forms
@@ -169,7 +169,7 @@ export default function ProtectedPage() {
                 )}
                 {renderSection("Prospects with 1 Yes Invite", sections.oneYes)}
                 {renderSection("Prospects with 0 Yes Invites", sections.zeroYes)}
-                {renderSection("Uninked Comment Forms", sections.notLinked)}
+                {renderSection("Unlinked Comment Forms", sections.notLinked)}
               </div>
             </div>
           </div>

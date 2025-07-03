@@ -64,7 +64,7 @@ export default function ProtectedPage() {
               </p>
               {selectedProspect && (
                 <button
-                  className="self-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                  className="self-center rounded-lg bg-blue-500 px-6 py-4 font-bold text-white hover:bg-blue-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg text-lg"
                   onClick={() => setShowingForm(true)}
                 >
                   Start Interview Form

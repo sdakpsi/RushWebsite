@@ -19,7 +19,7 @@ const RCButton: React.FC<PICButtonProps> = ({ is_active }) => {
       
     }}
     >
-      <span className="flex items-center rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 shadow-elevation-low hover:shadow-elevation-medium transition-all duration-200">
+      <span className="flex items-center rounded-xl bg-primary text-primary-foreground px-5 py-3 text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 shadow-elevation-low hover:shadow-elevation-medium transition-all duration-200 touch-manipulation active:scale-95">
               Rush Chair
             </span>
     </div>
