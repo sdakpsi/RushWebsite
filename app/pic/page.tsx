@@ -11,9 +11,10 @@ import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import { useDelibsSubmission } from "@/hooks/useDelibsSubmission";
 import { useSearchAndSort } from "@/hooks/useSearchAndSort";
 import { useCurrentWave } from "@/hooks/useCurrentWave";
+import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
-  const { isPIC, isLoading: isPICLoading } = useActiveStatus();
+  const { isPIC, isLoading: isPICLoading , isActive} = useActiveStatus();
   const { usersData, avatarMap, isLoading: isUsersLoading } = usePICUsers();
   const {
     currentApplicationId,
@@ -47,6 +48,24 @@ export default function ProtectedPage() {
   // Don't include cases/interviews loading since it depends on user selection
   if (isPICLoading || isUsersLoading || isWaveLoading) {
     return <LoadingSpinner />;
+  }
+
+  // Not PIC
+  if (!isActive) {
+    return redirect('/')
+  }
+  if (!isPIC) {
+    return (
+      <div className="flex w-full items-center justify-center">
+        <div className="animate-in w-full max-w-7xl opacity-0">
+          <div className="mt-8 flex items-center justify-center">
+            <p className="text-sm sm:text-lg">
+              You are not on PIC.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

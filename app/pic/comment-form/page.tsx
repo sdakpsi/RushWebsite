@@ -5,9 +5,10 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useProspectComments } from "@/hooks/useProspectComments";
+import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
-  const { isPIC, isLoading: isPICLoading } = useActiveStatus();
+  const { isPIC, isLoading: isPICLoading, isActive } = useActiveStatus();
   const { commentsData, isLoading: isUsersLoading } = useProspectComments();
 
   const [expandedProspects, setExpandedProspects] = useState<{[key: string]: boolean}>({});
@@ -21,6 +22,24 @@ export default function ProtectedPage() {
 
   if (isPICLoading || isUsersLoading) {
     return <LoadingSpinner />;
+  }
+
+  // Not PIC
+  if (!isActive) {
+    return redirect('/')
+  }
+  if (!isPIC) {
+    return (
+      <div className="flex w-full items-center justify-center">
+        <div className="animate-in w-full max-w-7xl opacity-0">
+          <div className="mt-8 flex items-center justify-center">
+            <p className="text-sm sm:text-lg">
+              You are not on PIC.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Group comments by prospect_id

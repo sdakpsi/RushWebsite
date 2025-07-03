@@ -99,7 +99,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
           {user.user_metadata.name || user.email}
         </span>
       </div>
-      <button onClick={signOut} className="btn-ghost px-4 py-2.5 rounded-xl">
+      <button onClick={signOut} className="flex items-center rounded-xl bg-gradient-to-r from-gray-600/80 to-slate-600/80 backdrop-blur-sm border border-gray-400/30 text-white px-4 py-2.5 text-sm font-medium hover:from-gray-600 hover:to-slate-600 focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
         <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
@@ -107,7 +107,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
       </button>
     </div>
   ) : (
-    <button onClick={handleSignInWithGoogle} className="btn-primary px-6 py-2.5 rounded-xl shadow-elevation-medium hover:shadow-elevation-high transition-all duration-200">
+    <button onClick={handleSignInWithGoogle} className="flex items-center rounded-xl bg-gradient-to-r from-blue-600/80 to-indigo-600/80 backdrop-blur-sm border border-blue-400/30 text-white px-6 py-2.5 text-sm font-medium hover:from-blue-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
       <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
       </svg>

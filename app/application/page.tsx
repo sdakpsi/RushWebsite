@@ -28,7 +28,7 @@ export default async function ProtectedPage() {
     .single();
 
   // Redirect non-active users without photos back to main page
-  if (!userData?.is_active && !userData?.photo_url) {
+  if (userData?.is_active || !userData?.photo_url) {
     return redirect("/");
   }
 
