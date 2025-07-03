@@ -147,6 +147,7 @@ export default function AnalyticsPage() {
                         <th className="pb-3 text-center font-medium text-gray-300">Case Studies</th>
                         <th className="pb-3 text-center font-medium text-gray-300">Interviews</th>
                         <th className="pb-3 text-center font-medium text-gray-300">Total</th>
+                        <th className="pb-3 text-left font-medium text-gray-300">Last Activity</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -169,6 +170,21 @@ export default function AnalyticsPage() {
                             <span className={`font-semibold ${active.totalEvaluations > 10 ? 'text-green-400' : active.totalEvaluations > 5 ? 'text-yellow-400' : 'text-red-400'}`}>
                               {active.totalEvaluations}
                             </span>
+                          </td>
+                          <td className="py-3 text-gray-400 text-xs">
+                            {active.lastActivity 
+                              ? (() => {
+                                  const date = new Date(active.lastActivity);
+                                  const now = new Date();
+                                  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+                                  
+                                  if (diffInHours < 1) return "< 1 hour ago";
+                                  if (diffInHours < 24) return `${diffInHours} hours ago`;
+                                  const diffInDays = Math.floor(diffInHours / 24);
+                                  return `${diffInDays} days ago`;
+                                })()
+                              : "No activity"
+                            }
                           </td>
                         </tr>
                       ))}
@@ -246,9 +262,9 @@ export default function AnalyticsPage() {
                       <div className="text-xs text-gray-500">
                         {(day.commentsCount + day.caseStudiesCount + day.interviewsCount) > 0 && (
                           <div>
-                            {day.commentsCount > 0 && <span>C:{day.commentsCount}</span>}
-                            {day.caseStudiesCount > 0 && <span> CS:{day.caseStudiesCount}</span>}
-                            {day.interviewsCount > 0 && <span> I:{day.interviewsCount}</span>}
+                            {day.commentsCount > 0 && <span>Comments: {day.commentsCount}</span>}
+                            {day.caseStudiesCount > 0 && <span> Case Studies: {day.caseStudiesCount}</span>}
+                            {day.interviewsCount > 0 && <span> Interviews: {day.interviewsCount}</span>}
                           </div>
                         )}
                       </div>

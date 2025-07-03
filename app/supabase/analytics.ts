@@ -90,8 +90,49 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           console.error("Error fetching interviews count:", interviewsError);
         }
 
-        // Skip last activity for now to avoid column errors
-        const lastActivity = null;
+        // Get last activity timestamp
+        const activities = [];
+        
+        const { data: lastComment, error: lastCommentError } = await supabase
+          .from("comments")
+          .select("created_at")
+          .eq("active_id", active.id)
+          .order("created_at", { ascending: false })
+          .limit(1);
+        
+        if (lastCommentError) {
+          console.error("Error fetching last comment:", lastCommentError);
+        }
+        
+        const { data: lastCaseStudy, error: lastCaseStudyError } = await supabase
+          .from("case_studies")
+          .select("created_at")
+          .eq("active", active.id)
+          .order("created_at", { ascending: false })
+          .limit(1);
+        
+        if (lastCaseStudyError) {
+          console.error("Error fetching last case study:", lastCaseStudyError);
+        }
+        
+        const { data: lastInterview, error: lastInterviewError } = await supabase
+          .from("interviews")
+          .select("created_at")
+          .eq("active_id", active.id)
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (lastInterviewError) {
+          console.error("Error fetching last interview:", lastInterviewError);
+        }
+
+        if (lastComment?.[0]?.created_at) activities.push(lastComment[0].created_at);
+        if (lastCaseStudy?.[0]?.created_at) activities.push(lastCaseStudy[0].created_at);
+        if (lastInterview?.[0]?.created_at) activities.push(lastInterview[0].created_at);
+
+        const lastActivity = activities.length > 0 
+          ? activities.sort().reverse()[0] 
+          : null;
 
         return {
           activeId: active.id,
@@ -121,7 +162,7 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const dateFilter = sevenDaysAgo.toISOString();
 
-    // Get comments by date (only working timestamp query)
+    // Get all evaluation data by date
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
       .select("created_at")
@@ -129,6 +170,24 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
 
     if (commentsError) {
       console.error("Error fetching comments for timeline:", commentsError);
+    }
+
+    const { data: caseStudies, error: caseStudiesError } = await supabase
+      .from("case_studies")
+      .select("created_at")
+      .gte("created_at", dateFilter);
+
+    if (caseStudiesError) {
+      console.error("Error fetching case studies for timeline:", caseStudiesError);
+    }
+
+    const { data: interviews, error: interviewsError } = await supabase
+      .from("interviews")
+      .select("created_at")
+      .gte("created_at", dateFilter);
+
+    if (interviewsError) {
+      console.error("Error fetching interviews for timeline:", interviewsError);
     }
 
     // Create timeline for last 7 days
@@ -144,19 +203,41 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
       dateMap.set(dateStr, {
         date: dateStr,
         commentsCount: 0,
-        caseStudiesCount: 0, // Disabled due to column issues
-        interviewsCount: 0, // Disabled due to column issues
+        caseStudiesCount: 0,
+        interviewsCount: 0,
         totalEvaluations: 0
       });
     }
 
-    // Process comments data
+    // Process all evaluation data
     comments?.forEach(comment => {
       if (comment.created_at) {
         const date = new Date(comment.created_at).toISOString().split('T')[0];
         const dayData = dateMap.get(date);
         if (dayData) {
           dayData.commentsCount++;
+          dayData.totalEvaluations++;
+        }
+      }
+    });
+
+    caseStudies?.forEach(caseStudy => {
+      if (caseStudy.created_at) {
+        const date = new Date(caseStudy.created_at).toISOString().split('T')[0];
+        const dayData = dateMap.get(date);
+        if (dayData) {
+          dayData.caseStudiesCount++;
+          dayData.totalEvaluations++;
+        }
+      }
+    });
+
+    interviews?.forEach(interview => {
+      if (interview.created_at) {
+        const date = new Date(interview.created_at).toISOString().split('T')[0];
+        const dayData = dateMap.get(date);
+        if (dayData) {
+          dayData.interviewsCount++;
           dayData.totalEvaluations++;
         }
       }

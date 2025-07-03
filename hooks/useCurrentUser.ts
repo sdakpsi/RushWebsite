@@ -21,6 +21,5 @@ export function useCurrentUser() {
     error
   };
 
-  console.log('useCurrentUser hook result:', result);
   return result;
 }
