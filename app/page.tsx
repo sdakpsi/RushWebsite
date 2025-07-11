@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import background from "./background.png";
-import tagline from "./tagline.png";
+import tagline from "./test2.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -39,25 +39,34 @@ export default function Index() {
       </div>
     );
   }
+  
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Background with dark theme overlay */}
-      <div
-        className="absolute inset-0 z-0 bg-background"
-        style={{
-          backgroundImage: `url(${background.src})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+    <div className="prospect-theme relative min-h-screen w-full overflow-hidden">
+      {/* Background with cool gradient */}
+      <div className="absolute inset-0 z-0 prospect-gradient-hero" />
 
       {/* Floating elements for visual interest */}
       <div className="absolute inset-0 z-10 overflow-hidden">
-        <div className="absolute -left-24 -top-24 h-96 w-96 animate-float rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl" />
+        <div 
+          className="absolute -left-24 -top-24 h-96 w-96 animate-float rounded-full blur-3xl" 
+          style={{
+            background: "linear-gradient(45deg, rgba(143, 131, 235, 0.2), rgba(0, 25, 108, 0.1))",
+          }}
+        />
         <div
-          className="absolute -bottom-24 -right-24 h-96 w-96 animate-float rounded-full bg-gradient-to-tl from-accent/20 to-transparent blur-3xl"
-          style={{ animationDelay: "3s" }}
+          className="absolute -bottom-24 -right-24 h-96 w-96 animate-float rounded-full blur-3xl"
+          style={{ 
+            animationDelay: "3s",
+            background: "linear-gradient(-45deg, rgba(143, 131, 235, 0.15), rgba(2, 0, 62, 0.2))",
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] animate-pulse rounded-full blur-3xl"
+          style={{ 
+            animationDelay: "1.5s", 
+            animationDuration: "8s",
+            background: "radial-gradient(circle, rgba(143, 131, 235, 0.08), rgba(0, 25, 108, 0.05), rgba(2, 0, 62, 0.08))",
+          }}
         />
       </div>
 
@@ -80,9 +89,9 @@ export default function Index() {
             <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
               {/* Welcome Section */}
               <div className="lg:col-span-2">
-                <div className="card glass animate-slide-up">
+                <div className={`${isActive ? 'card glass' : 'prospect-card prospect-glass rounded-xl p-6'} animate-slide-up`}>
                   <div className="card-header">
-                    <h1 className="card-title bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                    <h1 className={`card-title ${isActive ? 'bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent' : 'text-white'}`}>
                       {isActive
                         ? "Active Member Dashboard"
                         : `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`}
@@ -181,7 +190,7 @@ export default function Index() {
                     ) : (
                       // Non-active user content
                       <div className="space-y-4">
-                        <p className="text-muted-foreground">
+                        <p className="text-gray-300">
                           Please fill out the interest form below to receive
                           updates regarding rush!
                         </p>
@@ -189,7 +198,7 @@ export default function Index() {
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-3 sm:flex-row">
                           <Link href="/interest" className="flex-1">
-                            <button className="btn-primary w-full transform transition-all">
+                            <button className="prospect-btn-primary w-full transform transition-all rounded-lg px-4 py-2 text-sm font-medium">
                               Interest Form
                             </button>
                           </Link>
@@ -216,16 +225,16 @@ export default function Index() {
                 </div> */}
 
                 {/* Quick Links */}
-                <div className="card">
+                <div className={isActive ? "card" : "prospect-card rounded-xl p-6"}>
                   <div className="card-header">
-                    <h3 className="card-title">Quick Links</h3>
+                    <h3 className={`card-title ${isActive ? '' : 'text-white'}`}>Quick Links</h3>
                   </div>
                   <div className="card-content space-y-3">
                     <a
                       href={currentTheme.branding.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-outline w-full"
+                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center"}
                     >
                       Official Website
                     </a>
@@ -233,7 +242,7 @@ export default function Index() {
                       href="https://www.instagram.com/ucsdakpsi/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-outline w-full"
+                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center"}
                     >
                       Instagram
                     </a>
@@ -241,9 +250,9 @@ export default function Index() {
                 </div>
 
                 {/* Contact Info */}
-                <div className="card">
+                <div className={isActive ? "card" : "prospect-card rounded-xl p-6"}>
                   <div className="card-header">
-                    <h3 className="card-title">Need Help?</h3>
+                    <h3 className={`card-title ${isActive ? '' : 'text-white'}`}>Need Help?</h3>
                   </div>
                   <div className="card-content">
                     {isActive ?
@@ -252,7 +261,7 @@ export default function Index() {
                        To report any issues or questions please contact Ryan (909)-655-8447
                       </p>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-300">
                       If you're having any issues or have questions, please{" "}
                       {currentTheme.branding.rushChairs}!
                     </p> 
@@ -268,7 +277,7 @@ export default function Index() {
               className="mt-12 animate-fade-in text-center"
               style={{ animationDelay: "0.8s" }}
             >
-              <p className="text-xs text-muted-foreground text-white">
+              <p className={`text-xs ${isActive ? 'text-muted-foreground text-white' : 'text-gray-400'}`}>
                 *When signing in, it will ask to continue to{" "}
                 <span className="font-mono font-medium">
                   kvuilkasrtgyazkvxjal.supabase.co

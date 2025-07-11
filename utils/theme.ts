@@ -63,7 +63,7 @@ export const currentTheme: Theme = {
     rushYear: "Fall '25",
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiucsd.com",
-    rushChairs: "contact Kristen Lee or Jessie Ha @ (732) 484-8791 / (626) 267-4161",
+    rushChairs: "contact Amanda Wu or Joshua Hoffman @ (949)-572-8948 / (510)-634-9132",
   }
 };
 

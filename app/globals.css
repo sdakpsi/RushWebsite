@@ -200,6 +200,121 @@
   .glass-dark {
     @apply backdrop-blur-sm bg-background/90 border border-border/30;
   }
+
+  /* Prospect Theme Classes - Off-white on navy blue with white secondary */
+  .prospect-theme {
+    --prospect-primary: 216 100% 21%;       /* Navy blue primary (#00196C) */
+    --prospect-primary-foreground: 0 0% 100%;  /* White text on primary */
+    --prospect-secondary: 0 0% 100%;        /* White secondary */
+    --prospect-secondary-foreground: 216 100% 21%;  /* Navy blue text on secondary */
+    --prospect-accent: 0 85% 55%;           /* Red accent color */
+    --prospect-accent-foreground: 0 0% 100%;   /* White text on accent */
+    --prospect-background: 216 100% 21%;    /* Navy blue background (#00196C) */
+    --prospect-foreground: 0 0% 100%;       /* White text color */
+    --prospect-muted: 216 50% 30%;          /* Lighter navy muted background */
+    --prospect-muted-foreground: 0 0% 80%;  /* Light muted text */
+    --prospect-border: 216 50% 35%;         /* Border color */
+    --prospect-input: 0 0% 100%;            /* White input background */
+    --prospect-ring: 0 0% 100%;             /* White focus ring */
+    --prospect-shadow-color: 0 0% 0%;
+    --prospect-shadow-elevation-low: 0 1px 2px 0 hsl(var(--prospect-shadow-color) / 0.2);
+    --prospect-shadow-elevation-medium: 0 4px 6px -1px hsl(var(--prospect-shadow-color) / 0.3), 0 2px 4px -2px hsl(var(--prospect-shadow-color) / 0.3);
+    --prospect-shadow-elevation-high: 0 10px 15px -3px hsl(var(--prospect-shadow-color) / 0.4), 0 4px 6px -4px hsl(var(--prospect-shadow-color) / 0.4);
+  }
+
+  .prospect-bg {
+    background-color: hsl(var(--prospect-background));
+    color: hsl(var(--prospect-foreground));
+  }
+
+  .prospect-text {
+    color: hsl(var(--prospect-foreground));
+  }
+
+  .prospect-text-muted {
+    color: hsl(var(--prospect-muted-foreground));
+  }
+
+  .prospect-primary {
+    background-color: hsl(var(--prospect-primary));
+    color: hsl(var(--prospect-primary-foreground));
+  }
+
+  .prospect-secondary {
+    background-color: hsl(var(--prospect-secondary));
+    color: hsl(var(--prospect-secondary-foreground));
+  }
+
+  .prospect-accent {
+    background-color: hsl(var(--prospect-accent));
+    color: hsl(var(--prospect-accent-foreground));
+  }
+
+  .prospect-border {
+    border-color: hsl(var(--prospect-border));
+  }
+
+  .prospect-card {
+    background-color: hsl(var(--prospect-background));
+    border: 1px solid hsl(var(--prospect-border));
+    box-shadow: var(--prospect-shadow-elevation-low);
+  }
+
+  .prospect-input {
+    background-color: hsl(var(--prospect-input));
+    border: 1px solid hsl(var(--prospect-border));
+    color: hsl(var(--prospect-foreground));
+  }
+
+  .prospect-input:focus {
+    outline: none;
+    ring: 2px solid hsl(var(--prospect-ring));
+  }
+
+  .prospect-btn-primary {
+    background-color: hsl(var(--prospect-primary));
+    color: hsl(var(--prospect-primary-foreground));
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .prospect-btn-primary:hover {
+    background-color: hsl(var(--prospect-primary) / 0.9);
+    box-shadow: var(--prospect-shadow-elevation-medium);
+  }
+
+  .prospect-btn-secondary {
+    background-color: hsl(var(--prospect-secondary));
+    color: hsl(var(--prospect-secondary-foreground));
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .prospect-btn-secondary:hover {
+    background-color: hsl(var(--prospect-secondary) / 0.9);
+    box-shadow: var(--prospect-shadow-elevation-medium);
+  }
+
+  .prospect-gradient-bg {
+    background: linear-gradient(135deg, 
+      #02003E 0%, 
+      #00196C 50%, 
+      #8F83EB 100%);
+  }
+
+  .prospect-gradient-hero {
+    background: linear-gradient(90deg, 
+      #02003E 0%, 
+      #00196C 40%, 
+      #8F83EB 80%, 
+      #00196C 100%);
+  }
+
+  .prospect-glass {
+    backdrop-filter: blur(12px);
+    background-color: hsl(var(--prospect-muted) / 0.9);
+    border: 1px solid hsl(var(--prospect-border) / 0.5);
+  }
 }
 
 /* Enhanced Animations */

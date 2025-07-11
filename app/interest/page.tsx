@@ -125,9 +125,9 @@ const InterestForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-bg relative overflow-hidden">
+    <div className="prospect-theme min-h-screen w-full prospect-gradient-hero relative overflow-hidden fixed inset-0">
       {/* Starfield background */}
-      <div className="absolute inset-0 bg-background">
+      <div className="absolute inset-0">
         {stars.map((star) => (
           <Star key={star.id} {...star} />
         ))}
@@ -138,11 +138,11 @@ const InterestForm = () => {
 
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-float" />
-        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-accent/20 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-3xl animate-float" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-white/15 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 overflow-y-auto">
         {/* Header */}
         <div className="text-center mb-8 animate-slide-down">
           <Image
@@ -152,26 +152,26 @@ const InterestForm = () => {
             height={100}
             className="mx-auto mb-4"
           />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             {RUSH_YEAR} Rush Interest Form
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-gray-300">
             Thank you for taking interest in UCSD Alpha Kappa Psi
           </p>
         </div>
 
         {/* Form Container */}
-        <div className="card glass w-full max-w-md animate-slide-up">
+        <div className="prospect-card prospect-glass w-full max-w-md animate-slide-up rounded-xl p-6">
           <div className="card-header text-center">
-            <h2 className="card-title">Join Our Rush</h2>
-            <p className="card-description">
+            <h2 className="card-title text-white">Join Our Rush</h2>
+            <p className="card-description text-gray-300">
               Fill out this form to stay updated on rush events
             </p>
           </div>
           <div className="card-content">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                <label htmlFor="name" className="block text-sm font-medium mb-2 text-white">
                   Full Name *
                 </label>
                 <input
@@ -180,14 +180,14 @@ const InterestForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="input"
+                  className="prospect-input w-full h-10 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                   placeholder="Enter your full name"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-white">
                   Email *
                 </label>
                 <input
@@ -196,14 +196,14 @@ const InterestForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="input"
+                  className="prospect-input w-full h-10 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                   placeholder="your@email.com"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium mb-2 text-white">
                   Phone Number (Optional)
                 </label>
                 <input
@@ -212,7 +212,7 @@ const InterestForm = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="input"
+                  className="prospect-input w-full h-10 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                   placeholder="(123) 456-7890"
                 />
               </div>
@@ -220,7 +220,7 @@ const InterestForm = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-primary w-full"
+                className="prospect-btn-primary w-full rounded-lg px-4 py-2 text-sm font-medium"
               >
                 {isSubmitting ? "Submitting..." : "Submit Interest Form"}
               </button>
@@ -229,9 +229,9 @@ const InterestForm = () => {
         </div>
 
         {/* Contact Info */}
-        <div className="text-center mt-8 text-sm text-muted-foreground animate-fade-in">
-          <p>Questions? Follow us on Instagram <a href="https://www.instagram.com/ucsdakpsi" target="_blank" className="text-primary hover:underline">@ucsdakpsi</a></p>
-          <p>Or email us at <a href="mailto:akpfall2025@gmail.com" className="text-primary hover:underline">akpfall2025@gmail.com</a></p>
+        <div className="text-center mt-8 text-sm text-gray-300 animate-fade-in">
+          <p>Questions? Follow us on Instagram <a href="https://www.instagram.com/ucsdakpsi" target="_blank" className="text-white hover:underline">@ucsdakpsi</a></p>
+          <p>Or email us at <a href="mailto:akpfall2025@gmail.com" className="text-white hover:underline">akpfall2025@gmail.com</a></p>
         </div>
       </div>
     </div>
