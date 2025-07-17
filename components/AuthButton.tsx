@@ -99,7 +99,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
           {user.user_metadata.name || user.email}
         </span>
       </div>
-      <button onClick={signOut} className="flex items-center rounded-xl bg-gradient-to-r from-gray-600/80 to-slate-600/80 backdrop-blur-sm border border-gray-400/30 text-white px-4 py-2.5 text-sm font-medium hover:from-gray-600 hover:to-slate-600 focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
+      <button onClick={signOut} className="flex items-center rounded-xl bg-gradient-to-r from-red-500/80 to-rose-600/80 backdrop-blur-sm border border-red-400/30 text-white px-4 py-2.5 text-sm font-medium hover:from-red-500 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
         <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>

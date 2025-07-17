@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/server";
 import { libreCaslon } from "@/fonts/fonts";
 import { bonVivant } from "@/fonts/fonts";
 import { montserrat } from "@/fonts/fonts";
+import { neueHaasGrotesk } from "@/fonts/fonts";
 import ReactQueryProvider from "@/server/queryClientProvider";
 import NavigationLoader from "@/components/NavigationLoader";
 import ScrollRestoration from "@/components/ScrollRestoration";
@@ -56,7 +57,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.className} ${libreCaslon.variable} ${bonVivant.variable} ${montserrat.variable}`}
+      className={`${neueHaasGrotesk.className} ${libreCaslon.variable} ${bonVivant.variable} ${montserrat.variable} ${neueHaasGrotesk.variable}`}
     >
       <body className="bg-background text-foreground">
         <ReactQueryProvider>

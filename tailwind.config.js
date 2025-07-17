@@ -29,7 +29,8 @@ module.exports = {
         "libre-caslon": ["LibreCaslon", "serif"],
         bonVivant: ["var(--font-bon-vivant)", "serif"],
         montserrat: ["var(--font-montserrat)", "sans-serif"],
-        sans: ["var(--font-montserrat)", "system-ui", "sans-serif"],
+        "neue-haas": ["var(--font-neue-haas-grotesk)", "sans-serif"],
+        sans: ["var(--font-neue-haas-grotesk)", "system-ui", "sans-serif"],
       },
       fontSize: {
         xs: "var(--font-size-xs)",

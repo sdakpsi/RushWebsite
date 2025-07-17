@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import background from "./background.png";
-import tagline from "./test2.png";
+import tagline from "./tagline.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -42,33 +42,19 @@ export default function Index() {
   
   return (
     <div className="prospect-theme relative min-h-screen w-full overflow-hidden">
-      {/* Background with cool gradient */}
-      <div className="absolute inset-0 z-0 prospect-gradient-hero" />
-
-      {/* Floating elements for visual interest */}
-      <div className="absolute inset-0 z-10 overflow-hidden">
-        <div 
-          className="absolute -left-24 -top-24 h-96 w-96 animate-float rounded-full blur-3xl" 
-          style={{
-            background: "linear-gradient(45deg, rgba(143, 131, 235, 0.2), rgba(0, 25, 108, 0.1))",
-          }}
-        />
-        <div
-          className="absolute -bottom-24 -right-24 h-96 w-96 animate-float rounded-full blur-3xl"
-          style={{ 
-            animationDelay: "3s",
-            background: "linear-gradient(-45deg, rgba(143, 131, 235, 0.15), rgba(2, 0, 62, 0.2))",
-          }}
-        />
-        <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] animate-pulse rounded-full blur-3xl"
-          style={{ 
-            animationDelay: "1.5s", 
-            animationDuration: "8s",
-            background: "radial-gradient(circle, rgba(143, 131, 235, 0.08), rgba(0, 25, 108, 0.05), rgba(2, 0, 62, 0.08))",
-          }}
-        />
-      </div>
+      {/* Background image */}
+      <div
+        className="absolute inset-0 z-0 bg-background"
+        style={{
+          backgroundImage: `url(${background.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          imageRendering: "crisp-edges",
+          filter: "contrast(1.1) brightness(1.05)",
+        }}
+      />
 
       {/* Main content area */}
       <div className="relative z-20 flex min-h-screen flex-col">
@@ -76,7 +62,7 @@ export default function Index() {
         <section className="flex flex-1 items-center justify-center px-4 py-12">
           <div className="mx-auto max-w-7xl">
             {/* Tagline */}
-            <div className="mb-12 flex animate-slide-down justify-center">
+            <div className="mb-12 flex animate-slide-down justify-start">
               <Image
                 src={tagline}
                 alt="tagline"
@@ -234,7 +220,7 @@ export default function Index() {
                       href={currentTheme.branding.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center"}
+                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-blue-600 hover:to-yellow-500 hover:text-white transition-all duration-200"}
                     >
                       Official Website
                     </a>
@@ -242,7 +228,7 @@ export default function Index() {
                       href="https://www.instagram.com/ucsdakpsi/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center"}
+                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-red-500 hover:via-yellow-500 hover:via-green-500 hover:via-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all duration-200"}
                     >
                       Instagram
                     </a>

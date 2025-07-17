@@ -30,3 +30,15 @@ export const bonVivant = localFont({
   ],
   variable: "--font-bon-vivant", // Use variable to match the Libre Caslon format
 });
+
+export const neueHaasGrotesk = localFont({
+  src: [
+    {
+      path: "../public/fonts/NeueHaasDisplayMediu.ttf",
+      weight: "500",
+      style: "normal",
+    },
+  ],
+  variable: "--font-neue-haas-grotesk",
+  display: "swap",
+});

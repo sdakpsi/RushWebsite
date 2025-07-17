@@ -6,74 +6,46 @@ import { InterestForm as InterestFormType } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import { RUSH_YEAR } from "@/utils/constants";
 
-interface ShootingStar {
-  id: number;
-  delay: number;
-}
-
-const Star = ({
+const GentleOrb = ({
   top,
   left,
   size,
+  delay,
 }: {
   top: number;
   left: number;
   size: number;
+  delay: number;
 }) => (
   <div
-    className="absolute rounded-full bg-white"
+    className="absolute rounded-full bg-blue-400/5 border border-blue-300/10"
     style={{
       top: `${top}%`,
       left: `${left}%`,
       width: `${size}px`,
       height: `${size}px`,
+      animation: `gentle-breathe 8s ease-in-out infinite`,
+      animationDelay: `${delay}s`,
     }}
   />
 );
 
-const ShootingStar = ({ delay }: { delay: number }) => {
-  const top = Math.random() * 100;
-  const left = Math.random() * 100;
-
-  return (
-    <div
-      className="absolute h-1 w-1 animate-shooting-star rounded-full bg-blue-200"
-      style={{
-        top: `${top}%`,
-        left: `${left}%`,
-        animationDelay: `${delay}s`,
-      }}
-    />
-  );
-};
-
 const InterestForm = () => {
-  const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
   const [formData, setFormData] = useState<InterestFormType>({
     name: "",
     email: "",
     phone: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [stars] = useState(() =>
-    Array.from({ length: 50 }, (_, i) => ({
+  const [gentleOrbs] = useState(() =>
+    Array.from({ length: 20 }, (_, i) => ({
       id: i,
       top: Math.random() * 100,
       left: Math.random() * 100,
-      size: Math.random() * 3 + 1,
+      size: Math.random() * 40 + 20,
+      delay: Math.random() * 8,
     }))
   );
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShootingStars((prev) => [
-        ...prev.slice(-5),
-        { id: Date.now(), delay: Math.random() * 5 },
-      ]);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -125,14 +97,25 @@ const InterestForm = () => {
   };
 
   return (
-    <div className="prospect-theme min-h-screen w-full prospect-gradient-hero relative overflow-hidden fixed inset-0">
-      {/* Starfield background */}
+    <div className="prospect-theme min-h-screen w-full bg-slate-900 relative overflow-hidden fixed inset-0">
+      {/* Blueprint grid background */}
+      <div className="absolute inset-0 opacity-40">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '30px 30px',
+          }}
+        />
+      </div>
+      
+      {/* Gentle orb elements */}
       <div className="absolute inset-0">
-        {stars.map((star) => (
-          <Star key={star.id} {...star} />
-        ))}
-        {shootingStars.map((star) => (
-          <ShootingStar key={star.id} delay={star.delay} />
+        {gentleOrbs.map((orb) => (
+          <GentleOrb key={orb.id} {...orb} />
         ))}
       </div>
 

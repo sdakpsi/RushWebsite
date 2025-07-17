@@ -31,9 +31,10 @@ export default function GoogleOAuth() {
 
   return (
     <button
-      className="text-sm text-muted-foreground flex items-center justify-center rounded border bg-btn-background px-4 py-2 text-sm text-white shadow-sm hover:bg-btn-background-hover"
+      className="flex items-center rounded-xl bg-gradient-to-r from-blue-600/80 to-indigo-600/80 backdrop-blur-sm border border-blue-400/30 text-white px-6 py-2.5 text-sm font-medium hover:from-blue-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95"
       onClick={handleSignInWithGoogle}
     >
+   
       Login with Google
     </button>
   );

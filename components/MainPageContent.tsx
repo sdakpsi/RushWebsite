@@ -32,7 +32,7 @@ export default function MainPageContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="font-semibold text-info">
-              Application Due: Thursday, April 10th at 2 PM
+              Application Due: Thursday, October 2nd at 2 PM
             </p>
           </div>
         </div>
@@ -80,14 +80,8 @@ export default function MainPageContent() {
       ) : (
         <div className="text-center">
           <div className="mx-auto max-w-md">
-            <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <svg className="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Sign In to Continue</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Please sign in with your Google account to access the application portal.
+            <p className="text-med font-semibold mb-2">
+              Please sign in to access the application portal.
             </p>
             <div className="flex justify-center">
               <GoogleOAuth />

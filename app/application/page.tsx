@@ -33,14 +33,14 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="prospect-theme min-h-screen prospect-bg">
+    <div className="prospect-theme min-h-screen w-full prospect-bg relative">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-3xl animate-float" />
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-blue-900/40 via-blue-800/20 to-transparent blur-3xl animate-float" />
         <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-white/15 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
       </div>
 
-      <div className="relative z-10 container py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="animate-slide-up">
           {/* Header */}
           <div className="text-center mb-12">
@@ -59,7 +59,7 @@ export default async function ProtectedPage() {
               <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="font-medium text-white">Due: Thursday, April 10th at 2 PM</span>
+              <span className="font-medium text-white">Due: Thursday, October 2nd at 2 PM</span>
             </div>
           </div>
 
