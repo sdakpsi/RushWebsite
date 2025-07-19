@@ -30,7 +30,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-primary/20 backdrop-blur-lg">
       <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
         {/* Logo and title */}
         <div 
