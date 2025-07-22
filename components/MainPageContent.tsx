@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import Link from "next/link";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import PhotoUploadWrapper from "@/components/PhotoUploadWrapper";
@@ -8,6 +8,7 @@ import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
 
 export default function MainPageContent() {
   const { user, isActive, hasPhoto, photoUrl, isLoading } = useCurrentUser();
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   // Show loading state while checking user data
   if (isLoading) {
@@ -21,7 +22,7 @@ export default function MainPageContent() {
     );
   }
   if (isActive) {
-    return
+    return null;
   }
   return (
     <div className="space-y-6">
@@ -54,27 +55,15 @@ export default function MainPageContent() {
           
           {/* Show photo upload for non-active users */}
           {!isActive && (
-            <div className="card glass">
-              <div className="card-header text-center">
-                <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <h3 className="card-title text-lg">
-                  {hasPhoto ? "Update Your Photo" : "Complete Your Profile"}
-                </h3>
-                <p className="card-description">
-                  {hasPhoto 
-                    ? "You can change your photo anytime" 
-                    : "Please upload a photo of yourself to continue with your application"
-                  }
-                </p>
-              </div>
-              <div className="card-content">
-                <PhotoUploadWrapper existingPhotoUrl={photoUrl} />
-              </div>
-            </div>
+            <button 
+              onClick={() => setIsPhotoModalOpen(true)}
+              className="btn-secondary w-full sm:w-auto flex items-center justify-center"
+            >
+              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              {hasPhoto ? "Update Photo" : "Upload Photo"}
+            </button>
           )}
         </div>
       ) : (
@@ -86,6 +75,45 @@ export default function MainPageContent() {
             <div className="flex justify-center">
               <GoogleOAuth />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Photo Upload Modal */}
+      {isPhotoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="relative bg-card border border-border rounded-xl p-6 m-4 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            {/* Close button */}
+            <button
+              onClick={() => setIsPhotoModalOpen(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Close modal"
+            >
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Modal content */}
+            <div className="text-center mb-6">
+              <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                {hasPhoto ? "Update Your Photo" : "Complete Your Profile"}
+              </h3>
+              <p className="text-muted-foreground">
+                {hasPhoto 
+                  ? "You can change your photo anytime" 
+                  : "Please upload a photo of yourself to continue with your application"
+                }
+              </p>
+            </div>
+
+            {/* Photo upload component */}
+            <PhotoUploadWrapper existingPhotoUrl={photoUrl} />
           </div>
         </div>
       )}

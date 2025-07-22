@@ -59,10 +59,10 @@ export default function Index() {
       {/* Main content area */}
       <div className="relative z-20 flex min-h-screen flex-col">
         {/* Hero Section */}
-        <section className="flex flex-1 items-center justify-center px-4 py-12">
+        <section className="flex flex-1 items-center justify-center px-4 py-8">
           <div className="mx-auto max-w-7xl">
             {/* Tagline */}
-            <div className="mb-12 flex animate-slide-down justify-start">
+            <div className="mb-6 flex animate-slide-down justify-start">
               <Image
                 src={tagline}
                 alt="tagline"
@@ -72,9 +72,9 @@ export default function Index() {
             </div>
 
             {/* Main Content Grid */}
-            <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
-              {/* Welcome Section */}
-              <div className="lg:col-span-2">
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+              {/* Left Column - Welcome Section */}
+              <div className="space-y-6">
                 <div className={`${isActive ? 'card glass' : 'prospect-card prospect-glass rounded-xl p-6'} animate-slide-up`}>
                   <div className="card-header">
                     <h1 className={`card-title ${isActive ? 'bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent' : 'text-white'}`}>
@@ -192,26 +192,23 @@ export default function Index() {
                       </div>
                     )}
 
-                    {/* Main Page Content */}
+                  </div>
+                </div>
+
+                {/* Get Started / Quick Actions */}
+                <div className={`${isActive ? 'card glass' : 'prospect-card prospect-glass rounded-xl p-6'} animate-slide-up`} style={{ animationDelay: '0.15s' }}>
+                  <div className="card-header">
+                    <h3 className={`card-title ${isActive ? 'bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent' : 'text-white'}`}>
+                      {isActive ? "Quick Actions" : "Get Started"}
+                    </h3>
+                  </div>
+                  <div className="card-content">
                     <MainPageContent />
                   </div>
                 </div>
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                {/* Timer Card (when enabled) */}
-                {/* <div className="card animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                  <div className="card-header">
-                    <h3 className="card-title text-center">⏰ Rush Countdown</h3>
-                  </div>
-                  <div className="card-content">
-                    <Timer />
-                  </div>
-                </div> */}
 
                 {/* Quick Links */}
-                <div className={isActive ? "card" : "prospect-card rounded-xl p-6"}>
+                <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.25s' }}>
                   <div className="card-header">
                     <h3 className={`card-title ${isActive ? '' : 'text-white'}`}>Quick Links</h3>
                   </div>
@@ -236,7 +233,7 @@ export default function Index() {
                 </div>
 
                 {/* Contact Info */}
-                <div className={isActive ? "card" : "prospect-card rounded-xl p-6"}>
+                <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.35s' }}>
                   <div className="card-header">
                     <h3 className={`card-title ${isActive ? '' : 'text-white'}`}>Need Help?</h3>
                   </div>
@@ -256,19 +253,116 @@ export default function Index() {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Bottom Notice */}
-            <div
-              className="mt-12 animate-fade-in text-center"
-              style={{ animationDelay: "0.8s" }}
-            >
-              <p className={`text-xs ${isActive ? 'text-muted-foreground text-white' : 'text-gray-400'}`}>
-                *When signing in, it will ask to continue to{" "}
-                <span className="font-mono font-medium">
-                  kvuilkasrtgyazkvxjal.supabase.co
-                </span>
-              </p>
+              {/* Right Column - Rush Schedule Only */}
+              <div className="space-y-6">
+                {/* Rush Schedule Timeline */}
+                <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.2s' }}>
+                  <div className="card-header">
+                    <h3 className={`card-title ${isActive ? '' : 'text-white'} mb-4`}>Rush Schedule</h3>
+                  </div>
+                  <div className="card-content">
+                    <div className="space-y-3">
+                      {/* Info Night */}
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-green-400/10 border border-green-400/20">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-green-400/20 rounded-lg flex items-center justify-center">
+                            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-green-300 font-semibold text-sm">Mon 9/29</span>
+                          </div>
+                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Info Night</h4>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>6 PM @ Price Center</p>
+                        </div>
+                      </div>
+
+                      {/* Business Workshop */}
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-blue-400/10 border border-blue-400/20">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-blue-400/20 rounded-lg flex items-center justify-center">
+                            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-blue-300 font-semibold text-sm">Tue 9/30</span>
+                          </div>
+                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Business Workshop</h4>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>8 PM @ PC Theater</p>
+                        </div>
+                      </div>
+
+                      {/* Case Study Night */}
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-purple-400/10 border border-purple-400/20">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-purple-400/20 rounded-lg flex items-center justify-center">
+                            <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-purple-300 font-semibold text-sm">Wed 10/1</span>
+                          </div>
+                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Case Study Night</h4>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>By Appointment</p>
+                        </div>
+                      </div>
+
+                      {/* Application Deadline */}
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-indigo-400/10 border border-indigo-400/20">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-indigo-400/20 rounded-lg flex items-center justify-center">
+                            <div className="w-3 h-3 bg-indigo-400 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-indigo-300 font-semibold text-sm">Thu 10/2</span>
+                          </div>
+                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Application Due</h4>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>2:00 PM Deadline</p>
+                        </div>
+                      </div>
+
+                      {/* Social Night */}
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-orange-400/10 border border-orange-400/20">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-orange-400/20 rounded-lg flex items-center justify-center">
+                            <div className="w-3 h-3 bg-orange-400 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-orange-300 font-semibold text-sm">Fri 10/3</span>
+                          </div>
+                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Social Night</h4>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>By Invite Only</p>
+                        </div>
+                      </div>
+
+                      {/* Interviews */}
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-red-400/10 border border-red-400/20">
+                        <div className="flex-shrink-0">
+                          <div className="w-12 h-12 bg-red-400/20 rounded-lg flex items-center justify-center">
+                            <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-red-300 font-semibold text-sm">Sat 10/4</span>
+                          </div>
+                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Interviews</h4>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>By Appointment</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         </section>
