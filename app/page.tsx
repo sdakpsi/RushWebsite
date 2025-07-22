@@ -264,9 +264,9 @@ export default function Index() {
                   <div className="card-content">
                     <div className="space-y-3">
                       {/* Info Night */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-green-400/10 border border-green-400/20">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-green-400/10 border border-green-400/20 transition-all duration-200 hover:bg-green-400/20 hover:border-green-400/40 hover:shadow-lg hover:scale-[1.02]">
                         <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-green-400/20 rounded-lg flex items-center justify-center">
+                          <div className="w-12 h-12 bg-green-400/20 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:bg-green-400/30">
                             <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                           </div>
                         </div>
@@ -280,7 +280,7 @@ export default function Index() {
                       </div>
 
                       {/* Business Workshop */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-blue-400/10 border border-blue-400/20">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-blue-400/10 border border-blue-400/20 transition-all duration-200 hover:bg-blue-400/20 hover:border-blue-400/40 hover:shadow-lg hover:scale-[1.02]">
                         <div className="flex-shrink-0">
                           <div className="w-12 h-12 bg-blue-400/20 rounded-lg flex items-center justify-center">
                             <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
@@ -296,7 +296,7 @@ export default function Index() {
                       </div>
 
                       {/* Case Study Night */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-purple-400/10 border border-purple-400/20">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-purple-400/10 border border-purple-400/20 transition-all duration-200 hover:bg-purple-400/20 hover:border-purple-400/40 hover:shadow-lg hover:scale-[1.02]">
                         <div className="flex-shrink-0">
                           <div className="w-12 h-12 bg-purple-400/20 rounded-lg flex items-center justify-center">
                             <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
@@ -312,7 +312,7 @@ export default function Index() {
                       </div>
 
                       {/* Application Deadline */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-indigo-400/10 border border-indigo-400/20">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-indigo-400/10 border border-indigo-400/20 transition-all duration-200 hover:bg-indigo-400/20 hover:border-indigo-400/40 hover:shadow-lg hover:scale-[1.02]">
                         <div className="flex-shrink-0">
                           <div className="w-12 h-12 bg-indigo-400/20 rounded-lg flex items-center justify-center">
                             <div className="w-3 h-3 bg-indigo-400 rounded-full animate-pulse"></div>
@@ -328,7 +328,7 @@ export default function Index() {
                       </div>
 
                       {/* Social Night */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-orange-400/10 border border-orange-400/20">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-orange-400/10 border border-orange-400/20 transition-all duration-200 hover:bg-orange-400/20 hover:border-orange-400/40 hover:shadow-lg hover:scale-[1.02]">
                         <div className="flex-shrink-0">
                           <div className="w-12 h-12 bg-orange-400/20 rounded-lg flex items-center justify-center">
                             <div className="w-3 h-3 bg-orange-400 rounded-full animate-pulse"></div>
@@ -344,7 +344,7 @@ export default function Index() {
                       </div>
 
                       {/* Interviews */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-red-400/10 border border-red-400/20">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-red-400/10 border border-red-400/20 transition-all duration-200 hover:bg-red-400/20 hover:border-red-400/40 hover:shadow-lg hover:scale-[1.02]">
                         <div className="flex-shrink-0">
                           <div className="w-12 h-12 bg-red-400/20 rounded-lg flex items-center justify-center">
                             <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
@@ -362,6 +362,7 @@ export default function Index() {
                   </div>
                 </div>
 
+               
               </div>
             </div>
           </div>
