@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import logo from "../../components/akpsilogo.png";
+import background from "../background.png";
 import { InterestForm as InterestFormType } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import { RUSH_YEAR } from "@/utils/constants";
@@ -62,6 +63,7 @@ const InterestForm = () => {
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
 
+    // Enhanced validation
     if (!data.name || !data.email) {
       customToast("Name and email are required", "error");
       setIsSubmitting(false);
@@ -75,6 +77,25 @@ const InterestForm = () => {
       return;
     }
 
+    // Email validation
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(data.email as string)) {
+      customToast("Please enter a valid email address", "error");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Phone validation (if provided)
+    if (data.phone && (data.phone as string).trim()) {
+      const phonePattern = /^[\+]?[1-9]?[\d\s\-\(\)]{10,15}$/;
+      const cleanPhone = (data.phone as string).replace(/[^\d]/g, '');
+      if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+        customToast("Please enter a valid phone number", "error");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     try {
       const response = await fetch("/api/interest", {
         method: "POST",
@@ -83,8 +104,19 @@ const InterestForm = () => {
       });
 
       if (response.ok) {
-        customToast("Interest form submitted!", "success");
+        customToast("🎉 Interest form submitted successfully! You'll receive updates soon.", "success");
         setFormData({ name: "", email: "", phone: "" });
+        
+        // Add a brief celebration effect
+        setTimeout(() => {
+          const form = document.querySelector('form');
+          if (form) {
+            form.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+              form.style.transform = 'scale(1)';
+            }, 200);
+          }
+        }, 100);
       } else {
         const errorData = await response.json();
         customToast(errorData.message || "Error submitting form", "error");
@@ -97,35 +129,22 @@ const InterestForm = () => {
   };
 
   return (
-    <div className="prospect-theme min-h-screen w-full bg-slate-900 relative overflow-hidden fixed inset-0">
-      {/* Blueprint grid background */}
-      <div className="absolute inset-0 opacity-40">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '30px 30px',
-          }}
-        />
-      </div>
-      
-      {/* Gentle orb elements */}
-      <div className="absolute inset-0">
-        {gentleOrbs.map((orb) => (
-          <GentleOrb key={orb.id} {...orb} />
-        ))}
-      </div>
+    <div className="prospect-theme relative min-h-screen w-full overflow-hidden">
+      {/* Background image - same as main page */}
+      <div
+        className="absolute inset-0 z-0 bg-background"
+        style={{
+          backgroundImage: `url(${background.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          imageRendering: "crisp-edges",
+          filter: "contrast(1.1) brightness(1.05)",
+        }}
+      />
 
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-3xl animate-float" />
-        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-white/15 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
-      </div>
-
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 overflow-y-auto">
+      <div className="relative z-20 min-h-screen flex flex-col items-center justify-center p-4 overflow-y-auto">
         {/* Header */}
         <div className="text-center mb-8 animate-slide-down">
           <Image
@@ -163,9 +182,11 @@ const InterestForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="prospect-input w-full h-10 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="Enter your full name"
                   required
+                  minLength={3}
+                  maxLength={50}
                 />
               </div>
 
@@ -179,9 +200,10 @@ const InterestForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="prospect-input w-full h-10 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="your@email.com"
                   required
+                  maxLength={100}
                 />
               </div>
 
@@ -194,18 +216,31 @@ const InterestForm = () => {
                   id="phone"
                   name="phone"
                   value={formData.phone}
-                  onChange={handleChange}
-                  className="prospect-input w-full h-10 rounded-md px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow only numbers, spaces, dashes, parentheses, and plus
+                    const cleaned = value.replace(/[^\d\s\-\(\)\+]/g, '');
+                    setFormData(prev => ({ ...prev, phone: cleaned }));
+                  }}
+                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="(123) 456-7890"
+                  maxLength={20}
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="prospect-btn-primary w-full rounded-lg px-4 py-2 text-sm font-medium"
+                disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
+                className="w-full h-12 rounded-lg px-6 py-3 text-sm font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
               >
-                {isSubmitting ? "Submitting..." : "Submit Interest Form"}
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Submitting...
+                  </div>
+                ) : (
+                  "Submit Interest Form"
+                )}
               </button>
             </form>
           </div>
