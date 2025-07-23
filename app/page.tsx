@@ -275,7 +275,7 @@ export default function Index() {
                             <span className="text-green-300 font-semibold text-sm">Mon 9/29</span>
                           </div>
                           <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Info Night</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>6 PM @ Price Center</p>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>6 PM @ Price Center - Ballroom East</p>
                         </div>
                       </div>
 
@@ -291,7 +291,7 @@ export default function Index() {
                             <span className="text-blue-300 font-semibold text-sm">Tue 9/30</span>
                           </div>
                           <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Business Workshop</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>8 PM @ PC Theater</p>
+                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>8 PM @ Price Center Theater</p>
                         </div>
                       </div>
 
