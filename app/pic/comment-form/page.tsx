@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
@@ -9,25 +9,55 @@ import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
   const { isPIC, isLoading: isPICLoading, isActive } = useActiveStatus();
-  const { commentsData, isLoading: isUsersLoading } = useProspectComments();
+  const { commentsData, isLoading: isUsersLoading, error: commentsError } = useProspectComments();
 
   const [expandedProspects, setExpandedProspects] = useState<{[key: string]: boolean}>({});
-
-  const toggleProspect = (prospectId: string) => {
-    setExpandedProspects((prev) => ({
-      ...prev,
-      [prospectId]: !prev[prospectId]
-    }));
-  };
+  
+  // Use useCallback to prevent the function from being recreated on every render
+  const toggleProspect = useCallback((prospectId: string, event?: React.MouseEvent) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    
+    // console.log('Toggling prospect:', prospectId); // Debug log
+    
+    setExpandedProspects((prev) => {
+      const isCurrentlyExpanded = Boolean(prev[prospectId]);
+      
+      // Toggle only the clicked prospect (allows multiple open)
+      const newState = {
+        ...prev,
+        [prospectId]: !isCurrentlyExpanded
+      };
+      
+      // Alternative: Close all others and open only the clicked one (uncomment if preferred)
+      // const newState = {
+      //   [prospectId]: !isCurrentlyExpanded
+      // };
+      
+      return newState;
+    });
+  }, []);
 
   if (isPICLoading || isUsersLoading) {
     return <LoadingSpinner />;
   }
 
-  // Not PIC
-  if (!isActive) {
-    return redirect('/')
+  // Check for errors
+  if (commentsError) {
+    return (
+      <div className="flex w-full items-center justify-center">
+        <div className="animate-in w-full max-w-7xl opacity-0">
+          <div className="mt-8 flex items-center justify-center">
+            <p className="text-sm sm:text-lg text-red-400">
+              Error loading comments: {commentsError instanceof Error ? commentsError.message : 'Unknown error'}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  // Not PIC - only check PIC status, not active status
   if (!isPIC) {
     return (
       <div className="flex w-full items-center justify-center">
@@ -50,6 +80,9 @@ export default function ProtectedPage() {
     acc[comment.prospect_id].push(comment);
     return acc;
   }, {});
+  
+  // Debug: Log all prospect IDs to check for duplicates (can be removed in production)
+  // console.log('All prospect IDs:', Object.keys(groupedComments));
 
   // Separate into categories
   const sections = {
@@ -75,11 +108,13 @@ export default function ProtectedPage() {
     }
   });
 
-  const renderSection = (title: string, prospectIds: string[]) => (
-    <div className="mb-10">
-      <h2 className="mb-4 text-2xl font-bold text-gray-100">{title}</h2>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {prospectIds.map((prospectId) => {
+  const renderSection = (title: string, prospectIds: string[]) => {
+    // console.log(`Rendering section "${title}" with prospects:`, prospectIds);
+    return (
+      <div className="mb-10">
+        <h2 className="mb-4 text-2xl font-bold text-gray-100">{title}</h2>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {prospectIds.map((prospectId, index) => {
           const prospectComments = groupedComments[prospectId];
           const prospectName =
             prospectComments[prospectComments.length - 1].prospect_name ||
@@ -91,16 +126,24 @@ export default function ProtectedPage() {
             (c: any) => c.invite === "No"
           ).length;
           const numberOfComments = prospectComments.length;
-          const isExpanded = expandedProspects[prospectId] || false;
+          
+          // Create a unique key combining section, prospectId and index to avoid conflicts
+          const uniqueKey = `${title.replace(/\s+/g, '-')}-${prospectId}-${index}`;
+          const uniqueProspectId = `${title.replace(/\s+/g, '-')}-${prospectId}`;
+          const isExpanded = expandedProspects[uniqueProspectId] || false;
+          
+          // console.log(`Rendering prospect ${prospectName} with key: ${uniqueKey}, uniqueId: ${uniqueProspectId}, expanded: ${expandedProspects[uniqueProspectId]}`);
 
           return (
             <div
-              key={prospectId}
-              className="relative rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl"
+              key={uniqueKey}
+              className="relative rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl isolate overflow-hidden"
+              style={{ contain: 'layout style' }}
             >
-              <div
-                className="flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600"
-                onClick={() => toggleProspect(prospectId)}
+              <button
+                type="button"
+                className="w-full flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={(event) => toggleProspect(uniqueProspectId, event)}
               >
                 <span className="mr-2 text-lg font-bold">
                   {prospectId.slice(0, 5) === "66666" && (
@@ -127,10 +170,14 @@ export default function ProtectedPage() {
                   | {numberOfComments}{" "}
                   {numberOfComments > 1 ? "comments" : "comment"}
                 </span>
-              </div>
+              </button>
 
               {isExpanded && (
-                <div className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600">
+                <div 
+                  className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600 relative z-10"
+                  data-prospect={prospectName}
+                  data-expanded="true"
+                >
                   {prospectComments.map((comment: any) => (
                     <div
                       key={comment.id}
@@ -169,7 +216,8 @@ export default function ProtectedPage() {
         })}
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="flex w-full items-center justify-center">

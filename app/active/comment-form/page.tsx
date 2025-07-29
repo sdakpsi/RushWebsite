@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
@@ -8,9 +9,8 @@ import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
 import Checkbox from "@/components/Checkbox";
 import { v4 as uuidv4 } from "uuid";
-import { getUsersForComments } from "@/app/supabase/getUsers";
+import { getUsersForComments } from "@/app/supabase/clientQueries";
 import ProspectGrid from "@/components/ProspectGrid";
-import { useEffect } from "react";
 
 // Mirror implementation of interview page
 
@@ -44,39 +44,66 @@ export default function Page(this: any) {
   const [invite, setInvite] = useState("");
   const [newProspectName, setNewProspectName] = useState("");
   const [checked, setChecked] = useState(false);
-  const [prospects, setProspects] = useState<Array<{id: string, full_name: string, email: string, photo_url?: string}>>([]);
-  const [prospectsLoading, setProspectsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (viewMode === 'grid' && prospects.length === 0) {
-      const fetchProspects = async () => {
-        setProspectsLoading(true);
-        try {
-          const data = await getUsersForComments();
-          if (data) {
-            setProspects(data);
-          }
-        } catch (error) {
-          console.error("Error fetching prospects:", error);
-        } finally {
-          setProspectsLoading(false);
-        }
-      };
-      fetchProspects();
-    } else if (viewMode === 'search') {
-      // Clear loading state when switching back to search
-      setProspectsLoading(false);
-    }
-  }, [viewMode, prospects.length]);
+  // React Query for fetching prospects - only enabled when in grid mode
+  const { data: prospects = [], isLoading: prospectsLoading, error: prospectsError } = useQuery({
+    queryKey: ['prospectsForComments'],
+    queryFn: getUsersForComments,
+    enabled: viewMode === 'grid',
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  if (prospectsError) {
+    console.error("Error fetching prospects:", prospectsError);
+  }
 
   const supabase = createClient();
 
+  // React Query mutation for submitting comments
+  const submitCommentMutation = useMutation({
+    mutationFn: async ({ prospectData, commentData }: {
+      prospectData: { id?: string; name: string };
+      commentData: { comment: string; interaction: string; invite: string };
+    }) => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const { data, error } = await supabase.from("comments").insert([{
+        prospect_id: prospectData.id || "66666" + uuidv4().slice(5),
+        prospect_name: prospectData.name,
+        active_id: user?.id,
+        active_name: user?.user_metadata.name,
+        comment: commentData.comment,
+        interaction: commentData.interaction,
+        invite: commentData.invite,
+      }]);
+      
+      if (error) throw error;
+      return { data, prospectName: prospectData.name };
+    },
+    onSuccess: (result) => {
+      customToast(`Submitted comment for ${result.prospectName}: ${comment}`, "success");
+      setComment("");
+      setInteraction("");
+      setInvite("");
+      setSelectedProspect(null);
+      setChecked(false);
+      setNewProspectName("");
+      // Invalidate prospect comments queries
+      queryClient.invalidateQueries({ queryKey: ['prospectComments'] });
+    },
+    onError: (error: any) => {
+      customToast(`Error submitting comment: ${error.message}`, "error");
+    },
+  });
+
   const submitComment = async () => {
-    if (!selectedProspect) {
-      if (checked && newProspectName.length == 0) {
-        customToast("Please enter a prospect before submitting.", "error");
-        return;
-      }
+    if (!selectedProspect && (!checked || newProspectName.length === 0)) {
+      customToast("Please enter a prospect before submitting.", "error");
+      return;
     }
 
     if (interaction === "" || invite === "" || comment === "") {
@@ -90,66 +117,13 @@ export default function Page(this: any) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (checked) {
-        const { data, error } = await supabase.from("comments").insert([
-          {
-            prospect_id: "66666" + uuidv4().slice(5),
-            prospect_name: newProspectName,
-            active_id: user?.id,
-            active_name: user?.user_metadata.name,
-            comment: comment,
-            interaction: interaction, // Storing interaction result
-            invite: invite, // Storing invite response
-          },
-        ]);
-        setNewProspectName("");
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        customToast(
-          `Submitted comment for ${newProspectName}: ${comment}`,
-          "success"
-        );
-      } else {
-        const { data, error } = await supabase.from("comments").insert([
-          {
-            prospect_id: selectedProspect?.id,
-            prospect_name: selectedProspect?.full_name,
-            active_id: user?.id,
-            active_name: user?.user_metadata.name,
-            comment: comment,
-            interaction: interaction, // Storing interaction result
-            invite: invite, // Storing invite response
-          },
-        ]);
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        customToast(
-          `Submitted comment for ${selectedProspect?.full_name}: ${comment}`,
-          "success"
-        );
-      }
-      setComment("");
-      setInteraction("");
-      setInvite("");
-      setSelectedProspect(null);
-      setChecked(false);
-    } catch (error: any) {
-      customToast(`Error submitting comment: ${error.message}`, "error");
-    } finally {
-      setIsSubmitting(false);
-    }
+    const prospectData = checked 
+      ? { name: newProspectName }
+      : { id: selectedProspect?.id, name: selectedProspect?.full_name || "" };
+      
+    const commentData = { comment, interaction, invite };
+    
+    submitCommentMutation.mutate({ prospectData, commentData });
   };
 
   if (isLoading) {
@@ -365,9 +339,9 @@ export default function Page(this: any) {
                   <button
                     className="mb-4 mt-6 self-center rounded-lg bg-blue-600 px-8 py-4 text-white font-semibold text-lg hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={submitComment}
-                    disabled={isSubmitting}
+                    disabled={submitCommentMutation.isPending}
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Comment"}
+                    {submitCommentMutation.isPending ? "Submitting..." : "Submit Comment"}
                   </button>
                 </div>
               )}

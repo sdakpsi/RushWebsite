@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from '@tanstack/react-query';
 import { createClient } from "@/utils/supabase/client";
 import {
   getIsPIC,
   getInterestFormSubmissions,
   getIsActive,
-} from "../supabase/getUsers";
+} from "../supabase/clientQueries";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,29 +22,33 @@ interface InterestFormSubmission {
 }
 
 export default function ProtectedPage() {
-  const [interestFormData, setInterestFormData] = useState<
-    InterestFormSubmission[]
-  >([]);
-  const [isActive, setIsActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // React Query hooks for data fetching
+  const { data: interestFormData = [], isLoading: interestLoading, error: interestError, refetch: refetchInterest } = useQuery({
+    queryKey: ['interestFormSubmissions'],
+    queryFn: getInterestFormSubmissions,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
-  const fetchData = async () => {
-    setIsLoading(true); // Begin loading
-    try {
-      const usersData = await getInterestFormSubmissions();
-      setInterestFormData(usersData);
-      const activeStatus = await getIsActive();
-      setIsActive(activeStatus);
-      setIsLoading(false); // End loading
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setIsLoading(false); // Ensure loading is ended even if there is an error
-    }
+  const { data: isActive = false, isLoading: activeLoading, error: activeError } = useQuery({
+    queryKey: ['userIsActive'],
+    queryFn: getIsActive,
+    staleTime: 15 * 60 * 1000, // 15 minutes - role rarely changes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  const isLoading = interestLoading || activeLoading;
+  const error = interestError || activeError;
+
+  if (error) {
+    console.error("Error fetching data:", error);
+  }
+
+  const fetchData = () => {
+    refetchInterest();
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const copyToClipboard = (data: string) => {
     navigator.clipboard.writeText(data);

@@ -3,7 +3,7 @@ import { InterviewForm, ProspectInterview } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { questions, scorableTraits } from "../lib/InterviewQuestions";
-import { createClient } from '@/utils/supabase/client';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import customToast from '@/components/CustomToast';
 
 interface ActiveInterviewFormProps {
@@ -51,22 +51,18 @@ export default function ActiveInterviewForm({
   // Watch all form fields
   const formData = watch();
 
-  // Fetch current user's name and auto-populate
+  // Use React Query hook for current user data
+  const { user } = useCurrentUser();
+  
+  // Auto-populate user name when user data is available
   useEffect(() => {
-    const fetchUserName = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user && user.user_metadata?.name) {
-        const userName = user.user_metadata.name;
-        setCurrentUserName(userName);
-        // Always set the user's name, overriding any existing value
-        setValue('name', userName, { shouldValidate: true });
-      }
-    };
-
-    fetchUserName();
-  }, [setValue]);
+    if (user && user.user_metadata?.name) {
+      const userName = user.user_metadata.name;
+      setCurrentUserName(userName);
+      // Always set the user's name, overriding any existing value
+      setValue('name', userName, { shouldValidate: true });
+    }
+  }, [user, setValue]);
 
   useEffect(() => {
     // Save form data to local storage on change

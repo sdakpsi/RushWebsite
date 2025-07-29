@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { QueueType, QueueStatus } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import { useQueueRealtime } from "@/hooks/useQueueRealtime";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { createClient } from "@/utils/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -15,7 +16,8 @@ interface QueueViewProps {
 const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => {
   const { queue, isLoading, error, refetch, pendingCount } = useQueueRealtime();
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const { user } = useCurrentUser();
+  const currentUserId = user?.id || null;
   const queryClient = useQueryClient();
 
   const removeFromQueueMutation = useMutation({
@@ -98,15 +100,6 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
 
   const isUpdating = removeFromQueueMutation.isPending || removeSelfFromQueueMutation.isPending || updateStatusMutation.isPending;
 
-  // Get current user on mount
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
-    };
-    getCurrentUser();
-  }, []);
 
 
   // Remove person from queue (called from top of queue)
@@ -174,10 +167,10 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
     return (
       <div className="bg-background rounded-lg p-6 border border-foreground/20">
         <h2 className="text-xl font-semibold text-foreground mb-4">Queue Management</h2>
-        <div className="text-center text-red-400">Error: {error}</div>
+        <div className="text-center text-red-400">Error: {error instanceof Error ? error.message : String(error)}</div>
         <div className="text-center mt-2">
           <button
-            onClick={refetch}
+            onClick={() => refetch()}
             className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
           >
             Retry

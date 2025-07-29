@@ -1,49 +1,49 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 import { DelibQueueEntry, QueueStatus } from '@/lib/types';
 
+const fetchQueueData = async (): Promise<DelibQueueEntry[]> => {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from('delib_queue')
+    .select(`
+      *,
+      user:users!user_id (
+        full_name,
+        email
+      )
+    `)
+    .in('status', [QueueStatus.PENDING, QueueStatus.SPEAKING])
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+};
+
 export const useQueueRealtime = () => {
-  const [queue, setQueue] = useState<DelibQueueEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [realtimeError, setRealtimeError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  
+  // Use React Query for initial data fetching
+  const { data: queue = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['delibQueue'],
+    queryFn: fetchQueueData,
+    staleTime: 30 * 1000, // 30 seconds
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
   useEffect(() => {
     const supabase = createClient();
 
-    // Initial fetch
-    const fetchQueue = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('delib_queue')
-          .select(`
-            *,
-            user:users!user_id (
-              full_name,
-              email
-            )
-          `)
-          .in('status', [QueueStatus.PENDING, QueueStatus.SPEAKING])
-          .order('created_at', { ascending: true });
-
-        if (error) {
-          throw error;
-        }
-
-        setQueue(data || []);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching queue:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch queue');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchQueue();
-
-    // Set up real-time subscription
+    // Set up real-time subscription to invalidate and refetch data
     const subscription = supabase
       .channel('delib_queue_changes')
       .on(
@@ -56,48 +56,16 @@ export const useQueueRealtime = () => {
         async (payload) => {
           console.log('Queue change received:', payload);
           
-          if (payload.eventType === 'INSERT') {
-            // Fetch the new entry with user data
-            const { data: newEntry, error } = await supabase
-              .from('delib_queue')
-              .select(`
-                *,
-                user:users!user_id (
-                  full_name,
-                  email
-                )
-              `)
-              .eq('id', payload.new.id)
-              .single();
-
-            if (!error && newEntry) {
-              setQueue(prev => [...prev, newEntry].sort((a, b) => 
-                new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-              ));
-            }
-          } else if (payload.eventType === 'UPDATE') {
-            const updatedEntry = payload.new as DelibQueueEntry;
-            
-            // If status changed to completed, remove from queue
-            if (updatedEntry.status === QueueStatus.COMPLETED) {
-              setQueue(prev => prev.filter(entry => entry.id !== updatedEntry.id));
-            } else {
-              // Update the entry in place
-              setQueue(prev => prev.map(entry => 
-                entry.id === updatedEntry.id 
-                  ? { ...entry, ...updatedEntry }
-                  : entry
-              ));
-            }
-          } else if (payload.eventType === 'DELETE') {
-            setQueue(prev => prev.filter(entry => entry.id !== payload.old.id));
-          }
+          // Invalidate and refetch the queue data whenever there's a change
+          queryClient.invalidateQueries({ queryKey: ['delibQueue'] });
         }
       )
       .subscribe((status) => {
         console.log('Subscription status:', status);
         if (status === 'CHANNEL_ERROR') {
-          setError('Real-time connection failed');
+          setRealtimeError('Real-time connection failed');
+        } else {
+          setRealtimeError(null);
         }
       });
 
@@ -105,46 +73,22 @@ export const useQueueRealtime = () => {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, []);
-
-  const refetch = async () => {
-    setIsLoading(true);
-    const supabase = createClient();
-    
-    try {
-      const { data, error } = await supabase
-        .from('delib_queue')
-        .select(`
-          *,
-          user:users!user_id (
-            full_name,
-            email
-          )
-        `)
-        .in('status', [QueueStatus.PENDING, QueueStatus.SPEAKING])
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        throw error;
-      }
-
-      setQueue(data || []);
-      setError(null);
-    } catch (err) {
-      console.error('Error refetching queue:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch queue');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [queryClient]);
 
   const pendingCount = queue.filter(entry => entry.status === QueueStatus.PENDING).length;
   const speakingCount = queue.filter(entry => entry.status === QueueStatus.SPEAKING).length;
 
+  // Combine React Query error with realtime error
+  const combinedError = error || realtimeError;
+  
+  if (combinedError) {
+    console.error('Queue error:', combinedError);
+  }
+
   return {
     queue,
     isLoading,
-    error,
+    error: combinedError,
     refetch,
     pendingCount,
     speakingCount

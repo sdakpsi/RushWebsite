@@ -1,48 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 
-export function useCurrentWave() {
-  const [currentWaveCount, setCurrentWaveCount] = useState<number>(0);
-  const [currentWaveNames, setCurrentWaveNames] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const fetchCurrentWaveData = async () => {
   const supabase = createClient();
+  
+  const { data: delibsData, error: delibsError } = await supabase
+    .from('delibs')
+    .select('prospect_id');
 
-  const fetchCurrentWave = async () => {
-    try {
-      const { data: delibsData, error: delibsError } = await supabase
-        .from('delibs')
-        .select('prospect_id');
+  if (delibsError) throw delibsError;
 
-      if (delibsError) throw delibsError;
+  const prospectIds = delibsData?.map(d => d.prospect_id) || [];
+  const currentWaveCount = prospectIds.length;
 
-      const prospectIds = delibsData?.map(d => d.prospect_id) || [];
-      setCurrentWaveCount(prospectIds.length);
+  let currentWaveNames: string[] = [];
+  if (prospectIds.length > 0) {
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('full_name')
+      .in('id', prospectIds)
+      .order('full_name', { ascending: true });
 
-      if (prospectIds.length > 0) {
-        const { data: usersData, error: usersError } = await supabase
-          .from('users')
-          .select('full_name')
-          .in('id', prospectIds)
-          .order('full_name', { ascending: true });
+    if (usersError) throw usersError;
 
-        if (usersError) throw usersError;
+    currentWaveNames = usersData?.map(u => u.full_name) || [];
+  }
 
-        setCurrentWaveNames(usersData?.map(u => u.full_name) || []);
-      } else {
-        setCurrentWaveNames([]);
-      }
-    } catch (error) {
-      console.error('Error fetching current wave:', error);
-      setCurrentWaveCount(0);
-      setCurrentWaveNames([]);
-    } finally {
-      setIsLoading(false);
-    }
+  return { currentWaveCount, currentWaveNames };
+};
+
+export function useCurrentWave() {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['currentWave'],
+    queryFn: fetchCurrentWaveData,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  if (error) {
+    console.error('Error fetching current wave:', error);
+  }
+
+  return {
+    currentWaveCount: data?.currentWaveCount || 0,
+    currentWaveNames: data?.currentWaveNames || [],
+    isLoading,
+    error,
+    refetch
   };
-
-  useEffect(() => {
-    fetchCurrentWave();
-  }, []);
-
-  return { currentWaveCount, currentWaveNames, isLoading, refetch: fetchCurrentWave };
 }

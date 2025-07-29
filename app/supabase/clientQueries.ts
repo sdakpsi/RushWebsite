@@ -324,3 +324,149 @@ export async function getCurrentUserData() {
   console.log('getCurrentUserData result:', result);
   return result;
 }
+
+export async function getUserScores(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("app_score, resume_score")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching user scores:", error.message);
+    throw error;
+  }
+
+  return {
+    appScore: data?.app_score || "",
+    resumeScore: data?.resume_score || ""
+  };
+}
+
+export async function getProspectComments(userId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("comments")
+    .select("active_name, comment, interaction, invite")
+    .eq("prospect_id", userId);
+
+  if (error) {
+    console.error("Error fetching prospect comments:", error.message);
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getUsersForComments(): Promise<Array<{id: string, full_name: string, email: string, photo_url?: string}>> {
+  const supabase = createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  // Check permissions
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("is_pic, is_active")
+    .eq("id", user.id)
+    .single();
+
+  if (userError) {
+    console.error("Error checking permissions:", userError.message);
+    throw userError;
+  }
+
+  if (!userData?.is_pic && !userData?.is_active) {
+    throw new Error("User lacks permissions to view prospects");
+  }
+
+  // User is marked active/PIC, proceed to get prospects
+  const { data: prospects, error: prospectsError } = await supabase
+    .from("users")
+    .select("id, full_name, email, photo_url")
+    .eq("is_active", false)
+    .eq("is_pic", false)
+    .order("full_name", { ascending: true });
+
+  if (prospectsError) {
+    console.error("Error fetching prospects for comments:", prospectsError.message);
+    throw prospectsError;
+  }
+
+  return prospects || [];
+}
+
+export async function getInterestFormSubmissions() {
+  const supabase = createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  // Check if user is active
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("is_active")
+    .eq("id", user.id)
+    .single();
+
+  if (userError) {
+    console.error("Error checking active status:", userError.message);
+    throw userError;
+  }
+
+  if (!userData?.is_active) {
+    throw new Error("User is not active");
+  }
+
+  // User is active, fetch interest form submissions
+  const { data, error } = await supabase
+    .from("interests")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching interest form submissions:", error.message);
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getApplicationData() {
+  const response = await fetch("/api/application", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch application data");
+  }
+
+  const applicationObject = await response.json();
+  return applicationObject.application;
+}
+
+export async function getComments() {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase
+    .from("comments")
+    .select("*")
+    .order("prospect_name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching comments:", error.message);
+    throw error;
+  }
+
+  return data || [];
+}

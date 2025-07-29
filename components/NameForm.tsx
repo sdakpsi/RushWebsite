@@ -8,6 +8,7 @@ import React, {
   useCallback,
   useRef,
 } from "react";
+import { useQuery } from '@tanstack/react-query';
 import { debounce } from "lodash";
 import FileDropzone from "./Dropzone";
 import {
@@ -18,14 +19,27 @@ import {
   UCSDQuarters,
 } from "@/lib/types";
 import { formatTimestamp, extractFileName } from "@/utils/format";
+import { getApplicationData } from '@/app/supabase/clientQueries';
 import customToast from "./CustomToast";
 import { delay } from "@/utils/delay";
 import { smallInput, textLabel, largeInput } from "./NameForm.styles";
 import LoadingSpinner from "./LoadingSpinner";
 import { RUSH_CHAIR_INFO } from "@/utils/constants";
 export default function NameForm() {
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  
+  // React Query for fetching application data
+  const { data: applicationData, isLoading: loading, error } = useQuery({
+    queryKey: ['applicationData'],
+    queryFn: getApplicationData,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  if (error) {
+    console.error("Error fetching application data:", error);
+  }
 
   const debouncedSave = useCallback(
     debounce(async () => {
@@ -60,60 +74,40 @@ export default function NameForm() {
     []
   );
 
+  // useEffect to populate form state when React Query data is available
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/application", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch application data");
-        }
-
-        const applicationObject = await response.json();
-        const data = applicationObject.application;
-        setApplicationId(data.id);
-        setFirstName(data.name.split(" ")[0]);
-        setLastName(data.name.split(" ")[1]);
-        setPronouns(data.pronouns);
-        setPhoneNumber(data.phone_number);
-        setYearInCollege(data.year);
-        setGraduationYear(data.graduation_year || "");
-        setGraduationQuarter(data.graduation_qtr);
-        setMajor(data.major);
-        setMinor(data.minors || "");
-        setCumulativeGPA(data.gpa || "");
-        setCurrentClasses(data.classes);
-        setExtracurricularActivities(data.extracirriculars);
-        setProudAccomplishment(data.accomplishment);
-        setJoinReason(data.why_akpsi);
-        setLifeGoals(data.goals);
-        setComfortZone(data.comfort_zone);
-        setBusinessType(data.business);
-        setAdditionalDetails(data.additional);
-        setResumeFileUrl(data.resume);
-        setCoverLetterFileUrl(data.cover_letter);
-        setLastSaved(formatTimestamp(data.last_updated));
-        setLastSubmitted(formatTimestamp(data.submitted) || null);
-        setFacebook(data.social_media?.facebook || "");
-        setInstagram(data.social_media?.instagram || "");
-        setLinkedIn(data.social_media?.linkedIn || "");
-        setTiktok(data.social_media?.tiktok || "");
-        setCollege(data.college);
-      } catch (error) {
-        console.error("Error fetching application data:", error);
-      }
-
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
+    if (applicationData) {
+      const data = applicationData;
+      setApplicationId(data.id);
+      setFirstName(data.name.split(" ")[0]);
+      setLastName(data.name.split(" ")[1]);
+      setPronouns(data.pronouns);
+      setPhoneNumber(data.phone_number);
+      setYearInCollege(data.year);
+      setGraduationYear(data.graduation_year || "");
+      setGraduationQuarter(data.graduation_qtr);
+      setMajor(data.major);
+      setMinor(data.minors || "");
+      setCumulativeGPA(data.gpa || "");
+      setCurrentClasses(data.classes);
+      setExtracurricularActivities(data.extracirriculars);
+      setProudAccomplishment(data.accomplishment);
+      setJoinReason(data.why_akpsi);
+      setLifeGoals(data.goals);
+      setComfortZone(data.comfort_zone);
+      setBusinessType(data.business);
+      setAdditionalDetails(data.additional);
+      setResumeFileUrl(data.resume);
+      setCoverLetterFileUrl(data.cover_letter);
+      setLastSaved(formatTimestamp(data.last_updated));
+      setLastSubmitted(formatTimestamp(data.submitted) || null);
+      setFacebook(data.social_media?.facebook || "");
+      setInstagram(data.social_media?.instagram || "");
+      setLinkedIn(data.social_media?.linkedIn || "");
+      setTiktok(data.social_media?.tiktok || "");
+      setCollege(data.college);
+    }
+  }, [applicationData]);
 
   /**
    * States for user application forms

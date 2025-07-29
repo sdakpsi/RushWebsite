@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import { createClient } from "@/utils/supabase/client";
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import customToast from '@/components/CustomToast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -12,23 +13,10 @@ interface PhotoUploadProps {
 
 export default function PhotoUpload({ onPhotoUploaded, existingPhotoUrl }: PhotoUploadProps) {
   const supabase = createClient();
-  const [userId, setUserId] = useState("");
+  const { user } = useCurrentUser();
+  const userId = user?.id || "";
   const [uploading, setUploading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState(existingPhotoUrl || "");
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        setUserId(user.id);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   async function uploadPhotoToSupabase(file: File) {
     setUploading(true);

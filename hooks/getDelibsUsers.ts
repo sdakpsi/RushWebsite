@@ -1,24 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getDelibsUsers as fetchDelibsUsers } from '@/app/supabase/getUsers';
 import { Packet } from '@/lib/types';
 
 export function useDelibsUsers() {
-  const [usersData, setUserData] = useState<Packet[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: usersData = [], isLoading, error } = useQuery({
+    queryKey: ['delibsUsers'],
+    queryFn: fetchDelibsUsers,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchDelibsUsers();
-        setUserData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  if (error) {
+    console.error('Error fetching deliberation users:', error);
+  }
 
-  return { usersData, isLoading };
+  return { usersData, isLoading, error };
 }

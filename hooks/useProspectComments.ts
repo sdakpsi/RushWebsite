@@ -1,24 +1,19 @@
-import { useState, useEffect } from "react";
-import { getComments } from "@/app/supabase/getUsers";
+import { useQuery } from '@tanstack/react-query';
+import { getComments } from "@/app/supabase/clientQueries";
 import { Comment } from "@/lib/types";
 
 export function useProspectComments() {
-  const [commentsData, setCommentsData] = useState<Comment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: commentsData = [], isLoading, error } = useQuery({
+    queryKey: ['prospectComments'],
+    queryFn: getComments,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getComments();
-        setCommentsData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  if (error) {
+    console.error("Error fetching prospect comments:", error);
+  }
 
-  return { commentsData, isLoading };
+  return { commentsData, isLoading, error };
 }

@@ -14,7 +14,7 @@ import {
 import { caseStudyData } from "@/lib/CaseStudyQuestions";
 import customToast from "@/components/CustomToast";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { createClient } from "@/utils/supabase/client";
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { formatTimestamp } from "@/utils/format";
 
 interface ActiveInterviewFormProps {
@@ -138,23 +138,18 @@ export default function ActiveCaseStudyForm({
     [selectedProspect, submissionId, isMultiFormContext, watch]
   );
 
-  // Fetch current user's name and auto-populate
+  // Use React Query hook for current user data
+  const { user } = useCurrentUser();
+  
+  // Auto-populate user name when user data is available
   useEffect(() => {
-    const fetchUserName = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user && user.user_metadata?.name) {
-        const userName = user.user_metadata.name;
-        setCurrentUserName(userName);
-        // Always set the user's name, overriding any existing value
-        setValue("name", userName, { shouldValidate: true });
-      }
-    };
-
-    fetchUserName();
-  }, [setValue]);
+    if (user && user.user_metadata?.name) {
+      const userName = user.user_metadata.name;
+      setCurrentUserName(userName);
+      // Always set the user's name, overriding any existing value
+      setValue("name", userName, { shouldValidate: true });
+    }
+  }, [user, setValue]);
 
   // Handle user typing detection
   const handleUserInput = () => {

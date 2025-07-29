@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { createClient } from "@/utils/supabase/client";
+import { getUserScores, getProspectComments, getApplicantAvatar } from '@/app/supabase/clientQueries';
 import customToast from "./CustomToast";
 import Image from "next/image";
 
@@ -104,38 +106,104 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const supabase = createClient();
   const [uploading, setUploading] = useState(false);
   const [score, setScore] = useState("");
-  const [currentScore, setCurrentScore] = useState("");
 
   const [scoreResume, setScoreResume] = useState("");
   const [activeName, setActiveName] = useState("");
   const [comment, setComment] = useState("");
-  const [prospectComments, setProspectComments] = useState<Comment[]>([]);
   const [submissionCount, setSubmissionCount] = useState(0);
+  const queryClient = useQueryClient();
 
-  const [currentScoreResume, setCurrentScoreResume] = useState(""); // State to store the current score fetched from the database
+  // React Query hooks for data fetching
+  const { data: userScores } = useQuery({
+    queryKey: ['userScores', userID],
+    queryFn: () => getUserScores(userID),
+    enabled: !!userID,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnWindowFocus: false,
+  });
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("comments")
-          .select("active_name, comment, interaction, invite")
-          .eq("prospect_id", userID);
+  const { data: prospectComments = [] } = useQuery({
+    queryKey: ['prospectComments', userID, submissionCount],
+    queryFn: () => getProspectComments(userID),
+    enabled: !!userID,
+    staleTime: 30 * 1000, // 30 seconds
+    refetchOnWindowFocus: false,
+  });
 
-        if (error) {
-          throw error;
-        }
+  const { data: avatarUrl = "" } = useQuery({
+    queryKey: ['userAvatar', userID],
+    queryFn: () => getApplicantAvatar(userID),
+    enabled: !!userID,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+  });
 
-        if (data) {
-          setProspectComments(data);
-        }
-      } catch (error: any) {
-        console.error("Error fetching comments:", error.message);
-      }
-    };
+  // Extract scores from React Query data
+  const currentAppScore = userScores?.appScore || "";
+  const currentScoreResume = userScores?.resumeScore || "";
 
-    fetchComments();
-  }, [submissionCount]);
+  // React Query mutations
+  const updateAppScoreMutation = useMutation({
+    mutationFn: async (newScore: string) => {
+      const { data, error } = await supabase
+        .from("users")
+        .update({ app_score: newScore })
+        .eq("id", userID);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      customToast("Score updated successfully!", "success");
+      setScore("");
+      queryClient.invalidateQueries({ queryKey: ['userScores', userID] });
+    },
+    onError: (error: any) => {
+      customToast(`Error: ${error.message}`, "error");
+    },
+  });
+
+  const updateResumeScoreMutation = useMutation({
+    mutationFn: async (newScore: string) => {
+      const { data, error } = await supabase
+        .from("users")
+        .update({ resume_score: newScore })
+        .eq("id", userID);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      customToast("Resume score updated successfully!", "success");
+      setScoreResume("");
+      queryClient.invalidateQueries({ queryKey: ['userScores', userID] });
+    },
+    onError: (error: any) => {
+      customToast(`Error: ${error.message}`, "error");
+    },
+  });
+
+  const submitCommentMutation = useMutation({
+    mutationFn: async ({ activeName, comment }: { activeName: string; comment: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data, error } = await supabase.from("comments").insert([{
+        prospect_id: userID,
+        active_id: user?.id,
+        active_name: activeName,
+        comment: comment,
+      }]);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      customToast("Comment submitted.", "success");
+      setSubmissionCount((count) => count + 1);
+      setActiveName("");
+      setComment("");
+      queryClient.invalidateQueries({ queryKey: ['prospectComments', userID] });
+    },
+    onError: (error: any) => {
+      customToast(`Error: ${error.message}`, "error");
+    },
+  });
 
   const handleViewDocument = (documentUrl: string) => {
     setViewDocument(documentUrl);
@@ -149,7 +217,6 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     }
   };
 
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [error, setError] = useState("");
 
   const [averages, setAverages] = useState({
@@ -347,25 +414,6 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     }
   };
 
-  useEffect(() => {
-    const fetchCurrentScore = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("app_score")
-        .eq("id", userID)
-        .single();
-
-      if (error) {
-        console.error("Error fetching current score:", error.message);
-      } else if (data) {
-        setCurrentScore(data.app_score); // Update state with the fetched score
-      }
-    };
-
-    if (userID) {
-      fetchCurrentScore();
-    }
-  }, [userID]);
 
   const handleScoreChangeResume = (e: any) => {
     const value = e.target.value;
@@ -385,66 +433,21 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     setComment(value);
   };
 
-  useEffect(() => {
-    const fetchCurrentScoreResume = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("resume_score")
-        .eq("id", userID)
-        .single();
-
-      if (error) {
-        console.error("Error fetching current score:", error.message);
-      } else if (data) {
-        setCurrentScoreResume(data.resume_score); // Update state with the fetched score
-      }
-    };
-
-    if (userID) {
-      fetchCurrentScoreResume();
-    }
-  }, [userID]);
 
   const handleSubmit = async () => {
     if (score === "") {
       customToast("Please enter a score before submitting.", "error");
       return;
     }
-
-    setCurrentScore(score);
-
-    const { data, error } = await supabase
-      .from("users")
-      .update({ app_score: score })
-      .eq("id", userID);
-
-    if (error) {
-      customToast(`Error: ${error.message}`, "error");
-    } else {
-      customToast("Score updated successfully!", "success");
-      setScore(""); // Optionally reset the score input after successful submission
-    }
+    updateAppScoreMutation.mutate(score);
   };
 
   const handleSubmitResume = async () => {
     if (scoreResume === "") {
-      alert("Please enter a score before submitting.");
+      customToast("Please enter a score before submitting.", "error");
       return;
     }
-
-    setCurrentScoreResume(scoreResume);
-
-    const { data, error } = await supabase
-      .from("users")
-      .update({ resume_score: scoreResume })
-      .eq("id", userID);
-
-    if (error) {
-      alert(`Error: ${error.message}`);
-    } else {
-      alert("Score updated successfully!");
-      setScoreResume(""); // Optionally reset the score input after successful submission
-    }
+    updateResumeScoreMutation.mutate(scoreResume);
   };
 
   const handleCommentSubmit = async () => {
@@ -452,28 +455,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       customToast("Please enter a name and comment before submitting.", "error");
       return;
     }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    const { data, error } = await supabase.from("comments").insert([
-      {
-        prospect_id: userID,
-        active_id: user?.id,
-        active_name: activeName,
-        comment: comment,
-      },
-    ]);
-
-    if (error) {
-      customToast(`Error: ${error.message}`, "error");
-    } else {
-      customToast("Comment submitted.", "success");
-      setSubmissionCount((count) => count + 1);
-      setActiveName(""); // Optionally reset the score input after successful submission
-      setComment("");
-    }
+    submitCommentMutation.mutate({ activeName, comment });
   };
 
   const uploadImage = async (event: any) => {
@@ -532,7 +514,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
         if (insertError) throw insertError;
       }
 
-      setAvatarUrl(data.publicUrl);
+      // Invalidate avatar query to refetch
+      queryClient.invalidateQueries({ queryKey: ['userAvatar', userID] });
     } catch (error: any) {
       console.error("Upload error:", error.message);
       setError(`Upload failed: ${error.message}`);
@@ -541,23 +524,6 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     }
   };
 
-  useEffect(() => {
-    const fetchAvatarUrl = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("user_avatar")
-          .select("avatar_url")
-          .eq("user_id", userID)
-          .single();
-        if (error) throw error;
-        if (data) setAvatarUrl(data.avatar_url);
-      } catch (error: any) {
-        console.error("Error fetching avatar URL:", error.message);
-      }
-    };
-
-    fetchAvatarUrl();
-  }, [userID, supabase]);
 
   const scoreComponents = useMemo(() => {
     const pledgeFactor = Number((ivAverages.pledgeable / 5).toFixed(2)) * 15;
@@ -569,7 +535,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       Number((parseInt(currentScoreResume) / 8).toFixed(2)) * 14;
     const coverLetterScore = application.cover_letter ? 1 : 0;
     const applicationScore =
-      Number((parseInt(currentScore) / 8).toFixed(2)) * 25;
+      Number((parseInt(currentAppScore) / 8).toFixed(2)) * 25;
     const teamworkScore = Number((averages.teamwork_avg / 5).toFixed(2)) * 10;
     const leadershipScore =
       Number((averages.leadership_avg / 5).toFixed(2)) * 10;
@@ -606,7 +572,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [
     ivAverages,
     averages,
-    currentScore,
+    currentAppScore,
     currentScoreResume,
     application.cover_letter,
   ]);
@@ -859,7 +825,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                             Application Score:
                           </span>
                           <span className="text-gray-200 font-mono mb-2">
-                            {currentScore !== "" ? currentScore : "not set"}
+                            {currentAppScore !== "" ? currentAppScore : "not set"}
                           </span>
                           {isPIC && (
                             <div className="flex items-center space-x-2">

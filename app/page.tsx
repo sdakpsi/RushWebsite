@@ -196,6 +196,7 @@ export default function Index() {
                 </div>
 
                 {/* Get Started / Quick Actions */}
+                {!isActive ? (
                 <div className={`${isActive ? 'card glass' : 'prospect-card prospect-glass rounded-xl p-6'} animate-slide-up`} style={{ animationDelay: '0.15s' }}>
                   <div className="card-header">
                     <h3 className={`card-title ${isActive ? 'bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent' : 'text-white'}`}>
@@ -206,7 +207,9 @@ export default function Index() {
                     <MainPageContent />
                   </div>
                 </div>
-
+                ):(
+                  <div></div>
+                )} 
                 {/* Quick Links */}
                 <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.25s' }}>
                   <div className="card-header">

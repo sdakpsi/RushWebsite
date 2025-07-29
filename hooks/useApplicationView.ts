@@ -1,20 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getApplication } from '@/app/supabase/getUsers';
 
 export function useApplicationView() {
   const [currentApplicationId, setCurrentApplicationId] = useState<string | null>(null);
   const [userID, setUserID] = useState<string>('');
-  const [currentApplication, setCurrentApplication] = useState<any | null>(null);
 
-  useEffect(() => {
-    const fetchApplication = async () => {
-      if (currentApplicationId) {
-        const applicationData = await getApplication(currentApplicationId);
-        setCurrentApplication(applicationData);
-      }
-    };
-    fetchApplication();
-  }, [currentApplicationId]);
+  const { data: currentApplication, isLoading, error } = useQuery({
+    queryKey: ['application', currentApplicationId],
+    queryFn: () => getApplication(currentApplicationId!),
+    enabled: !!currentApplicationId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
   const handleViewApplication = (applicationId: string, userId: string) => {
     setCurrentApplicationId(applicationId);
@@ -22,7 +20,6 @@ export function useApplicationView() {
   };
 
   const handleClosePopup = () => {
-    setCurrentApplication(null);
     setCurrentApplicationId(null);
   };
 
@@ -30,6 +27,8 @@ export function useApplicationView() {
     currentApplicationId,
     currentApplication,
     userID,
+    isLoading,
+    error,
     handleViewApplication,
     handleClosePopup,
   };
