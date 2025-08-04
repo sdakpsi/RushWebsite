@@ -187,14 +187,23 @@ export async function getApplication(applicationID: string) {
 
   const { data, error } = await supabase
     .from("applications")
-    .select("*")
+    .select(`
+      *,
+      users!applications_user_id_fkey(full_name)
+    `)
     .eq("id", applicationID)
     .single();
 
   if (error) {
-    console.error("Error fetching application:", error.message);
+    console.error("Error fetching application:", error.message);  
     return null;
   }
+  
+  // Add the user's full_name to the application data
+  if (data && data.users) {
+    data.name = data.users.full_name;
+  }
+  
   return data;
 }
 
