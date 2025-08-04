@@ -185,26 +185,32 @@ export async function getApplication(applicationID: string) {
     return null;
   }
 
-  const { data, error } = await supabase
+  // First get the application
+  const { data: appData, error: appError } = await supabase
     .from("applications")
-    .select(`
-      *,
-      users!applications_user_id_fkey(full_name)
-    `)
+    .select("*")
     .eq("id", applicationID)
     .single();
 
-  if (error) {
-    console.error("Error fetching application:", error.message);  
+  if (appError) {
+    console.error("Error fetching application:", appError.message);
     return null;
   }
-  
-  // Add the user's full_name to the application data
-  if (data && data.users) {
-    data.name = data.users.full_name;
+
+  // Then get the user's name using the user_id
+  if (appData && appData.user_id) {
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("full_name")
+      .eq("id", appData.user_id)
+      .single();
+
+    if (!userError && userData) {
+      appData.name = userData.full_name;
+    }
   }
   
-  return data;
+  return appData;
 }
 
 export async function getCases(prospectID: string | null) {
