@@ -272,15 +272,17 @@
   }
 
   .prospect-btn-primary {
-    background-color: hsl(var(--prospect-primary));
-    color: hsl(var(--prospect-primary-foreground));
+    background-color: hsl(var(--prospect-secondary));
+    color: hsl(var(--prospect-secondary-foreground));
     border: none;
     transition: all 0.2s ease;
   }
 
   .prospect-btn-primary:hover {
-    background-color: hsl(var(--prospect-primary) / 0.9);
-    box-shadow: var(--prospect-shadow-elevation-medium);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(102, 126, 234, 0.4), 0 10px 10px -5px rgba(118, 75, 162, 0.2);
   }
 
   .prospect-btn-secondary {
