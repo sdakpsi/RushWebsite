@@ -2,7 +2,7 @@
 
 import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { LazyLazyApplicantCard, LazyApplicationPopUp, LazyLazyQueueView } from "@/components/LazyComponents";
+import { LazyApplicantCard, LazyApplicationPopUp, LazyQueueView } from "@/components/LazyComponents";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useDelibsUsers } from "@/hooks/getDelibsUsers";
