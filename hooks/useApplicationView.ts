@@ -10,8 +10,11 @@ export function useApplicationView() {
     queryKey: ['application', currentApplicationId],
     queryFn: () => getApplication(currentApplicationId!),
     enabled: !!currentApplicationId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes - applications don't change often
+    gcTime: 20 * 60 * 1000, // 20 minutes garbage collection
     refetchOnWindowFocus: false,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const handleViewApplication = (applicationId: string, userId: string) => {

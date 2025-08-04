@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
   getApplicantAvatar,
@@ -123,4 +123,4 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   );
 };
 
-export default ApplicantCard;
+export default memo(ApplicantCard);

@@ -33,9 +33,11 @@ export function useCurrentWave() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['currentWave'],
     queryFn: fetchCurrentWaveData,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 1 * 60 * 1000, // 1 minute - wave data changes more frequently
+    gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (error) {

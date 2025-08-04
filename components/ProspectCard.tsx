@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface ProspectCardProps {
   prospect: {id: string, full_name: string, email: string, photo_url?: string};
@@ -7,7 +7,7 @@ interface ProspectCardProps {
   hasExistingComment?: boolean;
 }
 
-export default function ProspectCard({ 
+function ProspectCard({ 
   prospect, 
   isSelected, 
   onClick, 
@@ -70,3 +70,5 @@ export default function ProspectCard({
     </div>
   );
 }
+
+export default memo(ProspectCard);

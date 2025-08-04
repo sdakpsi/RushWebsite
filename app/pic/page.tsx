@@ -2,8 +2,7 @@
 
 import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import ApplicantCard from "@/components/ApplicantCard";
-import ApplicationPopup from "@/components/ApplicationPopUp";
+import { LazyApplicantCard, LazyApplicationPopUp } from "@/components/LazyComponents";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { usePICUsers } from "@/hooks/usePICUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
@@ -136,7 +135,7 @@ export default function ProtectedPage() {
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {filteredUsersData.map((applicant) => (
                   <div key={applicant.id} className="flex flex-col">
-                    <ApplicantCard
+                    <LazyApplicantCard
                       applicant={applicant}
                       onViewApplication={handleViewApplication}
                       avatarUrl={avatarMap[applicant.id] || null}
@@ -156,7 +155,7 @@ export default function ProtectedPage() {
                   </div>
                 ))}
                 {currentApplication && (
-                  <ApplicationPopup
+                  <LazyApplicationPopUp
                     application={currentApplication}
                     cases={cases || []}
                     interviews={interviews || []}

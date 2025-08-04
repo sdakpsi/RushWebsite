@@ -6,9 +6,11 @@ export function useProspectComments() {
   const { data: commentsData = [], isLoading, error } = useQuery({
     queryKey: ['prospectComments'],
     queryFn: getComments,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes - comments don't change frequently
+    gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   if (error) {

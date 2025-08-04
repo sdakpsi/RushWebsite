@@ -75,9 +75,9 @@ export default function Index() {
             <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
               {/* Left Column - Welcome Section */}
               <div className="space-y-6">
-                <div className={`${isActive ? 'card glass' : 'prospect-card prospect-glass rounded-xl p-6'} animate-slide-up`}>
+                <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up">
                   <div className="card-header">
-                    <h1 className={`card-title ${isActive ? 'bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent' : 'text-white'}`}>
+                    <h1 className="card-title text-white">
                       {isActive
                         ? "Active Member Dashboard"
                         : `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`}
@@ -88,7 +88,7 @@ export default function Index() {
                     {isActive ? (
                       // Active user content
                       <div className="space-y-4">
-                        <p className="text-muted-foreground">
+                        <p className="text-gray-300">
                           Access your active member tools and resources.
                         </p>
 
@@ -197,9 +197,9 @@ export default function Index() {
 
                 {/* Get Started / Quick Actions */}
                 {!isActive ? (
-                <div className={`${isActive ? 'card glass' : 'prospect-card prospect-glass rounded-xl p-6'} animate-slide-up`} style={{ animationDelay: '0.15s' }}>
+                <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
                   <div className="card-header">
-                    <h3 className={`card-title ${isActive ? 'bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent' : 'text-white'}`}>
+                    <h3 className="card-title text-white">
                       {isActive ? "Quick Actions" : "Get Started"}
                     </h3>
                   </div>
@@ -211,16 +211,16 @@ export default function Index() {
                   <div></div>
                 )} 
                 {/* Quick Links */}
-                <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.25s' }}>
+                <div className="prospect-card rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.25s' }}>
                   <div className="card-header">
-                    <h3 className={`card-title ${isActive ? '' : 'text-white'}`}>Quick Links</h3>
+                    <h3 className="card-title text-white">Quick Links</h3>
                   </div>
                   <div className="card-content space-y-3">
                     <a
                       href={currentTheme.branding.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-blue-600 hover:to-yellow-500 hover:text-white transition-all duration-200"}
+                      className="prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-blue-600 hover:to-yellow-500 hover:text-white transition-all duration-200"
                     >
                       Official Website
                     </a>
@@ -228,7 +228,7 @@ export default function Index() {
                       href="https://www.instagram.com/ucsdakpsi/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={isActive ? "btn-outline w-full" : "prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-red-500 hover:via-yellow-500 hover:via-green-500 hover:via-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all duration-200"}
+                      className="prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-red-500 hover:via-yellow-500 hover:via-green-500 hover:via-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all duration-200"
                     >
                       Instagram
                     </a>
@@ -236,14 +236,14 @@ export default function Index() {
                 </div>
 
                 {/* Contact Info */}
-                <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.35s' }}>
+                <div className="prospect-card rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.35s' }}>
                   <div className="card-header">
-                    <h3 className={`card-title ${isActive ? '' : 'text-white'}`}>Need Help?</h3>
+                    <h3 className="card-title text-white">Need Help?</h3>
                   </div>
                   <div className="card-content">
                     {isActive ?
                     (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-300">
                        To report any issues or questions please contact Ryan (909)-655-8447
                       </p>
                     ) : (
@@ -260,9 +260,9 @@ export default function Index() {
               {/* Right Column - Rush Schedule Only */}
               <div className="space-y-6">
                 {/* Rush Schedule Timeline */}
-                <div className={isActive ? "card animate-slide-up" : "prospect-card rounded-xl p-6 animate-slide-up"} style={{ animationDelay: '0.2s' }}>
+                <div className="prospect-card rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
                   <div className="card-header">
-                    <h3 className={`card-title ${isActive ? '' : 'text-white'} mb-4`}>Rush Schedule</h3>
+                    <h3 className="card-title text-white mb-4">Rush Schedule</h3>
                   </div>
                   <div className="card-content">
                     <div className="space-y-3">
@@ -277,8 +277,8 @@ export default function Index() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-green-300 font-semibold text-sm">Mon 9/29</span>
                           </div>
-                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Info Night</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>6 PM @ Price Center - Ballroom East</p>
+                          <h4 className={`font-bold text-sm text-white`}>Info Night</h4>
+                          <p className={`text-xs text-gray-400`}>6 PM @ Price Center - Ballroom East</p>
                         </div>
                       </div>
 
@@ -293,8 +293,8 @@ export default function Index() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-blue-300 font-semibold text-sm">Tue 9/30</span>
                           </div>
-                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Business Workshop</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>8 PM @ Price Center Theater</p>
+                          <h4 className={`font-bold text-sm text-white`}>Business Workshop</h4>
+                          <p className={`text-xs text-gray-400`}>8 PM @ Price Center Theater</p>
                         </div>
                       </div>
 
@@ -309,8 +309,8 @@ export default function Index() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-purple-300 font-semibold text-sm">Wed 10/1</span>
                           </div>
-                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Case Study Night</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>By Appointment</p>
+                          <h4 className={`font-bold text-sm text-white`}>Case Study Night</h4>
+                          <p className={`text-xs text-gray-400`}>By Appointment</p>
                         </div>
                       </div>
 
@@ -325,8 +325,8 @@ export default function Index() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-indigo-300 font-semibold text-sm">Thu 10/2</span>
                           </div>
-                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Application Due</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>2:00 PM Deadline</p>
+                          <h4 className={`font-bold text-sm text-white`}>Application Due</h4>
+                          <p className={`text-xs text-gray-400`}>2:00 PM Deadline</p>
                         </div>
                       </div>
 
@@ -341,8 +341,8 @@ export default function Index() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-orange-300 font-semibold text-sm">Fri 10/3</span>
                           </div>
-                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Social Night</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>By Invite Only</p>
+                          <h4 className={`font-bold text-sm text-white`}>Social Night</h4>
+                          <p className={`text-xs text-gray-400`}>By Invite Only</p>
                         </div>
                       </div>
 
@@ -357,8 +357,8 @@ export default function Index() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-red-300 font-semibold text-sm">Sat 10/4</span>
                           </div>
-                          <h4 className={`font-bold text-sm ${isActive ? 'text-foreground' : 'text-white'}`}>Interviews</h4>
-                          <p className={`text-xs ${isActive ? 'text-muted-foreground' : 'text-gray-400'}`}>By Appointment</p>
+                          <h4 className={`font-bold text-sm text-white`}>Interviews</h4>
+                          <p className={`text-xs text-gray-400`}>By Appointment</p>
                         </div>
                       </div>
                     </div>

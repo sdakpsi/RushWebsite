@@ -5,9 +5,11 @@ export function useCurrentUser() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['currentUser'],
     queryFn: getCurrentUserData,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes - user data changes infrequently
+    gcTime: 30 * 60 * 1000, // 30 minutes garbage collection
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const result = {

@@ -2,15 +2,13 @@
 
 import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import ApplicantCard from "@/components/ApplicantCard";
-import ApplicationPopup from "@/components/ApplicationPopUp";
+import { LazyLazyApplicantCard, LazyApplicationPopUp, LazyLazyQueueView } from "@/components/LazyComponents";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useDelibsUsers } from "@/hooks/getDelibsUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import ActiveQueueControls from "@/components/ActiveQueueControls";
-import QueueView from "@/components/QueueView";
 
 export default function ProtectedPage() {
   const { isActive, isPIC, isLoading: isActiveLoading } = useActiveStatus();
@@ -47,21 +45,21 @@ export default function ProtectedPage() {
               {/* Queue Management for PICs */}
               {usersData.length > 0 && (
                 <div className="mb-6 mt-6">
-                  <QueueView isPic={isPIC}/>
+                  <LazyQueueView isPic={isPIC}/>
                 </div>
               )}
 
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {usersData.map((applicant) => (
                   <div key={applicant.id} className="flex flex-col">
-                    <ApplicantCard
+                    <LazyApplicantCard
                       applicant={applicant}
                       onViewApplication={handleViewApplication}
                     />
                   </div>
                 ))}
                 {currentApplication && (
-                  <ApplicationPopup
+                  <LazyApplicationPopUp
                     application={currentApplication}
                     cases={cases}
                     interviews={interviews}

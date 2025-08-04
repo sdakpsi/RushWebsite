@@ -5,17 +5,21 @@ export function useActiveStatus() {
   const { data: isPIC = false, isLoading: picLoading } = useQuery({
     queryKey: ['userIsPIC'],
     queryFn: getIsPIC,
-    staleTime: 15 * 60 * 1000, // 15 minutes - roles rarely change
+    staleTime: 30 * 60 * 1000, // 30 minutes - roles rarely change
+    gcTime: 60 * 60 * 1000, // 1 hour garbage collection
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const { data: isActive = false, isLoading: activeLoading } = useQuery({
     queryKey: ['userIsActive'],
     queryFn: getIsActive,
-    staleTime: 15 * 60 * 1000, // 15 minutes - roles rarely change
+    staleTime: 30 * 60 * 1000, // 30 minutes - roles rarely change
+    gcTime: 60 * 60 * 1000, // 1 hour garbage collection
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const isLoading = picLoading || activeLoading;
