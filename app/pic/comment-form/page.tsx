@@ -224,7 +224,7 @@ export default function ProtectedPage() {
             </span>
           )}
         </h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-wrap gap-6">
           {prospectIds.map((prospectId, index) => {
           const prospectComments = groupedComments[prospectId];
           const prospectName =
@@ -238,23 +238,23 @@ export default function ProtectedPage() {
           ).length;
           const numberOfComments = prospectComments.length;
           
-          // Create a unique key combining section, prospectId and index to avoid conflicts
-          const uniqueKey = `${title.replace(/\s+/g, '-')}-${prospectId}-${index}`;
-          const uniqueProspectId = `${title.replace(/\s+/g, '-')}-${prospectId}`;
-          const isExpanded = expandedProspects[uniqueProspectId] || false;
+          // Create a truly unique key for this specific card instance
+          const uniqueKey = `${title}-${prospectId}-${index}-${prospectComments[0]?.id || 'unknown'}`;
+          const cardId = `card-${index}-${prospectComments[0]?.id || Math.random()}`;
+          const isExpanded = expandedProspects[cardId] || false;
           
           // console.log(`Rendering prospect ${prospectName} with key: ${uniqueKey}, uniqueId: ${uniqueProspectId}, expanded: ${expandedProspects[uniqueProspectId]}`);
 
           return (
             <div
               key={uniqueKey}
-              className="relative rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl isolate overflow-hidden"
-              style={{ contain: 'layout style' }}
+              className="relative rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl w-full sm:w-80 lg:w-96 flex-shrink-0 self-start"
+              style={{ height: 'fit-content' }}
             >
               <button
                 type="button"
                 className="w-full flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onClick={(event) => toggleProspect(uniqueProspectId, event)}
+                onClick={(event) => toggleProspect(cardId, event)}
               >
                 <span className="mr-2 text-lg font-bold">
                   {prospectId.slice(0, 5) === "66666" && (
@@ -269,7 +269,7 @@ export default function ProtectedPage() {
                         yesInviteCount >= 2 ? "text-green-500" : "text-red-500"
                       }`}
                     >
-                      {yesInviteCount} yes
+                      {yesInviteCount} Yes
                     </span>{" "}
                     |{" "}
                     <span
@@ -277,10 +277,10 @@ export default function ProtectedPage() {
                         noInviteCount <= 0 ? "text-green-500" : "text-red-500"
                       }`}
                     >
-                      {noInviteCount} no
+                      {noInviteCount} No
                     </span>{" "}
                     | {numberOfComments}{" "}
-                    {numberOfComments > 1 ? "comments" : "comment"}
+                    {numberOfComments > 1 ? "Comments" : "Comment"}
                   </span>
                   {isUnlinkedSection && (
                     <button
@@ -298,7 +298,8 @@ export default function ProtectedPage() {
 
               {isExpanded && (
                 <div 
-                  className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600 relative z-10"
+                  className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600"
+                  data-card-id={cardId}
                   data-prospect={prospectName}
                   data-expanded="true"
                 >
