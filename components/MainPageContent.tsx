@@ -26,7 +26,27 @@ export default function MainPageContent() {
   }
   return (
     <div className="space-y-6">
-      {(hasPhoto) && (
+      {/* Professional Headshot Requirement Notice */}
+      {user && !hasPhoto && (
+        <div className="rounded-lg bg-warning/10 border border-warning/30 p-4">
+          <div className="flex items-start space-x-3">
+            <svg className="h-6 w-6 text-warning mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.99-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div>
+              <p className="font-semibold text-warning mb-1">
+                Professional Headshot Required
+              </p>
+              <p className="text-sm text-gray-300">
+                You must upload a professional headshot before you can access the application. Please ensure your photo is professional, well-lit, and shows your face clearly.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Application Deadline Notice - only show if user has photo */}
+      {hasPhoto && (
         <div className="rounded-lg bg-info/10 border border-info/20 p-4">
           <div className="flex items-center space-x-2">
             <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,12 +77,16 @@ export default function MainPageContent() {
           {!isActive && (
             <button 
               onClick={() => setIsPhotoModalOpen(true)}
-              className="btn-secondary w-full sm:w-auto flex items-center justify-center"
+              className={`w-full sm:w-auto flex items-center justify-center ${
+                hasPhoto 
+                  ? "btn-secondary" 
+                  : "btn-primary animate-pulse border-2 border-warning/50"
+              }`}
             >
               <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              {hasPhoto ? "Update Photo" : "Upload Photo"}
+              {hasPhoto ? "Update Professional Headshot" : "Upload Professional Headshot"}
             </button>
           )}
         </div>
@@ -102,14 +126,25 @@ export default function MainPageContent() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">
-                {hasPhoto ? "Update Your Photo" : "Complete Your Profile"}
+                {hasPhoto ? "Update Your Professional Headshot" : "Upload Professional Headshot"}
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-3">
                 {hasPhoto 
-                  ? "You can change your photo anytime" 
-                  : "Please upload a photo of yourself to continue with your application"
+                  ? "You can update your professional headshot anytime" 
+                  : "A professional headshot is required to access the application"
                 }
               </p>
+              {!hasPhoto && (
+                <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 text-left">
+                  <p className="text-sm font-medium text-warning mb-2">Professional Photo Guidelines:</p>
+                  <ul className="text-xs text-gray-300 space-y-1">
+                    <li>• Professional business attire recommended</li>
+                    <li>• Clear, well-lit photo showing your face</li>
+                    <li>• Neutral background preferred</li>
+                    <li>• High resolution (avoid blurry images)</li>
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Photo upload component */}
