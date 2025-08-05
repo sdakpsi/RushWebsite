@@ -5,13 +5,115 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useActiveStatus } from "@/hooks/useActiveStatus";
 import { useProspectComments } from "@/hooks/useProspectComments";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getUsersForComments } from "@/app/supabase/clientQueries";
+import { createClient } from "@/utils/supabase/client";
+import customToast from "@/components/CustomToast";
 import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
   const { isPIC, isLoading: isPICLoading, isActive } = useActiveStatus();
   const { commentsData, isLoading: isUsersLoading, error: commentsError } = useProspectComments();
+  const queryClient = useQueryClient();
+
+  // Fetch all prospects for linking
+  const { data: prospectsData = [], isLoading: isProspectsLoading } = useQuery({
+    queryKey: ['prospectsForLinking'],
+    queryFn: getUsersForComments,
+    enabled: isPIC,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
 
   const [expandedProspects, setExpandedProspects] = useState<{[key: string]: boolean}>({});
+  const [linkingMode, setLinkingMode] = useState<{[key: string]: boolean}>({});
+  const [selectedProspectForLinking, setSelectedProspectForLinking] = useState<{[key: string]: string}>({});
+
+  // Mutation to link comments to prospects
+  const linkCommentsMutation = useMutation({
+    mutationFn: async ({ unlinkedProspectId, targetProspectId, targetProspectName }: {
+      unlinkedProspectId: string;
+      targetProspectId: string;
+      targetProspectName: string;
+    }) => {
+      const supabase = createClient();
+      
+      // Update all comments with the unlinked prospect_id to use the target prospect's details
+      const { data, error } = await supabase
+        .from('comments')
+        .update({
+          prospect_id: targetProspectId,
+          prospect_name: targetProspectName
+        })
+        .eq('prospect_id', unlinkedProspectId);
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      customToast(`Successfully linked comments to ${variables.targetProspectName}`, 'success');
+      // Invalidate comments query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['prospectComments'] });
+      // Reset linking state
+      setLinkingMode(prev => ({ ...prev, [variables.unlinkedProspectId]: false }));
+      setSelectedProspectForLinking(prev => ({ ...prev, [variables.unlinkedProspectId]: '' }));
+    },
+    onError: (error) => {
+      customToast(`Error linking comments: ${error}`, 'error');
+    }
+  });
+
+  // Helper function to find similar prospects by name
+  const findSimilarProspects = useCallback((unlinkedName: string) => {
+    if (!unlinkedName || !prospectsData.length) return [];
+    
+    const normalizeString = (str: string) => str.toLowerCase().trim().replace(/\s+/g, ' ');
+    const normalizedUnlinked = normalizeString(unlinkedName);
+    
+    return prospectsData
+      .map(prospect => ({
+        ...prospect,
+        similarity: calculateSimilarity(normalizedUnlinked, normalizeString(prospect.full_name))
+      }))
+      .filter(prospect => prospect.similarity > 0.3) // Only show prospects with >30% similarity
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 5); // Show top 5 matches
+  }, [prospectsData]);
+
+  // Simple string similarity calculation (Levenshtein distance based)
+  const calculateSimilarity = (str1: string, str2: string): number => {
+    const matrix = [];
+    const len1 = str1.length;
+    const len2 = str2.length;
+
+    if (len1 === 0) return len2 === 0 ? 1 : 0;
+    if (len2 === 0) return 0;
+
+    // Initialize matrix
+    for (let i = 0; i <= len2; i++) {
+      matrix[i] = [i];
+    }
+    for (let j = 0; j <= len1; j++) {
+      matrix[0][j] = j;
+    }
+
+    // Fill matrix
+    for (let i = 1; i <= len2; i++) {
+      for (let j = 1; j <= len1; j++) {
+        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
+        }
+      }
+    }
+
+    const maxLen = Math.max(len1, len2);
+    return (maxLen - matrix[len2][len1]) / maxLen;
+  };
   
   // Use useCallback to prevent the function from being recreated on every render
   const toggleProspect = useCallback((prospectId: string, event?: React.MouseEvent) => {
@@ -38,7 +140,7 @@ export default function ProtectedPage() {
     });
   }, []);
 
-  if (isPICLoading || isUsersLoading) {
+  if (isPICLoading || isUsersLoading || isProspectsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -110,9 +212,18 @@ export default function ProtectedPage() {
 
   const renderSection = (title: string, prospectIds: string[]) => {
     // console.log(`Rendering section "${title}" with prospects:`, prospectIds);
+    const isUnlinkedSection = title === "Unlinked Comment Forms";
+    
     return (
       <div className="mb-10">
-        <h2 className="mb-4 text-2xl font-bold text-gray-100">{title}</h2>
+        <h2 className="mb-4 text-2xl font-bold text-gray-100">
+          {title}
+          {isUnlinkedSection && (
+            <span className="ml-2 text-sm text-gray-400">
+              ({prospectIds.length} unlinked)
+            </span>
+          )}
+        </h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {prospectIds.map((prospectId, index) => {
           const prospectComments = groupedComments[prospectId];
@@ -151,25 +262,38 @@ export default function ProtectedPage() {
                   )}{" "}
                   {prospectName}
                 </span>
-                <span className="text-sm">
-                  <span
-                    className={`font-semibold ${
-                      yesInviteCount >= 2 ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    {yesInviteCount} yes
-                  </span>{" "}
-                  |{" "}
-                  <span
-                    className={`font-semibold ${
-                      noInviteCount <= 0 ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    {noInviteCount} no
-                  </span>{" "}
-                  | {numberOfComments}{" "}
-                  {numberOfComments > 1 ? "comments" : "comment"}
-                </span>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm">
+                    <span
+                      className={`font-semibold ${
+                        yesInviteCount >= 2 ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {yesInviteCount} yes
+                    </span>{" "}
+                    |{" "}
+                    <span
+                      className={`font-semibold ${
+                        noInviteCount <= 0 ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {noInviteCount} no
+                    </span>{" "}
+                    | {numberOfComments}{" "}
+                    {numberOfComments > 1 ? "comments" : "comment"}
+                  </span>
+                  {isUnlinkedSection && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLinkingMode(prev => ({ ...prev, [prospectId]: !prev[prospectId] }));
+                      }}
+                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg transition-colors"
+                    >
+                      {linkingMode[prospectId] ? 'Cancel' : 'Link'}
+                    </button>
+                  )}
+                </div>
               </button>
 
               {isExpanded && (
@@ -209,6 +333,93 @@ export default function ProtectedPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Linking interface for unlinked comments */}
+              {isUnlinkedSection && linkingMode[prospectId] && (
+                <div className="mt-2 p-4 bg-blue-900/30 border border-blue-500/30 rounded-lg">
+                  <h4 className="text-sm font-semibold text-blue-300 mb-3">
+                    Link "{prospectName}" to an existing prospect:
+                  </h4>
+                  
+                  {/* Show similar prospects if any */}
+                  {(() => {
+                    const similarProspects = findSimilarProspects(prospectName);
+                    return similarProspects.length > 0 ? (
+                      <div className="mb-4">
+                        <p className="text-xs text-gray-400 mb-2">Suggested matches:</p>
+                        <div className="space-y-2">
+                          {similarProspects.map((prospect: any) => (
+                            <div key={prospect.id} className="flex items-center justify-between bg-gray-700/50 p-2 rounded">
+                              <div className="flex-1">
+                                <span className="text-sm text-white">{prospect.full_name}</span>
+                                <span className="text-xs text-gray-400 ml-2">
+                                  ({Math.round(prospect.similarity * 100)}% match)
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  linkCommentsMutation.mutate({
+                                    unlinkedProspectId: prospectId,
+                                    targetProspectId: prospect.id,
+                                    targetProspectName: prospect.full_name
+                                  });
+                                }}
+                                disabled={linkCommentsMutation.isPending}
+                                className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs rounded transition-colors"
+                              >
+                                {linkCommentsMutation.isPending ? 'Linking...' : 'Link'}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-400 mb-3">No similar prospects found</p>
+                    );
+                  })()}
+
+                  {/* Manual prospect selection */}
+                  <div className="space-y-2">
+                    <label className="text-xs text-gray-300">Or select a prospect manually:</label>
+                    <select
+                      value={selectedProspectForLinking[prospectId] || ''}
+                      onChange={(e) => setSelectedProspectForLinking(prev => ({ 
+                        ...prev, 
+                        [prospectId]: e.target.value 
+                      }))}
+                      className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm"
+                    >
+                      <option value="">Select a prospect...</option>
+                      {prospectsData
+                        .sort((a, b) => a.full_name.localeCompare(b.full_name))
+                        .map(prospect => (
+                          <option key={prospect.id} value={prospect.id}>
+                            {prospect.full_name} ({prospect.email})
+                          </option>
+                        ))}
+                    </select>
+                    
+                    {selectedProspectForLinking[prospectId] && (
+                      <button
+                        onClick={() => {
+                          const selectedProspect = prospectsData.find(p => p.id === selectedProspectForLinking[prospectId]);
+                          if (selectedProspect) {
+                            linkCommentsMutation.mutate({
+                              unlinkedProspectId: prospectId,
+                              targetProspectId: selectedProspect.id,
+                              targetProspectName: selectedProspect.full_name
+                            });
+                          }
+                        }}
+                        disabled={linkCommentsMutation.isPending}
+                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm rounded transition-colors"
+                      >
+                        {linkCommentsMutation.isPending ? 'Linking...' : 'Link Comments'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
