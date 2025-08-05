@@ -86,7 +86,7 @@ export default function ProtectedPage() {
                         <div className="h-3 bg-gray-700 rounded w-2/3 animate-pulse"></div>
                       </div>
                     </div>
-                  ))}
+                  ))
                 ) : (
                   usersData.map((applicant) => (
                     <div key={applicant.id} className="flex flex-col">
