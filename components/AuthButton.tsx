@@ -45,19 +45,17 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
   
   const signOut = async () => {
     try {
-      // Call the sign-out API route
-      await fetch('/api/signout', { method: 'POST' });
+      const supabase = createClient();
       
-      // Clear all React Query cache to reset user state
+      // Sign out from Supabase directly
+      await supabase.auth.signOut();
+      
+      // Clear React Query cache
       queryClient.clear();
       
-      // Navigate to home page without page reload
-      router.push('/');
+      // Force page refresh to update server-rendered navbar
+      window.location.href = '/';
       
-      // Optional: Small delay to ensure state is cleared
-      setTimeout(() => {
-        router.refresh();
-      }, 100);
     } catch (error) {
       console.error('Error signing out:', error);
       // Fallback to page reload if there's an error

@@ -286,6 +286,53 @@ export async function getApplicantTotalScore(userId: string) {
   return data?.total_score || 0;
 }
 
+// Batched query function for ApplicantCard data
+export async function getBatchedApplicantData(userId: string) {
+  const supabase = createClient();
+
+  try {
+    // Get all applicant data in parallel
+    const [avatarResult, casesResult, interviewsResult, scoreResult] = await Promise.all([
+      supabase
+        .from("user_avatar")
+        .select("avatar_url")
+        .eq("user_id", userId)
+        .single(),
+      
+      supabase
+        .from("case_studies")
+        .select("active_name")
+        .eq("prospect", userId),
+      
+      supabase
+        .from("interviews")
+        .select("active_name")
+        .eq("prospect_id", userId),
+      
+      supabase
+        .from("users")
+        .select("total_score")
+        .eq("id", userId)
+        .single()
+    ]);
+
+    return {
+      avatarUrl: avatarResult.data?.avatar_url || null,
+      caseStudies: casesResult.data || [],
+      interviews: interviewsResult.data || [],
+      totalScore: scoreResult.data?.total_score || 0
+    };
+  } catch (error) {
+    console.error("Error fetching batched applicant data:", error);
+    return {
+      avatarUrl: null,
+      caseStudies: [],
+      interviews: [],
+      totalScore: 0
+    };
+  }
+}
+
 export async function getCurrentUserData() {
   const supabase = createClient();
   
@@ -321,7 +368,6 @@ export async function getCurrentUserData() {
     photoUrl
   };
 
-  console.log('getCurrentUserData result:', result);
   return result;
 }
 

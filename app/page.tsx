@@ -10,35 +10,6 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Index() {
   const { isActive, isLoading, user } = useCurrentUser();
-
-  // Only show loading for authenticated users
-  if (isLoading && user) {
-    return (
-      <div className="relative min-h-screen w-full overflow-hidden">
-        {/* Background with dark theme overlay */}
-        <div
-          className="absolute inset-0 z-0 bg-background"
-          style={{
-            backgroundImage: `url(${background.src})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-
-        {/* Loading state */}
-        <div className="relative z-20 flex min-h-screen flex-col items-center justify-center">
-          <div className="animate-pulse space-y-6 text-center">
-            <div className="mx-auto h-16 w-16 rounded-full bg-primary/20"></div>
-            <div className="space-y-2">
-              <div className="mx-auto h-6 w-48 rounded bg-muted"></div>
-              <div className="mx-auto h-4 w-32 rounded bg-muted/60"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
   
   return (
     <div className="prospect-theme relative min-h-screen w-full overflow-hidden">
@@ -78,14 +49,28 @@ export default function Index() {
                 <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up">
                   <div className="card-header">
                     <h1 className="card-title text-white">
-                      {isActive
+                      {isLoading
+                        ? `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`
+                        : isActive
                         ? "Active Member Dashboard"
                         : `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`}
                     </h1>
                   </div>
 
                   <div className="card-content space-y-6">
-                    {isActive ? (
+                    {isLoading ? (
+                      // Loading state
+                      <div className="space-y-4">
+                        <div className="animate-pulse">
+                          <div className="h-4 bg-gray-700 rounded w-3/4 mb-3"></div>
+                          <div className="grid gap-4 sm:grid-cols-2">
+                            {[1, 2, 3, 4].map((i) => (
+                              <div key={i} className="h-12 bg-gray-700 rounded"></div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : isActive ? (
                       // Active user content
                       <div className="space-y-4">
                         <p className="text-gray-300">

@@ -1,10 +1,7 @@
 import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
-  getApplicantAvatar,
-  getApplicantCaseStudies,
-  getApplicantInterviews,
-  getApplicantTotalScore
+  getBatchedApplicantData
 } from "@/app/supabase/clientQueries";
 
 interface Packet {
@@ -31,34 +28,19 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   applicant,
   onViewApplication,
 }) => {
-  // Use React Query for optimized caching
-  const { data: avatarUrl } = useQuery({
-    queryKey: ['avatar', applicant.id],
-    queryFn: () => getApplicantAvatar(applicant.id),
-    staleTime: 10 * 60 * 1000, // 10 minutes
+  // Use single batched query for all applicant data
+  const { data: applicantData } = useQuery({
+    queryKey: ['applicantData', applicant.id],
+    queryFn: () => getBatchedApplicantData(applicant.id),
+    staleTime: 15 * 60 * 1000, // 15 minutes - good balance for all data types
     refetchOnWindowFocus: false,
   });
 
-  const { data: caseStudiesData = [] } = useQuery({
-    queryKey: ['caseStudies', applicant.id],
-    queryFn: () => getApplicantCaseStudies(applicant.id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: interviewsData = [] } = useQuery({
-    queryKey: ['interviews', applicant.id],
-    queryFn: () => getApplicantInterviews(applicant.id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: totalScore = 0 } = useQuery({
-    queryKey: ['totalScore', applicant.id],
-    queryFn: () => getApplicantTotalScore(applicant.id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
+  // Extract data with defaults
+  const avatarUrl = applicantData?.avatarUrl;
+  const caseStudiesData = applicantData?.caseStudies || [];
+  const interviewsData = applicantData?.interviews || [];
+  const totalScore = applicantData?.totalScore || 0;
 
   // Derive computed values
   const caseActives = caseStudiesData.map(item => item.active_name);
