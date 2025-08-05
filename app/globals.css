@@ -343,6 +343,38 @@
   animation: float 6s ease-in-out infinite;
 }
 
+.animate-timeline-glow {
+  animation: timeline-glow 3s ease-in-out infinite;
+}
+
+.animate-particle-float {
+  animation: particle-float 4s ease-in-out infinite;
+}
+
+.animate-progress-fill {
+  animation: progress-fill 2s ease-out forwards;
+}
+
+.animate-magnetic-hover {
+  animation: magnetic-hover 0.6s ease-out;
+}
+
+.animate-timeline-entrance {
+  animation: timeline-entrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-urgent-pulse {
+  animation: urgent-pulse 2s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbit 8s linear infinite;
+}
+
+.animate-gentle-breathe {
+  animation: gentle-breathe 3s ease-in-out infinite;
+}
+
 @keyframes animateIn {
   from {
     opacity: 0;
@@ -484,6 +516,86 @@
   50% {
     transform: scale(1.1);
     opacity: 0.5;
+  }
+}
+
+@keyframes timeline-glow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.7;
+  }
+  33% {
+    transform: translateY(-8px) translateX(4px);
+    opacity: 1;
+  }
+  66% {
+    transform: translateY(4px) translateX(-6px);
+    opacity: 0.8;
+  }
+}
+
+@keyframes progress-fill {
+  from {
+    height: 0%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+@keyframes magnetic-hover {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(8px) scale(1.05);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes timeline-entrance {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.8);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes urgent-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5), 0 0 15px rgba(239, 68, 68, 0.3);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.8), 0 0 25px rgba(239, 68, 68, 0.5), 0 0 35px rgba(239, 68, 68, 0.3);
+    background-color: rgba(239, 68, 68, 0.2);
+  }
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
   }
 }
 

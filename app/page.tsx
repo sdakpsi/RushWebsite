@@ -244,106 +244,148 @@ export default function Index() {
 
               {/* Right Column - Rush Schedule Only */}
               <div className="space-y-6">
-                {/* Rush Schedule Timeline */}
-                <div className="prospect-card rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                  <div className="card-header">
-                    <h3 className="card-title text-white mb-4">Rush Schedule</h3>
+                {/* Enhanced Rush Schedule Timeline */}
+                <div className="prospect-card rounded-xl p-6 animate-slide-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
+                  {/* Background gradient glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 animate-pulse"></div>
+                  
+                  <div className="card-header relative z-10">
+                    <h3 className="card-title text-white mb-6 text-center">
+                      <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-shimmer">
+                        Rush Schedule
+                      </span>
+                    </h3>
                   </div>
-                  <div className="card-content">
-                    <div className="space-y-3">
-                      {/* Info Night */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-green-400/10 border border-green-400/20 transition-all duration-200 hover:bg-green-400/20 hover:border-green-400/40 hover:shadow-lg hover:scale-[1.02]">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-green-400/20 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:bg-green-400/30">
-                            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  
+                  <div className="card-content relative z-10">
+                    {/* Timeline container with connecting line */}
+                    <div className="relative">
+                      {/* Vertical connecting line */}
+                      <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 via-purple-400 via-indigo-400 via-orange-400 to-red-400 opacity-30"></div>
+                      
+                      {/* Animated progress line */}
+                      <div className="absolute left-6 top-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 to-purple-400 animate-progress-fill opacity-80 shadow-lg shadow-blue-400/50"></div>
+                      
+                      <div className="space-y-6 relative">
+                        {/* Info Night */}
+                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.3s' }}>
+                          <div className="relative z-20">
+                            <div className="w-12 h-12 prospect-glass bg-green-400/20 backdrop-blur-sm border border-green-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-green-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                              {/* Professional orb with app styling */}
+                              <div className="w-4 h-4 bg-green-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                              <div className="absolute w-1 h-1 bg-green-300/60 rounded-full animate-particle-float" style={{ animationDelay: '0s' }}></div>
+                              <div className="absolute w-0.5 h-0.5 bg-green-200/40 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
+                            </div>
+                          </div>
+                          <div className="flex-1 bg-green-400/10 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-green-400/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-green-400/20 hover:scale-[1.02]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-green-300 font-bold text-sm bg-green-400/20 px-2 py-1 rounded-full">Mon 9/29</span>
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            </div>
+                            <h4 className="font-bold text-base text-white mb-1">Info Night</h4>
+                            <p className="text-sm text-gray-300">6 PM @ Price Center - Ballroom East</p>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-green-300 font-semibold text-sm">Mon 9/29</span>
-                          </div>
-                          <h4 className={`font-bold text-sm text-white`}>Info Night</h4>
-                          <p className={`text-xs text-gray-400`}>6 PM @ Price Center - Ballroom East</p>
-                        </div>
-                      </div>
 
-                      {/* Business Workshop */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-blue-400/10 border border-blue-400/20 transition-all duration-200 hover:bg-blue-400/20 hover:border-blue-400/40 hover:shadow-lg hover:scale-[1.02]">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-blue-400/20 rounded-lg flex items-center justify-center">
-                            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                        {/* Business Workshop */}
+                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.4s' }}>
+                          <div className="relative z-20">
+                            <div className="w-12 h-12 prospect-glass bg-blue-400/20 backdrop-blur-sm border border-blue-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-blue-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                              {/* Professional orb with app styling */}
+                              <div className="w-4 h-4 bg-blue-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                              <div className="absolute w-1 h-1 bg-blue-300/60 rounded-full animate-particle-float" style={{ animationDelay: '0.5s' }}></div>
+                              <div className="absolute w-0.5 h-0.5 bg-blue-200/40 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
+                            </div>
+                          </div>
+                          <div className="flex-1 bg-blue-400/10 backdrop-blur-sm border border-blue-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-blue-400/20 hover:border-blue-400/50 hover:shadow-xl hover:shadow-blue-400/20 hover:scale-[1.02]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-blue-300 font-bold text-sm bg-blue-400/20 px-2 py-1 rounded-full">Tue 9/30</span>
+                              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                            </div>
+                            <h4 className="font-bold text-base text-white mb-1">Business Workshop</h4>
+                            <p className="text-sm text-gray-300">8 PM @ Price Center Theater</p>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-blue-300 font-semibold text-sm">Tue 9/30</span>
-                          </div>
-                          <h4 className={`font-bold text-sm text-white`}>Business Workshop</h4>
-                          <p className={`text-xs text-gray-400`}>8 PM @ Price Center Theater</p>
-                        </div>
-                      </div>
 
-                      {/* Case Study Night */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-purple-400/10 border border-purple-400/20 transition-all duration-200 hover:bg-purple-400/20 hover:border-purple-400/40 hover:shadow-lg hover:scale-[1.02]">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-purple-400/20 rounded-lg flex items-center justify-center">
-                            <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                        {/* Case Study Night */}
+                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.5s' }}>
+                          <div className="relative z-20">
+                            <div className="w-12 h-12 prospect-glass bg-purple-400/20 backdrop-blur-sm border border-purple-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                              {/* Professional orb with app styling */}
+                              <div className="w-4 h-4 bg-purple-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                              <div className="absolute w-1 h-1 bg-purple-300/60 rounded-full animate-particle-float" style={{ animationDelay: '1s' }}></div>
+                              <div className="absolute w-0.5 h-0.5 bg-purple-200/40 rounded-full animate-particle-float" style={{ animationDelay: '2s' }}></div>
+                            </div>
+                          </div>
+                          <div className="flex-1 bg-purple-400/10 backdrop-blur-sm border border-purple-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-purple-400/20 hover:border-purple-400/50 hover:shadow-xl hover:shadow-purple-400/20 hover:scale-[1.02]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-purple-300 font-bold text-sm bg-purple-400/20 px-2 py-1 rounded-full">Wed 10/1</span>
+                              <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                            </div>
+                            <h4 className="font-bold text-base text-white mb-1">Case Study Night</h4>
+                            <p className="text-sm text-gray-300">By Appointment</p>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-purple-300 font-semibold text-sm">Wed 10/1</span>
-                          </div>
-                          <h4 className={`font-bold text-sm text-white`}>Case Study Night</h4>
-                          <p className={`text-xs text-gray-400`}>By Appointment</p>
-                        </div>
-                      </div>
 
-                      {/* Application Deadline */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-indigo-400/10 border border-indigo-400/20 transition-all duration-200 hover:bg-indigo-400/20 hover:border-indigo-400/40 hover:shadow-lg hover:scale-[1.02]">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-indigo-400/20 rounded-lg flex items-center justify-center">
-                            <div className="w-3 h-3 bg-indigo-400 rounded-full animate-pulse"></div>
+                        {/* Application Deadline - URGENT */}
+                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.6s' }}>
+                          <div className="relative z-20">
+                            <div className="w-12 h-12 prospect-glass bg-red-400/20 backdrop-blur-sm border border-red-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-red-400/20 animate-urgent-pulse group-hover:animate-magnetic-hover">
+                              {/* Professional orb with app styling */}
+                              <div className="w-4 h-4 bg-red-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                              <div className="absolute w-1 h-1 bg-red-300/60 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
+                              <div className="absolute w-0.5 h-0.5 bg-red-200/40 rounded-full animate-particle-float" style={{ animationDelay: '2.5s' }}></div>
+                            </div>
+                          </div>
+                          <div className="flex-1 bg-red-400/10 backdrop-blur-sm border border-red-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-red-400/20 hover:border-red-400/50 hover:shadow-xl hover:shadow-red-400/20 hover:scale-[1.02] animate-urgent-pulse">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-red-300 font-bold text-sm bg-red-400/20 px-2 py-1 rounded-full animate-pulse">Thu 10/2</span>
+                              <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                              <span className="text-xs text-red-200 font-semibold bg-red-500/20 px-2 py-1 rounded-full animate-pulse">DEADLINE</span>
+                            </div>
+                            <h4 className="font-bold text-base text-white mb-1">Application Due</h4>
+                            <p className="text-sm text-gray-300">2:00 PM Deadline</p>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-indigo-300 font-semibold text-sm">Thu 10/2</span>
-                          </div>
-                          <h4 className={`font-bold text-sm text-white`}>Application Due</h4>
-                          <p className={`text-xs text-gray-400`}>2:00 PM Deadline</p>
-                        </div>
-                      </div>
 
-                      {/* Social Night */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-orange-400/10 border border-orange-400/20 transition-all duration-200 hover:bg-orange-400/20 hover:border-orange-400/40 hover:shadow-lg hover:scale-[1.02]">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-orange-400/20 rounded-lg flex items-center justify-center">
-                            <div className="w-3 h-3 bg-orange-400 rounded-full animate-pulse"></div>
+                        {/* Social Night */}
+                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.7s' }}>
+                          <div className="relative z-20">
+                            <div className="w-12 h-12 prospect-glass bg-orange-400/20 backdrop-blur-sm border border-orange-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-orange-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                              {/* Professional orb with app styling */}
+                              <div className="w-4 h-4 bg-orange-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                              <div className="absolute w-1 h-1 bg-orange-300/60 rounded-full animate-particle-float" style={{ animationDelay: '2s' }}></div>
+                              <div className="absolute w-0.5 h-0.5 bg-orange-200/40 rounded-full animate-particle-float" style={{ animationDelay: '3s' }}></div>
+                            </div>
+                          </div>
+                          <div className="flex-1 bg-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-orange-400/20 hover:border-orange-400/50 hover:shadow-xl hover:shadow-orange-400/20 hover:scale-[1.02]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-orange-300 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-full">Fri 10/3</span>
+                              <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+                            </div>
+                            <h4 className="font-bold text-base text-white mb-1">Social Night</h4>
+                            <p className="text-sm text-gray-300">By Invite Only</p>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-orange-300 font-semibold text-sm">Fri 10/3</span>
-                          </div>
-                          <h4 className={`font-bold text-sm text-white`}>Social Night</h4>
-                          <p className={`text-xs text-gray-400`}>By Invite Only</p>
-                        </div>
-                      </div>
 
-                      {/* Interviews */}
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-red-400/10 border border-red-400/20 transition-all duration-200 hover:bg-red-400/20 hover:border-red-400/40 hover:shadow-lg hover:scale-[1.02]">
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-red-400/20 rounded-lg flex items-center justify-center">
-                            <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+                        {/* Interviews */}
+                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.8s' }}>
+                          <div className="relative z-20">
+                            <div className="w-12 h-12 prospect-glass bg-indigo-400/20 backdrop-blur-sm border border-indigo-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                              {/* Professional orb with app styling */}
+                              <div className="w-4 h-4 bg-indigo-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                              <div className="absolute w-1 h-1 bg-indigo-300/60 rounded-full animate-particle-float" style={{ animationDelay: '2.5s' }}></div>
+                              <div className="absolute w-0.5 h-0.5 bg-indigo-200/40 rounded-full animate-particle-float" style={{ animationDelay: '3.5s' }}></div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-red-300 font-semibold text-sm">Sat 10/4</span>
+                          <div className="flex-1 bg-indigo-400/10 backdrop-blur-sm border border-indigo-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-indigo-400/20 hover:border-indigo-400/50 hover:shadow-xl hover:shadow-indigo-400/20 hover:scale-[1.02]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-indigo-300 font-bold text-sm bg-indigo-400/20 px-2 py-1 rounded-full">Sat 10/4</span>
+                              <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                            </div>
+                            <h4 className="font-bold text-base text-white mb-1">Interviews</h4>
+                            <p className="text-sm text-gray-300">By Appointment</p>
                           </div>
-                          <h4 className={`font-bold text-sm text-white`}>Interviews</h4>
-                          <p className={`text-xs text-gray-400`}>By Appointment</p>
                         </div>
                       </div>
                     </div>
