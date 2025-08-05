@@ -50,7 +50,7 @@ export default function Footer() {
               {currentTheme.branding.rushYear} Rush
             </h3>
             <p className="text-sm text-muted-foreground">
-              Questions? {currentTheme.branding.rushChairs}
+              For any questions {currentTheme.branding.rushChairs}
             </p>
           </div>
         </div>
