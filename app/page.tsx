@@ -27,7 +27,6 @@ export default function Index() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
           imageRendering: "crisp-edges",
           filter: "contrast(1.1) brightness(1.05)",
         }}

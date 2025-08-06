@@ -318,6 +318,30 @@
   }
 }
 
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-timeline-glow,
+  .animate-particle-float,
+  .animate-progress-fill,
+  .animate-magnetic-hover,
+  .animate-timeline-entrance,
+  .animate-urgent-pulse,
+  .animate-orbit,
+  .animate-gentle-breathe,
+  .animate-float {
+    animation: none !important;
+  }
+}
+
 /* Enhanced Animations */
 .animate-in {
   animation: animateIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
@@ -345,6 +369,7 @@
 
 .animate-timeline-glow {
   animation: timeline-glow 3s ease-in-out infinite;
+  will-change: transform;
 }
 
 .animate-particle-float {
@@ -373,6 +398,7 @@
 
 .animate-gentle-breathe {
   animation: gentle-breathe 3s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 @keyframes animateIn {
