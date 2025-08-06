@@ -1,15 +1,21 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import background from "./background.png";
 import tagline from "./tagline.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useOptionalAuth } from "@/hooks/useOptionalAuth";
 
 export default function Index() {
-  const { isActive, isLoading, user } = useCurrentUser();
+  const { isActive, hasAuthData } = useOptionalAuth();
+  
+  // Show active content when confirmed
+  const displayAsActive = isActive && hasAuthData;
+  // Never show loading state - just render content immediately
+  const showLoadingState = false;
   
   return (
     <div className="prospect-theme relative min-h-screen w-full overflow-hidden">
@@ -49,17 +55,15 @@ export default function Index() {
                 <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up">
                   <div className="card-header">
                     <h1 className="card-title text-white">
-                      {isLoading
-                        ? `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`
-                        : isActive
+                      {displayAsActive
                         ? "Active Member Dashboard"
                         : `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`}
                     </h1>
                   </div>
 
                   <div className="card-content space-y-6">
-                    {isLoading ? (
-                      // Loading state
+                    {showLoadingState ? (
+                      // Loading state - only shown when no cached data
                       <div className="space-y-4">
                         <div className="animate-pulse">
                           <div className="h-4 bg-gray-700 rounded w-3/4 mb-3"></div>
@@ -70,7 +74,7 @@ export default function Index() {
                           </div>
                         </div>
                       </div>
-                    ) : isActive ? (
+                    ) : displayAsActive ? (
                       // Active user content
                       <div className="space-y-4">
                         <p className="text-gray-300">
@@ -181,11 +185,11 @@ export default function Index() {
                 </div>
 
                 {/* Get Started / Quick Actions */}
-                {!isActive ? (
+                {!displayAsActive ? (
                 <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
                   <div className="card-header">
                     <h3 className="card-title text-white">
-                      {isActive ? "Quick Actions" : "Get Started"}
+                      {displayAsActive ? "Quick Actions" : "Get Started"}
                     </h3>
                   </div>
                   <div className="card-content">
@@ -226,7 +230,7 @@ export default function Index() {
                     <h3 className="card-title text-white">Need Help?</h3>
                   </div>
                   <div className="card-content">
-                    {isActive ?
+                    {displayAsActive ?
                     (
                       <p className="text-sm text-gray-300">
                        To report any issues or questions please contact Ryan (909)-655-8447
