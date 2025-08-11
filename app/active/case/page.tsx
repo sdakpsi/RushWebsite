@@ -5,7 +5,7 @@ import ActiveCaseStudyForm from "@/components/ActiveCaseStudyForm";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import MultipleCaseStudyManager from "@/components/MultipleCaseStudyManager";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useSelectedProspect } from "@/hooks/useSelectedProspect";
 import { useFormAnimation } from "@/hooks/useFormAnimation";
 import PastActiveSubmission from "@/components/PastActiveSubmission";
@@ -17,7 +17,7 @@ import { getInterviewProspects } from "@/app/supabase/clientQueries";
 import { getActiveSubmissionsWithStatus } from "@/app/supabase/getUsers";
 
 export default function ProtectedPage() {
-  const { isActive, isLoading } = useActiveStatus();
+  const { isActive, isLoading } = useCurrentUser();
   const {
     selectedProspect,
     setSelectedProspect,

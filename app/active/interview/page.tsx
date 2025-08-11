@@ -4,7 +4,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveInterviewForm from "@/components/ActiveInterviewForm";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useSelectedProspect } from "@/hooks/useSelectedProspect";
 import { useFormAnimation } from "@/hooks/useFormAnimation";
 import PastActiveSubmission from "@/components/PastActiveSubmission";
@@ -12,7 +12,7 @@ import PastActiveSubmission from "@/components/PastActiveSubmission";
 // mirror implementation of case page
 
 export default function ProtectedPage() {
-  const { isActive, isLoading } = useActiveStatus();
+  const { isActive, isLoading } = useCurrentUser();
   const [hasLoaded, setHasLoaded] = useState(false);
   const {
     selectedProspect,

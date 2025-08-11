@@ -3,7 +3,7 @@
 import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAllAnalytics } from "@/hooks/useAllAnalytics";
 import { redirect } from "next/navigation";
 
@@ -37,7 +37,7 @@ const StatCard = ({
 };
 
 export default function AnalyticsPage() {
-  const { isPIC, isLoading: isPICLoading, isActive } = useActiveStatus();
+  const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const {
     data: analytics,
     isLoading: analyticsLoading,

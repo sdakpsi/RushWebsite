@@ -4,14 +4,14 @@ import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { LazyApplicantCard, LazyApplicationPopUp, LazyQueueView } from "@/components/LazyComponents";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useDelibsUsers } from "@/hooks/getDelibsUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import ActiveQueueControls from "@/components/ActiveQueueControls";
 
 export default function ProtectedPage() {
-  const { isActive, isPIC, isLoading: isActiveLoading } = useActiveStatus();
+  const { isActive, isPIC, isLoading: isActiveLoading } = useCurrentUser();
   const { usersData, isLoading: isUsersLoading } = useDelibsUsers();
   const {
     currentApplicationId,

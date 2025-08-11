@@ -2,11 +2,11 @@
 import React from "react";
 import NextLinkButton from "./NextLinkButton";
 import ActiveLoginComponent from "./ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function ActiveSetter() {
-  const { isActive, isLoading } = useActiveStatus();
+  const { isActive, isLoading } = useCurrentUser();
 
   if (isLoading) {
     return <LoadingSpinner />; // Placeholder for a loading state

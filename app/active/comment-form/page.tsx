@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
 import Checkbox from "@/components/Checkbox";
@@ -30,7 +30,7 @@ function useSelectedProspect() {
 }
 
 export default function Page(this: any) {
-  const { isActive, isLoading } = useActiveStatus();
+  const { isActive, isLoading } = useCurrentUser();
   const {
     selectedProspect,
     setSelectedProspect,

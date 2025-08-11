@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProspectComments } from "@/hooks/useProspectComments";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUsersForComments } from "@/app/supabase/clientQueries";
@@ -12,7 +12,7 @@ import customToast from "@/components/CustomToast";
 import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
-  const { isPIC, isLoading: isPICLoading, isActive } = useActiveStatus();
+  const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const { commentsData, isLoading: isUsersLoading, error: commentsError } = useProspectComments();
   const queryClient = useQueryClient();
 

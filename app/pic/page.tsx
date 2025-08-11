@@ -3,7 +3,7 @@
 import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { LazyApplicantCard, LazyApplicationPopUp } from "@/components/LazyComponents";
-import { useActiveStatus } from "@/hooks/useActiveStatus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePICUsers } from "@/hooks/usePICUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
@@ -13,7 +13,7 @@ import { useCurrentWave } from "@/hooks/useCurrentWave";
 import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
-  const { isPIC, isLoading: isPICLoading , isActive} = useActiveStatus();
+  const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const { usersData, avatarMap, isLoading: isUsersLoading } = usePICUsers();
   const {
     currentApplicationId,
