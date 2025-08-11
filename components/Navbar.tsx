@@ -77,7 +77,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
         <div className="hidden items-center gap-4 sm:flex">
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
-          <RCButton is_active={isActive} />
+          {/* <RCButton is_active={isActive} /> */}
           <AuthButton user={user} />
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
                         <div className="text-xs font-bold text-green-300 tracking-wider uppercase">Active Access</div>
                       </div>
                       <div className="flex flex-col gap-3">
-                        <RCButton is_active={isActive} />
+                        {/* <RCButton is_active={isActive} /> */}
                         {/* Active Navigation Links */}
                         <div className="grid grid-cols-2 gap-2">
                           <Link

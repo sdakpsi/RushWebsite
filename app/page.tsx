@@ -172,7 +172,7 @@ export default function Index() {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-3 sm:flex-row">
-                          <Link href="/interest" className="flex-1">
+                          <Link href="https://docs.google.com/forms/d/e/1FAIpQLSe2ooyLbCv2zen2gl0OFc75oJJgqQq-_HbpK2sl0VLHw5mADQ/viewform" className="flex-1">
                             <button className="prospect-btn-primary w-full transform transition-all rounded-lg px-4 py-2 text-sm font-medium">
                               Interest Form
                             </button>
