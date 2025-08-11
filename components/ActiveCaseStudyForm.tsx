@@ -143,13 +143,12 @@ export default function ActiveCaseStudyForm({
   
   // Auto-populate user name when user data is available
   useEffect(() => {
-    if (user && user.user_metadata?.name) {
+    if (user?.user_metadata?.name) {
       const userName = user.user_metadata.name;
       setCurrentUserName(userName);
-      // Always set the user's name, overriding any existing value
       setValue("name", userName, { shouldValidate: true });
     }
-  }, [user, setValue]);
+  }, [user?.user_metadata?.name, setValue]);
 
   // Handle user typing detection
   const handleUserInput = () => {
@@ -168,25 +167,27 @@ export default function ActiveCaseStudyForm({
     }
   };
 
-  // Debounced form data update for multi-form context
+  // Handle form data changes based on context
   useEffect(() => {
     if (isMultiFormContext && onFormDataChange && !isUserTypingRef.current) {
-      // Only update if user is not currently typing
       const timeoutId = setTimeout(() => {
         onFormDataChange(currentFormData);
-      }, 100); // Reduced debounce time
-
+      }, 100);
       return () => clearTimeout(timeoutId);
-    } else if (storageKey) {
-      // In single form context, save to localStorage
+    }
+    
+    if (storageKey && !isMultiFormContext) {
       localStorage.setItem(storageKey, JSON.stringify(currentFormData));
     }
   }, [currentFormData, isMultiFormContext, onFormDataChange, storageKey]);
 
-  // Cleanup debounced function on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       debouncedAutoSave.cancel();
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     };
   }, [debouncedAutoSave]);
 
@@ -222,55 +223,35 @@ export default function ActiveCaseStudyForm({
     };
   };
 
-  // Initial form data setup only - no ongoing updates to prevent interference
+  // Initial form data setup for multi-form context
   useEffect(() => {
-    if (
-      isMultiFormContext &&
-      externalFormData &&
-      Object.keys(externalFormData).length > 0
-    ) {
-      // Only set initial values, don't continuously update
+    if (isMultiFormContext && externalFormData && Object.keys(externalFormData).length > 0) {
       const hasCurrentData = Object.keys(currentFormData).some(
         (key) => currentFormData[key as keyof CaseStudyForm]
       );
 
       if (!hasCurrentData) {
-        Object.keys(externalFormData).forEach((key) => {
-          setValue(
-            key as keyof CaseStudyForm,
-            externalFormData[key as keyof CaseStudyForm]
-          );
+        Object.entries(externalFormData).forEach(([key, value]) => {
+          setValue(key as keyof CaseStudyForm, value);
         });
       }
     }
-  }, []); // Empty dependency array - only run once on mount
+  }, []); // Run once on mount
 
-  // Reset form when prospect changes (only for single form context)
+  // Reset form when prospect changes (single form context only)
   useEffect(() => {
     if (!isMultiFormContext && !isEditing) {
-      // Clear form data when switching to a different prospect
-      const formKeys = Object.keys(watch());
-      formKeys.forEach((key) => {
+      Object.keys(currentFormData).forEach((key) => {
         if (key !== "name") {
-          // Keep the active name
           setValue(key as keyof CaseStudyForm, "");
         }
       });
     }
-  }, [selectedProspect.id, isMultiFormContext, isEditing, setValue, watch]);
+  }, [selectedProspect.id, isMultiFormContext, isEditing, setValue]);
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const onSubmit = async (data: CaseStudyForm) => {
     // Handle submission for both single and multi-form contexts
-    const isCurrentlySubmitting = externalIsSubmitting || false;
 
     if (setIsSubmitting && !isMultiFormContext) setIsSubmitting(true);
     if (onFormSubmit && isMultiFormContext) {

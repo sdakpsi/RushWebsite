@@ -1,9 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 const Timer = () => {
-  const calculateTimeLeft = () => {
-    const targetDate = new Date("2024-09-30T18:00:00"); // Target date
+  // Memoized target date to avoid recreating on every render
+  const targetDate = useMemo(() => new Date("2024-09-30T18:00:00"), []);
+  
+  const calculateTimeLeft = useCallback(() => {
     const now = new Date();
     const difference = targetDate.getTime() - now.getTime();
 
@@ -23,7 +25,7 @@ const Timer = () => {
       };
     }
     return timeLeft;
-  };
+  }, [targetDate]);
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   const [mounted, setMounted] = useState(false);
@@ -35,9 +37,9 @@ const Timer = () => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [calculateTimeLeft]);
 
-  const formatTime = (num: number) => String(num).padStart(2, "0");
+  const formatTime = useCallback((num: number) => String(num).padStart(2, "0"), []);
 
   if (!mounted) {
     // Avoid rendering mismatched content during SSR by rendering nothing initially

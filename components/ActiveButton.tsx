@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 interface ActiveButtonProps {
   is_active: boolean | null;
@@ -9,28 +9,42 @@ interface ActiveButtonProps {
 
 const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); // Define the ref type
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when component unmounts or is_active changes
+  useEffect(() => {
+    if (!is_active) {
+      setIsOpen(false);
+    }
+  }, [is_active]);
+
+  // Memoized handlers
+  const closeDropdown = useCallback(() => setIsOpen(false), []);
+  const toggleDropdown = useCallback(() => setIsOpen(prev => !prev), []);
+
+  // Memoized click outside handler
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsOpen(false);
+    }
+  }, []);
 
   // Handle clicks outside the dropdown to close it
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
+    if (!isOpen) return;
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen, handleClickOutside]);
 
   return is_active ? (
     <div className="relative" ref={dropdownRef}>
       <button
         className="flex items-center rounded-xl bg-gradient-to-r from-green-600/80 to-emerald-600/80 backdrop-blur-sm border border-green-400/30 text-white px-5 py-3 text-sm font-medium hover:from-green-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDropdown}
       >
         Active
         <svg 
@@ -49,7 +63,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
               <Link
                 href="/active/comment-form"
                 className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
-                onClick={() => setIsOpen(false)}
+                onClick={closeDropdown}
               >
                 Comment Form
               </Link>
@@ -58,7 +72,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
               <Link
                 href="/active/case"
                 className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
-                onClick={() => setIsOpen(false)}
+                onClick={closeDropdown}
               >
                 Case Study
               </Link>
@@ -67,7 +81,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
               <Link
                 href="/active/interview"
                 className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
-                onClick={() => setIsOpen(false)}
+                onClick={closeDropdown}
               >
                 Interview
               </Link>
@@ -76,7 +90,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
               <Link
                 href="/active/delibs"
                 className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
-                onClick={() => setIsOpen(false)}
+                onClick={closeDropdown}
               >
                 Delibs
               </Link>

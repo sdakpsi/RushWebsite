@@ -236,7 +236,14 @@ export default function NameForm() {
 
   useEffect(() => {
     debouncedSave();
-  }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA]);
+  }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA, debouncedSave]);
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSave.cancel();
+    };
+  }, [debouncedSave]);
 
   const handleGraduationYearChange = (
     event: React.ChangeEvent<HTMLInputElement>

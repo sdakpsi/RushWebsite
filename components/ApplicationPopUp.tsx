@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { createClient } from "@/utils/supabase/client";
@@ -104,13 +104,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const [viewDocument, setViewDocument] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("application");
   const supabase = createClient();
-  const [uploading, setUploading] = useState(false);
   const [score, setScore] = useState("");
 
   const [scoreResume, setScoreResume] = useState("");
-  const [activeName, setActiveName] = useState("");
-  const [comment, setComment] = useState("");
-  const [submissionCount, setSubmissionCount] = useState(0);
   const queryClient = useQueryClient();
 
   // React Query hooks for data fetching
@@ -123,7 +119,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   });
 
   const { data: prospectComments = [] } = useQuery({
-    queryKey: ['prospectComments', userID, submissionCount],
+    queryKey: ['prospectComments', userID],
     queryFn: () => getProspectComments(userID),
     enabled: !!userID,
     staleTime: 30 * 1000, // 30 seconds
@@ -181,43 +177,12 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     },
   });
 
-  const submitCommentMutation = useMutation({
-    mutationFn: async ({ activeName, comment }: { activeName: string; comment: string }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { data, error } = await supabase.from("comments").insert([{
-        prospect_id: userID,
-        active_id: user?.id,
-        active_name: activeName,
-        comment: comment,
-      }]);
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      customToast("Comment submitted.", "success");
-      setSubmissionCount((count) => count + 1);
-      setActiveName("");
-      setComment("");
-      queryClient.invalidateQueries({ queryKey: ['prospectComments', userID] });
-    },
-    onError: (error: any) => {
-      customToast(`Error: ${error.message}`, "error");
-    },
-  });
 
   const handleViewDocument = (documentUrl: string) => {
     setViewDocument(documentUrl);
   };
 
-  const toggleSection = (sectionName: string) => {
-    if (activeSection === sectionName) {
-      setActiveSection(activeSection); // If the current section is already active, close it
-    } else {
-      setActiveSection(sectionName); // Otherwise, open the clicked section
-    }
-  };
 
-  const [error, setError] = useState("");
 
   const [averages, setAverages] = useState({
     leadership_avg: 0,
@@ -234,11 +199,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     events_attended: 0,
   });
 
-  useEffect(() => {
-    setIvAverages(calculateIvAverages(interviews));
-  }, [interviews]);
-
-  const calculateIvAverages = (interviews: Interview[]) => {
+  const calculateIvAverages = useCallback((interviews: Interview[]) => {
     if (interviews.length === 3) {
       // Check if all three interviews exist before accessing them
       if (interviews[0] && interviews[1] && interviews[2]) {
@@ -328,13 +289,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     };
 
     return averages;
-  };
+  }, []);
 
-  useEffect(() => {
-    setAverages(calculateAverages(cases));
-  }, [cases]);
-
-  const calculateAverages = (cases: Case[]) => {
+  const calculateAverages = useCallback((cases: Case[]) => {
     if (cases.length === 3) {
       // Check if all three cases exist before accessing them
       if (cases[0] && cases[1] && cases[2]) {
@@ -401,10 +358,18 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     };
 
     return averages;
-  };
+  }, []);
 
-  const numCases = cases.length;
-  const numInterviews = interviews.length;
+  // Calculate and set averages when data changes
+  useMemo(() => {
+    const newIvAverages = calculateIvAverages(interviews);
+    setIvAverages(newIvAverages);
+  }, [interviews, calculateIvAverages]);
+
+  useMemo(() => {
+    const newAverages = calculateAverages(cases);
+    setAverages(newAverages);
+  }, [cases, calculateAverages]);
 
   const handleScoreChange = (e: any) => {
     const value = e.target.value;
@@ -423,15 +388,6 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     }
   };
 
-  const handleActiveName = (e: any) => {
-    const value = e.target.value;
-    setActiveName(value);
-  };
-
-  const handleComment = (e: any) => {
-    const value = e.target.value;
-    setComment(value);
-  };
 
 
   const handleSubmit = async () => {
@@ -450,79 +406,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     updateResumeScoreMutation.mutate(scoreResume);
   };
 
-  const handleCommentSubmit = async () => {
-    if (activeName === "" || comment === "") {
-      customToast("Please enter a name and comment before submitting.", "error");
-      return;
-    }
-    submitCommentMutation.mutate({ activeName, comment });
-  };
 
-  const uploadImage = async (event: any) => {
-    setUploading(true);
-    setError("");
-    try {
-      const file = event.target.files[0];
-      if (!file) {
-        throw new Error("You must select an image to upload.");
-      }
-
-      // Only allow image file types for upload
-      if (!file.type.startsWith("image/")) {
-        throw new Error("Invalid file type. Please select an image.");
-      }
-
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${userID}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Correctly handle the retrieval of the public URL
-      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-
-      const { data: existingEntries, error: existingError } = await supabase
-        .from("user_avatar")
-        .select("id")
-        .eq("user_id", userID);
-
-      if (existingError) throw existingError;
-
-      if (existingEntries && existingEntries.length > 0) {
-        // Assuming the first entry is the correct one to update
-        const existingEntry = existingEntries[0];
-        if (existingEntry && existingEntry.id) {
-          const { error: updateError } = await supabase
-            .from("user_avatar")
-            .update({ avatar_url: data.publicUrl })
-            .eq("id", existingEntry.id);
-
-          if (updateError) throw updateError;
-        }
-      } else {
-        // Insert new entry
-        const { error: insertError } = await supabase
-          .from("user_avatar")
-          .insert([{ user_id: userID, avatar_url: data.publicUrl }]);
-
-        if (insertError) throw insertError;
-      }
-
-      // Invalidate avatar query to refetch
-      queryClient.invalidateQueries({ queryKey: ['userAvatar', userID] });
-    } catch (error: any) {
-      console.error("Upload error:", error.message);
-      setError(`Upload failed: ${error.message}`);
-    } finally {
-      setUploading(false);
-    }
-  };
 
 
   const scoreComponents = useMemo(() => {
@@ -577,21 +461,27 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     application.cover_letter,
   ]);
 
-  useEffect(() => {
-    const updateTot = async () => {
-      if (scoreComponents.totalScore > 0) {
-        const { data, error } = await supabase
-          .from("users")
-          .update({ total_score: scoreComponents.totalScore })
-          .eq("id", userID);
+  // Update total score when it changes (using useMemo with side effect)
+  useMemo(() => {
+    if (scoreComponents.totalScore > 0) {
+      const updateTotalScore = async () => {
+        try {
+          const { error } = await supabase
+            .from("users")
+            .update({ total_score: scoreComponents.totalScore })
+            .eq("id", userID);
 
-        if (error) {
-          alert(`Error: ${error.message}`);
+          if (error) {
+            customToast(`Error updating total score: ${error.message}`, "error");
+          }
+        } catch (err) {
+          customToast("Failed to update total score", "error");
         }
-      }
-    };
-    updateTot();
-  }, [scoreComponents.totalScore]);
+      };
+      
+      updateTotalScore();
+    }
+  }, [scoreComponents.totalScore, userID, supabase]);
 
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-75 pt-8 pb-8">
@@ -1300,26 +1190,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       )}
                     </div>
                   </div>
-                  {isPIC && (
-                    <div className="text-center">
-                      <label
-                        htmlFor="avatar-upload"
-                        className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 transition-colors duration-200 shadow-lg"
-                      >
-                        Upload New Image
-                      </label>
-                      <input
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={uploadImage}
-                        disabled={uploading}
-                        className="hidden"
-                      />
-                      {uploading && <p className="mt-3 text-blue-300">Uploading...</p>}
-                      {error && <p className="mt-3 text-red-400">{error}</p>}
-                    </div>
-                  )}
+                  <div className="text-center text-gray-400 text-sm">
+                    <p>This photo was uploaded by the applicant during registration.</p>
+                  </div>
                 </div>
               </div>
             )}

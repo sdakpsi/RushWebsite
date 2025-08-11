@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import logo from "../../components/akpsilogo.png";
 import background from "../background.png";
@@ -107,16 +107,22 @@ const InterestForm = () => {
         customToast("🎉 Interest form submitted successfully! You'll receive updates soon.", "success");
         setFormData({ name: "", email: "", phone: "" });
         
-        // Add a brief celebration effect
-        setTimeout(() => {
+        // Add a brief celebration effect with proper cleanup
+        const celebrateTimeout = setTimeout(() => {
           const form = document.querySelector('form');
           if (form) {
             form.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-              form.style.transform = 'scale(1)';
+            const resetTimeout = setTimeout(() => {
+              if (form.isConnected) { // Check if element still exists
+                form.style.transform = 'scale(1)';
+              }
             }, 200);
+            // Store timeout for potential cleanup if needed
+            (window as any)._formResetTimeout = resetTimeout;
           }
         }, 100);
+        // Store timeout for potential cleanup if needed
+        (window as any)._formCelebrationTimeout = celebrateTimeout;
       } else {
         const errorData = await response.json();
         customToast(errorData.message || "Error submitting form", "error");
