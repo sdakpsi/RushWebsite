@@ -113,14 +113,30 @@ export async function getDelibsUsers() {
 
   const { data: usersData, error: usersError } = await supabase
     .from("users")
-    .select("*")
+    .select(`
+      *,
+      applications(
+        id,
+        submitted
+      )
+    `)
     .in("id", prospectIds);
 
   if (usersError) {
     return [];
   }
 
-  return usersData;
+  // Transform the data to match expected format
+  const transformedUsers = usersData?.map((user: any) => {
+    // Find submitted application
+    const submittedApp = user.applications?.find((app: any) => app.submitted !== null);
+    return {
+      ...user,
+      application: submittedApp?.id || null
+    };
+  }) || [];
+
+  return transformedUsers;
 }
 
 export async function getIsPIC() {

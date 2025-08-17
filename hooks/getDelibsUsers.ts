@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDelibsUsers as fetchDelibsUsers } from '@/app/supabase/getUsers';
+import { getDelibsUsers as fetchDelibsUsers } from '@/app/supabase/clientQueries';
 import { Packet } from '@/lib/types';
 
 export function useDelibsUsers() {

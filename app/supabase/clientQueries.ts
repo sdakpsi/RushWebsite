@@ -516,3 +516,76 @@ export async function getComments() {
 
   return data || [];
 }
+
+export async function getDelibsUsers() {
+  const supabase = createClient();
+
+  // First, fetch all prospect_ids from the delibs table
+  const { data: delibsData, error: delibsError } = await supabase
+    .from("delibs")
+    .select("prospect_id");
+
+  if (delibsError) {
+    console.error("Error fetching delibs data:", delibsError.message);
+    throw delibsError;
+  }
+
+  console.log("Raw delibs data:", delibsData);
+
+  // Extract prospect_ids from the delibsData
+  const prospectIds = delibsData?.map((delib) => delib.prospect_id) || [];
+
+  console.log("Delibs prospect IDs:", prospectIds);
+
+  if (prospectIds.length === 0) {
+    console.log("No prospect IDs found in delibs table");
+    return [];
+  }
+
+  // Get users data
+  const { data: usersData, error: usersError } = await supabase
+    .from("users")
+    .select("*")
+    .in("id", prospectIds);
+
+  if (usersError) {
+    console.error("Error fetching delibs users:", usersError.message);
+    throw usersError;
+  }
+
+  console.log("Raw delibs users data:", usersData);
+
+  // Get application IDs separately
+  const { data: applicationsData, error: appsError } = await supabase
+    .from("applications")
+    .select("id, user_id")
+    .in("user_id", prospectIds)
+    .not("submitted", "is", null);
+
+  if (appsError) {
+    console.error("Error fetching applications:", appsError.message);
+  }
+
+  console.log("Applications data:", applicationsData);
+
+  // Create a map of user_id to application_id
+  const applicationMap = new Map();
+  applicationsData?.forEach((app: any) => {
+    applicationMap.set(app.user_id, app.id);
+  });
+
+  // Transform the data to match expected format
+  const transformedUsers = usersData?.map((user: any) => {
+    const applicationId = applicationMap.get(user.id) || null;
+    console.log("User", user.full_name, "application ID:", applicationId);
+    
+    return {
+      ...user,
+      application: applicationId
+    };
+  }) || [];
+
+  console.log("Transformed delibs users:", transformedUsers);
+
+  return transformedUsers;
+}

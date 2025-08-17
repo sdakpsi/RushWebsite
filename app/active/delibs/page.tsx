@@ -8,6 +8,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useDelibsUsers } from "@/hooks/getDelibsUsers";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
+import { useCurrentWave } from "@/hooks/useCurrentWave";
 import ActiveQueueControls from "@/components/ActiveQueueControls";
 
 export default function ProtectedPage() {
@@ -20,7 +21,14 @@ export default function ProtectedPage() {
     handleViewApplication,
     handleClosePopup,
   } = useApplicationView();
-  const { cases, interviews } = useCasesAndInterviews(userID);
+  const { cases, interviews, isLoading: isCasesInterviewsLoading } = useCasesAndInterviews(userID);
+  const { currentWaveCount, currentWaveNames, isLoading: isWaveLoading } = useCurrentWave();
+
+  // Debug logging
+  console.log("Delibs page - usersData:", usersData, "length:", usersData.length);
+  console.log("Delibs page - isUsersLoading:", isUsersLoading);
+  console.log("Delibs page - currentWaveCount:", currentWaveCount);
+  console.log("Delibs page - currentWaveNames:", currentWaveNames);
 
   return (
     <div className="flex w-full flex-1 items-center justify-center py-10">
@@ -29,8 +37,20 @@ export default function ProtectedPage() {
           <p className="mb-2 text-xl leading-tight lg:text-4xl">
             Delibs Portal
           </p>
+          <div className="mb-4 space-y-3">
+            <div>
+              <p className="text-lg text-gray-300 mb-1">
+                Current Wave ({currentWaveCount} applicant{currentWaveCount !== 1 ? 's' : ''}):
+              </p>
+              {currentWaveCount > 0 && (
+                <div className="text-sm text-gray-400 max-w-2xl mx-auto">
+                  {currentWaveNames.join(', ')}
+                </div>
+              )}
+            </div>
+          </div>
 
-          {isActiveLoading ? (
+          {isActiveLoading || isWaveLoading ? (
             // Loading skeleton for the entire page
             <div className="space-y-6">
               <div className="animate-pulse">
@@ -56,14 +76,14 @@ export default function ProtectedPage() {
             </div>
           ) : isActive ? (
             <div>
-              {/* Queue Controls for Active Members */}
-              {usersData.length > 0 && (
+              {/* Queue Controls for Active Members - only show if there's a current wave */}
+              {currentWaveCount > 0 && (
                 <div className="mb-6 mt-6">
                   <ActiveQueueControls userId={userID} />
                 </div>
               )}
-              {/* Queue Management for PICs */}
-              {usersData.length > 0 && (
+              {/* Queue Management for PICs - only show if there's a current wave */}
+              {currentWaveCount > 0 && (
                 <div className="mb-6 mt-6">
                   <LazyQueueView isPic={isPIC}/>
                 </div>
@@ -100,10 +120,11 @@ export default function ProtectedPage() {
                 {currentApplication && (
                   <LazyApplicationPopUp
                     application={currentApplication}
-                    cases={cases}
-                    interviews={interviews}
+                    cases={cases || []}
+                    interviews={interviews || []}
                     isPIC={false}
                     userID={userID}
+                    isLoadingCasesInterviews={isCasesInterviewsLoading}
                     onClose={handleClosePopup}
                   />
                 )}
