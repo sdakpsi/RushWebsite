@@ -307,7 +307,7 @@ export default function Index() {
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Business Workshop</h4>
-                            <p className="text-sm text-gray-300">8 PM @ Price Center Theater</p>
+                            <p className="text-sm text-gray-300">7 PM @ Price Center Theater</p>
                           </div>
                         </div>
 

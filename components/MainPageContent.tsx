@@ -35,10 +35,10 @@ export default function MainPageContent() {
             </svg>
             <div>
               <p className="font-semibold text-warning mb-1">
-                Professional Headshot Required
+                Picture Required
               </p>
               <p className="text-sm text-gray-300">
-                You must upload a professional headshot before you can access the application. Please ensure your photo is professional, well-lit, and shows your face clearly.
+                You must upload a picture of yourself before you can access the application. Please ensure your photo is well-lit and shows your face clearly.
               </p>
             </div>
           </div>
@@ -126,12 +126,12 @@ export default function MainPageContent() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">
-                {hasPhoto ? "Update Your Professional Headshot" : "Upload Professional Headshot"}
+                {hasPhoto ? "Update Your Photo" : "Upload Your Photo"}
               </h3>
               <p className="text-muted-foreground mb-3">
                 {hasPhoto 
-                  ? "You can update your professional headshot anytime" 
-                  : "A professional headshot is required to access the application"
+                  ? "You can update your photo anytime" 
+                  : "A photo is required to access the application"
                 }
               </p>
               {!hasPhoto && (
