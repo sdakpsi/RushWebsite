@@ -138,7 +138,6 @@ export default function MainPageContent() {
                 <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 text-left">
                   <p className="text-sm font-medium text-warning mb-2">Professional Photo Guidelines:</p>
                   <ul className="text-xs text-gray-300 space-y-1">
-                    <li>• Professional business attire recommended</li>
                     <li>• Clear, well-lit photo showing your face</li>
                     <li>• Neutral background preferred</li>
                     <li>• High resolution (avoid blurry images)</li>
