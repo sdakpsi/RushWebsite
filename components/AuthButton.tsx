@@ -1,17 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-
-interface AuthButtonProps {
-  user: User | null;
-}
 
 const handleSignInWithGoogle = async () => {
   const supabase = createClient();
@@ -38,8 +34,8 @@ const handleSignInWithGoogle = async () => {
   }
 };
 
-const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
-  const { photoUrl, hasPhoto, isActive, isPIC } = useCurrentUser();
+const AuthButton: React.FC = () => {
+  const { user, photoUrl, hasPhoto, isActive, isPIC } = useCurrentUser();
   const queryClient = useQueryClient();
   const router = useRouter();
   

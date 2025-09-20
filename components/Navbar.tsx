@@ -1,28 +1,22 @@
 "use client";
 
 import AuthButton from "@/components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
 import ActiveButton from "./ActiveButton";
 import PICButton from "./PICButton";
 import logo from "./akpsilogo.png";
 import Image from "next/image";
-import { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import RCButton from "./RCButton";
 import navbg from "../app/navbar-bg.png";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
-interface NavbarProps {
-  isPIC: boolean;
-  isActive: boolean;
-  user: User | null; // Use the appropriate type for your user object
-}
-
-export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
+export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { user, isActive, isPIC } = useCurrentUser();
 
   const isInterestPage = pathname?.endsWith("/interest");
   if (isInterestPage) {
@@ -78,7 +72,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
           <PICButton is_pic={isPIC} />
           <ActiveButton is_active={isActive} />
           {/* <RCButton is_active={isActive} /> */}
-          <AuthButton user={user} />
+          <AuthButton />
         </div>
       </div>
 
@@ -186,7 +180,7 @@ export default function Navbar({ isPIC, isActive, user }: NavbarProps) {
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
                       <div className="text-xs font-bold text-gray-300 tracking-wider uppercase">Account</div>
                     </div>
-                    <AuthButton user={user} />
+                    <AuthButton />
                   </div>
                 </div>
                 

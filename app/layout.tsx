@@ -26,34 +26,11 @@ export const metadata = {
   `Website for UCSD AKPsi's ${RUSH_YEAR} Rush Application!`
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
-  let isActive = false;
-  let isPIC = false;
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    const { data, error } = await supabase
-      .from("users")
-      .select("is_active")
-      .eq("id", user.id)
-      .single();
-    isActive = !!data?.is_active;
-  }
-
-  if (user) {
-    const { data, error } = await supabase
-      .from("users")
-      .select("is_pic")
-      .eq("id", user.id)
-      .single();
-    isPIC = !!data?.is_pic;
-  }
 
   return (
     <html
@@ -67,7 +44,7 @@ export default async function RootLayout({
           <ScrollRestoration />
           <main className="flex min-h-screen flex-col items-center">
             <ToastContainer />
-            <Navbar isPIC={isPIC} isActive={isActive} user={user} />
+            <Navbar />
             {children}
           </main>
           <Footer />
