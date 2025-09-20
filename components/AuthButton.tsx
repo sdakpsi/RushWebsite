@@ -105,7 +105,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ user }) => {
       </button>
     </div>
   ) : (
-    <button onClick={handleSignInWithGoogle} className="flex items-center rounded-xl bg-gradient-to-r from-blue-600/80 to-indigo-600/80 backdrop-blur-sm border border-blue-400/30 text-white px-6 py-2.5 text-sm font-medium hover:from-blue-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
+    <button onClick={handleSignInWithGoogle} className="flex items-center rounded-xl bg-white border border-gray-300 text-black px-6 py-2.5 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
       <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
       </svg>

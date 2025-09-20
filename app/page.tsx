@@ -255,7 +255,7 @@ export default function Index() {
                   
                   <div className="card-header relative z-10">
                     <h3 className="card-title text-white mb-6 text-center">
-                      <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-shimmer">
+                      <span className="text-white bg-clip-text text-transparent animate-shimmer">
                         Rush Schedule
                       </span>
                     </h3>
@@ -287,7 +287,10 @@ export default function Index() {
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Info Night</h4>
-                            <p className="text-sm text-gray-300">6 PM @ Price Center - Ballroom East</p>
+                            <p className="text-sm text-gray-300 mb-1">6 PM @ Price Center - Ballroom East</p>
+                            <p className="text-sm text-white">Come learn about Alpha Kappa Psi, hear brothers' experiences, and discuss career opportunities and professional development. Discover how you'll fit into our chapter's strong brotherhood!
+
+</p>
                           </div>
                         </div>
 
@@ -307,7 +310,8 @@ export default function Index() {
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Business Workshop</h4>
-                            <p className="text-sm text-gray-300">7 PM @ Price Center Theater</p>
+                            <p className="text-sm text-gray-300 mb-1">7 PM @ Price Center Theater</p>
+                            <p className="text-sm text-white">Bring your resume (cover letter optional) for a personalized career guidance session, and gain valuable insights from inspirational talks by our alumni guest speakers!</p>
                           </div>
                         </div>
 
@@ -327,7 +331,8 @@ export default function Index() {
                               <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Case Study Night</h4>
-                            <p className="text-sm text-gray-300">By Appointment</p>
+                            <p className="text-sm text-gray-300 mb-1">By Appointment</p>
+                            <p className="text-sm text-white">Tackle a real-life business problem and test your teamwork and analytical skills! Case Study Night participation is mandatory for membership consideration.</p>
                           </div>
                         </div>
 
@@ -368,7 +373,8 @@ export default function Index() {
                               <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Social Night</h4>
-                            <p className="text-sm text-gray-300">By Invite Only</p>
+                            <p className="text-sm text-gray-300 mb-1">By Invite Only</p>
+                            <p className="text-sm text-white">Mingle with our brothers in a casual setting with food and drinks provided! Experience wholesome brotherhood within our tight-knit family in AKPsi.</p>
                           </div>
                         </div>
 
@@ -388,7 +394,8 @@ export default function Index() {
                               <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Interviews</h4>
-                            <p className="text-sm text-gray-300">By Appointment</p>
+                            <p className="text-sm text-gray-300 mb-1">By Appointment</p>
+                            <p className="text-sm text-white">Interview participation is mandatory for membership consideration.</p>
                           </div>
                         </div>
                       </div>
