@@ -341,7 +341,15 @@ export async function getCurrentUserData() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("User not authenticated");
+    // Return null data for unauthenticated users instead of throwing
+    return {
+      user: null,
+      userData: null,
+      isActive: false,
+      isPIC: false,
+      hasPhoto: false,
+      photoUrl: null
+    };
   }
 
   // Get user data including photo_url from database
@@ -353,7 +361,15 @@ export async function getCurrentUserData() {
 
   if (error) {
     console.error("Error fetching user data:", error.message);
-    throw error;
+    // Return default values instead of throwing
+    return {
+      user,
+      userData: null,
+      isActive: false,
+      isPIC: false,
+      hasPhoto: false,
+      photoUrl: null
+    };
   }
 
   const hasPhoto = !!data?.photo_url;

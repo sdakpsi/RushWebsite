@@ -8,13 +8,15 @@ export function useCurrentUser() {
     queryFn: getCurrentUserData,
     staleTime: 30 * 60 * 1000, // 30 minutes - user data changes very infrequently
     gcTime: 60 * 60 * 1000, // 1 hour garbage collection
-    refetchOnWindowFocus: true,
-    retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
-    // Enable background refetching while showing stale data
-    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
+    retry: 1, // Reduce retries for faster response
+    retryDelay: 1000, // Shorter retry delay
+    // Only refetch if data is stale
+    refetchOnMount: true,
     // Don't show loading on background updates
     notifyOnChangeProps: ['data', 'error'],
+    // Enable network mode to work offline
+    networkMode: 'always',
   });
 
   // Memoize result to prevent unnecessary re-renders
