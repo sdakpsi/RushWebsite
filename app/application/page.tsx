@@ -1,17 +1,29 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import Image from 'next/image';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { RUSH_YEAR, RUSH_CHAIR_INFO } from '@/utils/constants';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import background from '../background.png';
 
-export default async function ProtectedPage() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return redirect('/');
+export default function ProtectedPage() {
+  const { user, hasPhoto, isLoading, isActive } = useCurrentUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && (!user || !hasPhoto || isActive)) {
+      router.push('/');
+    }
+  }, [user, hasPhoto, isLoading, router]);
+
+  // Show loading while checking auth/photo status
+  if (isLoading || !user || !hasPhoto) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+      </div>
+    );
   }
 
   return (

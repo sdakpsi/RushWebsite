@@ -8,15 +8,13 @@ import Image from "next/image";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import RCButton from "./RCButton";
-import navbg from "../app/navbar-bg.png";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isActive, isPIC } = useCurrentUser();
+  const { isActive, isPIC } = useCurrentUser();
 
   const isInterestPage = pathname?.endsWith("/interest");
   if (isInterestPage) {
