@@ -3,9 +3,10 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { RUSH_YEAR, RUSH_CHAIR_INFO } from '@/utils/constants';
+import { RUSH_YEAR } from '@/utils/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import background from '../background.png';
+import NameForm from '@/components/NameForm';
 
 export default function ProtectedPage() {
   const { user, hasPhoto, isLoading, isActive } = useCurrentUser();
@@ -88,40 +89,7 @@ export default function ProtectedPage() {
               </div>
               
               <div className="card-content">
-                {/* Placeholder for form content */}
-                <div className="space-y-6">
-                  <div className="p-6 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20 backdrop-blur-sm">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                      <span className="font-semibold text-blue-300">Application Form Coming Soon</span>
-                    </div>
-                    <p className="text-gray-300">
-                      The application form will be available here during rush season.
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-400/20 backdrop-blur-sm">
-                    <div className="flex items-center space-x-2">
-                      <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p className="text-yellow-300 font-medium">Need Help?</p>
-                    </div>
-                    <p className="mt-2 text-gray-300">
-                      If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom decorative element */}
-            <div className="text-center mt-12 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <div className="inline-flex items-center space-x-2 text-gray-400 text-sm">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span>Your information is secure and encrypted</span>
+                <NameForm />
               </div>
             </div>
           </div>
