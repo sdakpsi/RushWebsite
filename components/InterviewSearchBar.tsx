@@ -102,8 +102,25 @@ export default function InterviewSearchBar({
                 className="suggestion cursor-pointer border-b border-gray-700 last:border-b-0 px-4 py-4 text-white hover:bg-gray-700 active:bg-gray-600 transition-all duration-150 touch-manipulation active:scale-[0.98]"
                 onClick={() => handleSelectProspect(prospect)}
               >
-                <div className="font-medium text-base">{prospect.full_name}</div>
-                <div className="text-sm text-gray-400">{prospect.email}</div>
+                <div className="flex items-center gap-3">
+                  {prospect.photo_url ? (
+                    <img
+                      src={prospect.photo_url}
+                      alt={prospect.full_name}
+                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
+                      <span className="text-gray-300 text-sm font-semibold">
+                        {prospect.full_name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-base">{prospect.full_name}</div>
+                    <div className="text-sm text-gray-400">{prospect.email}</div>
+                  </div>
+                </div>
               </div>
             ))}
             {filteredData.length === 0 && searchInput && (

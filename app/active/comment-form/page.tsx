@@ -185,11 +185,24 @@ export default function Page(this: any) {
               )}
 
               {selectedProspect ? (
-                <div className="bg-green-100 border-2 border-green-500 rounded-lg p-4 w-full max-w-2xl mx-auto">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-green-800 mb-1">
+                <div className="bg-green-100 border-2 border-green-500 rounded-lg p-4 w-full max-w-2xl mx-auto" data-selected-prospect>
+                  <div className="flex flex-col items-center">
+                    <div className="text-lg font-semibold text-green-800 mb-3">
                       Selected Prospect
                     </div>
+                    {selectedProspect.photo_url ? (
+                      <img
+                        src={selectedProspect.photo_url}
+                        alt={selectedProspect.full_name}
+                        className="w-20 h-20 rounded-full object-cover mb-3 border-2 border-green-600"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center mb-3 border-2 border-green-700">
+                        <span className="text-white text-2xl font-semibold">
+                          {selectedProspect.full_name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                     <div className="text-xl font-bold text-green-900">
                       {selectedProspect.full_name}
                     </div>

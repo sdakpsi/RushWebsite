@@ -35,6 +35,7 @@ export type ProspectInterview = {
   id: string;
   full_name: string;
   email: string;
+  photo_url?: string;
 };
 
 export interface ApplicationFormState {

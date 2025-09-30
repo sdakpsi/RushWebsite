@@ -9,11 +9,11 @@ interface ProspectGridProps {
   isLoading?: boolean;
 }
 
-export default function ProspectGrid({ 
-  prospects, 
-  selectedProspect, 
+export default function ProspectGrid({
+  prospects,
+  selectedProspect,
   onSelectProspect,
-  isLoading = false 
+  isLoading = false
 }: ProspectGridProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -28,20 +28,26 @@ export default function ProspectGrid({
     const prospectInterview: ProspectInterview = {
       id: prospect.id,
       full_name: prospect.full_name,
-      email: prospect.email
+      email: prospect.email,
+      photo_url: prospect.photo_url
     };
     onSelectProspect(prospectInterview);
-    
-    // Scroll to comment form after a short delay to let state update
+
+    // Scroll to selected prospect box after a longer delay to let DOM fully update
     setTimeout(() => {
-      const commentForm = document.querySelector('[data-comment-form]');
-      if (commentForm) {
-        commentForm.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
+      const selectedProspectBox = document.querySelector('[data-selected-prospect]');
+      if (selectedProspectBox) {
+        const element = selectedProspectBox as HTMLElement;
+        const navbarHeight = 80; // Approximate navbar height
+        const yOffset = -navbarHeight - 20; // Extra 20px padding
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({
+          top: y,
+          behavior: 'smooth'
         });
       }
-    }, 100);
+    }, 300);
   };
 
   return (

@@ -155,7 +155,7 @@ export async function getInterviewProspects(): Promise<ProspectInterview[]> {
   // User is marked active, proceed to get interview prospects
   const { data: prospects, error: prospectsError } = await supabase
     .from("users")
-    .select("full_name, email, id")
+    .select("full_name, email, id, photo_url")
     .eq("is_active", false)
     .eq("is_pic", false)
     .order("full_name", { ascending: true });
