@@ -35,29 +35,36 @@ const handleSignInWithGoogle = async () => {
 };
 
 const AuthButton: React.FC = () => {
-  const { user, photoUrl, hasPhoto, isActive, isPIC } = useCurrentUser();
+  const { user, photoUrl, hasPhoto, isActive, isPIC, isLoading } = useCurrentUser();
   const queryClient = useQueryClient();
   const router = useRouter();
   
   const signOut = async () => {
     try {
       const supabase = createClient();
-      
+
       // Sign out from Supabase directly
       await supabase.auth.signOut();
-      
+
       // Clear React Query cache
       queryClient.clear();
-      
+
       // Force page refresh to update server-rendered navbar
       window.location.href = '/';
-      
+
     } catch (error) {
       console.error('Error signing out:', error);
       // Fallback to page reload if there's an error
       window.location.href = '/';
     }
   };
+
+  // Show skeleton loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="h-10 w-24 rounded-xl bg-gray-700/50 animate-pulse"></div>
+    );
+  }
 
   return user ? (
     <div className="flex items-center gap-4">
