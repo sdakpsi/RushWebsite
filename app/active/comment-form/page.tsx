@@ -9,8 +9,9 @@ import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
 import Checkbox from "@/components/Checkbox";
 import { v4 as uuidv4 } from "uuid";
-import { getUsersForComments } from "@/app/supabase/clientQueries";
+import { getUsersForComments, getUserComments } from "@/app/supabase/clientQueries";
 import ProspectGrid from "@/components/ProspectGrid";
+import PastCommentSubmissions from "@/components/PastCommentSubmissions";
 
 // Mirror implementation of interview page
 
@@ -56,6 +57,18 @@ export default function Page(this: any) {
     retry: 1,
   });
 
+  // Fetch user's existing comments
+  const { data: userComments = [] } = useQuery({
+    queryKey: ['userComments'],
+    queryFn: getUserComments,
+    enabled: isActive,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
+
+  // Create a Set of prospect IDs that have existing comments
+  const existingCommentProspectIds = new Set(userComments.map(c => c.prospect_id));
+
   if (prospectsError) {
     console.error("Error fetching prospects:", prospectsError);
   }
@@ -94,6 +107,7 @@ export default function Page(this: any) {
       setNewProspectName("");
       // Invalidate prospect comments queries
       queryClient.invalidateQueries({ queryKey: ['prospectComments'] });
+      queryClient.invalidateQueries({ queryKey: ['userComments'] });
     },
     onError: (error: any) => {
       customToast(`Error submitting comment: ${error.message}`, "error");
@@ -168,6 +182,12 @@ export default function Page(this: any) {
                   Use <strong>Grid View</strong> to browse all prospects in a grid layout and see their photos.
                 </p>
               </div>
+
+              <PastCommentSubmissions
+                preloadedData={userComments}
+                isPreloaded={true}
+              />
+
               {viewMode === 'search' && (
                 <InterviewSearchBar
                   selectedProspect={selectedProspect}
@@ -181,6 +201,7 @@ export default function Page(this: any) {
                   selectedProspect={selectedProspect}
                   onSelectProspect={setSelectedProspect}
                   isLoading={prospectsLoading}
+                  existingCommentProspectIds={existingCommentProspectIds}
                 />
               )}
 

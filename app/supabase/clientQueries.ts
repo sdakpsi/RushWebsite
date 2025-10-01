@@ -519,7 +519,7 @@ export async function getApplicationData() {
 
 export async function getComments() {
   const supabase = createClient();
-  
+
   const { data, error } = await supabase
     .from("comments")
     .select("*")
@@ -527,6 +527,27 @@ export async function getComments() {
 
   if (error) {
     console.error("Error fetching comments:", error.message);
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getUserComments() {
+  const supabase = createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("comments")
+    .select("prospect_id, prospect_name")
+    .eq("active_id", user.id);
+
+  if (error) {
+    console.error("Error fetching user comments:", error.message);
     throw error;
   }
 

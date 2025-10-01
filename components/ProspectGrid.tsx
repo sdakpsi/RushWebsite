@@ -7,13 +7,15 @@ interface ProspectGridProps {
   selectedProspect: ProspectInterview | null;
   onSelectProspect: (prospect: ProspectInterview) => void;
   isLoading?: boolean;
+  existingCommentProspectIds?: Set<string>;
 }
 
 export default function ProspectGrid({
   prospects,
   selectedProspect,
   onSelectProspect,
-  isLoading = false
+  isLoading = false,
+  existingCommentProspectIds
 }: ProspectGridProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -78,6 +80,7 @@ export default function ProspectGrid({
               prospect={prospect}
               isSelected={selectedProspect?.id === prospect.id}
               onClick={() => handleProspectClick(prospect)}
+              hasExistingComment={existingCommentProspectIds?.has(prospect.id)}
             />
           ))}
         </div>
