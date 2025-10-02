@@ -2,9 +2,10 @@ import React, { useState, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { createClient } from "@/utils/supabase/client";
-import { getUserScores, getProspectComments, getApplicantAvatar } from '@/app/supabase/clientQueries';
+import { getUserScores, getProspectComments } from '@/app/supabase/clientQueries';
 import customToast from "./CustomToast";
 import Image from "next/image";
+import AvatarUpload from "./AvatarUpload";
 
 interface Application {
   id: string;
@@ -128,7 +129,16 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const { data: avatarUrl = "" } = useQuery({
     queryKey: ['userAvatar', userID],
-    queryFn: () => getApplicantAvatar(userID),
+    queryFn: async () => {
+      const response = await fetch('/api/applicant-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: userID })
+      });
+      if (!response.ok) throw new Error('Failed to fetch avatar');
+      const data = await response.json();
+      return data.avatarUrl || "";
+    },
     enabled: !!userID,
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
@@ -1190,9 +1200,25 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       )}
                     </div>
                   </div>
-                  <div className="text-center text-gray-400 text-sm">
-                    <p>This photo was uploaded by the applicant during registration.</p>
-                  </div>
+
+                  {isPIC && (
+                    <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 w-full max-w-2xl mx-auto">
+                      <h4 className="text-lg font-semibold text-blue-300 mb-4">Upload New Avatar (PIC Only)</h4>
+                      <AvatarUpload
+                        userId={userID}
+                        existingAvatarUrl={avatarUrl}
+                        onAvatarUploaded={() => {
+                          queryClient.invalidateQueries({ queryKey: ['userAvatar', userID] });
+                          queryClient.invalidateQueries({ queryKey: ['applicantData', userID] });
+                        }}
+                      />
+                      <p className="mt-4 text-sm text-gray-400">
+                        Upload an image file to be displayed on the applicant card.
+                      </p>
+                    </div>
+                  )}
+
+                 
                 </div>
               </div>
             )}

@@ -334,6 +334,9 @@ export default function NameForm() {
           lastSubmitted: new Date().toISOString(),
           isSubmitting: true,
         });
+
+        console.log("Submitting application...", { applicationId });
+
         const response = await fetch("/api/application", {
           method: "PUT",
           headers: {
@@ -341,18 +344,32 @@ export default function NameForm() {
           },
           body: body,
         });
-        if (response.ok) {
-          setLastSubmitted(formatTimestamp(new Date()));
-          customToast(
-            "Application submitted! Thanks for taking the time to submit an application :)",
-            "success"
-          );
-        } else {
-          customToast("Failed to submit application", "error");
+
+        if (!response.ok) {
+          // Get detailed error message from response
+          let errorMessage = "Failed to submit application";
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorData.message || errorMessage;
+            console.error("Application submission failed:", { status: response.status, error: errorData });
+          } catch (e) {
+            console.error("Application submission failed with status:", response.status);
+          }
+          throw new Error(errorMessage);
         }
+
+        const result = await response.json();
+        console.log("Application submitted successfully:", result);
+
+        setLastSubmitted(formatTimestamp(new Date()));
+        customToast(
+          "Application submitted! Thanks for taking the time to submit an application :)",
+          "success"
+        );
       } catch (error) {
         console.error("Error submitting application:", error);
-        customToast("An error occurred while submitting the application", "error");
+        const errorMessage = error instanceof Error ? error.message : "An error occurred while submitting the application";
+        customToast(errorMessage, "error");
       } finally {
         setSubmitting(false);
       }

@@ -43,9 +43,9 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
   const totalScore = applicantData?.totalScore || 0;
 
   // Derive computed values
-  const caseActives = caseStudiesData.map(item => item.active_name);
+  const caseActives = caseStudiesData.map((item: any) => item.active_name);
   const numCaseStudies = caseActives.length;
-  const interviewActives = interviewsData.map(item => item.active_name);
+  const interviewActives = interviewsData.map((item: any) => item.active_name);
   const numInterviews = interviewActives.length;
 
   return (
