@@ -217,20 +217,47 @@ export default function ProtectedPage() {
     }
   });
 
+  // Copy function for prospect names
+  const copyProspectNames = (prospectIds: string[]) => {
+    const names = prospectIds
+      .map(prospectId => {
+        const prospectComments = groupedComments[prospectId];
+        return prospectComments[prospectComments.length - 1]?.prospect_name || "Unknown";
+      })
+      .filter(name => name !== "Unknown")
+      .join(", ");
+
+    navigator.clipboard.writeText(names).then(() => {
+      customToast("Names copied to clipboard!", "success");
+    }).catch(() => {
+      customToast("Failed to copy names", "error");
+    });
+  };
+
   const renderSection = (title: string, prospectIds: string[]) => {
     // console.log(`Rendering section "${title}" with prospects:`, prospectIds);
     const isUnlinkedSection = title === "Unlinked Comment Forms";
-    
+
     return (
       <div className="mb-10">
-        <h2 className="mb-4 text-2xl font-bold text-gray-100">
-          {title}
-          {isUnlinkedSection && (
-            <span className="ml-2 text-sm text-gray-400">
-              ({prospectIds.length} unlinked)
-            </span>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-100">
+            {title}
+            {isUnlinkedSection && (
+              <span className="ml-2 text-sm text-gray-400">
+                ({prospectIds.length} unlinked)
+              </span>
+            )}
+          </h2>
+          {!isUnlinkedSection && prospectIds.length > 0 && (
+            <button
+              onClick={() => copyProspectNames(prospectIds)}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              Copy Names ({prospectIds.length})
+            </button>
           )}
-        </h2>
+        </div>
         <div className="flex flex-wrap gap-6">
           {prospectIds.map((prospectId, index) => {
           const prospectComments = groupedComments[prospectId];
