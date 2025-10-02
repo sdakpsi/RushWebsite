@@ -31,6 +31,7 @@ export interface Theme {
     organization: string;
     website: string;
     rushChairs: string;
+    applicationOpen: boolean;
   };
 }
 
@@ -64,6 +65,7 @@ export const currentTheme: Theme = {
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiucsd.com",
     rushChairs: "contact Amanda Wu or Joshua Hoffmann @ (949)-572-8948 / (510)-634-9132",
+    applicationOpen: false,
   }
 };
 
@@ -98,6 +100,7 @@ export const springTheme: Theme = {
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiucsd.com",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
+    applicationOpen: true,
   }
 };
 
@@ -130,6 +133,7 @@ export const fallTheme: Theme = {
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiucsd.com",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
+    applicationOpen: true,
   }
 };
 

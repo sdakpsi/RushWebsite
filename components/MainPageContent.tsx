@@ -4,7 +4,7 @@ import Link from "next/link";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import PhotoUploadWrapper from "@/components/PhotoUploadWrapper";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { RUSH_YEAR, RUSH_CHAIR_INFO } from "@/utils/constants";
+import { RUSH_YEAR, RUSH_CHAIR_INFO, APPLICATION_OPEN } from "@/utils/constants";
 
 export default function MainPageContent() {
   const { user, isActive, hasPhoto, photoUrl, isLoading } = useCurrentUser();
@@ -46,7 +46,7 @@ export default function MainPageContent() {
       )}
 
       {/* Application Deadline Notice - only show if user has photo */}
-      {hasPhoto && (
+      {hasPhoto && APPLICATION_OPEN && (
         <div className="rounded-lg bg-info/10 border border-info/20 p-4">
           <div className="flex items-center space-x-2">
             <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,11 +58,30 @@ export default function MainPageContent() {
           </div>
         </div>
       )}
+
+      {/* Application Closed Notice - show if applications are closed and user has photo */}
+      {hasPhoto && !APPLICATION_OPEN && (
+        <div className="rounded-lg bg-warning/10 border border-warning/20 p-4">
+          <div className="flex items-start space-x-3">
+            <svg className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <p className="font-semibold text-warning mb-1">
+                Applications Closed
+              </p>
+              <p className="text-sm text-gray-300">
+                Applications for {RUSH_YEAR} Rush have closed. Thank you for your interest!
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       
       {user ? (
         <div className="space-y-4">
-          {/* Show application button for active users or users with photos */}
-          {(hasPhoto) && (
+          {/* Show application button only when applications are open and user has photo */}
+          {hasPhoto && APPLICATION_OPEN && (
             <Link href="/application" className="inline-block">
               <button className="btn-primary w-full sm:w-auto">
                 <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
