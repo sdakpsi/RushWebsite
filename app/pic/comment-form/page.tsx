@@ -200,7 +200,14 @@ export default function ProtectedPage() {
       return;
     }
 
-    const yesCount = comments.filter((c: any) => c.invite === "Yes").length;
+    // Count unique active members who said "Yes" (only one comment per active)
+    const uniqueYesActives = new Set(
+      comments
+        .filter((c: any) => c.invite === "Yes")
+        .map((c: any) => c.active_id)
+    );
+    const yesCount = uniqueYesActives.size;
+
     if (yesCount >= 2) {
       sections.twoPlusYes.push(prospectId);
     } else if (yesCount === 1) {
@@ -230,12 +237,20 @@ export default function ProtectedPage() {
           const prospectName =
             prospectComments[prospectComments.length - 1].prospect_name ||
             "Unknown Prospect";
-          const yesInviteCount = prospectComments.filter(
-            (c: any) => c.invite === "Yes"
-          ).length;
-          const noInviteCount = prospectComments.filter(
-            (c: any) => c.invite === "No"
-          ).length;
+
+          // Count unique active members for Yes/No invites (one comment per active)
+          const uniqueYesActives = new Set(
+            prospectComments
+              .filter((c: any) => c.invite === "Yes")
+              .map((c: any) => c.active_id)
+          );
+          const uniqueNoActives = new Set(
+            prospectComments
+              .filter((c: any) => c.invite === "No")
+              .map((c: any) => c.active_id)
+          );
+          const yesInviteCount = uniqueYesActives.size;
+          const noInviteCount = uniqueNoActives.size;
           const numberOfComments = prospectComments.length;
           
           // Create a truly unique key for this specific card instance
