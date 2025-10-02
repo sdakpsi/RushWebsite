@@ -463,6 +463,25 @@ export async function getUsersForComments(): Promise<Array<{id: string, full_nam
   return null;
 }
 
+export async function getAllCaseStudies() {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("case_studies")
+    .select(`
+      *,
+      users!case_studies_prospect_fkey(full_name, photo_url, id)
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching case studies:", error.message);
+    return [];
+  }
+
+  return data || [];
+}
+
 export async function getActiveSubmissionsWithStatus(
   type: "interviews" | "case_studies"
 ): Promise<Array<{name: string, status: 'complete' | 'incomplete', id: string}> | null> {

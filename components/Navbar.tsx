@@ -113,6 +113,13 @@ export default function Navbar() {
                             Comment Forms
                           </Link>
                           <Link
+                            href="/pic/case-studies"
+                            className="block px-3 py-3 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent text-center bg-gray-700 hover:bg-gray-600"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            Case Studies
+                          </Link>
+                          <Link
                             href="/pic/analytics"
                             className="block px-3 py-3 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent text-center bg-gray-700 hover:bg-gray-600"
                             onClick={() => setIsMobileMenuOpen(false)}
