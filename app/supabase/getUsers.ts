@@ -543,13 +543,14 @@ export async function getActiveSubmissionsWithStatus(
   // Check each submission for completeness
   return prospectData.map((prospect) => {
     const submission = data.find(item => item.prospect === prospect.id);
-    
+
     // Consider incomplete if any required field is missing/empty
-    const isIncomplete = !submission || 
-      !submission.leadership_score || 
-      !submission.teamwork_score || 
-      !submission.public_speaking_score || 
-      !submission.analytical_score ||
+    // Note: scores can be 0, so check for null/undefined specifically
+    const isIncomplete = !submission ||
+      submission.leadership_score == null ||
+      submission.teamwork_score == null ||
+      submission.public_speaking_score == null ||
+      submission.analytical_score == null ||
       !submission.leadership_comments?.trim() ||
       !submission.teamwork_comments?.trim() ||
       !submission.public_speaking_comments?.trim() ||

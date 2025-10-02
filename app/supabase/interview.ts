@@ -96,14 +96,18 @@ export async function autoSaveCaseStudy(data: Partial<CaseStudyForm>, selectedPr
             data: { user },
         } = await supabase.auth.getUser();
 
+        if (!user?.id) {
+            throw new Error("No user authenticated");
+        }
+
         const submissionData = {
             prospect: selectedProspect.id,
-            active: user?.id as string,
+            active: user.id,
             active_name: data.name || '',
-            leadership_score: data.leadership_score || null,
-            teamwork_score: data.teamwork_score || null,
-            public_speaking_score: data.publicSpeaking_score || null,
-            analytical_score: data.analytical_score || null,
+            leadership_score: data.leadership_score ?? null,
+            teamwork_score: data.teamwork_score ?? null,
+            public_speaking_score: data.publicSpeaking_score ?? null,
+            analytical_score: data.analytical_score ?? null,
             other_actives: data.otherActives || '',
             leadership_comments: data.leadership_comments || '',
             teamwork_comments: data.teamwork_comments || '',
@@ -123,20 +127,40 @@ export async function autoSaveCaseStudy(data: Partial<CaseStudyForm>, selectedPr
                 .from("case_studies")
                 .update(submissionData)
                 .eq("id", existingSubmissionId)
-                .eq("active", user?.id as string) // Security check
+                .eq("active", user.id) // Security check
                 .select();
-            
+
             result = updateResult.data;
             error = updateResult.error;
         } else {
-            // Create new draft submission
-            const insertResult = await supabase
+            // Check if a case study already exists for this prospect/active combination
+            const { data: existing } = await supabase
                 .from("case_studies")
-                .insert([submissionData])
-                .select();
-            
-            result = insertResult.data;
-            error = insertResult.error;
+                .select("id")
+                .eq("prospect", selectedProspect.id)
+                .eq("active", user.id)
+                .single();
+
+            if (existing) {
+                // Update the existing one instead of creating a duplicate
+                const updateResult = await supabase
+                    .from("case_studies")
+                    .update(submissionData)
+                    .eq("id", existing.id)
+                    .select();
+
+                result = updateResult.data;
+                error = updateResult.error;
+            } else {
+                // Create new draft submission
+                const insertResult = await supabase
+                    .from("case_studies")
+                    .insert([submissionData])
+                    .select();
+
+                result = insertResult.data;
+                error = insertResult.error;
+            }
         }
 
         if (error) {
@@ -144,7 +168,7 @@ export async function autoSaveCaseStudy(data: Partial<CaseStudyForm>, selectedPr
             throw error;
         }
 
-        return { data: result, isUpdate: !!existingSubmissionId };
+        return { data: result, isUpdate: !!existingSubmissionId || !!result };
 
     } catch (error) {
         throw error;
@@ -159,9 +183,13 @@ export async function createOrUpdateCaseStudy(data: CaseStudyForm, selectedProsp
             data: { user },
         } = await supabase.auth.getUser();
 
+        if (!user?.id) {
+            throw new Error("No user authenticated");
+        }
+
         const submissionData = {
             prospect: selectedProspect.id,
-            active: user?.id as string,
+            active: user.id,
             active_name: data.name,
             leadership_score: data.leadership_score,
             teamwork_score: data.teamwork_score,
@@ -186,18 +214,37 @@ export async function createOrUpdateCaseStudy(data: CaseStudyForm, selectedProsp
                 .from("case_studies")
                 .update(submissionData)
                 .eq("id", existingSubmissionId)
-                .eq("active", user?.id as string); // Security check
-            
+                .eq("active", user.id); // Security check
+
             result = updateResult.data;
             error = updateResult.error;
         } else {
-            // Create new submission
-            const insertResult = await supabase
+            // Check if a case study already exists for this prospect/active combination
+            const { data: existing } = await supabase
                 .from("case_studies")
-                .insert([submissionData]);
-            
-            result = insertResult.data;
-            error = insertResult.error;
+                .select("id")
+                .eq("prospect", selectedProspect.id)
+                .eq("active", user.id)
+                .single();
+
+            if (existing) {
+                // Update the existing one instead of creating a duplicate
+                const updateResult = await supabase
+                    .from("case_studies")
+                    .update(submissionData)
+                    .eq("id", existing.id);
+
+                result = updateResult.data;
+                error = updateResult.error;
+            } else {
+                // Create new submission
+                const insertResult = await supabase
+                    .from("case_studies")
+                    .insert([submissionData]);
+
+                result = insertResult.data;
+                error = insertResult.error;
+            }
         }
 
         if (error) {
@@ -205,7 +252,7 @@ export async function createOrUpdateCaseStudy(data: CaseStudyForm, selectedProsp
             throw error;
         }
 
-        return { data: result, isUpdate: !!existingSubmissionId };
+        return { data: result, isUpdate: !!existingSubmissionId || !!result };
 
     } catch (error) {
         throw error;
