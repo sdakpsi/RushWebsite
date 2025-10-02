@@ -149,6 +149,7 @@ export interface Comment {
   comment: string | null;
   interaction: string | null;
   invite: string | null;
+  prospect_photo_url?: string | null;
 }
 
 export enum QueueType {

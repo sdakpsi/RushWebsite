@@ -520,17 +520,47 @@ export async function getApplicationData() {
 export async function getComments() {
   const supabase = createClient();
 
-  const { data, error } = await supabase
+  // First get all comments
+  const { data: commentsData, error: commentsError } = await supabase
     .from("comments")
     .select("*")
     .order("prospect_name", { ascending: true });
 
-  if (error) {
-    console.error("Error fetching comments:", error.message);
-    throw error;
+  if (commentsError) {
+    console.error("Error fetching comments:", commentsError);
+    throw commentsError;
   }
 
-  return data || [];
+  if (!commentsData || commentsData.length === 0) {
+    return [];
+  }
+
+  // Get unique prospect IDs
+  const prospectIds = [...new Set(commentsData.map(c => c.prospect_id))];
+
+  // Fetch photo URLs for all prospects
+  const { data: usersData, error: usersError } = await supabase
+    .from("users")
+    .select("id, photo_url")
+    .in("id", prospectIds);
+
+  if (usersError) {
+    console.error("Error fetching user photos:", usersError);
+    // Continue without photos rather than failing
+  }
+
+  // Create a map of prospect_id -> photo_url
+  const photoMap = new Map(
+    usersData?.map(user => [user.id, user.photo_url]) || []
+  );
+
+  // Add photo URLs to comments
+  const enrichedComments = commentsData.map(comment => ({
+    ...comment,
+    prospect_photo_url: photoMap.get(comment.prospect_id) || null,
+  }));
+
+  return enrichedComments;
 }
 
 export async function getUserComments() {

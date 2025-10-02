@@ -237,6 +237,7 @@ export default function ProtectedPage() {
           const prospectName =
             prospectComments[prospectComments.length - 1].prospect_name ||
             "Unknown Prospect";
+          const prospectPhotoUrl = prospectComments[prospectComments.length - 1].prospect_photo_url;
 
           // Count unique active members for Yes/No invites (one comment per active)
           const uniqueYesActives = new Set(
@@ -271,12 +272,27 @@ export default function ProtectedPage() {
                 className="w-full flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onClick={(event) => toggleProspect(cardId, event)}
               >
-                <span className="mr-2 text-lg font-bold">
-                  {prospectId.slice(0, 5) === "66666" && (
-                    <span className="text-red-600">*</span>
-                  )}{" "}
-                  {prospectName}
-                </span>
+                <div className="flex items-center gap-3 mr-2">
+                  {prospectPhotoUrl ? (
+                    <img
+                      src={prospectPhotoUrl}
+                      alt={prospectName}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-500 flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 border-gray-500 flex-shrink-0">
+                      <span className="text-gray-300 text-sm font-semibold">
+                        {prospectName.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <span className="text-lg font-bold">
+                    {prospectId.slice(0, 5) === "66666" && (
+                      <span className="text-red-600">*</span>
+                    )}{" "}
+                    {prospectName}
+                  </span>
+                </div>
                 <div className="flex items-center gap-4">
                   <span className="text-sm">
                     <span
