@@ -57,7 +57,7 @@ export default function Index() {
                     <h1 className="card-title text-white">
                       {displayAsActive
                         ? "Active Member Dashboard"
-                        : `Welcome to ${currentTheme.branding.organization} ${currentTheme.branding.rushYear} Application Portal`}
+                        : `Thanks for Rushing ${currentTheme.branding.organization}!`}
                     </h1>
                   </div>
 
@@ -166,15 +166,14 @@ export default function Index() {
                       // Non-active user content
                       <div className="space-y-4">
                         <p className="text-gray-300">
-                          Please fill out the interest form below to receive
-                          updates regarding rush!
+                          Thank you for participating in {currentTheme.branding.rushYear} Rush! We appreciate your interest in {currentTheme.branding.organization} and wish you the best.
                         </p>
 
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-3 sm:flex-row">
-                          <Link href="https://docs.google.com/forms/d/e/1FAIpQLSe2ooyLbCv2zen2gl0OFc75oJJgqQq-_HbpK2sl0VLHw5mADQ/viewform" className="flex-1">
+                          <Link href={currentTheme.branding.website} className="flex-1">
                             <button className="prospect-btn-primary w-full transform transition-all rounded-lg px-4 py-2 text-sm font-medium">
-                              Interest Form
+                              Visit Our Website
                             </button>
                           </Link>
                         </div>
