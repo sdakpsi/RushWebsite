@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { RUSH_YEAR, APPLICATION_OPEN, RUSH_CHAIR_INFO } from '@/utils/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';

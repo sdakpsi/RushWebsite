@@ -10,6 +10,7 @@ import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import { useDelibsSubmission } from "@/hooks/useDelibsSubmission";
 import { useSearchAndSort } from "@/hooks/useSearchAndSort";
 import { useCurrentWave } from "@/hooks/useCurrentWave";
+import { useProspectComments } from "@/hooks/useProspectComments";
 import { redirect } from "next/navigation";
 
 export default function ProtectedPage() {
@@ -29,13 +30,16 @@ export default function ProtectedPage() {
   } = useCasesAndInterviews(userID);
   const { selectedApplicants, toggleApplicantSelection, handleSubmitDelibs, clearSelections } =
     useDelibsSubmission();
+  const { commentsData, isLoading: isCommentsLoading } = useProspectComments();
   const {
     searchQuery,
     setSearchQuery,
     sortType,
     sortUsers,
     filteredUsersData,
-  } = useSearchAndSort(usersData);
+    filterTwoPlus,
+    toggleFilterTwoPlus,
+  } = useSearchAndSort(usersData, commentsData);
   const { currentWaveCount, currentWaveNames, isLoading: isWaveLoading, refetch: refetchWave } = useCurrentWave();
 
   const handleSubmitDelibsWithRefresh = async () => {
@@ -45,7 +49,7 @@ export default function ProtectedPage() {
 
   // Only show spinner for critical loading states
   // Don't include cases/interviews loading since it depends on user selection
-  if (isPICLoading || isUsersLoading || isWaveLoading) {
+  if (isPICLoading || isUsersLoading || isWaveLoading || isCommentsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -110,7 +114,7 @@ export default function ProtectedPage() {
                     className="flex-grow rounded-lg border px-4 py-2 text-gray-700 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4 justify-center">
                   <button
                     className="rounded-lg bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                     onClick={handleSubmitDelibsWithRefresh}
@@ -122,6 +126,16 @@ export default function ProtectedPage() {
                     onClick={sortUsers}
                   >
                     Sort By {sortType === "name" ? "Score" : "Name"}
+                  </button>
+                  <button
+                    className={`rounded-lg px-4 py-2 font-bold text-white transition-colors ${
+                      filterTwoPlus
+                        ? "bg-purple-600 hover:bg-purple-700"
+                        : "bg-gray-500 hover:bg-gray-600"
+                    }`}
+                    onClick={toggleFilterTwoPlus}
+                  >
+                    {filterTwoPlus ? "Show All" : "2+ Yes Invites"}
                   </button>
                   <button
                     className="rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
