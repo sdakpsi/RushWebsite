@@ -483,15 +483,18 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
           if (error) {
             customToast(`Error updating total score: ${error.message}`, "error");
+          } else {
+            // Invalidate the applicant data cache to refresh the preview card
+            queryClient.invalidateQueries({ queryKey: ['applicantData', userID] });
           }
         } catch (err) {
           customToast("Failed to update total score", "error");
         }
       };
-      
+
       updateTotalScore();
     }
-  }, [scoreComponents.totalScore, userID, supabase]);
+  }, [scoreComponents.totalScore, userID, supabase, queryClient]);
 
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-75 pt-8 pb-8">
