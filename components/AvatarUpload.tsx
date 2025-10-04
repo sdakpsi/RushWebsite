@@ -4,6 +4,7 @@ import Dropzone from "react-dropzone";
 import { createClient } from "@/utils/supabase/client";
 import customToast from '@/components/CustomToast';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import heic2any from 'heic2any';
 
 interface AvatarUploadProps {
   userId: string;
@@ -16,6 +17,26 @@ export default function AvatarUpload({ userId, existingAvatarUrl, onAvatarUpload
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(existingAvatarUrl || "");
 
+  async function convertHeicToJpeg(file: File): Promise<File> {
+    try {
+      const convertedBlob = await heic2any({
+        blob: file,
+        toType: 'image/jpeg',
+        quality: 0.9
+      });
+
+      // heic2any can return Blob or Blob[]
+      const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+
+      // Create new File from Blob
+      const newFileName = file.name.replace(/\.heic$/i, '.jpg');
+      return new File([blob], newFileName, { type: 'image/jpeg' });
+    } catch (error) {
+      console.error('HEIC conversion error:', error);
+      throw new Error('Failed to convert HEIC image. Please try a different format.');
+    }
+  }
+
   async function uploadAvatarToSupabase(file: File) {
     setUploading(true);
     console.log('Starting avatar upload process...', {
@@ -26,22 +47,39 @@ export default function AvatarUpload({ userId, existingAvatarUrl, onAvatarUpload
     });
 
     try {
+      // Convert HEIC files to JPEG
+      const isHeic = file.name.toLowerCase().endsWith('.heic') ||
+                     file.name.toLowerCase().endsWith('.heif') ||
+                     file.type === 'image/heic' ||
+                     file.type === 'image/heif';
+
+      let fileToUpload = file;
+      if (isHeic) {
+        customToast('Converting HEIC image...', 'info');
+        fileToUpload = await convertHeicToJpeg(file);
+        console.log('HEIC converted to JPEG:', {
+          fileName: fileToUpload.name,
+          fileSize: fileToUpload.size,
+          fileType: fileToUpload.type
+        });
+      }
+
       // Check if file is an image
-      if (!file.type.startsWith('image/')) {
-        throw new Error("Please upload an image file (JPG, PNG, etc.)");
+      if (!fileToUpload.type.startsWith('image/')) {
+        throw new Error("Please upload an image file (JPG, PNG, HEIC, etc.)");
       }
 
       // Check file size (limit to 5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      if (fileToUpload.size > 5 * 1024 * 1024) {
         throw new Error("File size must be less than 5MB");
       }
 
-      const filePath = `avatars/${userId}/${Date.now()}_${file.name}`;
+      const filePath = `avatars/${userId}/${Date.now()}_${fileToUpload.name}`;
       console.log('Uploading avatar to path:', filePath);
 
       const { data, error } = await supabase.storage
         .from("SPRING24")
-        .upload(filePath, file);
+        .upload(filePath, fileToUpload);
 
       console.log('Upload result:', { data, error });
 
@@ -102,7 +140,7 @@ export default function AvatarUpload({ userId, existingAvatarUrl, onAvatarUpload
           }
         }}
         accept={{
-          'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
+          'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.heic', '.heif']
         }}
         multiple={false}
       >
@@ -132,7 +170,7 @@ export default function AvatarUpload({ userId, existingAvatarUrl, onAvatarUpload
                     {avatarUrl ? "Click to change avatar" : "Click or drag to upload avatar"}
                   </p>
                   <p className="text-sm text-gray-400 mt-2">
-                    JPG, PNG, GIF up to 5MB
+                    JPG, PNG, GIF, HEIC up to 5MB
                   </p>
                 </div>
               )}
