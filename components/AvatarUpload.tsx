@@ -28,6 +28,10 @@ export default function AvatarUpload({ userId, existingAvatarUrl, onAvatarUpload
       // heic2any can return Blob or Blob[]
       const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
 
+      if (!blob) {
+        throw new Error('Conversion resulted in empty blob');
+      }
+
       // Create new File from Blob
       const newFileName = file.name.replace(/\.heic$/i, '.jpg');
       return new File([blob], newFileName, { type: 'image/jpeg' });

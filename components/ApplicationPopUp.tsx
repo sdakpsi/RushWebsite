@@ -796,49 +796,49 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Classes
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.classes}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.classes}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Extracurriculars
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.extracirriculars}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.extracirriculars}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Accomplishment
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.accomplishment}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.accomplishment}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Why AKPsi
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.why_akpsi}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.why_akpsi}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Goals
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.goals}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.goals}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Comfort Zone
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.comfort_zone}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.comfort_zone}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Business Idea
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.business}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.business}</div>
                     </div>
                     <div className="rounded-lg bg-gray-900 p-4 border border-gray-600">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-300">
                         Additional Details
                       </div>
-                      <div className="text-gray-200 text-sm leading-relaxed">{application.additional}</div>
+                      <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">{application.additional}</div>
                     </div>
                   </div>
                 </div>
@@ -904,7 +904,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="text-gray-200 md:col-span-1 bg-gray-900 rounded p-2 text-sm">
+                          <div key={index} className="text-gray-200 md:col-span-1 bg-gray-900 rounded p-2 text-sm whitespace-pre-line">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
                             "number"
@@ -934,7 +934,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="text-gray-200 md:col-span-1 bg-gray-900 rounded p-2 text-sm">
+                          <div key={index} className="text-gray-200 md:col-span-1 bg-gray-900 rounded p-2 text-sm whitespace-pre-line">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
                             "number"
@@ -973,7 +973,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="text-gray-200 md:col-span-1 bg-gray-900 rounded p-2 text-sm">
+                          <div key={index} className="text-gray-200 md:col-span-1 bg-gray-900 rounded p-2 text-sm whitespace-pre-line">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
                             "number"
@@ -1025,7 +1025,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           :
                         </div>
                         {interviews.map((interview, index) => (
-                          <div key={index} className="md:col-span-1 bg-gray-900 rounded p-2 text-sm text-gray-200">
+                          <div key={index} className="md:col-span-1 bg-gray-900 rounded p-2 text-sm text-gray-200 whitespace-pre-line">
                             {interview[key as keyof Interview]}
                           </div>
                         ))}
@@ -1062,7 +1062,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                             :
                           </div>
                           {interviews.map((interview, index) => (
-                            <div key={index} className="md:col-span-1 bg-gray-900 rounded p-2 text-sm text-gray-200">
+                            <div key={index} className="md:col-span-1 bg-gray-900 rounded p-2 text-sm text-gray-200 whitespace-pre-line">
                               {interview[question as keyof Interview]}
                             </div>
                           ))}
@@ -1140,7 +1140,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         <div className="text-gray-200">
                           {comment.invite}
                         </div>
-                        <div className="text-gray-200 text-sm">
+                        <div className="text-gray-200 text-sm whitespace-pre-line">
                           {comment.comment}
                         </div>
                       </div>
