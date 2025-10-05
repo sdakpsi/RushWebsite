@@ -650,14 +650,41 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           {application.social_media ? (
                             <ul className="mt-1 space-y-1">
                               {Object.entries(application.social_media).map(
-                                ([platform, answer], index) => (
-                                  <li key={index} className="text-sm">
-                                    <span className="font-medium text-blue-200">
-                                      {platform.charAt(0).toUpperCase() + platform.slice(1)}:
-                                    </span>{" "}
-                                    {answer}
-                                  </li>
-                                )
+                                ([platform, answer], index) => {
+                                  // Check if the answer looks like a URL
+                                  const isUrl = typeof answer === 'string' && 
+                                    (answer.startsWith('http://') || 
+                                     answer.startsWith('https://') || 
+                                     answer.startsWith('www.') ||
+                                     answer.includes('.com') ||
+                                     answer.includes('.org') ||
+                                     answer.includes('.net'));
+                                  
+                                  // Ensure URL has proper protocol
+                                  const url = isUrl && !answer.startsWith('http') 
+                                    ? `https://${answer}` 
+                                    : answer;
+                                  
+                                  return (
+                                    <li key={index} className="text-sm">
+                                      <span className="font-medium text-blue-200">
+                                        {platform.charAt(0).toUpperCase() + platform.slice(1)}:
+                                      </span>{" "}
+                                      {isUrl ? (
+                                        <a 
+                                          href={url} 
+                                          target="_blank" 
+                                          rel="noopener noreferrer"
+                                          className="text-blue-400 hover:text-blue-300 underline"
+                                        >
+                                          {answer}
+                                        </a>
+                                      ) : (
+                                        answer
+                                      )}
+                                    </li>
+                                  );
+                                }
                               )}
                             </ul>
                           ) : (
