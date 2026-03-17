@@ -64,7 +64,7 @@ export const currentTheme: Theme = {
     rushYear: "Fall '25",
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiucsd.com",
-    rushChairs: "contact Joshua Hoffmann @ (510)-634-9132",
+    rushChairs: "contact our rush chair Josh Hoffmann @ (510)-634-9132",
     applicationOpen: false,
   }
 };

@@ -5,6 +5,9 @@
     "build": "next build",
     "start": "next start"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
