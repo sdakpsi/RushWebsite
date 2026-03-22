@@ -30,7 +30,7 @@ Update the branding information in your chosen theme:
 branding: {
   rushYear: "Spring '26",           // Update rush season
   organization: "UCSD Alpha Kappa Psi",
-  website: "https://www.akpsiucsd.com",
+  website: "https://akpsiatucsd.com",
   rushChairs: "contact [New Names] @ [New Phone Numbers]",
 }
 ```

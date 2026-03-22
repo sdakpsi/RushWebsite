@@ -61,9 +61,9 @@ export const currentTheme: Theme = {
     gradientTo: "260 70% 60%",
   },
   branding: {
-    rushYear: "Fall '25",
+    rushYear: "Spring '25",
     organization: "UCSD Alpha Kappa Psi",
-    website: "https://www.akpsiucsd.com",
+    website: "https://www.akpsiatucsd.com",
     rushChairs: "contact our rush chair Josh Hoffmann @ (510)-634-9132",
     applicationOpen: false,
   }
@@ -98,7 +98,7 @@ export const springTheme: Theme = {
   branding: {
     rushYear: "Spring '26",
     organization: "UCSD Alpha Kappa Psi",
-    website: "https://www.akpsiucsd.com",
+    website: "https://akpsiatucsd.com",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
     applicationOpen: true,
   }
@@ -131,7 +131,7 @@ export const fallTheme: Theme = {
   branding: {
     rushYear: "Fall '26",
     organization: "UCSD Alpha Kappa Psi",
-    website: "https://www.akpsiucsd.com",
+    website: "https://akpsiatucsd.com",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
     applicationOpen: true,
   }
