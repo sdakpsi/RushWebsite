@@ -14,6 +14,7 @@ import NavigationLoader from "@/components/NavigationLoader";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import AuthStateListener from "@/components/AuthStateListener";
 import { RUSH_YEAR } from "@/utils/constants";
+import { Analytics } from "@vercel/analytics/next";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -49,6 +50,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </ReactQueryProvider>
+        <Analytics />
       </body>
     </html>
   );
