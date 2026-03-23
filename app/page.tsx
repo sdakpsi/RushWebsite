@@ -264,7 +264,7 @@ export default function Index() {
                     {/* Timeline container with connecting line */}
                     <div className="relative">
                       {/* Vertical connecting line */}
-                      <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 via-purple-400 via-indigo-400 via-orange-400 to-red-400 opacity-30"></div>
+                      <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 via-purple-400 via-red-400 via-orange-400 to-indigo-400 opacity-30"></div>
                       
                       {/* Animated progress line */}
                       <div className="absolute left-6 top-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 to-purple-400 animate-progress-fill opacity-80 shadow-lg shadow-blue-400/50"></div>
@@ -282,14 +282,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-green-400/10 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-green-400/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-green-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-green-300 font-bold text-sm bg-green-400/20 px-2 py-1 rounded-full">Mon 9/29</span>
+                              <span className="text-green-300 font-bold text-sm bg-green-400/20 px-2 py-1 rounded-full">Mon 4/6</span>
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Info Night</h4>
-                            <p className="text-sm text-gray-300 mb-1">6 PM @ Price Center - Ballroom East</p>
-                            <p className="text-sm text-white">Come learn about Alpha Kappa Psi, hear brothers' experiences, and discuss career opportunities and professional development. Discover how you'll fit into our chapter's strong brotherhood!
-
-</p>
+                            <p className="text-sm text-gray-300 mb-1">6 PM @ Price Center Theater | Casual Attire</p>
+                            <p className="text-sm text-white">Come learn about Alpha Kappa Psi, hear brothers' experiences, and discuss career opportunities and professional development. Discover how you'll fit into our chapter's strong brotherhood!</p>
                           </div>
                         </div>
 
@@ -305,12 +303,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-blue-400/10 backdrop-blur-sm border border-blue-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-blue-400/20 hover:border-blue-400/50 hover:shadow-xl hover:shadow-blue-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-blue-300 font-bold text-sm bg-blue-400/20 px-2 py-1 rounded-full">Tue 9/30</span>
+                              <span className="text-blue-300 font-bold text-sm bg-blue-400/20 px-2 py-1 rounded-full">Tue 4/7</span>
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Business Workshop</h4>
-                            <p className="text-sm text-gray-300 mb-1">7 PM @ Price Center Theater</p>
-                            <p className="text-sm text-white">Bring your resume (cover letter optional) for a personalized career guidance session, and gain valuable insights from inspirational talks by our alumni guest speakers!</p>
+                            <p className="text-sm text-gray-300 mb-1">8 PM @ Price Center - Ballroom B | Business Casual Attire</p>
+                            <p className="text-sm text-white">Bring your resume (cover letter optional) for a career guidance session, and gain valuable insights from inspirational talks by our alumni guest speakers!</p>
                           </div>
                         </div>
 
@@ -326,12 +324,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-purple-400/10 backdrop-blur-sm border border-purple-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-purple-400/20 hover:border-purple-400/50 hover:shadow-xl hover:shadow-purple-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-purple-300 font-bold text-sm bg-purple-400/20 px-2 py-1 rounded-full">Wed 10/1</span>
+                              <span className="text-purple-300 font-bold text-sm bg-purple-400/20 px-2 py-1 rounded-full">Wed 4/8</span>
                               <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Case Study Night</h4>
-                            <p className="text-sm text-gray-300 mb-1">By Appointment</p>
-                            <p className="text-sm text-white">Tackle a real-life business problem and test your teamwork and analytical skills! Case Study Night participation is mandatory for membership consideration.</p>
+                            <p className="text-sm text-gray-300 mb-1">By Appointment Only | Professional Attire</p>
+                            <p className="text-sm text-white">Study a real-life business problem and test your teamwork and analytical skills! Case Study Night participation is mandatory for membership consideration.</p>
                           </div>
                         </div>
 
@@ -339,7 +337,6 @@ export default function Index() {
                         <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.6s' }}>
                           <div className="relative z-20">
                             <div className="w-12 h-12 prospect-glass bg-red-400/20 backdrop-blur-sm border border-red-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-red-400/20 animate-urgent-pulse group-hover:animate-magnetic-hover">
-                              {/* Professional orb with app styling */}
                               <div className="w-4 h-4 bg-red-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
                               <div className="absolute w-1 h-1 bg-red-300/60 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
                               <div className="absolute w-0.5 h-0.5 bg-red-200/40 rounded-full animate-particle-float" style={{ animationDelay: '2.5s' }}></div>
@@ -347,7 +344,7 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-red-400/10 backdrop-blur-sm border border-red-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-red-400/20 hover:border-red-400/50 hover:shadow-xl hover:shadow-red-400/20 hover:scale-[1.02] animate-urgent-pulse">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-red-300 font-bold text-sm bg-red-400/20 px-2 py-1 rounded-full animate-pulse">Thu 10/2</span>
+                              <span className="text-red-300 font-bold text-sm bg-red-400/20 px-2 py-1 rounded-full animate-pulse">Thu 4/9</span>
                               <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                               <span className="text-xs text-red-200 font-semibold bg-red-500/20 px-2 py-1 rounded-full animate-pulse">DEADLINE</span>
                             </div>
@@ -368,11 +365,11 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-orange-400/20 hover:border-orange-400/50 hover:shadow-xl hover:shadow-orange-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-orange-300 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-full">Fri 10/3</span>
+                              <span className="text-orange-300 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-full">Fri 4/9</span>
                               <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Social Night</h4>
-                            <p className="text-sm text-gray-300 mb-1">By Invite Only</p>
+                            <p className="text-sm text-gray-300 mb-1">By Invite Only | Casual Attire</p>
                             <p className="text-sm text-white">Mingle with our brothers in a casual setting with food and drinks provided! Experience wholesome brotherhood within our tight-knit family in AKPsi.</p>
                           </div>
                         </div>
@@ -389,11 +386,11 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-indigo-400/10 backdrop-blur-sm border border-indigo-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-indigo-400/20 hover:border-indigo-400/50 hover:shadow-xl hover:shadow-indigo-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-indigo-300 font-bold text-sm bg-indigo-400/20 px-2 py-1 rounded-full">Sat 10/4</span>
+                              <span className="text-indigo-300 font-bold text-sm bg-indigo-400/20 px-2 py-1 rounded-full">Sat 4/10</span>
                               <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Interviews</h4>
-                            <p className="text-sm text-gray-300 mb-1">By Appointment</p>
+                            <p className="text-sm text-gray-300 mb-1">By Appointment Only | Professional Attire</p>
                             <p className="text-sm text-white">Interview participation is mandatory for membership consideration.</p>
                           </div>
                         </div>

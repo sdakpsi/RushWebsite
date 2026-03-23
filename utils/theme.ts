@@ -64,7 +64,7 @@ export const currentTheme: Theme = {
     rushYear: "Spring '26",
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiatucsd.com",
-    rushChairs: "contact our rush chairs Heather Jeon @ (510)-634-9132 and Hailey Kim @ (714)-715-0072",
+    rushChairs: "contact our rush chairs Heather Jeon @ (213)-999-3685 and Hailey Kim @ (714)-715-0072",
     applicationOpen: false,
   }
 };
