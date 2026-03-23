@@ -61,10 +61,10 @@ export const currentTheme: Theme = {
     gradientTo: "260 70% 60%",
   },
   branding: {
-    rushYear: "Spring '25",
+    rushYear: "Spring '26",
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiatucsd.com",
-    rushChairs: "contact our rush chair Josh Hoffmann @ (510)-634-9132",
+    rushChairs: "contact our rush chairs Heather Jeon @ (510)-634-9132 and Hailey Kim @ (714)-715-0072",
     applicationOpen: false,
   }
 };
