@@ -307,7 +307,7 @@ export default function Index() {
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Business Workshop</h4>
-                            <p className="text-sm text-gray-300 mb-1">8 PM @ Price Center - Ballroom B | Business Casual Attire</p>
+                            <p className="text-sm text-gray-300 mb-1">7 PM @ Price Center - Ballroom B | Business Casual Attire</p>
                             <p className="text-sm text-white">Bring your resume (cover letter optional) for a career guidance session, and gain valuable insights from inspirational talks by our alumni guest speakers!</p>
                           </div>
                         </div>
