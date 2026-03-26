@@ -69,7 +69,7 @@ export default function InterviewSearchBar({
     return (
       <div className="mb-6">
         <div className="text-yellow-400 text-center p-4 bg-yellow-900/20 rounded-md">
-          No prospects available for interviews at this time.
+          No prospects available at this time.
         </div>
       </div>
     );

@@ -232,7 +232,7 @@ export default function Index() {
                     {displayAsActive ?
                     (
                       <p className="text-sm text-gray-300">
-                       To report any issues or questions please contact Ryan (909)-655-8447
+                       To report any issues or questions please contact Yathin/George/Arish/Eeswar
                       </p>
                     ) : (
                       <p className="text-sm text-gray-300">

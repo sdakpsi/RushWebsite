@@ -77,7 +77,7 @@ export default function ProtectedPage() {
 
             {/* Application Form Container */}
             <div className="prospect-card prospect-glass rounded-xl p-8 animate-slide-up shadow-2xl border border-white/10" style={{ animationDelay: '0.3s' }}>
-              {APPLICATION_OPEN ? (
+              {APPLICATION_OPEN === 'open' ? (
                 <>
                   <div className="card-header mb-8">
                     <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
@@ -93,6 +93,39 @@ export default function ProtectedPage() {
                     <NameForm />
                   </div>
                 </>
+              ) : APPLICATION_OPEN === 'coming_soon' ? (
+                <div className="card-header text-center py-12">
+                  <div className="mx-auto h-24 w-24 rounded-full bg-blue-900/30 backdrop-blur-sm border border-blue-500/30 flex items-center justify-center mb-6">
+                    <svg className="h-12 w-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                    Applications Opening Soon
+                  </h3>
+                  <p className="text-gray-300 text-lg mb-6 max-w-2xl mx-auto">
+                    Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned for updates!
+                  </p>
+                  <div className="bg-blue-900/20 backdrop-blur-sm border border-blue-500/30 rounded-lg p-6 max-w-2xl mx-auto">
+                    <p className="text-blue-200 text-base mb-2">
+                      <strong>Questions? Reach out:</strong>
+                    </p>
+                    <p className="text-blue-100 text-sm">
+                      {RUSH_CHAIR_INFO}
+                    </p>
+                  </div>
+                  <div className="mt-8">
+                    <a
+                      href="/"
+                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                      </svg>
+                      Return to Home
+                    </a>
+                  </div>
+                </div>
               ) : (
                 <div className="card-header text-center py-12">
                   <div className="mx-auto h-24 w-24 rounded-full bg-red-900/30 backdrop-blur-sm border border-red-500/30 flex items-center justify-center mb-6">

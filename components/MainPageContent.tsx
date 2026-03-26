@@ -45,8 +45,8 @@ export default function MainPageContent() {
         </div>
       )}
 
-      {/* Application Deadline Notice - only show if user has photo */}
-      {hasPhoto && APPLICATION_OPEN && (
+      {/* Application Deadline Notice - only show if user has photo and apps are open */}
+      {hasPhoto && APPLICATION_OPEN === 'open' && (
         <div className="rounded-lg bg-info/10 border border-info/20 p-4">
           <div className="flex items-center space-x-2">
             <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,8 +59,27 @@ export default function MainPageContent() {
         </div>
       )}
 
-      {/* Application Closed Notice - show if applications are closed and user has photo */}
-      {hasPhoto && !APPLICATION_OPEN && (
+      {/* Application Opening Soon Notice */}
+      {hasPhoto && APPLICATION_OPEN === 'coming_soon' && (
+        <div className="rounded-lg bg-info/10 border border-info/20 p-4">
+          <div className="flex items-start space-x-3">
+            <svg className="h-5 w-5 text-info mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p className="font-semibold text-info mb-1">
+                Applications Opening Soon
+              </p>
+              <p className="text-sm text-gray-300">
+                Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned!
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Application Closed Notice */}
+      {hasPhoto && APPLICATION_OPEN === 'closed' && (
         <div className="rounded-lg bg-warning/10 border border-warning/20 p-4">
           <div className="flex items-start space-x-3">
             <svg className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +100,7 @@ export default function MainPageContent() {
       {user ? (
         <div className="space-y-4">
           {/* Show application button only when applications are open and user has photo */}
-          {hasPhoto && APPLICATION_OPEN && (
+          {hasPhoto && APPLICATION_OPEN === 'open' && (
             <Link href="/application" className="inline-block">
               <button className="btn-primary w-full sm:w-auto">
                 <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
