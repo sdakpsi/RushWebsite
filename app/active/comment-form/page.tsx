@@ -126,8 +126,8 @@ export default function Page(this: any) {
     }
 
     const wordCount = comment.trim().split(/\s+/).length;
-    if (wordCount < 5) {
-      customToast("Comment must be at least 5 words long.", "error");
+    if (wordCount < 15) {
+      customToast("Comment must be at least 15 words long.", "error");
       return;
     }
 
@@ -357,7 +357,7 @@ export default function Page(this: any) {
                     </div>
                   </div>
                   <label className="mb-2 mt-4 text-gray-200">
-                    Explain the interaction (minimum 5 words):
+                    Explain the interaction (minimum 15 words):
                   </label>
                   <textarea
                     className="rounded-lg border-2 border-gray-300 p-4 text-gray-700 text-base leading-relaxed resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
@@ -368,7 +368,7 @@ export default function Page(this: any) {
                     style={{ fontSize: '16px' }} // Prevents zoom on iOS
                   />
                   <div className="mt-2 text-xs text-gray-400">
-                    Word count: {comment.trim() ? comment.trim().split(/\s+/).length : 0} (minimum 5 words)
+                    Word count: {comment.trim() ? comment.trim().split(/\s+/).length : 0} (minimum 15 words)
                   </div>
                   <button
                     className="mb-4 mt-6 self-center rounded-lg bg-blue-600 px-8 py-4 text-white font-semibold text-lg hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
