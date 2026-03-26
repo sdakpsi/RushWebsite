@@ -38,9 +38,9 @@ export default function Footer() {
               <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/interest" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScbhQ7B1qzs5_ZWkjY-RFDejC34dG3di7dMbu_xFA4pe33KYA/viewform" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 Interest Form
-              </Link>
+              </a>
             </div>
           </div>
 
