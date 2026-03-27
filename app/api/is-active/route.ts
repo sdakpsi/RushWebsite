@@ -2,32 +2,32 @@ import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
+  const supabase = createClient();
 
-  if (req.method === 'POST') {
-    const supabase = createClient();
+  const userResponse = await supabase.auth.getUser();
+  const user = userResponse.data.user;
 
-    // Retrieve the current user
-    const userResponse = await supabase.auth.getUser();
-    const user = userResponse.data.user;
-
-    if (user) {
-      const { data, error } = await supabase
-        .from('users')
-        .update({ is_active: true })
-        .match({ id: user.id }); 
-
-
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 400 });
-      }
-
-      return NextResponse.json({ message: 'User activated successfully', data }, { status: 200 });
-    } else {
-      return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
-    }
-  } else {
-    return NextResponse.json({ message: 'Method Not Allowed' }, { status: 405 });
+  if (!user) {
+    return NextResponse.json({ message: 'No user signed in' }, { status: 401 });
   }
+
+  const body = await req.json().catch(() => null);
+  const password = body?.password;
+
+  if (!password || password !== process.env.ACTIVE_PASSWORD) {
+    return NextResponse.json({ message: 'Incorrect password' }, { status: 403 });
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ is_active: true })
+    .match({ id: user.id });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  return NextResponse.json({ message: 'User activated successfully', data }, { status: 200 });
 }
 
 /**
