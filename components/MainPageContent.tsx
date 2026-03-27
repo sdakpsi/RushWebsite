@@ -4,7 +4,7 @@ import Link from "next/link";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import PhotoUploadWrapper from "@/components/PhotoUploadWrapper";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { RUSH_YEAR, RUSH_CHAIR_INFO, APPLICATION_OPEN } from "@/utils/constants";
+import { RUSH_YEAR, RUSH_CHAIR_INFO, APPLICATION_OPEN, APPLICATION_DEADLINE } from "@/utils/constants";
 
 export default function MainPageContent() {
   const { user, isActive, hasPhoto, photoUrl, isLoading } = useCurrentUser();
@@ -53,7 +53,7 @@ export default function MainPageContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="font-semibold text-info">
-              Application Due: Thursday, October 2nd at 2 PM
+              Application Due: {APPLICATION_DEADLINE}
             </p>
           </div>
         </div>

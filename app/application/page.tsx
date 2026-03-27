@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { RUSH_YEAR, APPLICATION_OPEN, RUSH_CHAIR_INFO } from '@/utils/constants';
+import { RUSH_YEAR, APPLICATION_OPEN, RUSH_CHAIR_INFO, APPLICATION_DEADLINE } from '@/utils/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import background from '../background.png';
 import NameForm from '@/components/NameForm';
@@ -70,7 +70,7 @@ export default function ProtectedPage() {
                 <svg className="h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="font-medium text-white">Due: Thursday, October 2nd at 2 PM</span>
+                <span className="font-medium text-white">Due: {APPLICATION_DEADLINE}</span>
               </div>
             </div>
 

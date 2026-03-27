@@ -7,6 +7,7 @@ import background from "./background.png";
 import tagline from "./tagline.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
+import { APPLICATION_DEADLINE } from "@/utils/constants";
 import { useOptionalAuth } from "@/hooks/useOptionalAuth";
 
 export default function Index() {
@@ -349,7 +350,7 @@ export default function Index() {
                               <span className="text-xs text-red-200 font-semibold bg-red-500/20 px-2 py-1 rounded-full animate-pulse">DEADLINE</span>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Application Due</h4>
-                            <p className="text-sm text-gray-300">2:00 PM Deadline</p>
+                            <p className="text-sm text-gray-300">{APPLICATION_DEADLINE}</p>
                           </div>
                         </div>
 

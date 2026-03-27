@@ -32,6 +32,7 @@ export interface Theme {
     website: string;
     rushChairs: string;
     applicationOpen: 'open' | 'closed' | 'coming_soon';
+    applicationDeadline: string;
   };
 }
 
@@ -65,7 +66,8 @@ export const currentTheme: Theme = {
     organization: "UCSD Alpha Kappa Psi",
     website: "https://www.akpsiatucsd.com",
     rushChairs: "contact our rush chairs Heather Jeon @ (213)-999-3685 and Hailey Kim @ (714)-715-0072",
-    applicationOpen: 'coming_soon',
+    applicationOpen: 'open',
+    applicationDeadline: 'Thursday, April 9th at 2 PM',
   }
 };
 
@@ -101,6 +103,7 @@ export const springTheme: Theme = {
     website: "https://akpsiatucsd.com",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
     applicationOpen: 'open',
+    applicationDeadline: 'TBD',
   }
 };
 
@@ -134,6 +137,7 @@ export const fallTheme: Theme = {
     website: "https://akpsiatucsd.com",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
     applicationOpen: 'open',
+    applicationDeadline: 'TBD',
   }
 };
 
