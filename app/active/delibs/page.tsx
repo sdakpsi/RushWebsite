@@ -24,26 +24,20 @@ export default function ProtectedPage() {
   const { cases, interviews, isLoading: isCasesInterviewsLoading } = useCasesAndInterviews(userID);
   const { currentWaveCount, currentWaveNames, isLoading: isWaveLoading } = useCurrentWave();
 
-  // Debug logging
-  console.log("Delibs page - usersData:", usersData, "length:", usersData.length);
-  console.log("Delibs page - isUsersLoading:", isUsersLoading);
-  console.log("Delibs page - currentWaveCount:", currentWaveCount);
-  console.log("Delibs page - currentWaveNames:", currentWaveNames);
-
   return (
     <div className="flex w-full flex-1 items-center justify-center py-10">
       <div className="animate-in mx-8 w-full">
         <div className="text-center">
-          <p className="mb-2 text-xl leading-tight lg:text-4xl">
+          <p className="mb-2 text-xl font-semibold leading-tight text-foreground lg:text-4xl">
             Delibs Portal
           </p>
           <div className="mb-4 space-y-3">
             <div>
-              <p className="text-lg text-gray-300 mb-1">
+              <p className="mb-1 text-lg font-medium text-foreground">
                 Current Wave ({currentWaveCount} applicant{currentWaveCount !== 1 ? 's' : ''}):
               </p>
               {currentWaveCount > 0 && (
-                <div className="text-sm text-gray-400 max-w-2xl mx-auto">
+                <div className="mx-auto max-w-2xl text-sm text-muted-foreground">
                   {currentWaveNames.join(', ')}
                 </div>
               )}
@@ -54,20 +48,20 @@ export default function ProtectedPage() {
             // Loading skeleton for the entire page
             <div className="space-y-6">
               <div className="animate-pulse">
-                <div className="h-8 bg-gray-700 rounded w-64 mx-auto mb-4"></div>
+                <div className="mx-auto mb-4 h-8 w-64 rounded bg-muted"></div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-slate-800 rounded-lg p-4 space-y-3">
+                    <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="h-12 w-12 bg-gray-700 rounded-full"></div>
-                        <div className="space-y-2 flex-1">
-                          <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                        <div className="h-12 w-12 rounded-full bg-muted"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 w-3/4 rounded bg-muted"></div>
+                          <div className="h-3 w-1/2 rounded bg-muted"></div>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <div className="h-3 bg-gray-700 rounded w-full"></div>
-                        <div className="h-3 bg-gray-700 rounded w-2/3"></div>
+                        <div className="h-3 w-full rounded bg-muted"></div>
+                        <div className="h-3 w-2/3 rounded bg-muted"></div>
                       </div>
                     </div>
                   ))}
@@ -93,17 +87,17 @@ export default function ProtectedPage() {
                 {isUsersLoading ? (
                   // Show loading skeletons while users data loads
                   [1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-slate-800 rounded-lg p-4 space-y-3">
+                    <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="h-12 w-12 bg-gray-700 rounded-full animate-pulse"></div>
-                        <div className="space-y-2 flex-1">
-                          <div className="h-4 bg-gray-700 rounded w-3/4 animate-pulse"></div>
-                          <div className="h-3 bg-gray-700 rounded w-1/2 animate-pulse"></div>
+                        <div className="h-12 w-12 animate-pulse rounded-full bg-muted"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 w-3/4 animate-pulse rounded bg-muted"></div>
+                          <div className="h-3 w-1/2 animate-pulse rounded bg-muted"></div>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <div className="h-3 bg-gray-700 rounded w-full animate-pulse"></div>
-                        <div className="h-3 bg-gray-700 rounded w-2/3 animate-pulse"></div>
+                        <div className="h-3 w-full animate-pulse rounded bg-muted"></div>
+                        <div className="h-3 w-2/3 animate-pulse rounded bg-muted"></div>
                       </div>
                     </div>
                   ))
