@@ -19,19 +19,23 @@ const StatCard = ({
   color?: "blue" | "green" | "red" | "yellow";
 }) => {
   const colorClasses = {
-    blue: "bg-blue-900/30 border-blue-500",
-    green: "bg-green-900/30 border-green-500",
-    red: "bg-red-900/30 border-red-500",
-    yellow: "bg-yellow-900/30 border-yellow-500",
+    blue:
+      "border-2 border-sky-300 bg-sky-50 [box-shadow:0_0_28px_-10px_rgba(14,165,233,0.55)]",
+    green:
+      "border-2 border-emerald-300 bg-emerald-50 [box-shadow:0_0_28px_-10px_rgba(16,185,129,0.5)]",
+    red:
+      "border-2 border-rose-300 bg-rose-50 [box-shadow:0_0_28px_-10px_rgba(244,63,94,0.48)]",
+    yellow:
+      "border-2 border-amber-300 bg-amber-50 [box-shadow:0_0_28px_-10px_rgba(245,158,11,0.5)]",
   };
 
   return (
-    <div
-      className={`rounded-lg border p-6 ${colorClasses[color]} backdrop-blur-sm`}
-    >
-      <h3 className="text-sm font-medium text-gray-300">{title}</h3>
-      <p className="mt-2 text-3xl font-bold text-white">{value}</p>
-      {subtitle && <p className="mt-1 text-sm text-gray-400">{subtitle}</p>}
+    <div className={`rounded-lg p-6 ${colorClasses[color]}`}>
+      <h3 className="text-sm font-medium text-slate-800">{title}</h3>
+      <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
+      {subtitle && (
+        <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+      )}
     </div>
   );
 };
@@ -84,7 +88,7 @@ export default function AnalyticsPage() {
                 <p className="text-lg text-red-400">
                   Error loading analytics data
                 </p>
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-sm text-muted-foreground">
                   Please try refreshing the page
                 </p>
               </div>
@@ -106,11 +110,11 @@ export default function AnalyticsPage() {
         <div className="container relative mx-auto px-4 pb-24 pt-6">
           <div className="flex flex-col space-y-6">
             <div className="text-center">
-              <h1 className="mt-10 text-2xl font-semibold text-white md:text-5xl">
+              <h1 className="mt-10 text-2xl font-semibold text-foreground md:text-5xl">
                 Rush Analytics Dashboard
               </h1>
-              <p className="mx-auto mt-4 max-w-3xl text-lg text-gray-300">
-                Track particpation and see who's a bum and who's goated
+              <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
+                Track participation and see who&apos;s a bum and who&apos;s goated
               </p>
             </div>
 
@@ -156,31 +160,31 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Active Member Participation */}
-            <div className="rounded-lg bg-gray-800 p-6">
-              <h2 className="mb-4 text-xl font-bold text-white">
+            <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <h2 className="mb-4 text-xl font-bold text-foreground">
                 Active Member Participation
               </h2>
               {participation.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-600">
-                        <th className="pb-3 text-left font-medium text-gray-300">
+                      <tr className="border-b border-border">
+                        <th className="pb-3 text-left font-medium text-muted-foreground">
                           Active Member
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Comments
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Case Studies
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Interviews
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Total
                         </th>
-                        <th className="pb-3 text-left font-medium text-gray-300">
+                        <th className="pb-3 text-left font-medium text-muted-foreground">
                           Last Activity
                         </th>
                       </tr>
@@ -191,35 +195,35 @@ export default function AnalyticsPage() {
                         .map((active, index) => (
                           <tr
                             key={active.activeId}
-                            className="border-b border-gray-700/50"
+                            className="border-b border-border/80"
                           >
-                            <td className="py-3 text-white">
+                            <td className="py-3 text-foreground">
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-green-900/30 text-green-400" : "bg-gray-700 text-gray-300"}`}
+                                  className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-emerald-100 font-medium text-emerald-900" : "bg-muted text-muted-foreground"}`}
                                 >
                                   #{index + 1}
                                 </span>
                                 {active.activeName}
                               </div>
                             </td>
-                            <td className="py-3 text-center text-gray-300">
+                            <td className="py-3 text-center text-muted-foreground">
                               {active.commentsCount}
                             </td>
-                            <td className="py-3 text-center text-gray-300">
+                            <td className="py-3 text-center text-muted-foreground">
                               {active.caseStudiesCount}
                             </td>
-                            <td className="py-3 text-center text-gray-300">
+                            <td className="py-3 text-center text-muted-foreground">
                               {active.interviewsCount}
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`font-semibold ${active.totalEvaluations > 10 ? "text-green-400" : active.totalEvaluations > 5 ? "text-yellow-400" : "text-red-400"}`}
+                                className={`font-semibold ${active.totalEvaluations > 10 ? "text-emerald-700" : active.totalEvaluations > 5 ? "text-amber-700" : "text-rose-600"}`}
                               >
                                 {active.totalEvaluations}
                               </span>
                             </td>
-                            <td className="py-3 text-xs text-gray-400">
+                            <td className="py-3 text-xs text-muted-foreground">
                               {active.lastActivity
                                 ? (() => {
                                     const date = new Date(active.lastActivity);
@@ -245,33 +249,35 @@ export default function AnalyticsPage() {
                   </table>
                 </div>
               ) : (
-                <p className="text-gray-400">No participation data available</p>
+                <p className="text-muted-foreground">
+                  No participation data available
+                </p>
               )}
             </div>
 
             {/* Prospect Coverage */}
-            <div className="rounded-lg bg-gray-800 p-6">
-              <h2 className="mb-4 text-xl font-bold text-white">
+            <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <h2 className="mb-4 text-xl font-bold text-foreground">
                 Prospect Evaluation Coverage
               </h2>
               {coverage.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-600">
-                        <th className="pb-3 text-left font-medium text-gray-300">
+                      <tr className="border-b border-border">
+                        <th className="pb-3 text-left font-medium text-muted-foreground">
                           Prospect
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Comments
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Case Studies
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Interviews
                         </th>
-                        <th className="pb-3 text-center font-medium text-gray-300">
+                        <th className="pb-3 text-center font-medium text-muted-foreground">
                           Status
                         </th>
                       </tr>
@@ -289,31 +295,31 @@ export default function AnalyticsPage() {
                         .map((prospect) => (
                           <tr
                             key={prospect.prospectId}
-                            className="border-b border-gray-700/50"
+                            className="border-b border-border/80"
                           >
-                            <td className="py-3 text-white">
+                            <td className="py-3 text-foreground">
                               {prospect.prospectName}
                             </td>
-                            <td className="py-3 text-center text-gray-300">
+                            <td className="py-3 text-center text-muted-foreground">
                               {prospect.commentsCount}
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`${prospect.caseStudiesCount >= 3 ? "text-green-400" : "text-red-400"}`}
+                                className={`${prospect.caseStudiesCount >= 3 ? "font-medium text-emerald-700" : "font-medium text-rose-600"}`}
                               >
                                 {prospect.caseStudiesCount}
                               </span>
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`${prospect.interviewsCount >= 3 ? "text-green-400" : "text-red-400"}`}
+                                className={`${prospect.interviewsCount >= 3 ? "font-medium text-emerald-700" : "font-medium text-rose-600"}`}
                               >
                                 {prospect.interviewsCount}
                               </span>
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`rounded px-2 py-1 text-xs ${prospect.needsMoreEvaluations ? "bg-red-900/30 text-red-400" : "bg-green-900/30 text-green-400"}`}
+                                className={`rounded px-2 py-1 text-xs ${prospect.needsMoreEvaluations ? "bg-rose-100 font-medium text-rose-800" : "bg-emerald-100 font-medium text-emerald-800"}`}
                               >
                                 {prospect.needsMoreEvaluations
                                   ? "Needs More"
@@ -326,30 +332,30 @@ export default function AnalyticsPage() {
                   </table>
                 </div>
               ) : (
-                <p className="text-gray-400">No prospect data available</p>
+                <p className="text-muted-foreground">No prospect data available</p>
               )}
             </div>
 
             {/* Timeline Summary */}
             {timeline.length > 0 && (
-              <div className="rounded-lg bg-gray-800 p-6">
-                <h2 className="mb-4 text-xl font-bold text-white">
+              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                <h2 className="mb-4 text-xl font-bold text-foreground">
                   Recent Activity Timeline
                 </h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-7">
                   {timeline.map((day) => (
                     <div key={day.date} className="text-center">
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-muted-foreground">
                         {new Date(day.date).toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "numeric",
                           day: "numeric",
                         })}
                       </div>
-                      <div className="mt-1 text-lg font-bold text-white">
+                      <div className="mt-1 text-lg font-bold text-foreground">
                         {day.totalEvaluations}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-muted-foreground">
                         {day.commentsCount +
                           day.caseStudiesCount +
                           day.interviewsCount >
@@ -370,7 +376,7 @@ export default function AnalyticsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 text-center text-sm text-gray-400">
+                <div className="mt-4 text-center text-sm text-muted-foreground">
                   Total activity last 7 days:{" "}
                   {timeline.reduce((sum, day) => sum + day.totalEvaluations, 0)}{" "}
                   evaluations

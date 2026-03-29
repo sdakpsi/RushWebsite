@@ -75,24 +75,26 @@ export default function ProtectedPage() {
     <div className="flex w-full flex-1 items-center justify-center py-10">
       <div className="animate-in mx-8 w-full">
         <div className="text-center">
-          <p className="mb-2 text-xl leading-tight lg:text-4xl">PIC Portal</p>
+          <p className="mb-2 text-xl leading-tight text-foreground lg:text-4xl">
+            PIC Portal
+          </p>
           <div className="mb-4 space-y-3">
             <div>
-              <p className="text-lg text-gray-300 mb-1">
+              <p className="mb-1 text-lg text-foreground">
                 Current Wave ({currentWaveCount} applicant{currentWaveCount !== 1 ? 's' : ''}):
               </p>
               {currentWaveCount > 0 && (
-                <div className="text-sm text-gray-400 max-w-2xl mx-auto">
+                <div className="mx-auto max-w-2xl text-sm text-muted-foreground">
                   {currentWaveNames.join(', ')}
                 </div>
               )}
             </div>
             <div>
-              <p className="text-lg text-blue-300 mb-1">
+              <p className="mb-1 text-lg font-medium text-blue-800">
                 Selected for Next Wave ({selectedApplicants.length} applicant{selectedApplicants.length !== 1 ? 's' : ''}):
               </p>
               {selectedApplicants.length > 0 && (
-                <div className="text-sm text-blue-400 max-w-2xl mx-auto">
+                <div className="mx-auto max-w-2xl text-sm text-blue-900">
                   {selectedApplicants.map(id => {
                     const applicant = filteredUsersData.find(user => user.id === id);
                     return applicant?.full_name;

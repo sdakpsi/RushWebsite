@@ -241,10 +241,10 @@ export default function ProtectedPage() {
     return (
       <div className="mb-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-100">
+          <h2 className="text-2xl font-bold text-foreground">
             {title}
             {isUnlinkedSection && (
-              <span className="ml-2 text-sm text-gray-400">
+              <span className="ml-2 text-sm text-muted-foreground">
                 ({prospectIds.length} unlinked)
               </span>
             )}
@@ -495,7 +495,7 @@ export default function ProtectedPage() {
         {isPIC ? (
           <div className="container mx-auto px-4 pt-6 pb-32 relative">
             <div className="flex flex-col space-y-6">
-              <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
+              <h1 className="mt-10 text-center text-2xl font-semibold text-foreground md:text-5xl">
                 Prospect Comment Forms
               </h1>
 
