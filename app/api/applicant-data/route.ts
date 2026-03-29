@@ -14,13 +14,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get all applicant data in parallel
-    const [avatarResult, casesResult, interviewsResult, scoreResult] = await Promise.all([
+    // user_avatar is optional; many prospects only have users.photo_url
+    const [avatarRow, userRow, casesResult, interviewsResult] = await Promise.all([
       supabase
         .from("user_avatar")
         .select("avatar_url")
         .eq("user_id", userId)
-        .single(),
+        .maybeSingle(),
+
+      supabase
+        .from("users")
+        .select("total_score, photo_url")
+        .eq("id", userId)
+        .maybeSingle(),
 
       supabase
         .from("case_studies")
@@ -31,19 +37,18 @@ export async function POST(request: Request) {
         .from("interviews")
         .select("active_name")
         .eq("prospect_id", userId),
-
-      supabase
-        .from("users")
-        .select("total_score")
-        .eq("id", userId)
-        .single()
     ]);
 
+    const avatarUrl =
+      avatarRow.data?.avatar_url?.trim() ||
+      userRow.data?.photo_url?.trim() ||
+      null;
+
     return NextResponse.json({
-      avatarUrl: avatarResult.data?.avatar_url || null,
+      avatarUrl,
       caseStudies: casesResult.data || [],
       interviews: interviewsResult.data || [],
-      totalScore: scoreResult.data?.total_score || 0
+      totalScore: userRow.data?.total_score ?? 0,
     });
   } catch (error) {
     console.error("Error fetching batched applicant data:", error);

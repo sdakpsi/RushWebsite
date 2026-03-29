@@ -1,103 +1,94 @@
 import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { 
-  getBatchedApplicantData
-} from "@/app/supabase/clientQueries";
-
-interface Packet {
-  id: string;
-  created_at: string;
-  full_name: string;
-  is_active: boolean;
-  is_pic: boolean;
-  application: string | null; // Assuming application could be null
-  case_study: string | null; // Assuming case_study could be null
-  interview: string | null; // Assuming interview could be null
-  email: string;
-  active_case_studies: string | null; // Assuming active_case_studies could be null
-  active_interviews: string | null; // Assuming active_interviews could be null
-  total_score: number | null;
-}
+import { getBatchedApplicantData } from "@/app/supabase/clientQueries";
+import type { Packet } from "@/lib/types";
 
 interface ApplicantCardProps {
   applicant: Packet;
   onViewApplication: (applicationId: string, userId: string) => void;
+  /** Optional pre-resolved URL from parent (e.g. legacy avatar map) */
+  avatarUrl?: string | null;
 }
 
 const ApplicantCard: React.FC<ApplicantCardProps> = ({
   applicant,
   onViewApplication,
+  avatarUrl: prefetchedAvatarUrl,
 }) => {
-  // Use single batched query for all applicant data
   const { data: applicantData } = useQuery({
-    queryKey: ['applicantData', applicant.id],
+    queryKey: ["applicantData", applicant.id],
     queryFn: () => getBatchedApplicantData(applicant.id),
-    staleTime: 15 * 60 * 1000, // 15 minutes - good balance for all data types
+    staleTime: 15 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
-  // Extract data with defaults
-  const avatarUrl = applicantData?.avatarUrl;
   const caseStudiesData = applicantData?.caseStudies || [];
   const interviewsData = applicantData?.interviews || [];
-  const totalScore = applicantData?.totalScore || 0;
+  const totalScore = applicantData?.totalScore ?? 0;
 
-  // Derive computed values
-  const caseActives = caseStudiesData.map((item: any) => item.active_name);
+  const resolvedAvatar =
+    applicantData?.avatarUrl?.trim() ||
+    prefetchedAvatarUrl?.trim() ||
+    applicant.photo_url?.trim() ||
+    null;
+
+  const caseActives = caseStudiesData.map((item: { active_name: string }) => item.active_name);
   const numCaseStudies = caseActives.length;
-  const interviewActives = interviewsData.map((item: any) => item.active_name);
+  const interviewActives = interviewsData.map((item: { active_name: string }) => item.active_name);
   const numInterviews = interviewActives.length;
 
   return (
     <button
+      type="button"
       onClick={() =>
         applicant.application &&
         onViewApplication(applicant.application, applicant.id)
       }
       className="transition duration-200 hover:scale-[1.03]"
     >
-      <div className="m-2 flex flex-col items-start rounded-lg bg-slate-800 p-3 shadow-lg">
+      <div className="m-2 flex flex-col items-start rounded-lg border border-border bg-card p-3 text-left shadow-sm">
         <div className="flex flex-row">
-          {avatarUrl ? (
+          {resolvedAvatar ? (
             <img
-              src={avatarUrl}
-              alt="Avatar"
-              className="h-12 w-12 rounded-full object-cover"
+              src={resolvedAvatar}
+              alt=""
+              className="h-12 w-12 flex-shrink-0 rounded-full object-cover"
             />
           ) : (
-            <div className="h-12 w-12 items-center justify-center rounded-full bg-gray-200 pt-2 text-xs">
-              <span className="text-gray-500">No Image</span>
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-muted">
+              <span className="text-[10px] text-muted-foreground">No Image</span>
             </div>
           )}
-          <div className="ml-4 flex flex-col text-left">
-            <h3 className="text-lg font-bold">{applicant.full_name}</h3>
-            <p className="text-xs">
+          <div className="ml-4 flex min-w-0 flex-col">
+            <h3 className="truncate text-lg font-bold text-foreground">
+              {applicant.full_name}
+            </h3>
+            <p className="truncate text-xs text-muted-foreground">
               <i>{applicant.email}</i>
             </p>
           </div>
         </div>
-        {/* Score and evaluation data */}
         <div className="mt-2 text-left">
           {numCaseStudies >= 3 ? (
-            <p className="text-xs text-green-500">
+            <p className="text-xs text-emerald-700">
               {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           ) : (
-            <p className="text-xs text-red-500">
+            <p className="text-xs text-rose-600">
               {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           )}
           {numInterviews >= 3 ? (
-            <p className="text-xs text-green-500">
+            <p className="text-xs text-emerald-700">
               {numInterviews} Interviews: {interviewActives.join(", ")}
             </p>
           ) : (
-            <p className="text-xs text-red-500">
+            <p className="text-xs text-rose-600">
               {numInterviews} Interviews: {interviewActives.join(", ")}
             </p>
           )}
         </div>
-        <div className="mt-2">
+        <div className="mt-2 text-sm text-foreground">
           <span>Total Score: {totalScore}</span>
         </div>
       </div>

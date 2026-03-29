@@ -157,11 +157,12 @@ export default function ProtectedPage() {
                       avatarUrl={avatarMap[applicant.id] || null}
                     />
                     <button
-                      className={`ml-2 ${
+                      type="button"
+                      className={`ml-2 w-1/4 rounded px-2 py-1 text-sm font-bold transition-colors ${
                         selectedApplicants.includes(applicant.id)
-                          ? "bg-green-500"
-                          : "bg-gray-700"
-                      } w-1/4 rounded px-2 py-1 text-sm font-bold text-white hover:bg-green-700`}
+                          ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                          : "border border-border bg-muted text-foreground hover:bg-muted/80"
+                      }`}
                       onClick={() => toggleApplicantSelection(applicant.id)}
                     >
                       {selectedApplicants.includes(applicant.id)
