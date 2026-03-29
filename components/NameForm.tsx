@@ -22,7 +22,9 @@ import { formatTimestamp, extractFileName } from "@/utils/format";
 import { getApplicationData } from '@/app/supabase/clientQueries';
 import customToast from "./CustomToast";
 import { delay } from "@/utils/delay";
-import { smallInput, textLabel, largeInput } from "./NameForm.styles";
+import { smallInput, selectWithDropdownIcon, textLabel, largeInput } from "./NameForm.styles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import LoadingSpinner from "./LoadingSpinner";
 import { RUSH_CHAIR_INFO } from "@/utils/constants";
 export default function NameForm() {
@@ -468,8 +470,9 @@ export default function NameForm() {
                 <label className={textLabel} htmlFor="yearInCollege">
               Year in College:
                 </label>
+                <div className="relative">
                 <select
-              className={smallInput}
+              className={selectWithDropdownIcon}
               id="yearInCollege"
               value={yearInCollege}
               onChange={handleChange(setYearInCollege)}
@@ -481,13 +484,18 @@ export default function NameForm() {
                 </option>
               ))}
                 </select>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
+                  <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
+                </span>
+                </div>
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="college">
               College:
                 </label>
+                <div className="relative">
                 <select
-              className={smallInput}
+              className={selectWithDropdownIcon}
               id="college"
               value={college}
               onChange={handleChange(setCollege)}
@@ -499,6 +507,10 @@ export default function NameForm() {
                 </option>
               ))}
                 </select>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
+                  <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
+                </span>
+                </div>
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="graduationYear">
@@ -524,8 +536,9 @@ export default function NameForm() {
                 <label className={textLabel} htmlFor="graduationQuarter">
               Graduation Quarter:
                 </label>
+                <div className="relative">
                 <select
-              className={smallInput}
+              className={selectWithDropdownIcon}
               id="graduationQuarter"
               value={graduationQuarter}
               onChange={handleChange(setGraduationQuarter)}
@@ -538,6 +551,10 @@ export default function NameForm() {
                 </option>
               ))}
                 </select>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
+                  <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
+                </span>
+                </div>
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="major">
