@@ -366,7 +366,7 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-orange-400/20 hover:border-orange-400/50 hover:shadow-xl hover:shadow-orange-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-orange-300 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-full">Fri 4/9</span>
+                              <span className="text-orange-300 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-full">Fri 4/10</span>
                               <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Social Night</h4>
@@ -387,7 +387,7 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-indigo-400/10 backdrop-blur-sm border border-indigo-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-indigo-400/20 hover:border-indigo-400/50 hover:shadow-xl hover:shadow-indigo-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-indigo-300 font-bold text-sm bg-indigo-400/20 px-2 py-1 rounded-full">Sat 4/10</span>
+                              <span className="text-indigo-300 font-bold text-sm bg-indigo-400/20 px-2 py-1 rounded-full">Sat 4/11</span>
                               <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-white mb-1">Interviews</h4>
