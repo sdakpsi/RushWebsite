@@ -105,7 +105,7 @@ export default function PastActiveSubmission({
 
   return (
     <div className="mb-6">
-      <label className="block text-xl font-medium text-gray-200">
+      <label className="block text-xl font-medium text-foreground">
         {type === "case_studies"
           ? "Your Case Studies:"
           : "Your Interviews:"}
@@ -116,26 +116,27 @@ export default function PastActiveSubmission({
             {finalProspectData.map((prospect, index) => (
               <li
                 key={index}
-                className="mx-4 my-2 p-3 rounded-lg bg-gray-800 border border-gray-700 shadow-lg flex items-center justify-between"
+                className="mx-4 my-2 flex items-center justify-between rounded-lg border border-border bg-card p-3 shadow-sm"
               >
-                <span className="text-white">{prospect.name}</span>
+                <span className="font-semibold text-foreground">{prospect.name}</span>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      prospect.status === 'complete'
-                        ? 'bg-green-900 text-green-200 border border-green-700'
-                        : 'bg-yellow-900 text-yellow-200 border border-yellow-700'
+                    className={`rounded-full border px-2 py-1 text-xs font-medium ${
+                      prospect.status === "complete"
+                        ? "border-emerald-300 bg-emerald-100 text-emerald-900"
+                        : "border-amber-300 bg-amber-100 text-amber-900"
                     }`}
                   >
-                    {prospect.status === 'complete' ? '✓ Complete' : '⧖ In Progress'}
+                    {prospect.status === "complete" ? "✓ Complete" : "⧖ In Progress"}
                   </span>
                   {type === "case_studies" && (
                     <button
+                      type="button"
                       onClick={() => handleDeleteClick(prospect.id)}
                       disabled={deletingId === prospect.id}
-                      className="px-2 py-1 text-xs font-medium text-red-200 bg-red-900 border border-red-700 rounded hover:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="rounded border border-red-300 bg-red-50 px-2 py-1 text-xs font-medium text-red-800 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {deletingId === prospect.id ? 'Deleting...' : 'Delete'}
+                      {deletingId === prospect.id ? "Deleting..." : "Delete"}
                     </button>
                   )}
                 </div>
@@ -143,15 +144,15 @@ export default function PastActiveSubmission({
             ))}
           </ul>
         ) : (
-          <p className="mx-4 my-2 text-gray-500">No previous submissions</p>
+          <p className="mx-4 my-2 text-muted-foreground">No previous submissions</p>
         )}
       </div>
       
       {/* Confirmation Dialog */}
       {confirmDeleteId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 z-50 bg-foreground/40">
           <div 
-            className="bg-gray-800 border border-gray-700 rounded-lg p-6 max-w-md absolute"
+            className="absolute max-w-md rounded-lg border border-border bg-card p-6 shadow-lg"
             style={{
               top: `${modalPosition.top}px`,
               left: `${modalPosition.left}%`,
@@ -159,29 +160,31 @@ export default function PastActiveSubmission({
               maxWidth: 'calc(100vw - 2rem)'
             }}
           >
-            <h3 className="text-lg font-semibold text-white mb-4">Confirm Delete</h3>
-            <p className="text-gray-300 mb-6">
-              Are you sure you want to delete the case study for{' '}
-              <span className="font-semibold">
+            <h3 className="mb-4 text-lg font-semibold text-foreground">Confirm Delete</h3>
+            <p className="mb-6 text-muted-foreground">
+              Are you sure you want to delete the case study for{" "}
+              <span className="font-semibold text-foreground">
                 {finalProspectData?.find(p => p.id === confirmDeleteId)?.name}
               </span>
               ? This action cannot be undone. No like fr this CANNOT be undone, PIC cannot help you after this.
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <button
+                type="button"
                 onClick={handleCancelDelete}
-                className="px-4 py-2 text-gray-300 bg-gray-700 border border-gray-600 rounded hover:bg-gray-600 transition-colors"
+                className="rounded-lg border border-border bg-muted px-4 py-2 text-foreground transition-colors hover:bg-muted/80"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={() => {
                   const prospect = finalProspectData?.find(p => p.id === confirmDeleteId);
                   if (prospect) {
                     handleConfirmDelete(confirmDeleteId, prospect.name);
                   }
                 }}
-                className="px-4 py-2 text-white bg-red-600 border border-red-500 rounded hover:bg-red-700 transition-colors"
+                className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
               >
                 Delete
               </button>
