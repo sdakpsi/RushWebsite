@@ -252,7 +252,7 @@ export default function ProtectedPage() {
           {!isUnlinkedSection && prospectIds.length > 0 && (
             <button
               onClick={() => copyProspectNames(prospectIds)}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="btn btn-primary rounded-lg px-4 py-2 text-sm font-semibold shadow-md"
             >
               Copy Names ({prospectIds.length})
             </button>
@@ -291,50 +291,42 @@ export default function ProtectedPage() {
           return (
             <div
               key={uniqueKey}
-              className="relative rounded-lg bg-gray-800 p-1 shadow-lg transition-shadow duration-200 hover:shadow-xl w-full sm:w-80 lg:w-96 flex-shrink-0 self-start"
+              className="relative w-full flex-shrink-0 self-start rounded-lg border border-border bg-card p-1 shadow-sm transition-shadow duration-200 hover:shadow-md sm:w-80 lg:w-96"
               style={{ height: 'fit-content' }}
             >
               <button
                 type="button"
-                className="w-full flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-muted px-4 py-2 text-left text-foreground hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
                 onClick={(event) => toggleProspect(cardId, event)}
               >
-                <div className="flex items-center gap-3 mr-2">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   {prospectPhotoUrl ? (
                     <img
                       src={prospectPhotoUrl}
                       alt={prospectName}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-500 flex-shrink-0"
+                      className="h-12 w-12 flex-shrink-0 rounded-full border-2 border-border object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 border-gray-500 flex-shrink-0">
-                      <span className="text-gray-300 text-sm font-semibold">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted">
+                      <span className="text-sm font-semibold text-muted-foreground">
                         {prospectName.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
-                  <span className="text-lg font-bold">
+                  <span className="min-w-0 truncate text-lg font-bold text-foreground">
                     {prospectId.slice(0, 5) === "66666" && (
                       <span className="text-red-600">*</span>
                     )}{" "}
                     {prospectName}
                   </span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm">
-                    <span
-                      className={`font-semibold ${
-                        yesInviteCount >= 2 ? "text-green-500" : "text-red-500"
-                      }`}
-                    >
+                <div className="flex shrink-0 items-center gap-4">
+                  <span className="whitespace-nowrap text-sm text-muted-foreground">
+                    <span className="font-semibold text-green-600">
                       {yesInviteCount} Yes
                     </span>{" "}
                     |{" "}
-                    <span
-                      className={`font-semibold ${
-                        noInviteCount <= 0 ? "text-green-500" : "text-red-500"
-                      }`}
-                    >
+                    <span className="font-semibold text-red-600">
                       {noInviteCount} No
                     </span>{" "}
                     | {numberOfComments}{" "}
@@ -346,7 +338,7 @@ export default function ProtectedPage() {
                         e.stopPropagation();
                         setLinkingMode(prev => ({ ...prev, [prospectId]: !prev[prospectId] }));
                       }}
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg transition-colors"
+                      className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                     >
                       {linkingMode[prospectId] ? 'Cancel' : 'Link'}
                     </button>
@@ -356,7 +348,7 @@ export default function ProtectedPage() {
 
               {isExpanded && (
                 <div 
-                  className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600"
+                  className="mt-2 space-y-2 rounded-lg border border-border bg-muted/40 p-2 shadow-sm"
                   data-card-id={cardId}
                   data-prospect={prospectName}
                   data-expanded="true"
@@ -364,7 +356,7 @@ export default function ProtectedPage() {
                   {prospectComments.map((comment: any) => (
                     <div
                       key={comment.id}
-                      className="flex items-start justify-between rounded-lg border border-gray-600 bg-gray-700 p-4"
+                      className="flex items-start justify-between rounded-lg border border-border bg-background p-4 text-foreground"
                     >
                       <div className="flex flex-col space-y-1 text-sm">
                         <p>
@@ -379,7 +371,7 @@ export default function ProtectedPage() {
                         <p className="text-sm italic">
                           "{comment.comment || "No comment"}"
                         </p>
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-muted-foreground">
                           {new Intl.DateTimeFormat("en-US", {
                             day: "2-digit",
                             month: "2-digit",
@@ -397,8 +389,8 @@ export default function ProtectedPage() {
 
               {/* Linking interface for unlinked comments */}
               {isUnlinkedSection && linkingMode[prospectId] && (
-                <div className="mt-2 p-4 bg-blue-900/30 border border-blue-500/30 rounded-lg">
-                  <h4 className="text-sm font-semibold text-blue-300 mb-3">
+                <div className="mt-2 rounded-lg border border-sky-200 bg-sky-50/80 p-4">
+                  <h4 className="mb-3 text-sm font-semibold text-sky-950">
                     Link "{prospectName}" to an existing prospect:
                   </h4>
                   
@@ -407,13 +399,13 @@ export default function ProtectedPage() {
                     const similarProspects = findSimilarProspects(prospectName);
                     return similarProspects.length > 0 ? (
                       <div className="mb-4">
-                        <p className="text-xs text-gray-400 mb-2">Suggested matches:</p>
+                        <p className="mb-2 text-xs text-muted-foreground">Suggested matches:</p>
                         <div className="space-y-2">
                           {similarProspects.map((prospect: any) => (
-                            <div key={prospect.id} className="flex items-center justify-between bg-gray-700/50 p-2 rounded">
+                            <div key={prospect.id} className="flex items-center justify-between rounded border border-border bg-background p-2">
                               <div className="flex-1">
-                                <span className="text-sm text-white">{prospect.full_name}</span>
-                                <span className="text-xs text-gray-400 ml-2">
+                                <span className="text-sm text-foreground">{prospect.full_name}</span>
+                                <span className="ml-2 text-xs text-muted-foreground">
                                   ({Math.round(prospect.similarity * 100)}% match)
                                 </span>
                               </div>
@@ -426,7 +418,7 @@ export default function ProtectedPage() {
                                   });
                                 }}
                                 disabled={linkCommentsMutation.isPending}
-                                className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs rounded transition-colors"
+                                className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
                               >
                                 {linkCommentsMutation.isPending ? 'Linking...' : 'Link'}
                               </button>
@@ -435,20 +427,20 @@ export default function ProtectedPage() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-xs text-gray-400 mb-3">No similar prospects found</p>
+                      <p className="mb-3 text-xs text-muted-foreground">No similar prospects found</p>
                     );
                   })()}
 
                   {/* Manual prospect selection */}
                   <div className="space-y-2">
-                    <label className="text-xs text-gray-300">Or select a prospect manually:</label>
+                    <label className="text-xs text-foreground">Or select a prospect manually:</label>
                     <select
                       value={selectedProspectForLinking[prospectId] || ''}
                       onChange={(e) => setSelectedProspectForLinking(prev => ({ 
                         ...prev, 
                         [prospectId]: e.target.value 
                       }))}
-                      className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm"
+                      className="w-full rounded border border-border bg-background p-2 text-sm text-foreground"
                     >
                       <option value="">Select a prospect...</option>
                       {prospectsData
@@ -473,7 +465,7 @@ export default function ProtectedPage() {
                           }
                         }}
                         disabled={linkCommentsMutation.isPending}
-                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm rounded transition-colors"
+                        className="btn btn-primary w-full rounded px-4 py-2 text-sm disabled:opacity-50"
                       >
                         {linkCommentsMutation.isPending ? 'Linking...' : 'Link Comments'}
                       </button>

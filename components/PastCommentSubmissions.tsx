@@ -52,7 +52,7 @@ export default function PastCommentSubmissions({
 
   return (
     <div className="mb-6">
-      <label className="block text-xl font-medium text-gray-200">
+      <label className="block text-xl font-medium text-foreground">
         Your Comments:
       </label>
       <div className="relative mt-1">
@@ -61,17 +61,21 @@ export default function PastCommentSubmissions({
             {uniqueProspects.map((comment, index) => (
               <li
                 key={index}
-                className="mx-4 my-2 p-3 rounded-lg bg-gray-800 border border-gray-700 shadow-lg flex items-center justify-between"
+                className="mx-4 my-2 flex items-center justify-between rounded-lg border border-border bg-card p-3 shadow-sm"
               >
-                <span className="text-white">{comment.prospect_name}</span>
-                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-green-200 border border-green-700">
+                <span className="font-semibold text-foreground">
+                  {comment.prospect_name}
+                </span>
+                <span className="rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-900">
                   ✓ Submitted
                 </span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="mx-4 my-2 text-gray-500">No previous comments submitted</p>
+          <p className="mx-4 my-2 text-muted-foreground">
+            No previous comments submitted
+          </p>
         )}
       </div>
     </div>
