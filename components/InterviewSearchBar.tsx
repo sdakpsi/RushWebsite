@@ -52,13 +52,15 @@ export default function InterviewSearchBar({
   };
 
   if (finalIsLoading) {
-    return <div className="">Loading prospects...</div>;
+    return (
+      <div className="text-muted-foreground">Loading prospects...</div>
+    );
   }
 
   if (error) {
     return (
       <div className="mb-6">
-        <div className="text-red-400 text-center p-4 bg-red-900/20 rounded-md">
+        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-center text-red-800">
           There was an error fetching the prospects, please try refreshing.
         </div>
       </div>
@@ -68,7 +70,7 @@ export default function InterviewSearchBar({
   if (!finalProspectData || finalProspectData.length === 0) {
     return (
       <div className="mb-6">
-        <div className="text-yellow-400 text-center p-4 bg-yellow-900/20 rounded-md">
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-center text-amber-900">
           No prospects available at this time.
         </div>
       </div>
@@ -79,7 +81,7 @@ export default function InterviewSearchBar({
     <div className="mb-6">
       <label
         htmlFor="search"
-        className="block text-lg sm:text-xl font-medium text-gray-200 mb-3"
+        className="mb-3 block text-lg font-medium text-foreground sm:text-xl"
       >
         Search for and select a prospect:
       </label>
@@ -91,15 +93,15 @@ export default function InterviewSearchBar({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Type prospect name..."
-          className="block w-full rounded-lg border-2 border-gray-300 bg-gray-200 text-black shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-4 text-base transition-all duration-200"
+          className="block w-full rounded-lg border-2 border-border bg-background px-4 py-4 text-base text-foreground shadow-md transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/30"
           style={{ fontSize: '16px' }} // Prevents zoom on iOS
         />
         {searchInput && (
-          <div className="suggestions mt-2 w-full rounded-lg bg-gray-800 shadow-xl border border-gray-600 overflow-hidden">
+          <div className="suggestions mt-2 w-full overflow-hidden rounded-lg border border-border bg-card shadow-xl">
             {filteredData.slice(0, 5).map((prospect, index) => (
               <div
                 key={index}
-                className="suggestion cursor-pointer border-b border-gray-700 last:border-b-0 px-4 py-4 text-white hover:bg-gray-700 active:bg-gray-600 transition-all duration-150 touch-manipulation active:scale-[0.98]"
+                className="suggestion cursor-pointer border-b border-border px-4 py-4 text-foreground transition-all duration-150 hover:bg-muted active:bg-muted/80 touch-manipulation active:scale-[0.98] last:border-b-0"
                 onClick={() => handleSelectProspect(prospect)}
               >
                 <div className="flex items-center gap-3">
@@ -110,21 +112,23 @@ export default function InterviewSearchBar({
                       className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
-                      <span className="text-gray-300 text-sm font-semibold">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-muted">
+                      <span className="text-sm font-semibold text-muted-foreground">
                         {prospect.full_name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-base">{prospect.full_name}</div>
-                    <div className="text-sm text-gray-400">{prospect.email}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {prospect.email}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
             {filteredData.length === 0 && searchInput && (
-              <div className="px-4 py-4 text-gray-400 text-center">
+              <div className="px-4 py-4 text-center text-muted-foreground">
                 No prospects found matching "{searchInput}"
               </div>
             )}

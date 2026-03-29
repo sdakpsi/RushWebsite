@@ -38,7 +38,7 @@ export default function ProtectedPage() {
   return (
     <div className="container mx-auto px-4 pt-6 relative">
       {isSubmitting && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
+        <div className="absolute inset-0 bg-foreground/10 flex items-center justify-center z-50 rounded-lg">
           <LoadingSpinner size="medium" fullScreen={false} />
         </div>
       )}
@@ -64,7 +64,7 @@ export default function ProtectedPage() {
               </p>
               {selectedProspect && (
                 <button
-                  className="self-center rounded-lg bg-blue-500 px-6 py-4 font-bold text-white hover:bg-blue-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg text-lg"
+                  className="btn btn-primary self-center px-6 py-4 text-lg font-bold transition-all duration-200 touch-manipulation active:scale-95 shadow-lg"
                   onClick={() => setShowingForm(true)}
                 >
                   Start Interview Form
