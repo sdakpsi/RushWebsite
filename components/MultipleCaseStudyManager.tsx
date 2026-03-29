@@ -228,16 +228,16 @@ export default function MultipleCaseStudyManager({
   if (!showingManager) return null;
 
   return (
-    <div className="w-full max-w-6xl mx-auto bg-black text-white min-h-screen p-6">
+    <div className="w-full max-w-6xl mx-auto bg-background text-foreground min-h-screen p-6">
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={handleBack}
-          className="px-4 py-2 text-base rounded-lg text-white border-none cursor-pointer hover:bg-gray-700"
+          className="px-4 py-2 text-base rounded-lg text-foreground border border-border bg-muted/50 cursor-pointer hover:bg-muted"
           >
             &lt; Back{' '}
           </button>
         
-        <h1 className="text-2xl font-semibold text-center text-white absolute left-1/2 transform -translate-x-1/2">
+        <h1 className="text-2xl font-semibold text-center text-foreground absolute left-1/2 transform -translate-x-1/2">
           Multiple Case Studies
         </h1>
 
@@ -258,19 +258,19 @@ export default function MultipleCaseStudyManager({
 
       {/* Tooltip description */}
       <div className="text-center mb-4">
-        <p className="text-sm text-gray-400 max-w-2xl mx-auto">
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
           Use <strong>arrow keys</strong> to navigate between tabs when not typing :3. <br></br>
           Press <strong>esc</strong> to unfocus while typing and allow the arrow keys to be used. <br></br>
         </p>
       </div>
 
       {/* Add New Form Section */}
-      <div className="mb-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+      <div className="mb-6 p-4 bg-muted/60 rounded-lg border border-border">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium text-white">Add New Case Study</h2>
+          <h2 className="text-lg font-medium text-foreground">Add New Case Study</h2>
           <button
             onClick={() => setShowProspectSelector(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
           >
             + Add Form
           </button>
@@ -284,12 +284,12 @@ export default function MultipleCaseStudyManager({
             />
             {selectedProspect && (
               <div className="mt-4 flex items-center gap-4">
-                <span className="text-sm text-white">
+                <span className="text-sm text-foreground">
                   Selected: {selectedProspect.full_name} ({selectedProspect.email})
                 </span>
                 <button
                   onClick={() => handleAddForm(selectedProspect)}
-                  className="px-4 py-2 rounded bg-blue-500 font-bold text-white hover:bg-blue-700"
+                  className="px-4 py-2 rounded-lg bg-primary font-semibold text-primary-foreground hover:opacity-90"
                 >
                   Start Case Study Form
                 </button>
@@ -298,7 +298,7 @@ export default function MultipleCaseStudyManager({
                     setSelectedProspect(null);
                     setShowProspectSelector(false);
                   }}
-                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500"
+                  className="px-4 py-2 bg-muted text-foreground rounded-lg border border-border hover:bg-muted/80"
                 >
                   Cancel
                 </button>
@@ -320,17 +320,17 @@ export default function MultipleCaseStudyManager({
       {/* Compact sticky prospect indicator */}
       {activeForm && (
         <div className="sticky top-20 z-40 mx-auto max-w-md mb-4">
-          <div className="bg-gray-800/90 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2 shadow-lg">
+          <div className="bg-card backdrop-blur-sm border border-border rounded-lg px-4 py-2 shadow-md">
             <div className="flex items-center justify-between gap-3">
               {/* Status icon */}
               <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                 activeForm.status === "submitted"
-                  ? "bg-green-500/20 text-green-400"
+                  ? "bg-green-100 text-green-800"
                   : activeForm.status === "error"
-                    ? "bg-red-500/20 text-red-400 animate-pulse"
+                    ? "bg-red-100 text-red-700 animate-pulse"
                     : activeForm.status === "submitting"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "bg-gray-500/20 text-gray-300"
+                      ? "bg-gray-200 text-gray-700"
+                      : "bg-muted text-muted-foreground"
               }`}>
                 <span className={activeForm.status === "submitting" ? "animate-spin" : ""}>
                   {activeForm.status === "submitting" ? "⟳" : 
@@ -341,19 +341,19 @@ export default function MultipleCaseStudyManager({
               
               {/* Prospect name */}
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-white truncate">
+                <div className="text-sm font-semibold text-foreground truncate">
                   {activeForm.prospect.full_name}
                 </div>
               </div>
               
               {/* Progress */}
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-muted-foreground">
                 {forms.findIndex(f => f.id === activeForm.id) + 1}/{forms.length}
               </div>
               
               {/* Auto-save indicator */}
               {autoSaveStatus[activeForm.id]?.saving && (
-                <div className="w-3 h-3 border border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-3 h-3 border border-gray-500 border-t-transparent rounded-full animate-spin"></div>
               )}
             </div>
           </div>
@@ -362,7 +362,7 @@ export default function MultipleCaseStudyManager({
 
       {/* Active Form */}
       {activeForm && (
-        <div className="border border-gray-700 rounded-lg bg-black">
+        <div className="border border-border rounded-lg bg-card">
           <ActiveCaseStudyForm
             key={activeForm.id} // Add key to force re-mount when switching forms
             selectedProspect={activeForm.prospect}
@@ -384,8 +384,8 @@ export default function MultipleCaseStudyManager({
 
       {forms.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-300 text-lg">No case study forms open</p>
-          <p className="text-gray-400 text-sm mt-2">Click "Add Another Form" to get started</p>
+          <p className="text-muted-foreground text-lg">No case study forms open</p>
+          <p className="text-muted-foreground text-sm mt-2">Click &quot;+ Add Form&quot; to get started</p>
         </div>
       )}
     </div>

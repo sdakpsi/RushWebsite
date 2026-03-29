@@ -315,10 +315,10 @@ export default function ActiveCaseStudyForm({
   const isCurrentlySubmitting = externalIsSubmitting || false;
 
   return (
-    <div className="bg-black text-white relative">
+    <div className="bg-card text-foreground relative">
       <div className="p-5">
         {isCurrentlySubmitting && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
+          <div className="absolute inset-0 bg-foreground/10 flex items-center justify-center z-50 rounded-lg">
             <LoadingSpinner size="medium" fullScreen={false} />
           </div>
         )}
@@ -327,19 +327,19 @@ export default function ActiveCaseStudyForm({
           <button
             type="button"
             onClick={() => handleBack()}
-            className="cursor-pointer rounded-lg border-none bg-gray-700 px-4 py-2 text-base text-white"
+            className="cursor-pointer rounded-lg border border-border bg-muted px-4 py-2 text-base text-foreground hover:bg-muted/80"
           >
             &#x276E; Back{" "}
           </button>
         )}
         <div className="text-center">
         {!isMultiFormContext && (
-          <h1 className="text-2xl text-white">
+          <h1 className="text-2xl text-foreground">
             Case Study: {selectedProspect.full_name}
           </h1>
         )}
           {!isMultiFormContext && (
-            <div className="mt-1 text-sm text-gray-400">
+            <div className="mt-1 text-sm text-muted-foreground">
               {isAutoSaving
                 ? "Auto-saving..."
                 : lastAutoSaved && `Last saved: ${lastAutoSaved}`}
@@ -350,13 +350,13 @@ export default function ActiveCaseStudyForm({
       </div>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="mb-5">
-          <label htmlFor="name" className="mb-2 block">
+          <label htmlFor="name" className="mb-2 block text-foreground">
             Active Name
           </label>
           <input
             type="text"
             id="name"
-            className="w-full cursor-not-allowed rounded-lg bg-gray-100 p-2.5 text-base text-black"
+            className="w-full cursor-not-allowed rounded-lg border border-border bg-muted p-2.5 text-base text-foreground"
             readOnly
             {...register("name", {
               required: "Name is required",
@@ -369,13 +369,13 @@ export default function ActiveCaseStudyForm({
           )}
         </div>
         <div className="mb-5">
-          <label htmlFor="otherActives" className="mb-2 block">
+          <label htmlFor="otherActives" className="mb-2 block text-foreground">
             Other Actives on Panel
           </label>
           <input
             type="text"
             id="otherActives"
-            className="w-full rounded-lg p-2.5 text-base text-black"
+            className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
             onInput={handleUserInput}
             {...registerWithAutoSave("otherActives", {
               required: "Other Actives on Panel is required",
@@ -392,12 +392,12 @@ export default function ActiveCaseStudyForm({
           {/* im like the look at me using a loop n shi */}
           {caseStudyData.map((question, index) => (
             <div key={index} className="mb-5">
-              <label htmlFor={question.name} className="mb-2 block">
+              <label htmlFor={question.name} className="mb-2 block text-foreground">
                 {index <= 3 ? `${question.name} Comments` : question.name}
               </label>
               <textarea
                 id={question.name}
-                className="w-full rounded-lg p-2.5 text-base text-black"
+                className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
                 onInput={handleUserInput}
                 {...registerWithAutoSave(
                   index <= 3 ? `${question.label}_comments` : question.label,
@@ -422,10 +422,10 @@ export default function ActiveCaseStudyForm({
         <div className="flex flex-col justify-evenly sm:flex-row">
           {caseStudyData.slice(0, 4).map((trait) => (
             <div key={trait.label} className="mb-5">
-              <label>{trait.name + " Score"}</label>
+              <label className="text-foreground">{trait.name + " Score"}</label>
               <div className="mt-1">
                 <select
-                  className="rounded-lg p-2.5 text-base text-black"
+                  className="rounded-lg border border-border bg-background p-2.5 text-base text-foreground w-full max-w-[120px]"
                   {...registerWithAutoSave(`${trait.label}_score`, {
                     required: `Please select a value for ${trait.name}`,
                   })}
@@ -447,12 +447,12 @@ export default function ActiveCaseStudyForm({
           ))}
         </div>
         <div className="mt-5">
-          <label htmlFor={"additionalComments"} className="mb-2 block">
+          <label htmlFor={"additionalComments"} className="mb-2 block text-foreground">
             Additional Comments
           </label>
           <textarea
             id={"additionalComments"}
-            className="w-full rounded-lg p-2.5 text-base text-black"
+            className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
             onInput={handleUserInput}
             {...register("additionalComments", {})}
           ></textarea>
@@ -466,8 +466,7 @@ export default function ActiveCaseStudyForm({
           <button
             type="submit"
             disabled={isCurrentlySubmitting}
-            className={`} cursor-pointer rounded-xl border-none bg-blue-500 px-5 py-2.5 text-base text-black hover:bg-blue-700
-              disabled:opacity-50`}
+            className="btn btn-primary cursor-pointer rounded-xl px-5 py-2.5 text-base disabled:opacity-50"
           >
             {isCurrentlySubmitting
               ? isEditing
