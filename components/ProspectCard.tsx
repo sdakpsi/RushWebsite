@@ -16,9 +16,9 @@ function ProspectCard({
   return (
     <div
       className={`
-        rounded-lg bg-gray-800 p-2 shadow-lg transition-shadow duration-200 hover:shadow-xl cursor-pointer
+        rounded-lg bg-gray-200 border border-gray-300 p-2 shadow-md transition-shadow duration-200 hover:shadow-lg cursor-pointer
         ${isSelected 
-          ? 'ring-2 ring-blue-500' 
+          ? 'ring-2 ring-gray-600' 
           : ''
         }
       `}
@@ -26,10 +26,10 @@ function ProspectCard({
     >
       <div
         className={`
-          flex items-center justify-between rounded-lg px-6 py-4 text-gray-200 transition-colors duration-200
+          flex items-center justify-between rounded-lg px-6 py-4 transition-colors duration-200
           ${isSelected 
-            ? 'bg-blue-700 hover:bg-blue-600' 
-            : 'bg-gray-700 hover:bg-gray-600'
+            ? 'bg-gray-400 text-gray-900 hover:bg-gray-500 border-2 border-gray-600' 
+            : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-200'
           }
         `}
       >
@@ -40,11 +40,11 @@ function ProspectCard({
               <img 
                 src={prospect.photo_url} 
                 alt={`${prospect.full_name}'s photo`}
-                className="w-16 h-16 object-cover rounded-full border-2 border-gray-500"
+                className={`w-16 h-16 object-cover rounded-full border-2 ${isSelected ? 'border-gray-600' : 'border-gray-400'}`}
               />
             ) : (
-              <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center border-2 border-gray-500">
-                <span className="text-sm text-gray-300 font-medium">
+              <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center border-2 border-gray-400">
+                <span className="text-sm text-gray-700 font-medium">
                   {prospect.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </span>
               </div>
@@ -56,13 +56,13 @@ function ProspectCard({
             <span className="text-xl font-bold truncate">
               {prospect.full_name}
             </span>
-            <span className="text-base text-gray-400 truncate">
+            <span className={`text-base truncate ${isSelected ? 'text-gray-700' : 'text-gray-600'}`}>
               {prospect.email}
             </span>
           </div>
         </div>
         {hasExistingComment && (
-          <span className="ml-3 px-3 py-2 rounded-full text-sm bg-green-900 text-green-200 border border-green-700 flex-shrink-0">
+          <span className="ml-3 px-3 py-2 rounded-full text-sm bg-green-100 text-green-800 border border-green-300 flex-shrink-0">
             ✓ Comment
           </span>
         )}

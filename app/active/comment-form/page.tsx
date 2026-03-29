@@ -160,7 +160,7 @@ export default function Page(this: any) {
                     className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold text-white transition-all duration-200 touch-manipulation active:scale-95 ${
                       viewMode === 'search'
                         ? 'bg-blue-600 hover:bg-blue-700 shadow-lg'
-                        : 'bg-gray-600 hover:bg-gray-700'
+                        : 'bg-gray-500 hover:bg-gray-600'
                     }`}
                     onClick={() => setViewMode('search')}
                   >
@@ -170,7 +170,7 @@ export default function Page(this: any) {
                     className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold text-white transition-all duration-200 touch-manipulation active:scale-95 ${
                       viewMode === 'grid'
                         ? 'bg-blue-600 hover:bg-blue-700 shadow-lg'
-                        : 'bg-gray-600 hover:bg-gray-700'
+                        : 'bg-gray-500 hover:bg-gray-600'
                     }`}
                     onClick={() => setViewMode('grid')}
                   >
@@ -259,7 +259,7 @@ export default function Page(this: any) {
               {viewMode === 'grid' && selectedProspect && (
                 <div className="flex justify-center">
                   <button
-                    className="rounded-lg bg-gray-600 px-6 py-3 text-white font-medium hover:bg-gray-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-md"
+                    className="rounded-lg bg-gray-500 px-6 py-3 text-white font-medium hover:bg-gray-600 transition-all duration-200 touch-manipulation active:scale-95 shadow-md"
                     onClick={() => setSelectedProspect(null)}
                   >
                     Back to Grid
@@ -281,7 +281,7 @@ export default function Page(this: any) {
                         rows={1}
                       />
                     )}
-                    <label className="mb-2 text-gray-200">
+                    <label className="mb-2 text-gray-700">
                       How was the interaction?
                     </label>
                     <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
@@ -289,7 +289,7 @@ export default function Page(this: any) {
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           interaction === "Good" 
                             ? "bg-green-600 shadow-lg border-2 border-green-400" 
-                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Good")}
                       >
@@ -299,7 +299,7 @@ export default function Page(this: any) {
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           interaction === "Neutral" 
                             ? "bg-yellow-600 shadow-lg border-2 border-yellow-400" 
-                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Neutral")}
                       >
@@ -309,7 +309,7 @@ export default function Page(this: any) {
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           interaction === "Bad" 
                             ? "bg-red-600 shadow-lg border-2 border-red-400" 
-                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Bad")}
                       >
@@ -320,7 +320,7 @@ export default function Page(this: any) {
 
                   {/* Invite to Social Night Question */}
                   <div className="flex flex-col text-white">
-                    <label className="mb-2 mt-4 text-gray-200">
+                    <label className="mb-2 mt-4 text-gray-700">
                       Invite to social night?
                     </label>
                     <div className="grid grid-cols-3 gap-2 sm:gap-4">
@@ -328,7 +328,7 @@ export default function Page(this: any) {
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           invite === "Yes" 
                             ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
-                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInvite("Yes")}
                       >
@@ -338,7 +338,7 @@ export default function Page(this: any) {
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           invite === "No" 
                             ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
-                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInvite("No")}
                       >
@@ -348,7 +348,7 @@ export default function Page(this: any) {
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           invite === "N/A" 
                             ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
-                            : "bg-gray-800 hover:bg-gray-700 border-2 border-transparent"
+                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInvite("N/A")}
                       >
@@ -356,7 +356,7 @@ export default function Page(this: any) {
                       </button>
                     </div>
                   </div>
-                  <label className="mb-2 mt-4 text-gray-200">
+                  <label className="mb-2 mt-4 text-gray-700">
                     Explain the interaction (minimum 15 words):
                   </label>
                   <textarea

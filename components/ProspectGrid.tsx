@@ -59,13 +59,13 @@ export default function ProspectGrid({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {/* Loading skeleton cards */}
           {Array.from({ length: 9 }).map((_, index) => (
-            <div key={index} className="rounded-lg bg-gray-800 p-2 shadow-lg animate-pulse">
-              <div className="flex items-center justify-between rounded-lg px-6 py-4 bg-gray-700">
+            <div key={index} className="rounded-lg bg-gray-200 border border-gray-300 p-2 shadow-md animate-pulse">
+              <div className="flex items-center justify-between rounded-lg px-6 py-4 bg-gray-100">
                 <div className="flex items-center space-x-4 flex-1">
-                  <div className="w-16 h-16 bg-gray-600 rounded-full"></div>
+                  <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
                   <div className="flex flex-col space-y-2 flex-1">
-                    <div className="h-6 bg-gray-600 rounded w-3/4"></div>
-                    <div className="h-5 bg-gray-600 rounded w-1/2"></div>
+                    <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+                    <div className="h-5 bg-gray-300 rounded w-1/2"></div>
                   </div>
                 </div>
               </div>
