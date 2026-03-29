@@ -45,26 +45,43 @@ export async function getUsers() {
       
       usersData = users || [];
     } else {
-      // Production mode - use JOIN query for better performance
-      const { data: users, error: usersError } = await supabase
-        .from("users")
-        .select(`
-          *,
-          applications!inner(
-            submitted
-          )
-        `)
-        .eq("is_active", false)
-        .eq("is_pic", false)
-        .not("applications.submitted", "is", null)
-        .order("full_name", { ascending: true });
+      // Production: prospects with a submitted application (no embed — avoids
+      // "more than one relationship" between users and applications).
+      const { data: apps, error: appsError } = await supabase
+        .from("applications")
+        .select("user_id")
+        .not("submitted", "is", null);
 
-      if (usersError) {
-        console.error("Error fetching users with applications:", usersError.message);
+      if (appsError) {
+        console.error("Error fetching applications:", appsError.message);
         return [];
       }
-      
-      usersData = users || [];
+
+      const validUserIds = [
+        ...new Set((apps ?? []).map((a: { user_id: string }) => a.user_id)),
+      ];
+
+      if (validUserIds.length === 0) {
+        usersData = [];
+      } else {
+        const { data: users, error: usersError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("is_active", false)
+          .eq("is_pic", false)
+          .in("id", validUserIds)
+          .order("full_name", { ascending: true });
+
+        if (usersError) {
+          console.error(
+            "Error fetching users with applications:",
+            usersError.message
+          );
+          return [];
+        }
+
+        usersData = users || [];
+      }
     }
   }
   
