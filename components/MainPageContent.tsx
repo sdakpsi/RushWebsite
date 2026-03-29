@@ -61,16 +61,16 @@ export default function MainPageContent() {
 
       {/* Application Opening Soon Notice */}
       {hasPhoto && APPLICATION_OPEN === 'coming_soon' && (
-        <div className="rounded-lg bg-info/10 border border-info/20 p-4">
+        <div className="rounded-lg bg-white border border-gray-300 p-4">
           <div className="flex items-start space-x-3">
-            <svg className="h-5 w-5 text-info mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="font-semibold text-info mb-1">
+              <p className="font-semibold text-gray-900 mb-1">
                 Applications Opening Soon
               </p>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-gray-600">
                 Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned!
               </p>
             </div>

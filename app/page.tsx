@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import background from "./background.png";
-import tagline from "./tagline.png";
+import background from "./spring26background.png";
+import tagline from "./spring26tagline.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
 import { APPLICATION_DEADLINE } from "@/utils/constants";
@@ -55,7 +55,7 @@ export default function Index() {
               <div className="space-y-6">
                 <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up">
                   <div className="card-header">
-                    <h1 className="card-title text-white">
+                    <h1 className="card-title text-foreground">
                       {displayAsActive
                         ? "Active Member Dashboard"
                         : `Thanks for Rushing ${currentTheme.branding.organization}!`}
@@ -78,7 +78,7 @@ export default function Index() {
                     ) : displayAsActive ? (
                       // Active user content
                       <div className="space-y-4">
-                        <p className="text-gray-300">
+                        <p className="text-muted-foreground">
                           Access your active member tools and resources.
                         </p>
 
@@ -166,7 +166,7 @@ export default function Index() {
                     ) : (
                       // Non-active user content
                       <div className="space-y-4">
-                        <p className="text-gray-300">
+                        <p className="text-muted-foreground">
                           Thank you for participating in {currentTheme.branding.rushYear} Rush! We appreciate your interest in {currentTheme.branding.organization} and wish you the best.
                         </p>
 
@@ -188,7 +188,7 @@ export default function Index() {
                 {!displayAsActive ? (
                 <div className="prospect-card prospect-glass rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
                   <div className="card-header">
-                    <h3 className="card-title text-white">
+                    <h3 className="card-title text-foreground">
                       {displayAsActive ? "Quick Actions" : "Get Started"}
                     </h3>
                   </div>
@@ -202,7 +202,7 @@ export default function Index() {
                 {/* Quick Links */}
                 <div className="prospect-card rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.25s' }}>
                   <div className="card-header">
-                    <h3 className="card-title text-white">Quick Links</h3>
+                    <h3 className="card-title text-foreground">Quick Links</h3>
                   </div>
                   <div className="card-content space-y-3">
                     <a
@@ -227,16 +227,16 @@ export default function Index() {
                 {/* Contact Info */}
                 <div className="prospect-card rounded-xl p-6 animate-slide-up" style={{ animationDelay: '0.35s' }}>
                   <div className="card-header">
-                    <h3 className="card-title text-white">Need Help?</h3>
+                    <h3 className="card-title text-foreground">Need Help?</h3>
                   </div>
                   <div className="card-content">
                     {displayAsActive ?
                     (
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-muted-foreground">
                        To report any issues or questions please contact Yathin/George/Arish/Eeswar
                       </p>
                     ) : (
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-muted-foreground">
                       If you're having any issues or have questions, please{" "}
                       {currentTheme.branding.rushChairs}!
                     </p> 
@@ -251,11 +251,11 @@ export default function Index() {
                 {/* Enhanced Rush Schedule Timeline */}
                 <div className="prospect-card rounded-xl p-6 animate-slide-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
                   {/* Background gradient glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 via-gray-400/5 to-gray-300/5 animate-pulse"></div>
                   
                   <div className="card-header relative z-10">
-                    <h3 className="card-title text-white mb-6 text-center">
-                      <span className="text-white bg-clip-text text-transparent animate-shimmer">
+                    <h3 className="card-title text-foreground mb-6 text-center">
+                      <span className="text-foreground">
                         Rush Schedule
                       </span>
                     </h3>
@@ -283,12 +283,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-green-400/10 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-green-400/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-green-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-green-300 font-bold text-sm bg-green-400/20 px-2 py-1 rounded-full">Mon 4/6</span>
+                              <span className="text-green-800 font-bold text-sm bg-green-200 px-2 py-1 rounded-full">Mon 4/6</span>
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             </div>
-                            <h4 className="font-bold text-base text-white mb-1">Info Night</h4>
-                            <p className="text-sm text-gray-300 mb-1">6 PM @ Price Center Theater | Casual Attire</p>
-                            <p className="text-sm text-white">Come learn about Alpha Kappa Psi, hear brothers' experiences, and discuss career opportunities and professional development. Discover how you'll fit into our chapter's strong brotherhood!</p>
+                            <h4 className="font-bold text-base text-foreground mb-1">Info Night</h4>
+                            <p className="text-sm text-muted-foreground mb-1">6 PM @ Price Center Theater | Casual Attire</p>
+                            <p className="text-sm text-foreground">Come learn about Alpha Kappa Psi, hear brothers' experiences, and discuss career opportunities and professional development. Discover how you'll fit into our chapter's strong brotherhood!</p>
                           </div>
                         </div>
 
@@ -304,12 +304,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-blue-400/10 backdrop-blur-sm border border-blue-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-blue-400/20 hover:border-blue-400/50 hover:shadow-xl hover:shadow-blue-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-blue-300 font-bold text-sm bg-blue-400/20 px-2 py-1 rounded-full">Tue 4/7</span>
+                              <span className="text-blue-800 font-bold text-sm bg-blue-200 px-2 py-1 rounded-full">Tue 4/7</span>
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             </div>
-                            <h4 className="font-bold text-base text-white mb-1">Business Workshop</h4>
-                            <p className="text-sm text-gray-300 mb-1">7 PM @ Price Center - Ballroom B | Business Casual Attire</p>
-                            <p className="text-sm text-white">Bring your resume (cover letter optional) for a career guidance session, and gain valuable insights from inspirational talks by our alumni guest speakers!</p>
+                            <h4 className="font-bold text-base text-foreground mb-1">Business Workshop</h4>
+                            <p className="text-sm text-muted-foreground mb-1">7 PM @ Price Center - Ballroom B | Business Casual Attire</p>
+                            <p className="text-sm text-foreground">Bring your resume (cover letter optional) for a career guidance session, and gain valuable insights from inspirational talks by our alumni guest speakers!</p>
                           </div>
                         </div>
 
@@ -325,12 +325,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-purple-400/10 backdrop-blur-sm border border-purple-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-purple-400/20 hover:border-purple-400/50 hover:shadow-xl hover:shadow-purple-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-purple-300 font-bold text-sm bg-purple-400/20 px-2 py-1 rounded-full">Wed 4/8</span>
+                              <span className="text-purple-800 font-bold text-sm bg-purple-200 px-2 py-1 rounded-full">Wed 4/8</span>
                               <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
                             </div>
-                            <h4 className="font-bold text-base text-white mb-1">Case Study Night</h4>
-                            <p className="text-sm text-gray-300 mb-1">By Appointment Only | Professional Attire</p>
-                            <p className="text-sm text-white">Study a real-life business problem and test your teamwork and analytical skills! Case Study Night participation is mandatory for membership consideration.</p>
+                            <h4 className="font-bold text-base text-foreground mb-1">Case Study Night</h4>
+                            <p className="text-sm text-muted-foreground mb-1">By Appointment Only | Professional Attire</p>
+                            <p className="text-sm text-foreground">Study a real-life business problem and test your teamwork and analytical skills! Case Study Night participation is mandatory for membership consideration.</p>
                           </div>
                         </div>
 
@@ -345,12 +345,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-red-400/10 backdrop-blur-sm border border-red-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-red-400/20 hover:border-red-400/50 hover:shadow-xl hover:shadow-red-400/20 hover:scale-[1.02] animate-urgent-pulse">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-red-300 font-bold text-sm bg-red-400/20 px-2 py-1 rounded-full animate-pulse">Thu 4/9</span>
+                              <span className="text-red-800 font-bold text-sm bg-red-200 px-2 py-1 rounded-full animate-pulse">Thu 4/9</span>
                               <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                              <span className="text-xs text-red-200 font-semibold bg-red-500/20 px-2 py-1 rounded-full animate-pulse">DEADLINE</span>
+                              <span className="text-xs text-red-800 font-semibold bg-red-200 px-2 py-1 rounded-full animate-pulse">DEADLINE</span>
                             </div>
-                            <h4 className="font-bold text-base text-white mb-1">Application Due</h4>
-                            <p className="text-sm text-gray-300">{APPLICATION_DEADLINE}</p>
+                            <h4 className="font-bold text-base text-foreground mb-1">Application Due</h4>
+                            <p className="text-sm text-muted-foreground">{APPLICATION_DEADLINE}</p>
                           </div>
                         </div>
 
@@ -366,12 +366,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-orange-400/20 hover:border-orange-400/50 hover:shadow-xl hover:shadow-orange-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-orange-300 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-full">Fri 4/10</span>
+                              <span className="text-orange-800 font-bold text-sm bg-orange-200 px-2 py-1 rounded-full">Fri 4/10</span>
                               <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                             </div>
-                            <h4 className="font-bold text-base text-white mb-1">Social Night</h4>
-                            <p className="text-sm text-gray-300 mb-1">By Invite Only | Casual Attire</p>
-                            <p className="text-sm text-white">Mingle with our brothers in a casual setting with food and drinks provided! Experience wholesome brotherhood within our tight-knit family in AKPsi.</p>
+                            <h4 className="font-bold text-base text-foreground mb-1">Social Night</h4>
+                            <p className="text-sm text-muted-foreground mb-1">By Invite Only | Casual Attire</p>
+                            <p className="text-sm text-foreground">Mingle with our brothers in a casual setting with food and drinks provided! Experience wholesome brotherhood within our tight-knit family in AKPsi.</p>
                           </div>
                         </div>
 
@@ -387,12 +387,12 @@ export default function Index() {
                           </div>
                           <div className="flex-1 bg-indigo-400/10 backdrop-blur-sm border border-indigo-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-indigo-400/20 hover:border-indigo-400/50 hover:shadow-xl hover:shadow-indigo-400/20 hover:scale-[1.02]">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-indigo-300 font-bold text-sm bg-indigo-400/20 px-2 py-1 rounded-full">Sat 4/11</span>
+                              <span className="text-indigo-800 font-bold text-sm bg-indigo-200 px-2 py-1 rounded-full">Sat 4/11</span>
                               <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
                             </div>
-                            <h4 className="font-bold text-base text-white mb-1">Interviews</h4>
-                            <p className="text-sm text-gray-300 mb-1">By Appointment Only | Professional Attire</p>
-                            <p className="text-sm text-white">Interview participation is mandatory for membership consideration.</p>
+                            <h4 className="font-bold text-base text-foreground mb-1">Interviews</h4>
+                            <p className="text-sm text-muted-foreground mb-1">By Appointment Only | Professional Attire</p>
+                            <p className="text-sm text-foreground">Interview participation is mandatory for membership consideration.</p>
                           </div>
                         </div>
                       </div>

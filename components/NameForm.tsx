@@ -397,7 +397,7 @@ export default function NameForm() {
 
   return (
     <div>
-      <div className="save-status px-4 text-gray-400 sm:px-0">
+      <div className="save-status px-4 text-muted-foreground sm:px-0">
         {isSaving ? "Saving..." : lastSaved && `Last saved on ${lastSaved}`}
       </div>
       <div className="submit-status px-4 text-green-600 sm:px-0">
@@ -798,9 +798,11 @@ export default function NameForm() {
             <div className="mb-4">
               <a
                 href={resumeFileUrl ? resumeFileUrl : "#"}
-                className={`text-blue-200 hover:text-blue-500 ${
-                  !resumeFileUrl && "pointer-events-none"
-                }`}
+                className={`${
+                  resumeFileUrl
+                    ? "text-primary hover:opacity-90 underline underline-offset-2"
+                    : "text-muted-foreground"
+                } ${!resumeFileUrl && "pointer-events-none"}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -815,9 +817,11 @@ export default function NameForm() {
             <div className="mb-4">
               <a
                 href={coverLetterFileUrl ? coverLetterFileUrl : "#"}
-                className={`text-blue-200 hover:text-blue-500 ${
-                  !coverLetterFileUrl && "pointer-events-none"
-                }`}
+                className={`${
+                  coverLetterFileUrl
+                    ? "text-primary hover:opacity-90 underline underline-offset-2"
+                    : "text-muted-foreground"
+                } ${!coverLetterFileUrl && "pointer-events-none"}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -850,7 +854,7 @@ export default function NameForm() {
           </div>
         </div>
       </form>
-      <p className="mt-4 text-gray-200">
+      <p className="mt-4 text-muted-foreground">
         If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
       </p>
     </div>

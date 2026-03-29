@@ -38,28 +38,28 @@ export interface Theme {
 
 // Current Theme - Update this for future rushes
 export const currentTheme: Theme = {
-  name: "Fall 2025 Rush - Dark",
+  name: "Spring 2026 Rush - Light",
   colors: {
-    primary: "220 70% 60%",          // Bright blue for dark theme
-    primaryForeground: "0 0% 100%",
-    secondary: "217 33% 17%",         // Dark secondary
-    secondaryForeground: "210 40% 98%",
-    accent: "216 12% 15%",            // Dark accent
-    accentForeground: "210 40% 98%",
-    background: "222 84% 5%",         // Very dark background
-    foreground: "210 40% 98%",        // Light text
-    muted: "217 33% 17%",             // Dark muted
-    mutedForeground: "215 20% 65%",   // Muted text
-    border: "217 33% 17%",            // Dark borders
-    input: "217 33% 17%",             // Dark inputs
-    ring: "220 70% 60%",              // Bright focus ring
-    destructive: "0 84% 60%",
+    primary: "0 0% 42%",              // Medium gray for primary buttons/links
+    primaryForeground: "0 0% 100%",   // White text on primary
+    secondary: "0 0% 95%",            // Very light gray
+    secondaryForeground: "0 0% 15%",  // Dark text on secondary
+    accent: "0 0% 88%",               // Light gray accent
+    accentForeground: "0 0% 10%",     // Dark text on accent
+    background: "0 0% 91%",           // Light gray matching background image
+    foreground: "0 0% 10%",           // Near-black text
+    muted: "0 0% 85%",                // Muted gray
+    mutedForeground: "0 0% 40%",      // Medium gray text
+    border: "0 0% 80%",               // Gray borders
+    input: "0 0% 96%",                // Near-white inputs
+    ring: "0 0% 25%",                 // Dark focus ring
+    destructive: "0 72% 51%",
     destructiveForeground: "0 0% 100%",
-    success: "142 76% 50%",           // Brighter for dark theme
-    warning: "38 92% 60%",            // Brighter for dark theme
-    info: "199 89% 58%",              // Brighter for dark theme
-    gradientFrom: "220 70% 60%",
-    gradientTo: "260 70% 60%",
+    success: "142 72% 29%",
+    warning: "38 92% 50%",
+    info: "0 0% 30%",                 // Dark gray info
+    gradientFrom: "0 0% 20%",
+    gradientTo: "0 0% 35%",
   },
   branding: {
     rushYear: "Spring '26",

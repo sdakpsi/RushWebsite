@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import logo from "../../components/akpsilogo.png";
-import background from "../background.png";
+import background from "../spring26background.png";
 import { InterestForm as InterestFormType } from "@/lib/types";
 import customToast from "@/components/CustomToast";
 import { RUSH_YEAR } from "@/utils/constants";

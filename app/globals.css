@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    /* Dark Theme Colors - Easily changeable for future rushes */
-    --primary: 220 70% 60%;        /* Bright blue for dark theme */
-    --primary-foreground: 0 0% 100%;  /* Text on primary */
-    --secondary: 217 33% 17%;      /* Dark secondary background */
-    --secondary-foreground: 210 40% 98%;  /* Light text on secondary */
-    --accent: 216 12% 15%;         /* Dark accent color */
-    --accent-foreground: 210 40% 98%;   /* Light text on accent */
-    --background: 222 84% 5%;      /* Very dark background */
-    --foreground: 210 40% 98%;     /* Light text color */
-    --muted: 217 33% 17%;          /* Dark muted background */
-    --muted-foreground: 215 20% 65%;    /* Muted text */
-    --border: 217 33% 17%;         /* Dark border color */
-    --input: 217 33% 17%;          /* Dark input background */
-    --ring: 220 70% 60%;           /* Bright focus ring */
-    --destructive: 0 84% 60%;      /* Error/destructive */
+    /* Light Theme Colors - Spring 2026 Rush */
+    --primary: 0 0% 42%;            /* Medium gray for primary buttons */
+    --primary-foreground: 0 0% 100%;  /* White text on primary */
+    --secondary: 0 0% 95%;          /* Very light gray */
+    --secondary-foreground: 0 0% 15%;  /* Dark text on secondary */
+    --accent: 0 0% 88%;             /* Light gray accent */
+    --accent-foreground: 0 0% 10%;  /* Dark text on accent */
+    --background: 0 0% 91%;         /* Light gray matching background */
+    --foreground: 0 0% 10%;         /* Near-black text */
+    --muted: 0 0% 85%;              /* Muted gray */
+    --muted-foreground: 0 0% 40%;   /* Medium gray text */
+    --border: 0 0% 80%;             /* Gray borders */
+    --input: 0 0% 96%;              /* Near-white inputs */
+    --ring: 0 0% 25%;               /* Dark focus ring */
+    --destructive: 0 72% 51%;       /* Error/destructive */
     --destructive-foreground: 0 0% 100%;  /* Text on destructive */
     
     /* Button Colors */
-    --btn-background: 220 70% 60%;
-    --btn-background-hover: 220 70% 55%;
+    --btn-background: 0 0% 42%;
+    --btn-background-hover: 0 0% 36%;
     --btn-foreground: 0 0% 100%;
-    --btn-secondary: 217 33% 17%;
-    --btn-secondary-hover: 217 33% 20%;
-    --btn-secondary-foreground: 210 40% 98%;
+    --btn-secondary: 0 0% 85%;
+    --btn-secondary-hover: 0 0% 78%;
+    --btn-secondary-foreground: 0 0% 15%;
     
     /* Gradient Colors */
-    --gradient-from: 220 70% 60%;
-    --gradient-to: 260 70% 60%;
+    --gradient-from: 0 0% 20%;
+    --gradient-to: 0 0% 35%;
     
-    /* Success/Warning/Info Colors - Brighter for dark theme */
-    --success: 142 76% 50%;
-    --warning: 38 92% 60%;
-    --info: 199 89% 58%;
+    /* Success/Warning/Info Colors */
+    --success: 142 72% 29%;
+    --warning: 38 92% 50%;
+    --info: 0 0% 30%;
     
     /* Shadow Colors - Darker shadows for dark theme */
     --shadow-color: 0 0% 0%;
@@ -203,23 +203,23 @@
 
   /* Prospect Theme Classes - Off-white on navy blue with white secondary */
   .prospect-theme {
-    --prospect-primary: 216 100% 21%;       /* Navy blue primary (#00196C) */
+    --prospect-primary: 0 0% 15%;            /* Near-black primary */
     --prospect-primary-foreground: 0 0% 100%;  /* White text on primary */
-    --prospect-secondary: 0 0% 100%;        /* White secondary */
-    --prospect-secondary-foreground: 216 100% 21%;  /* Navy blue text on secondary */
-    --prospect-accent: 0 85% 55%;           /* Red accent color */
+    --prospect-secondary: 0 0% 100%;         /* White secondary */
+    --prospect-secondary-foreground: 0 0% 15%;  /* Dark text on secondary */
+    --prospect-accent: 0 0% 40%;             /* Medium gray accent */
     --prospect-accent-foreground: 0 0% 100%;   /* White text on accent */
-    --prospect-background: 216 100% 21%;    /* Navy blue background (#00196C) */
-    --prospect-foreground: 0 0% 100%;       /* White text color */
-    --prospect-muted: 216 50% 30%;          /* Lighter navy muted background */
-    --prospect-muted-foreground: 0 0% 80%;  /* Light muted text */
-    --prospect-border: 216 50% 35%;         /* Border color */
-    --prospect-input: 0 0% 100%;            /* White input background */
-    --prospect-ring: 0 0% 100%;             /* White focus ring */
+    --prospect-background: 0 0% 96%;         /* Near-white card background */
+    --prospect-foreground: 0 0% 10%;         /* Near-black text */
+    --prospect-muted: 0 0% 92%;              /* Light gray muted background */
+    --prospect-muted-foreground: 0 0% 40%;   /* Medium gray muted text */
+    --prospect-border: 0 0% 80%;             /* Gray border */
+    --prospect-input: 0 0% 100%;             /* White input background */
+    --prospect-ring: 0 0% 25%;               /* Dark focus ring */
     --prospect-shadow-color: 0 0% 0%;
-    --prospect-shadow-elevation-low: 0 1px 2px 0 hsl(var(--prospect-shadow-color) / 0.2);
-    --prospect-shadow-elevation-medium: 0 4px 6px -1px hsl(var(--prospect-shadow-color) / 0.3), 0 2px 4px -2px hsl(var(--prospect-shadow-color) / 0.3);
-    --prospect-shadow-elevation-high: 0 10px 15px -3px hsl(var(--prospect-shadow-color) / 0.4), 0 4px 6px -4px hsl(var(--prospect-shadow-color) / 0.4);
+    --prospect-shadow-elevation-low: 0 1px 3px 0 hsl(var(--prospect-shadow-color) / 0.1);
+    --prospect-shadow-elevation-medium: 0 4px 6px -1px hsl(var(--prospect-shadow-color) / 0.1), 0 2px 4px -2px hsl(var(--prospect-shadow-color) / 0.1);
+    --prospect-shadow-elevation-high: 0 10px 15px -3px hsl(var(--prospect-shadow-color) / 0.15), 0 4px 6px -4px hsl(var(--prospect-shadow-color) / 0.1);
   }
 
   .prospect-bg {
@@ -279,9 +279,9 @@
   }
 
   .prospect-btn-primary:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 8px 25px -5px rgba(102, 126, 234, 0.4), 0 10px 10px -5px rgba(118, 75, 162, 0.2);
+    background-color: hsl(var(--prospect-primary));
+    color: hsl(var(--prospect-primary-foreground));
+    box-shadow: 0 4px 12px -2px hsl(var(--prospect-shadow-color) / 0.15);
   }
 
   .prospect-btn-secondary {
@@ -298,17 +298,17 @@
 
   .prospect-gradient-bg {
     background: linear-gradient(135deg, 
-      #02003E 0%, 
-      #00196C 50%, 
-      #8F83EB 100%);
+      hsl(0 0% 88%) 0%, 
+      hsl(0 0% 94%) 50%, 
+      hsl(0 0% 85%) 100%);
   }
 
   .prospect-gradient-hero {
     background: linear-gradient(90deg, 
-      #02003E 0%, 
-      #00196C 40%, 
-      #8F83EB 80%, 
-      #00196C 100%);
+      hsl(0 0% 88%) 0%, 
+      hsl(0 0% 94%) 40%, 
+      hsl(0 0% 85%) 80%, 
+      hsl(0 0% 94%) 100%);
   }
 
   .prospect-glass {
