@@ -75,26 +75,26 @@ export default function ProtectedPage() {
     <div className="flex w-full flex-1 items-center justify-center py-10">
       <div className="animate-in mx-8 w-full">
         <div className="text-center">
-          <p className="mb-2 text-xl leading-tight text-foreground lg:text-4xl">
+          <p className="mb-2 text-xl leading-tight text-white lg:text-4xl">
             PIC Portal
           </p>
           <div className="mb-4 space-y-3">
             <div>
-              <p className="mb-1 text-lg text-foreground">
+              <p className="mb-1 text-lg text-white">
                 Current Wave ({currentWaveCount} applicant{currentWaveCount !== 1 ? 's' : ''}):
               </p>
               {currentWaveCount > 0 && (
-                <div className="mx-auto max-w-2xl text-sm text-muted-foreground">
+                <div className="mx-auto max-w-2xl text-sm text-gray-300">
                   {currentWaveNames.join(', ')}
                 </div>
               )}
             </div>
             <div>
-              <p className="mb-1 text-lg font-medium text-blue-800">
+              <p className="mb-1 text-lg font-medium text-blue-300">
                 Selected for Next Wave ({selectedApplicants.length} applicant{selectedApplicants.length !== 1 ? 's' : ''}):
               </p>
               {selectedApplicants.length > 0 && (
-                <div className="mx-auto max-w-2xl text-sm text-blue-900">
+                <div className="mx-auto max-w-2xl text-sm text-blue-200">
                   {selectedApplicants.map(id => {
                     const applicant = filteredUsersData.find(user => user.id === id);
                     return applicant?.full_name;
@@ -113,7 +113,7 @@ export default function ProtectedPage() {
                     placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-grow rounded-lg border px-4 py-2 text-gray-700 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-grow rounded-lg border border-gray-600 px-4 py-2 text-gray-200 bg-gray-800 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="flex flex-wrap gap-4 justify-center">
@@ -161,7 +161,7 @@ export default function ProtectedPage() {
                       className={`ml-2 w-1/4 rounded px-2 py-1 text-sm font-bold transition-colors ${
                         selectedApplicants.includes(applicant.id)
                           ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                          : "border border-border bg-muted text-foreground hover:bg-muted/80"
+                          : "border border-border bg-muted text-white hover:bg-muted/80"
                       }`}
                       onClick={() => toggleApplicantSelection(applicant.id)}
                     >

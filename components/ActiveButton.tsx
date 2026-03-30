@@ -57,12 +57,12 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
         </svg>
       </button>
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-3 w-52 rounded-xl bg-background border border-border shadow-elevation-high backdrop-blur-sm">
+        <div className="absolute right-0 z-50 mt-3 w-52 rounded-xl bg-black border border-white/15 shadow-2xl backdrop-blur-sm">
           <ul className="py-2">
             <li>
               <Link
                 href="/active/comment-form"
-                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                className="block px-4 py-4 text-sm font-medium text-white hover:bg-white/10 rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95"
                 onClick={closeDropdown}
               >
                 Comment Form
@@ -71,7 +71,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
             <li>
               <Link
                 href="/active/case"
-                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                className="block px-4 py-4 text-sm font-medium text-white hover:bg-white/10 rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95"
                 onClick={closeDropdown}
               >
                 Case Study
@@ -80,7 +80,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
             <li>
               <Link
                 href="/active/interview"
-                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                className="block px-4 py-4 text-sm font-medium text-white hover:bg-white/10 rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95"
                 onClick={closeDropdown}
               >
                 Interview
@@ -89,7 +89,7 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
             <li>
               <Link
                 href="/active/delibs"
-                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                className="block px-4 py-4 text-sm font-medium text-white hover:bg-white/10 rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95"
                 onClick={closeDropdown}
               >
                 Delibs

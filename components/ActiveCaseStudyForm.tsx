@@ -315,7 +315,7 @@ export default function ActiveCaseStudyForm({
   const isCurrentlySubmitting = externalIsSubmitting || false;
 
   return (
-    <div className="bg-card text-foreground relative">
+    <div className="bg-background text-foreground relative">
       <div className="p-5">
         {isCurrentlySubmitting && (
           <div className="absolute inset-0 bg-foreground/10 flex items-center justify-center z-50 rounded-lg">
@@ -327,7 +327,7 @@ export default function ActiveCaseStudyForm({
           <button
             type="button"
             onClick={() => handleBack()}
-            className="cursor-pointer rounded-lg border border-border bg-muted px-4 py-2 text-base text-foreground hover:bg-muted/80"
+            className="cursor-pointer rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-base text-gray-800 hover:bg-gray-200"
           >
             &#x276E; Back{" "}
           </button>
@@ -339,7 +339,7 @@ export default function ActiveCaseStudyForm({
           </h1>
         )}
           {!isMultiFormContext && (
-            <div className="mt-1 text-sm text-muted-foreground">
+            <div className="mt-1 text-sm text-gray-600">
               {isAutoSaving
                 ? "Auto-saving..."
                 : lastAutoSaved && `Last saved: ${lastAutoSaved}`}
@@ -356,7 +356,7 @@ export default function ActiveCaseStudyForm({
           <input
             type="text"
             id="name"
-            className="w-full cursor-not-allowed rounded-lg border border-border bg-muted p-2.5 text-base text-foreground"
+            className="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black"
             readOnly
             {...register("name", {
               required: "Name is required",
@@ -375,7 +375,7 @@ export default function ActiveCaseStudyForm({
           <input
             type="text"
             id="otherActives"
-            className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+            className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black"
             onInput={handleUserInput}
             {...registerWithAutoSave("otherActives", {
               required: "Other Actives on Panel is required",
@@ -397,7 +397,7 @@ export default function ActiveCaseStudyForm({
               </label>
               <textarea
                 id={question.name}
-                className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+                className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black"
                 onInput={handleUserInput}
                 {...registerWithAutoSave(
                   index <= 3 ? `${question.label}_comments` : question.label,
@@ -425,7 +425,7 @@ export default function ActiveCaseStudyForm({
               <label className="text-foreground">{trait.name + " Score"}</label>
               <div className="mt-1">
                 <select
-                  className="rounded-lg border border-border bg-background p-2.5 text-base text-foreground w-full max-w-[120px]"
+                  className="rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black w-full max-w-[120px]"
                   {...registerWithAutoSave(`${trait.label}_score`, {
                     required: `Please select a value for ${trait.name}`,
                   })}
@@ -452,7 +452,7 @@ export default function ActiveCaseStudyForm({
           </label>
           <textarea
             id={"additionalComments"}
-            className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+            className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black"
             onInput={handleUserInput}
             {...register("additionalComments", {})}
           ></textarea>

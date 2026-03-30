@@ -150,7 +150,7 @@ export default function Page(this: any) {
         {isActive ? (
           <div className="container mx-auto px-4 pt-6 pb-8">
             <div className="flex flex-col space-y-6">
-              <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
+              <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl text-black">
                 Prospect Comment Form
               </h1>
 
@@ -177,7 +177,7 @@ export default function Page(this: any) {
                     Grid
                   </button>
                 </div>
-                <p className="text-sm text-gray-400 text-center max-w-2xl">
+                <p className="text-sm text-gray-600 text-center max-w-2xl">
                   Use <strong>Search View</strong> to search for prospects manually. <br></br>
                   Use <strong>Grid View</strong> to browse all prospects in a grid layout and see their photos.
                 </p>
@@ -251,7 +251,7 @@ export default function Page(this: any) {
                     checked={checked}
                     onChange={(e) => setChecked(e.target.checked)}
                   />
-                  <label> Manually enter prospect name?</label>
+                  <label className="text-black"> Manually enter prospect name?</label>
                 </div>
               )}
 
@@ -274,7 +274,7 @@ export default function Page(this: any) {
                   <div className="flex flex-col">
                     {checked && !selectedProspect && (
                       <textarea
-                        className="rounzded border p-1 text-gray-700"
+                        className="rounzded border border-gray-300 p-1 text-gray-700 bg-white"
                         placeholder="Enter prospect name"
                         value={newProspectName}
                         onChange={(e) => setNewProspectName(e.target.value)}
@@ -360,14 +360,14 @@ export default function Page(this: any) {
                     Explain the interaction (minimum 15 words):
                   </label>
                   <textarea
-                    className="rounded-lg border-2 border-gray-300 p-4 text-gray-700 text-base leading-relaxed resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                    className="rounded-lg border-2 border-gray-300 p-4 text-gray-700 bg-white text-base leading-relaxed resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                     placeholder="Be detailed, this will be used in delibs! Include what you talked about, their responses, and your overall impression."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={5}
                     style={{ fontSize: '16px' }} // Prevents zoom on iOS
                   />
-                  <div className="mt-2 text-xs text-gray-400">
+                  <div className="mt-2 text-xs text-gray-600">
                     Word count: {comment.trim() ? comment.trim().split(/\s+/).length : 0} (minimum 15 words)
                   </div>
                   <button

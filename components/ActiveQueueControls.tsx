@@ -84,7 +84,7 @@ const ActiveQueueControls: React.FC<ActiveQueueControlsProps> = ({
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-      <h3 className="mb-4 text-center text-lg font-semibold text-foreground">
+      <h3 className="mb-4 text-center text-lg font-semibold text-black">
         Delibs Queue
       </h3>
       
@@ -114,7 +114,7 @@ const ActiveQueueControls: React.FC<ActiveQueueControlsProps> = ({
         </button>
       </div>
       
-      <p className="mt-3 text-center text-sm text-muted-foreground">
+      <p className="mt-3 text-center text-sm text-gray-600">
         Click a button to join the delib queue
       </p>
     </div>

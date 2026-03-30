@@ -241,10 +241,10 @@ export default function ProtectedPage() {
     return (
       <div className="mb-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-foreground">
+          <h2 className="text-2xl font-bold text-white">
             {title}
             {isUnlinkedSection && (
-              <span className="ml-2 text-sm text-muted-foreground">
+              <span className="ml-2 text-sm text-gray-300">
                 ({prospectIds.length} unlinked)
               </span>
             )}
@@ -296,7 +296,7 @@ export default function ProtectedPage() {
             >
               <button
                 type="button"
-                className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-muted px-4 py-2 text-left text-foreground hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-muted px-4 py-2 text-left text-white hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
                 onClick={(event) => toggleProspect(cardId, event)}
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -308,12 +308,12 @@ export default function ProtectedPage() {
                     />
                   ) : (
                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted">
-                      <span className="text-sm font-semibold text-muted-foreground">
+                      <span className="text-sm font-semibold text-gray-300">
                         {prospectName.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
-                  <span className="min-w-0 truncate text-lg font-bold text-foreground">
+                  <span className="min-w-0 truncate text-lg font-bold text-white">
                     {prospectId.slice(0, 5) === "66666" && (
                       <span className="text-red-600">*</span>
                     )}{" "}
@@ -321,7 +321,7 @@ export default function ProtectedPage() {
                   </span>
                 </div>
                 <div className="flex shrink-0 items-center gap-4">
-                  <span className="whitespace-nowrap text-sm text-muted-foreground">
+                  <span className="whitespace-nowrap text-sm text-gray-300">
                     <span className="font-semibold text-green-600">
                       {yesInviteCount} Yes
                     </span>{" "}
@@ -356,7 +356,7 @@ export default function ProtectedPage() {
                   {prospectComments.map((comment: any) => (
                     <div
                       key={comment.id}
-                      className="flex items-start justify-between rounded-lg border border-border bg-background p-4 text-foreground"
+                      className="flex items-start justify-between rounded-lg border border-border bg-background p-4 text-white"
                     >
                       <div className="flex flex-col space-y-1 text-sm">
                         <p>
@@ -371,7 +371,7 @@ export default function ProtectedPage() {
                         <p className="text-sm italic">
                           "{comment.comment || "No comment"}"
                         </p>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-gray-300">
                           {new Intl.DateTimeFormat("en-US", {
                             day: "2-digit",
                             month: "2-digit",
@@ -399,13 +399,13 @@ export default function ProtectedPage() {
                     const similarProspects = findSimilarProspects(prospectName);
                     return similarProspects.length > 0 ? (
                       <div className="mb-4">
-                        <p className="mb-2 text-xs text-muted-foreground">Suggested matches:</p>
+                        <p className="mb-2 text-xs text-gray-300">Suggested matches:</p>
                         <div className="space-y-2">
                           {similarProspects.map((prospect: any) => (
                             <div key={prospect.id} className="flex items-center justify-between rounded border border-border bg-background p-2">
                               <div className="flex-1">
-                                <span className="text-sm text-foreground">{prospect.full_name}</span>
-                                <span className="ml-2 text-xs text-muted-foreground">
+                                <span className="text-sm text-white">{prospect.full_name}</span>
+                                <span className="ml-2 text-xs text-gray-300">
                                   ({Math.round(prospect.similarity * 100)}% match)
                                 </span>
                               </div>
@@ -427,20 +427,20 @@ export default function ProtectedPage() {
                         </div>
                       </div>
                     ) : (
-                      <p className="mb-3 text-xs text-muted-foreground">No similar prospects found</p>
+                      <p className="mb-3 text-xs text-gray-300">No similar prospects found</p>
                     );
                   })()}
 
                   {/* Manual prospect selection */}
                   <div className="space-y-2">
-                    <label className="text-xs text-foreground">Or select a prospect manually:</label>
+                    <label className="text-xs text-white">Or select a prospect manually:</label>
                     <select
                       value={selectedProspectForLinking[prospectId] || ''}
                       onChange={(e) => setSelectedProspectForLinking(prev => ({ 
                         ...prev, 
                         [prospectId]: e.target.value 
                       }))}
-                      className="w-full rounded border border-border bg-background p-2 text-sm text-foreground"
+                      className="w-full rounded border border-border bg-background p-2 text-sm text-white"
                     >
                       <option value="">Select a prospect...</option>
                       {prospectsData
@@ -487,7 +487,7 @@ export default function ProtectedPage() {
         {isPIC ? (
           <div className="container mx-auto px-4 pt-6 pb-32 relative">
             <div className="flex flex-col space-y-6">
-              <h1 className="mt-10 text-center text-2xl font-semibold text-foreground md:text-5xl">
+              <h1 className="mt-10 text-center text-2xl font-semibold text-white md:text-5xl">
                 Prospect Comment Forms
               </h1>
 

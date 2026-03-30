@@ -38,7 +38,7 @@ export default async function ProtectedPage() {
             <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-4">
               Active Member Portal
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-xl text-gray-300">
               UCSD Alpha Kappa Psi
             </p>
           </div>

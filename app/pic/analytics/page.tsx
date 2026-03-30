@@ -32,9 +32,9 @@ const StatCard = ({
   return (
     <div className={`rounded-lg p-6 ${colorClasses[color]}`}>
       <h3 className="text-sm font-medium text-slate-800">{title}</h3>
-      <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
+      <p className="mt-2 text-3xl font-bold text-white">{value}</p>
       {subtitle && (
-        <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+        <p className="mt-1 text-sm text-gray-300">{subtitle}</p>
       )}
     </div>
   );
@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
                 <p className="text-lg text-red-400">
                   Error loading analytics data
                 </p>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 text-sm text-gray-300">
                   Please try refreshing the page
                 </p>
               </div>
@@ -110,10 +110,10 @@ export default function AnalyticsPage() {
         <div className="container relative mx-auto px-4 pb-24 pt-6">
           <div className="flex flex-col space-y-6">
             <div className="text-center">
-              <h1 className="mt-10 text-2xl font-semibold text-foreground md:text-5xl">
+              <h1 className="mt-10 text-2xl font-semibold text-white md:text-5xl">
                 Rush Analytics Dashboard
               </h1>
-              <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
+              <p className="mx-auto mt-4 max-w-3xl text-lg text-gray-300">
                 Track participation and see who&apos;s a bum and who&apos;s goated
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function AnalyticsPage() {
 
             {/* Active Member Participation */}
             <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-bold text-foreground">
+              <h2 className="mb-4 text-xl font-bold text-white">
                 Active Member Participation
               </h2>
               {participation.length > 0 ? (
@@ -169,22 +169,22 @@ export default function AnalyticsPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="pb-3 text-left font-medium text-muted-foreground">
+                        <th className="pb-3 text-left font-medium text-gray-300">
                           Active Member
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Comments
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Case Studies
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Interviews
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Total
                         </th>
-                        <th className="pb-3 text-left font-medium text-muted-foreground">
+                        <th className="pb-3 text-left font-medium text-gray-300">
                           Last Activity
                         </th>
                       </tr>
@@ -197,23 +197,23 @@ export default function AnalyticsPage() {
                             key={active.activeId}
                             className="border-b border-border/80"
                           >
-                            <td className="py-3 text-foreground">
+                            <td className="py-3 text-white">
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-emerald-100 font-medium text-emerald-900" : "bg-muted text-muted-foreground"}`}
+                                  className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-emerald-100 font-medium text-emerald-900" : "bg-muted text-gray-300"}`}
                                 >
                                   #{index + 1}
                                 </span>
                                 {active.activeName}
                               </div>
                             </td>
-                            <td className="py-3 text-center text-muted-foreground">
+                            <td className="py-3 text-center text-gray-300">
                               {active.commentsCount}
                             </td>
-                            <td className="py-3 text-center text-muted-foreground">
+                            <td className="py-3 text-center text-gray-300">
                               {active.caseStudiesCount}
                             </td>
-                            <td className="py-3 text-center text-muted-foreground">
+                            <td className="py-3 text-center text-gray-300">
                               {active.interviewsCount}
                             </td>
                             <td className="py-3 text-center">
@@ -223,7 +223,7 @@ export default function AnalyticsPage() {
                                 {active.totalEvaluations}
                               </span>
                             </td>
-                            <td className="py-3 text-xs text-muted-foreground">
+                            <td className="py-3 text-xs text-gray-300">
                               {active.lastActivity
                                 ? (() => {
                                     const date = new Date(active.lastActivity);
@@ -249,7 +249,7 @@ export default function AnalyticsPage() {
                   </table>
                 </div>
               ) : (
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   No participation data available
                 </p>
               )}
@@ -257,7 +257,7 @@ export default function AnalyticsPage() {
 
             {/* Prospect Coverage */}
             <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-bold text-foreground">
+              <h2 className="mb-4 text-xl font-bold text-white">
                 Prospect Evaluation Coverage
               </h2>
               {coverage.length > 0 ? (
@@ -265,19 +265,19 @@ export default function AnalyticsPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        <th className="pb-3 text-left font-medium text-muted-foreground">
+                        <th className="pb-3 text-left font-medium text-gray-300">
                           Prospect
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Comments
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Case Studies
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Interviews
                         </th>
-                        <th className="pb-3 text-center font-medium text-muted-foreground">
+                        <th className="pb-3 text-center font-medium text-gray-300">
                           Status
                         </th>
                       </tr>
@@ -297,10 +297,10 @@ export default function AnalyticsPage() {
                             key={prospect.prospectId}
                             className="border-b border-border/80"
                           >
-                            <td className="py-3 text-foreground">
+                            <td className="py-3 text-white">
                               {prospect.prospectName}
                             </td>
-                            <td className="py-3 text-center text-muted-foreground">
+                            <td className="py-3 text-center text-gray-300">
                               {prospect.commentsCount}
                             </td>
                             <td className="py-3 text-center">
@@ -332,30 +332,30 @@ export default function AnalyticsPage() {
                   </table>
                 </div>
               ) : (
-                <p className="text-muted-foreground">No prospect data available</p>
+                <p className="text-gray-300">No prospect data available</p>
               )}
             </div>
 
             {/* Timeline Summary */}
             {timeline.length > 0 && (
               <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                <h2 className="mb-4 text-xl font-bold text-foreground">
+                <h2 className="mb-4 text-xl font-bold text-white">
                   Recent Activity Timeline
                 </h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-7">
                   {timeline.map((day) => (
                     <div key={day.date} className="text-center">
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-gray-300">
                         {new Date(day.date).toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "numeric",
                           day: "numeric",
                         })}
                       </div>
-                      <div className="mt-1 text-lg font-bold text-foreground">
+                      <div className="mt-1 text-lg font-bold text-white">
                         {day.totalEvaluations}
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-gray-300">
                         {day.commentsCount +
                           day.caseStudiesCount +
                           day.interviewsCount >
@@ -376,7 +376,7 @@ export default function AnalyticsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 text-center text-sm text-muted-foreground">
+                <div className="mt-4 text-center text-sm text-gray-300">
                   Total activity last 7 days:{" "}
                   {timeline.reduce((sum, day) => sum + day.totalEvaluations, 0)}{" "}
                   evaluations

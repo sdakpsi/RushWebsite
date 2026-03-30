@@ -34,7 +34,7 @@ export default function PhotoUploadWrapper({ existingPhotoUrl }: PhotoUploadWrap
           <p className="text-green-600 font-medium">
             ✓ Photo uploaded successfully!
           </p>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             The application button will appear shortly...
           </p>
         </div>

@@ -83,9 +83,9 @@ export default function CaseStudiesPage() {
   const renderSection = (title: string, prospectIds: string[], bgColor: string) => {
     return (
       <div className="mb-10">
-        <h2 className="mb-4 text-2xl font-bold text-foreground">
+        <h2 className="mb-4 text-2xl font-bold text-white">
           {title}
-          <span className="ml-2 text-sm text-muted-foreground">
+          <span className="ml-2 text-sm text-gray-300">
             ({prospectIds.length} prospect{prospectIds.length !== 1 ? 's' : ''})
           </span>
         </h2>
@@ -251,7 +251,7 @@ export default function CaseStudiesPage() {
       <div className="animate-in w-full max-w-6xl opacity-0">
         <div className="container mx-auto px-4 pt-6 pb-32 relative">
           <div className="flex flex-col space-y-6">
-            <h1 className="mt-10 text-center text-2xl font-semibold text-foreground md:text-5xl">
+            <h1 className="mt-10 text-center text-2xl font-semibold text-white md:text-5xl">
               Case Study Evaluations
             </h1>
 

@@ -124,7 +124,7 @@ export default function ProtectedPage() {
               </div>
             ) : (
               <div className="flex flex-col space-y-6">
-                <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl">
+                <h1 className="mt-10 text-center text-2xl font-semibold md:text-5xl text-black">
                   Case Study Portal
                 </h1>
                 
@@ -153,7 +153,7 @@ export default function ProtectedPage() {
                   </p>
                 </div>
 
-                <p className="text-md text-center md:text-2xl">
+                <p className="text-md text-center md:text-2xl text-black">
                   Currently selected: {selectedProspect?.full_name ?? "None"} (
                   {selectedProspect?.email ?? "None"})
                 </p>

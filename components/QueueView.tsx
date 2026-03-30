@@ -130,7 +130,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
       case QueueType.COMMENT:
         return { icon: "", text: "COMMENT", color: "text-sky-800" };
       default:
-        return { icon: "", text: "UNKNOWN", color: "text-muted-foreground" };
+        return { icon: "", text: "UNKNOWN", color: "text-gray-600" };
     }
   };
 
@@ -141,9 +141,9 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
       case QueueStatus.SPEAKING:
         return { text: "SPEAKING", color: "bg-emerald-100 text-emerald-950 border border-emerald-300" };
       case QueueStatus.COMPLETED:
-        return { text: "COMPLETED", color: "bg-muted text-foreground border border-border" };
+        return { text: "COMPLETED", color: "bg-gray-200 text-gray-800 border border-gray-300" };
       default:
-        return { text: "Unknown", color: "bg-muted text-muted-foreground border border-border" };
+        return { text: "Unknown", color: "bg-gray-200 text-gray-600 border border-gray-300" };
     }
   };
 
@@ -157,8 +157,8 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
   if (isLoading) {
     return (
       <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold text-foreground">Queue Management</h2>
-        <div className="text-center text-muted-foreground">Loading queue...</div>
+        <h2 className="mb-4 text-xl font-semibold text-black">Queue Management</h2>
+        <div className="text-center text-gray-600">Loading queue...</div>
       </div>
     );
   }
@@ -166,13 +166,13 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
   if (error) {
     return (
       <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold text-foreground">Queue Management</h2>
+        <h2 className="mb-4 text-xl font-semibold text-black">Queue Management</h2>
         <div className="text-center text-red-600">Error: {error instanceof Error ? error.message : String(error)}</div>
         <div className="mt-2 text-center">
           <button
             type="button"
             onClick={() => refetch()}
-            className="rounded-lg border border-border bg-muted px-3 py-1 text-sm text-foreground hover:bg-muted/80"
+            className="rounded-lg border border-border bg-muted px-3 py-1 text-sm text-gray-800 hover:bg-muted/80"
           >
             Retry
           </button>
@@ -184,9 +184,9 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
   return (
     <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-foreground">Queue Management</h2>
+        <h2 className="text-xl font-semibold text-black">Queue Management</h2>
         <div className="flex items-center space-x-3">
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-gray-600">
             Last updated: {lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </span>
           <button
@@ -196,7 +196,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
               setLastRefresh(new Date());
             }}
             disabled={isUpdating}
-            className="rounded-lg border border-border bg-muted px-3 py-1 text-sm font-medium text-foreground hover:bg-muted/80 disabled:opacity-50"
+            className="rounded-lg border border-border bg-muted px-3 py-1 text-sm font-medium text-gray-800 hover:bg-muted/80 disabled:opacity-50"
           >
             Refresh
           </button>
@@ -204,7 +204,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
       </div>
 
       {queue.length === 0 ? (
-        <div className="py-8 text-center text-muted-foreground">
+        <div className="py-8 text-center text-gray-600">
           No one in queue
         </div>
       ) : (
@@ -231,7 +231,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
                     <div className="flex items-center space-x-2">
                       <span className="text-2xl">{typeDisplay.icon}</span>
                       <div>
-                        <div className="font-semibold text-foreground">
+                        <div className="font-semibold text-black">
                           {entry.user?.full_name || 'Unknown User'}
                           {isCurrentUser && (
                             <span className="ml-2 rounded bg-primary px-1.5 py-0.5 text-xs font-medium text-primary-foreground">
@@ -249,7 +249,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
                       <span className={`rounded px-2 py-1 text-xs font-medium ${statusDisplay.color}`}>
                         {statusDisplay.text}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-gray-600">
                         {formatTime(entry.created_at)}
                       </span>
                       {isFirst && (
@@ -302,7 +302,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
         </div>
       )}
       
-      <div className="mt-4 text-center text-sm text-muted-foreground">
+      <div className="mt-4 text-center text-sm text-gray-600">
         Total in queue: {pendingCount}
       </div>
     </div>

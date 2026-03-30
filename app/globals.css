@@ -167,11 +167,11 @@
   }
   
   .card-title {
-    @apply text-2xl font-semibold leading-none tracking-tight;
+    @apply text-2xl font-semibold leading-none tracking-tight text-white;
   }
-  
+
   .card-description {
-    @apply text-sm text-muted-foreground;
+    @apply text-sm text-gray-300;
   }
 
   /* Interview form: neon-style gradient + layered glow (readable on light cards) */
@@ -208,25 +208,25 @@
     @apply backdrop-blur-sm bg-background/90 border border-border/30;
   }
 
-  /* Prospect Theme Classes - Off-white on navy blue with white secondary */
+  /* Prospect Theme Classes - Dark theme with white text */
   .prospect-theme {
-    --prospect-primary: 0 0% 15%;            /* Near-black primary */
-    --prospect-primary-foreground: 0 0% 100%;  /* White text on primary */
-    --prospect-secondary: 0 0% 100%;         /* White secondary */
-    --prospect-secondary-foreground: 0 0% 15%;  /* Dark text on secondary */
-    --prospect-accent: 0 0% 40%;             /* Medium gray accent */
-    --prospect-accent-foreground: 0 0% 100%;   /* White text on accent */
-    --prospect-background: 0 0% 96%;         /* Near-white card background */
-    --prospect-foreground: 0 0% 10%;         /* Near-black text */
-    --prospect-muted: 0 0% 92%;              /* Light gray muted background */
-    --prospect-muted-foreground: 0 0% 40%;   /* Medium gray muted text */
-    --prospect-border: 0 0% 80%;             /* Gray border */
-    --prospect-input: 0 0% 100%;             /* White input background */
-    --prospect-ring: 0 0% 25%;               /* Dark focus ring */
+    --prospect-primary: 0 0% 85%;            /* Near-white primary */
+    --prospect-primary-foreground: 0 0% 5%;   /* Dark text on primary */
+    --prospect-secondary: 0 0% 5%;            /* Near-black secondary */
+    --prospect-secondary-foreground: 0 0% 90%;  /* Light text on secondary */
+    --prospect-accent: 0 0% 60%;             /* Medium gray accent */
+    --prospect-accent-foreground: 0 0% 5%;   /* Dark text on accent */
+    --prospect-background: 0 0% 8%;          /* Near-black card background */
+    --prospect-foreground: 0 0% 90%;         /* Near-white text */
+    --prospect-muted: 0 0% 12%;              /* Dark muted background */
+    --prospect-muted-foreground: 0 0% 60%;   /* Medium gray muted text */
+    --prospect-border: 0 0% 25%;             /* Dark gray border */
+    --prospect-input: 0 0% 5%;               /* Very dark input background */
+    --prospect-ring: 0 0% 75%;               /* Light focus ring */
     --prospect-shadow-color: 0 0% 0%;
-    --prospect-shadow-elevation-low: 0 1px 3px 0 hsl(var(--prospect-shadow-color) / 0.1);
-    --prospect-shadow-elevation-medium: 0 4px 6px -1px hsl(var(--prospect-shadow-color) / 0.1), 0 2px 4px -2px hsl(var(--prospect-shadow-color) / 0.1);
-    --prospect-shadow-elevation-high: 0 10px 15px -3px hsl(var(--prospect-shadow-color) / 0.15), 0 4px 6px -4px hsl(var(--prospect-shadow-color) / 0.1);
+    --prospect-shadow-elevation-low: 0 1px 3px 0 hsl(var(--prospect-shadow-color) / 0.4);
+    --prospect-shadow-elevation-medium: 0 4px 6px -1px hsl(var(--prospect-shadow-color) / 0.4), 0 2px 4px -2px hsl(var(--prospect-shadow-color) / 0.4);
+    --prospect-shadow-elevation-high: 0 10px 15px -3px hsl(var(--prospect-shadow-color) / 0.5), 0 4px 6px -4px hsl(var(--prospect-shadow-color) / 0.4);
   }
 
   .prospect-bg {
@@ -288,39 +288,39 @@
   .prospect-btn-primary:hover {
     background-color: hsl(var(--prospect-primary));
     color: hsl(var(--prospect-primary-foreground));
-    box-shadow: 0 4px 12px -2px hsl(var(--prospect-shadow-color) / 0.15);
+    box-shadow: 0 4px 12px -2px hsl(var(--prospect-shadow-color) / 0.4);
   }
 
   .prospect-btn-secondary {
     background-color: hsl(var(--prospect-secondary));
     color: hsl(var(--prospect-secondary-foreground));
-    border: none;
+    border: 1px solid hsl(var(--prospect-border));
     transition: all 0.2s ease;
   }
 
   .prospect-btn-secondary:hover {
-    background-color: hsl(var(--prospect-secondary) / 0.9);
+    background-color: hsl(var(--prospect-muted));
     box-shadow: var(--prospect-shadow-elevation-medium);
   }
 
   .prospect-gradient-bg {
-    background: linear-gradient(135deg, 
-      hsl(0 0% 88%) 0%, 
-      hsl(0 0% 94%) 50%, 
-      hsl(0 0% 85%) 100%);
+    background: linear-gradient(135deg,
+      hsl(0 0% 8%) 0%,
+      hsl(0 0% 12%) 50%,
+      hsl(0 0% 6%) 100%);
   }
 
   .prospect-gradient-hero {
-    background: linear-gradient(90deg, 
-      hsl(0 0% 88%) 0%, 
-      hsl(0 0% 94%) 40%, 
-      hsl(0 0% 85%) 80%, 
-      hsl(0 0% 94%) 100%);
+    background: linear-gradient(90deg,
+      hsl(0 0% 8%) 0%,
+      hsl(0 0% 12%) 40%,
+      hsl(0 0% 6%) 80%,
+      hsl(0 0% 12%) 100%);
   }
 
   .prospect-glass {
     backdrop-filter: blur(12px);
-    background-color: hsl(var(--prospect-muted) / 0.9);
+    background-color: hsl(var(--prospect-background) / 0.9);
     border: 1px solid hsl(var(--prospect-border) / 0.5);
   }
 }

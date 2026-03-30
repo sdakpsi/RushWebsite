@@ -75,20 +75,20 @@ export default function FileDropzone({ setFileUrl, type }: FileDropzoneProps) {
         <section className="flex items-center justify-center p-6">
           <div
             {...getRootProps({ className: "dropzone" })}
-            className="flex w-full max-w-xl cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-400 bg-gray-100 p-6 hover:border-gray-500"
+            className="flex w-full max-w-xl cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary-foreground bg-primary p-6 hover:border-primary-foreground/70"
           >
             <input {...getInputProps()} />
             {uploading && (
               <div className="text-center space-y-4">
                 <LoadingSpinner size="medium" fullScreen={false} />
-                <p className="text-lg text-gray-700">Uploading...</p>
+                <p className="text-lg text-primary-foreground">Uploading...</p>
               </div>
             )}
             {!uploading && fileName && (
               <p className="text-md text-green-500">Uploaded: {fileName}</p>
             )}
             {!uploading && !fileName && (
-              <p className="text-md text-gray-700">
+              <p className="text-md text-primary-foreground">
                 {type === ApplicationFileTypes.COVER_LETTER ? "Optional: " : ""}
                 Select or drag your {type} into here!
               </p>

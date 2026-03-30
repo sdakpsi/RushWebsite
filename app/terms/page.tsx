@@ -41,7 +41,7 @@ export default function Page() {
             <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-4">
               Terms of Service
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-xl text-gray-300">
               UCSD AKPsi Application
             </p>
           </div>
@@ -50,49 +50,49 @@ export default function Page() {
           <div className="card glass">
             <div className="card-content">
               <div className="text-lg text-left space-y-6">
-                <div className="text-muted-foreground">
+                <div className="text-gray-300">
                   These Terms of Service govern your use of the application portal for Alpha Kappa Psi at the University of California, San Diego (UCSD). By accessing or using the portal, you agree to be bound by these terms.
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-foreground">Use of the Portal</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold mb-2 text-white">Use of the Portal</h3>
+                  <p className="text-gray-300">
                     The portal is intended for personal and non-commercial use. You agree not to misuse the portal or help anyone else do so.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-foreground">Your Commitments</h3>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                  <h3 className="font-bold mb-2 text-white">Your Commitments</h3>
+                  <ul className="list-disc list-inside text-gray-300 space-y-1">
                     <li>You must provide accurate information during the application process.</li>
                     <li>You agree not to share your login credentials or let anyone else access your account.</li>
                   </ul>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-foreground">Rights and Ownership</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold mb-2 text-white">Rights and Ownership</h3>
+                  <p className="text-gray-300">
                     All rights, title, and interest in and to the portal (including all intellectual property rights) are and will remain the exclusive property of UCSD AKPsi and its licensors.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-foreground">Limitation of Liability</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold mb-2 text-white">Limitation of Liability</h3>
+                  <p className="text-gray-300">
                     To the extent permitted by law, UCSD and UCSD AKPsi will not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-foreground">Amendments</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold mb-2 text-white">Amendments</h3>
+                  <p className="text-gray-300">
                     We reserve the right to modify these Terms of Service at any time. Your continued use of the portal after any such modification constitutes your acceptance of the new Terms of Service.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-foreground">Contact Us</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold mb-2 text-white">Contact Us</h3>
+                  <p className="text-gray-300">
                     If you have any questions about these Terms of Service, please contact us via the information provided on our website.
                   </p>
                 </div>

@@ -158,7 +158,7 @@ const InterestForm = () => {
             alt="UCSD Alpha Kappa Psi Logo"
             width={100}
             height={100}
-            className="mx-auto mb-4"
+            className="mx-auto mb-4 invert"
           />
           <h1 className="text-4xl font-bold text-white mb-2">
             {RUSH_YEAR} Rush Interest Form
@@ -188,7 +188,7 @@ const InterestForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
+                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-gray-800/95 text-gray-100 placeholder:text-gray-500 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="Enter your full name"
                   required
                   minLength={3}
@@ -206,7 +206,7 @@ const InterestForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
+                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-gray-800/95 text-gray-100 placeholder:text-gray-500 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="your@email.com"
                   required
                   maxLength={100}
@@ -228,7 +228,7 @@ const InterestForm = () => {
                     const cleaned = value.replace(/[^\d\s\-\(\)\+]/g, '');
                     setFormData(prev => ({ ...prev, phone: cleaned }));
                   }}
-                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
+                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-gray-800/95 text-gray-100 placeholder:text-gray-500 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="(123) 456-7890"
                   maxLength={20}
                 />
