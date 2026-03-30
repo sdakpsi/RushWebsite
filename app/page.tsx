@@ -22,9 +22,14 @@ export default function Index() {
     <div className="prospect-theme relative min-h-screen w-full overflow-hidden">
       {/* Background image */}
       <div
-        className="absolute inset-0 z-0 bg-background bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed [image-rendering:auto]"
+        className="absolute inset-0 z-0 bg-background"
         style={{
           backgroundImage: `url(${background.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          imageRendering: "crisp-edges",
+          backgroundAttachment: "fixed",
           filter: "contrast(1.1) brightness(1.05)",
         }}
       />
@@ -35,11 +40,11 @@ export default function Index() {
         <section className="flex flex-1 items-center justify-center px-4 py-8">
           <div className="mx-auto max-w-7xl">
             {/* Tagline */}
-            <div className="mb-6 flex animate-slide-down justify-start leading-none">
+            <div className="mb-6 flex animate-slide-down justify-start">
               <Image
                 src={tagline}
                 alt="tagline"
-                className="block h-auto w-[85%] max-w-4xl md:w-[70%]"
+                className="h-auto w-[85%] max-w-4xl md:w-[70%]"
                 priority
               />
             </div>
