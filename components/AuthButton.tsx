@@ -62,13 +62,13 @@ const AuthButton: React.FC = () => {
   // Show skeleton loading state while checking auth
   if (isLoading) {
     return (
-      <div className="h-10 w-24 rounded-xl bg-gray-700/50 animate-pulse"></div>
+      <div className="h-10 w-24 animate-pulse rounded-xl bg-muted/80"></div>
     );
   }
 
   return user ? (
-    <div className="flex items-center gap-4">
-      <div className="hidden items-center gap-3 sm:flex">
+    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+      <div className="flex items-center gap-3">
         <div className={`h-10 w-10 rounded-xl flex items-center justify-center ring-1 ring-border/20 overflow-hidden shadow-lg ${
           isPIC ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 shadow-purple-500/30' :
           isActive ? 'bg-gradient-to-br from-blue-500 via-cyan-600 to-blue-700 shadow-blue-500/30' :
@@ -96,11 +96,11 @@ const AuthButton: React.FC = () => {
             </span>
           )}
         </div>
-        <span className="text-sm text-white-foreground max-w-32 truncate font-medium">
+        <span className="max-w-[min(100%,12rem)] truncate text-sm font-medium text-foreground">
           {user.user_metadata.name || user.email}
         </span>
       </div>
-      <button onClick={signOut} className="flex items-center rounded-xl bg-gradient-to-r from-red-500/80 to-rose-600/80 backdrop-blur-sm border border-red-400/30 text-white px-4 py-2.5 text-sm font-medium hover:from-red-500 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
+      <button onClick={signOut} className="flex w-full items-center justify-center rounded-xl border border-red-400/40 bg-gradient-to-r from-red-500/90 to-rose-600/90 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-red-500 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 touch-manipulation active:scale-95 sm:w-auto">
         <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
@@ -108,7 +108,7 @@ const AuthButton: React.FC = () => {
       </button>
     </div>
   ) : (
-    <button onClick={handleSignInWithGoogle} className="flex items-center rounded-xl bg-white border border-gray-300 text-black px-6 py-2.5 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 touch-manipulation active:scale-95">
+    <button onClick={handleSignInWithGoogle} className="flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-2.5 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation active:scale-95 sm:w-auto">
       <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
       </svg>
