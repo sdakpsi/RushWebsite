@@ -3,7 +3,7 @@
 import AuthButton from "@/components/AuthButton";
 import ActiveButton from "./ActiveButton";
 import PICButton from "./PICButton";
-import logo from "./akpsilogo.png";
+import logo from "./akpsiLogoBlack.png";
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
