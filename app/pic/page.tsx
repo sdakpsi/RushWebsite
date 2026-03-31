@@ -62,7 +62,7 @@ export default function ProtectedPage() {
       <div className="flex w-full items-center justify-center">
         <div className="animate-in w-full max-w-7xl opacity-0">
           <div className="mt-8 flex items-center justify-center">
-            <p className="text-sm sm:text-lg">
+            <p className="text-sm text-foreground sm:text-lg">
               You are not on PIC.
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function ProtectedPage() {
             </div>
           ) : (
             <div className="mt-8">
-              <p>You are not on PIC.</p>
+              <p className="text-foreground">You are not on PIC.</p>
             </div>
           )}
         </div>

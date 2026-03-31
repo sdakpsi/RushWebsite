@@ -167,11 +167,11 @@
   }
   
   .card-title {
-    @apply text-2xl font-semibold leading-none tracking-tight text-white;
+    @apply text-2xl font-semibold leading-none tracking-tight text-foreground;
   }
 
   .card-description {
-    @apply text-sm text-gray-300;
+    @apply text-sm text-muted-foreground;
   }
 
   /* Interview form: neon-style gradient + layered glow (readable on light cards) */

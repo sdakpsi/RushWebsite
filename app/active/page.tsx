@@ -19,7 +19,7 @@ export default async function ProtectedPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="min-h-screen bg-gradient-bg">
+    <div className="min-h-screen bg-gradient-bg text-foreground">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-float" />
@@ -38,7 +38,7 @@ export default async function ProtectedPage() {
             <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-4">
               Active Member Portal
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-muted-foreground">
               UCSD Alpha Kappa Psi
             </p>
           </div>

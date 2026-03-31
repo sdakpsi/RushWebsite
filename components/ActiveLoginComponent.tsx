@@ -39,24 +39,26 @@ export default function ActiveLoginComponent() {
   };
 
   return (
-    <div>
-      <p className="text-sm sm:text-lg">You are not marked as active, enter the password.</p>
+    <div className="text-foreground">
+      <p className="text-sm sm:text-lg">
+        You are not marked as active, enter the password.
+      </p>
       <form
         onSubmit={handleSubmit}
-        className="flex mt-4 justify-center items-center gap-2"
+        className="mt-4 flex items-center justify-center gap-2"
       >
         <input
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          className="px-4 py-2 rounded-lg border-2 border-gray-600 focus:outline-none focus:border-blue-500 transition duration-300 text-white bg-gray-800"
+          className="rounded-lg border-2 border-border bg-background px-4 py-2 text-foreground transition duration-300 placeholder:text-muted-foreground focus:border-blue-500 focus:outline-none"
           placeholder="Enter the password"
         />
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded bg-blue-600 px-6 py-2 text-white transition duration-300 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? 'Verifying...' : 'Submit'}
         </button>
