@@ -56,14 +56,14 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
             />
           ) : (
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-muted">
-              <span className="text-[10px] text-gray-300">No Image</span>
+              <span className="text-[10px] text-muted-foreground">No Image</span>
             </div>
           )}
           <div className="ml-4 flex min-w-0 flex-col">
-            <h3 className="truncate text-lg font-bold text-white">
+            <h3 className="truncate text-lg font-bold text-foreground">
               {applicant.full_name}
             </h3>
-            <p className="truncate text-xs text-gray-300">
+            <p className="truncate text-xs text-muted-foreground">
               <i>{applicant.email}</i>
             </p>
           </div>
@@ -88,7 +88,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
             </p>
           )}
         </div>
-        <div className="mt-2 text-sm text-white">
+        <div className="mt-2 text-sm text-foreground">
           <span>Total Score: {totalScore}</span>
         </div>
       </div>
