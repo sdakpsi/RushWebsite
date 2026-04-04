@@ -62,7 +62,7 @@ export default function ProtectedPage() {
       <div className="flex w-full items-center justify-center">
         <div className="animate-in w-full max-w-7xl opacity-0">
           <div className="mt-8 flex items-center justify-center">
-            <p className="text-sm text-foreground sm:text-lg">
+            <p className="text-sm sm:text-lg">
               You are not on PIC.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function ProtectedPage() {
                 Selected for Next Wave ({selectedApplicants.length} applicant{selectedApplicants.length !== 1 ? 's' : ''}):
               </p>
               {selectedApplicants.length > 0 && (
-                <div className="mx-auto max-w-2xl text-sm text-blue-700">
+                <div className="mx-auto max-w-2xl text-sm text-blue-900">
                   {selectedApplicants.map(id => {
                     const applicant = filteredUsersData.find(user => user.id === id);
                     return applicant?.full_name;
@@ -113,7 +113,7 @@ export default function ProtectedPage() {
                     placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-grow rounded-lg border border-border bg-background px-4 py-2 text-foreground shadow-sm transition duration-150 ease-in-out placeholder:text-muted-foreground focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-grow rounded-lg border px-4 py-2 text-gray-700 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="flex flex-wrap gap-4 justify-center">
@@ -186,7 +186,7 @@ export default function ProtectedPage() {
             </div>
           ) : (
             <div className="mt-8">
-              <p className="text-foreground">You are not on PIC.</p>
+              <p>You are not on PIC.</p>
             </div>
           )}
         </div>

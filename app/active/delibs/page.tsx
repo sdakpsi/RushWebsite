@@ -28,16 +28,16 @@ export default function ProtectedPage() {
     <div className="flex w-full flex-1 items-center justify-center py-10">
       <div className="animate-in mx-8 w-full">
         <div className="text-center">
-          <p className="mb-2 text-xl font-semibold leading-tight text-gray-900 lg:text-4xl">
+          <p className="mb-2 text-xl font-semibold leading-tight text-foreground lg:text-4xl">
             Delibs Portal
           </p>
           <div className="mb-4 space-y-3">
             <div>
-              <p className="mb-1 text-lg font-medium text-gray-900">
+              <p className="mb-1 text-lg font-medium text-foreground">
                 Current Wave ({currentWaveCount} applicant{currentWaveCount !== 1 ? 's' : ''}):
               </p>
               {currentWaveCount > 0 && (
-                <div className="mx-auto max-w-2xl text-sm text-gray-600">
+                <div className="mx-auto max-w-2xl text-sm text-muted-foreground">
                   {currentWaveNames.join(', ')}
                 </div>
               )}

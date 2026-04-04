@@ -502,7 +502,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
         <div className="mb-6 space-y-4">
           {/* Header Row */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <h2 className="text-3xl font-bold text-white">
+            <h2 className="text-3xl font-bold text-foreground">
               {application.name}&apos;s Packet
             </h2>
             
@@ -519,7 +519,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   />
                 ) : (
                   <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-border bg-muted">
-                    <span className="text-xs text-gray-300">No Image</span>
+                    <span className="text-xs text-muted-foreground">No Image</span>
                   </div>
                 )}
               </button>
@@ -535,7 +535,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                   activeSection === "application"
                     ? "bg-primary text-primary-foreground shadow-md"
-                    : "border border-border bg-muted text-white hover:bg-muted/80"
+                    : "border border-border bg-muted text-foreground hover:bg-muted/80"
                 }`}
               >
                 App
@@ -547,7 +547,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       activeSection === "cases"
                         ? "bg-primary text-primary-foreground shadow-md"
-                        : "border border-border bg-muted text-white hover:bg-muted/80"
+                        : "border border-border bg-muted text-foreground hover:bg-muted/80"
                     }`}
                   >
                     Cases
@@ -557,7 +557,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       activeSection === "interviews"
                         ? "bg-primary text-primary-foreground shadow-md"
-                        : "border border-border bg-muted text-white hover:bg-muted/80"
+                        : "border border-border bg-muted text-foreground hover:bg-muted/80"
                     }`}
                   >
                     Interviews
@@ -567,7 +567,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       activeSection === "comments"
                         ? "bg-primary text-primary-foreground shadow-md"
-                        : "border border-border bg-muted text-white hover:bg-muted/80"
+                        : "border border-border bg-muted text-foreground hover:bg-muted/80"
                     }`}
                   >
                     Comments
@@ -577,7 +577,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       activeSection === "scoring"
                         ? "bg-primary text-primary-foreground shadow-md"
-                        : "border border-border bg-muted text-white hover:bg-muted/80"
+                        : "border border-border bg-muted text-foreground hover:bg-muted/80"
                     }`}
                   >
                     Scoring
@@ -595,7 +595,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       application.resume
                         ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700"
-                        : "cursor-not-allowed border border-border bg-muted text-gray-300"
+                        : "cursor-not-allowed border border-border bg-muted text-muted-foreground"
                     }`}
                     disabled={!application.resume}
                   >
@@ -607,7 +607,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       application.cover_letter
                         ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700"
-                        : "cursor-not-allowed border border-border bg-muted text-gray-300"
+                        : "cursor-not-allowed border border-border bg-muted text-muted-foreground"
                     }`}
                     disabled={!application.cover_letter}
                   >
@@ -632,21 +632,21 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-xl font-bold text-white">
+                    <h3 className="mb-4 text-xl font-bold text-foreground">
                       Personal Details
                     </h3>
-                    <ul className="space-y-3 text-gray-300">
+                    <ul className="space-y-3 text-muted-foreground">
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Pronouns:</span>
-                        <span className="text-white">{application.pronouns}</span>
+                        <span className="text-foreground">{application.pronouns}</span>
                       </li>
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Phone Number:</span>
-                        <span className="text-white">{application.phone_number}</span>
+                        <span className="text-foreground">{application.phone_number}</span>
                       </li>
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Social Media:</span>
-                        <div className="text-white">
+                        <div className="text-foreground">
                           {application.social_media ? (
                             <ul className="mt-1 space-y-1">
                               {Object.entries(application.social_media).map(
@@ -696,47 +696,47 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   </div>
 
                   <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-xl font-bold text-white">
+                    <h3 className="mb-4 text-xl font-bold text-foreground">
                       Academic Details
                     </h3>
-                    <ul className="space-y-3 text-gray-300">
+                    <ul className="space-y-3 text-muted-foreground">
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Year:</span>
-                        <span className="text-white">{application.year}</span>
+                        <span className="text-foreground">{application.year}</span>
                       </li>
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Graduation Year:</span>
-                        <span className="text-white">{application.graduation_year}</span>
+                        <span className="text-foreground">{application.graduation_year}</span>
                       </li>
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Graduation Quarter:</span>
-                        <span className="text-white">{application.graduation_qtr}</span>
+                        <span className="text-foreground">{application.graduation_qtr}</span>
                       </li>
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Major:</span>
-                        <span className="text-white">{application.major}</span>
+                        <span className="text-foreground">{application.major}</span>
                       </li>
                       {application.minors && (
                         <li className="flex flex-col">
                           <span className="font-semibold text-blue-900">Minors:</span>
-                          <span className="text-white">{application.minors}</span>
+                          <span className="text-foreground">{application.minors}</span>
                         </li>
                       )}
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">GPA:</span>
-                        <span className="text-white">{application.gpa}</span>
+                        <span className="text-foreground">{application.gpa}</span>
                       </li>
                     </ul>
                   </div>
                   <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-xl font-bold text-white">
+                    <h3 className="mb-4 text-xl font-bold text-foreground">
                       Scores
                     </h3>
                     {(
-                      <ul className="space-y-3 text-gray-300">
+                      <ul className="space-y-3 text-muted-foreground">
                         <li className="flex flex-col">
                           <span className="font-semibold text-blue-900">Case Study:</span>
-                          <span className="text-white font-mono">
+                          <span className="text-foreground font-mono">
                             {Object.values(averages)
                               .reduce((acc, cur) => acc + cur, 0)
                               .toFixed(2)}
@@ -744,7 +744,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </li>
                         <li className="flex flex-col">
                           <span className="font-semibold text-blue-900">Interview:</span>
-                          <span className="text-white font-mono">
+                          <span className="text-foreground font-mono">
                             {Object.values(ivAverages)
                               .reduce((acc, cur) => acc + cur, 0)
                               .toFixed(2)}
@@ -754,7 +754,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           <span className="font-semibold text-blue-900">
                             Application Score:
                           </span>
-                          <span className="text-white font-mono mb-2">
+                          <span className="text-foreground font-mono mb-2">
                             {currentAppScore !== "" ? currentAppScore : "not set"}
                           </span>
                           {isPIC && (
@@ -763,7 +763,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                 type="text"
                                 inputMode="numeric"
                                 pattern="[1-7]|8"
-                                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-white placeholder:text-gray-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+                                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
                                 placeholder="1-8"
                                 value={score}
                                 onChange={handleScoreChange}
@@ -779,7 +779,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </li>
                         <li className="flex flex-col">
                           <span className="font-semibold text-blue-900">Resume Score:</span>
-                          <span className="text-white font-mono mb-2">
+                          <span className="text-foreground font-mono mb-2">
                             {currentScoreResume !== ""
                               ? currentScoreResume
                               : "not set"}
@@ -790,7 +790,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                 type="text"
                                 inputMode="numeric"
                                 pattern="[1-7]|8"
-                                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-white placeholder:text-gray-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+                                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
                                 placeholder="1-8"
                                 value={scoreResume}
                                 onChange={handleScoreChangeResume}
@@ -815,57 +815,57 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                 </div>
 
                 <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                  <h3 className="mb-6 text-xl font-bold text-white">
+                  <h3 className="mb-6 text-xl font-bold text-foreground">
                     Long Response
                   </h3>
-                  <div className="grid grid-cols-1 gap-6 text-gray-300 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-6 text-muted-foreground md:grid-cols-2 lg:grid-cols-3">
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Classes
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.classes}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.classes}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Extracurriculars
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.extracirriculars}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.extracirriculars}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Accomplishment
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.accomplishment}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.accomplishment}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Why AKPsi
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.why_akpsi}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.why_akpsi}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Goals
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.goals}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.goals}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Comfort Zone
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.comfort_zone}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.comfort_zone}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Business Idea
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.business}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.business}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
                         Additional Details
                       </div>
-                      <div className="text-white text-sm leading-relaxed whitespace-pre-line">{application.additional}</div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.additional}</div>
                     </div>
                   </div>
                 </div>
@@ -875,13 +875,13 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             {/* Cases Evaluation Section */}
             {activeSection === "cases" && (
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white mb-6">Case Study Notes</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Case Study Notes</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div className="rounded-lg border border-border bg-card p-4 text-center shadow-sm">
                     <div className="text-blue-900 font-semibold mb-2">
                       Leadership
                     </div>
-                    <div className="text-2xl font-bold text-white font-mono">
+                    <div className="text-2xl font-bold text-foreground font-mono">
                       {averages.leadership_avg.toFixed(2)}
                     </div>
                   </div>
@@ -889,7 +889,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     <div className="text-blue-900 font-semibold mb-2">
                       Teamwork
                     </div>
-                    <div className="text-2xl font-bold text-white font-mono">
+                    <div className="text-2xl font-bold text-foreground font-mono">
                       {averages.teamwork_avg.toFixed(2)}
                     </div>
                   </div>
@@ -897,7 +897,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     <div className="text-blue-900 font-semibold mb-2">
                       Analytical
                     </div>
-                    <div className="text-2xl font-bold text-white font-mono">
+                    <div className="text-2xl font-bold text-foreground font-mono">
                       {averages.analytical_avg.toFixed(2)}
                     </div>
                   </div>
@@ -905,7 +905,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     <div className="text-blue-900 font-semibold mb-2">
                       Public Speaking
                     </div>
-                    <div className="text-2xl font-bold text-white font-mono">
+                    <div className="text-2xl font-bold text-foreground font-mono">
                       {averages.public_speaking_avg.toFixed(2)}
                     </div>
                   </div>
@@ -931,7 +931,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="text-white md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm whitespace-pre-line">
+                          <div key={index} className="text-foreground md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm whitespace-pre-line">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
                             "number"
@@ -961,7 +961,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="text-white md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm whitespace-pre-line">
+                          <div key={index} className="text-foreground md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm whitespace-pre-line">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
                             "number"
@@ -1000,7 +1000,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         {/* Display each case's attribute next to the type */}
                         {cases.map((caseItem, index) => (
-                          <div key={index} className="text-white md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm whitespace-pre-line">
+                          <div key={index} className="text-foreground md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm whitespace-pre-line">
                             {/* Check if the attribute needs special formatting or handling */}
                             {typeof caseItem[attribute as keyof Case] ===
                             "number"
@@ -1016,7 +1016,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             {/* Interview Responses Section */}
             {activeSection === "interviews" && (
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white mb-6">Interview Notes</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Interview Notes</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
                   {Object.entries(ivAverages).map(([key, value]) => (
                     <div
@@ -1026,7 +1026,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <div className="text-blue-900 font-semibold mb-2 capitalize text-sm">
                         {key.replace('_', ' ')}
                       </div>
-                      <div className="text-xl font-bold text-white font-mono">
+                      <div className="text-xl font-bold text-foreground font-mono">
                         {isNaN(value) ? "N/A" : value.toFixed(2)}
                       </div>
                     </div>
@@ -1052,7 +1052,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           :
                         </div>
                         {interviews.map((interview, index) => (
-                          <div key={index} className="md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm text-white whitespace-pre-line">
+                          <div key={index} className="md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm text-foreground whitespace-pre-line">
                             {interview[key as keyof Interview]}
                           </div>
                         ))}
@@ -1089,7 +1089,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                             :
                           </div>
                           {interviews.map((interview, index) => (
-                            <div key={index} className="md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm text-white whitespace-pre-line">
+                            <div key={index} className="md:col-span-1 rounded border border-border bg-muted/40 p-2 text-sm text-foreground whitespace-pre-line">
                               {interview[question as keyof Interview]}
                             </div>
                           ))}
@@ -1102,7 +1102,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
             {activeSection === "comments" && (
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white mb-6">
+                <h3 className="text-2xl font-bold text-foreground mb-6">
                   Prospect Comment Forms
                 </h3>
                 {/* {isPIC ? (
@@ -1114,7 +1114,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <div className="flex items-center">
                         <input
                           type="text"
-                          className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-white"
+                          className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-black"
                           placeholder="Active name"
                           value={activeName}
                           onChange={handleActiveName}
@@ -1122,7 +1122,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         <div className="w-full">
                           <input
                             type="text"
-                            className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-white"
+                            className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-black"
                             placeholder="Prospect comment"
                             value={comment}
                             onChange={handleComment}
@@ -1161,13 +1161,13 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         <div className="font-semibold text-blue-900">
                           {comment.active_name}
                         </div>
-                        <div className="text-white">
+                        <div className="text-foreground">
                           {comment.interaction}
                         </div>
-                        <div className="text-white">
+                        <div className="text-foreground">
                           {comment.invite}
                         </div>
-                        <div className="text-white text-sm whitespace-pre-line">
+                        <div className="text-foreground text-sm whitespace-pre-line">
                           {comment.comment}
                         </div>
                       </div>
@@ -1178,9 +1178,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             )}
             {activeSection === "scoring" && (
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white mb-6">Prospect Scoring</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Prospect Scoring</h3>
                 <div className="rounded-lg border border-border bg-card p-6">
-                  <h4 className="mb-4 text-xl font-semibold text-white">Score Components</h4>
+                  <h4 className="mb-4 text-xl font-semibold text-foreground">Score Components</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                     {Object.entries(scoreComponents.components).map(
                       ([key, { score, outOf }]) => (
@@ -1191,7 +1191,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           <div className="text-blue-900 font-semibold capitalize mb-2">
                             {key.replace(/([A-Z])/g, ' $1').trim()}
                           </div>
-                          <div className="font-mono text-lg text-white">
+                          <div className="font-mono text-lg text-foreground">
                             {score.toFixed(2)} / {outOf}
                           </div>
                         </div>
@@ -1201,7 +1201,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   <div className="text-center">
                     <div className="inline-block rounded-lg border border-emerald-300 bg-emerald-100 p-4">
                       <div className="mb-2 font-semibold text-emerald-900">Total Score</div>
-                      <div className="font-mono text-2xl font-bold text-white">
+                      <div className="font-mono text-2xl font-bold text-foreground">
                         {scoreComponents.totalScore.toFixed(2)}
                       </div>
                     </div>
@@ -1212,7 +1212,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
             {activeSection === "avatar" && (
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-white mb-6 text-center">Profile Picture</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Profile Picture</h3>
                 <div className="flex flex-col items-center justify-center gap-6">
                   <div className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-card p-6">
                     <div className="flex justify-center">
@@ -1225,7 +1225,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         />
                       ) : (
                         <div className="flex h-80 w-80 max-w-full items-center justify-center rounded-lg border-2 border-border bg-muted">
-                          <span className="text-lg text-gray-300">No Image</span>
+                          <span className="text-lg text-muted-foreground">No Image</span>
                         </div>
                       )}
                     </div>
@@ -1233,7 +1233,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
                   {isPIC && (
                     <div className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-card p-6">
-                      <h4 className="mb-4 text-lg font-semibold text-white">Upload New Avatar (PIC Only)</h4>
+                      <h4 className="mb-4 text-lg font-semibold text-foreground">Upload New Avatar (PIC Only)</h4>
                       <AvatarUpload
                         userId={userID}
                         existingAvatarUrl={avatarUrl}
@@ -1242,7 +1242,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           queryClient.invalidateQueries({ queryKey: ['applicantData', userID] });
                         }}
                       />
-                      <p className="mt-4 text-sm text-gray-300">
+                      <p className="mt-4 text-sm text-muted-foreground">
                         Upload an image file to be displayed on the applicant card.
                       </p>
                     </div>

@@ -32,9 +32,9 @@ const StatCard = ({
   return (
     <div className={`rounded-lg p-6 ${colorClasses[color]}`}>
       <h3 className="text-sm font-medium text-slate-800">{title}</h3>
-      <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
+      <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
       {subtitle && (
-        <p className="mt-1 text-sm text-slate-600">{subtitle}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
       )}
     </div>
   );
@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
       <div className="flex w-full items-center justify-center">
         <div className="animate-in w-full max-w-7xl opacity-0">
           <div className="mt-8 flex items-center justify-center">
-            <p className="text-sm text-foreground sm:text-lg">
+            <p className="text-sm sm:text-lg">
               You are not on PIC.
             </p>
           </div>

@@ -38,7 +38,7 @@ export default function RootLayout({
       lang="en"
       className={`${neueHaasGrotesk.className} ${libreCaslon.variable} ${bonVivant.variable} ${montserrat.variable} ${neueHaasGrotesk.variable}`}
     >
-      <body className="bg-background text-white">
+      <body className="bg-background text-foreground">
         <ReactQueryProvider>
           <AuthStateListener />
           <NavigationLoader />

@@ -91,12 +91,12 @@ const AuthButton: React.FC = () => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-sm font-semibold text-white">
+            <span className="text-sm font-semibold text-primary">
               {user.user_metadata.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
             </span>
           )}
         </div>
-        <span className="max-w-[min(100%,12rem)] truncate text-sm font-medium text-white">
+        <span className="max-w-[min(100%,12rem)] truncate text-sm font-medium text-foreground">
           {user.user_metadata.name || user.email}
         </span>
       </div>
@@ -108,7 +108,7 @@ const AuthButton: React.FC = () => {
       </button>
     </div>
   ) : (
-    <button onClick={handleSignInWithGoogle} className="flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/10 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 touch-manipulation active:scale-95 sm:w-auto">
+    <button onClick={handleSignInWithGoogle} className="flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-2.5 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation active:scale-95 sm:w-auto">
       <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
       </svg>

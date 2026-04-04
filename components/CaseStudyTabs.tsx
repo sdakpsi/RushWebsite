@@ -12,17 +12,17 @@ interface CaseStudyTabsProps {
 const getStatusColor = (status: CaseFormInstance["status"]) => {
   switch (status) {
     case "editing":
-      return "border-gray-400 bg-gray-100 text-gray-800";
+      return "border-gray-600 bg-gray-300 text-gray-900";
     case "completed":
-      return "border-green-500 bg-green-100 text-green-800";
+      return "border-green-500 bg-green-100 text-green-900";
     case "submitting":
-      return "border-gray-400 bg-gray-100 text-gray-700";
+      return "border-gray-500 bg-gray-200 text-gray-800";
     case "submitted":
-      return "border-gray-400 bg-gray-200 text-gray-700";
+      return "border-gray-400 bg-gray-200 text-gray-800";
     case "error":
-      return "border-red-500 bg-red-100 text-red-700";
+      return "border-red-500 bg-red-100 text-red-900";
     default:
-      return "border-gray-300 bg-gray-100 text-gray-700";
+      return "border-gray-300 bg-gray-100 text-gray-900";
   }
 };
 
@@ -57,7 +57,7 @@ export default function CaseStudyTabs({
           className={`relative flex cursor-pointer items-center gap-2 rounded-t-lg border-2 px-4 py-2 transition-all duration-200 ${
             activeFormId === form.id
               ? `${getStatusColor(form.status)} -mb-0.5 border-b-transparent`
-              : "border-gray-300 bg-gray-100 text-gray-600 hover:bg-gray-200"
+              : "border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
           onClick={() => onTabClick(form.id)}
         >
@@ -65,12 +65,12 @@ export default function CaseStudyTabs({
             <span
               className={`text-sm ${
                 form.status === "submitted"
-                  ? "text-green-600"
+                  ? "text-green-700"
                   : form.status === "error"
                     ? "text-red-600"
                     : form.status === "submitting"
-                      ? "text-gray-500"
-                        : "text-gray-500"
+                      ? "text-gray-600"
+                        : "text-gray-700"
               }`}
             >
               {getStatusIcon(form)}
@@ -86,7 +86,7 @@ export default function CaseStudyTabs({
             )}
           </div>
           {autoSaveStatus[form.id]?.lastSaved && !autoSaveStatus[form.id]?.saving && (
-            <div className="text-xs text-gray-500 truncate max-w-20" title={`Last saved: ${autoSaveStatus[form.id]?.lastSaved}`}>
+            <div className="text-xs text-gray-400 truncate max-w-20" title={`Last saved: ${autoSaveStatus[form.id]?.lastSaved}`}>
               {autoSaveStatus[form.id]?.lastSaved}
             </div>
           )}
@@ -96,7 +96,7 @@ export default function CaseStudyTabs({
               e.stopPropagation();
               onTabClose(form.id);
             }}
-            className="ml-2 text-sm font-bold leading-none text-gray-500 hover:text-red-500"
+            className="ml-2 text-sm font-bold leading-none text-gray-400 hover:text-red-400"
             title="Close form"
           >
             ×

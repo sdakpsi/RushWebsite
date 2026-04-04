@@ -3,23 +3,23 @@ import { currentTheme } from '@/utils/theme';
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-white/10 bg-black backdrop-blur-sm">
+    <footer className="w-full border-t border-border/20 bg-muted/30 backdrop-blur-sm">
       <div className="container px-4 py-8">
         {/* Main Footer Content */}
         <div className="grid gap-8 md:grid-cols-3">
           {/* Organization Info */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-white">
+            <h3 className="font-semibold text-foreground">
               {currentTheme.branding.organization}
             </h3>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-muted-foreground">
               Professional Business Fraternity
             </p>
             <a
               href={currentTheme.branding.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm text-white/80 hover:text-white transition-colors"
+              className="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
             >
               Visit Official Website
               <svg className="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,15 +30,15 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-white">Quick Links</h3>
+            <h3 className="font-semibold text-foreground">Quick Links</h3>
             <div className="flex flex-col space-y-2 text-sm">
-              <Link href="/privacy" className="text-white/60 hover:text-primary transition-colors">
+              <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-white/60 hover:text-primary transition-colors">
+              <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Service
               </Link>
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLScbhQ7B1qzs5_ZWkjY-RFDejC34dG3di7dMbu_xFA4pe33KYA/viewform" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-primary transition-colors">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScbhQ7B1qzs5_ZWkjY-RFDejC34dG3di7dMbu_xFA4pe33KYA/viewform" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 Interest Form
               </a>
             </div>
@@ -46,18 +46,18 @@ export default function Footer() {
 
           {/* Rush Info */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-white">
+            <h3 className="font-semibold text-foreground">
               {currentTheme.branding.rushYear} Rush
             </h3>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-muted-foreground">
               For any questions {currentTheme.branding.rushChairs}
             </p>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 border-t border-white/10 pt-6">
-          <div className="flex flex-col items-center justify-between space-y-4 text-sm text-white/60 md:flex-row md:space-y-0">
+        <div className="mt-8 border-t border-border/20 pt-6">
+          <div className="flex flex-col items-center justify-between space-y-4 text-sm text-muted-foreground md:flex-row md:space-y-0">
             <p>
               © {new Date().getFullYear()} {currentTheme.branding.organization}. All rights reserved.
             </p>

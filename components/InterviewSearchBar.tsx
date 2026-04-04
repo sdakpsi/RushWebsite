@@ -53,7 +53,7 @@ export default function InterviewSearchBar({
 
   if (finalIsLoading) {
     return (
-      <div className="text-gray-600">Loading prospects...</div>
+      <div className="text-muted-foreground">Loading prospects...</div>
     );
   }
 
@@ -81,7 +81,7 @@ export default function InterviewSearchBar({
     <div className="mb-6">
       <label
         htmlFor="search"
-        className="mb-3 block text-lg font-medium text-black sm:text-xl"
+        className="mb-3 block text-lg font-medium text-foreground sm:text-xl"
       >
         Search for and select a prospect:
       </label>
@@ -93,7 +93,7 @@ export default function InterviewSearchBar({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Type prospect name..."
-          className="block w-full rounded-lg border-2 border-border bg-background px-4 py-4 text-base text-black shadow-md transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/30"
+          className="block w-full rounded-lg border-2 border-border bg-background px-4 py-4 text-base text-foreground shadow-md transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/30"
           style={{ fontSize: '16px' }} // Prevents zoom on iOS
         />
         {searchInput && (
@@ -101,7 +101,7 @@ export default function InterviewSearchBar({
             {filteredData.slice(0, 5).map((prospect, index) => (
               <div
                 key={index}
-                className="suggestion cursor-pointer border-b border-border px-4 py-4 text-black transition-all duration-150 hover:bg-muted active:bg-muted/80 touch-manipulation active:scale-[0.98] last:border-b-0"
+                className="suggestion cursor-pointer border-b border-border px-4 py-4 text-foreground transition-all duration-150 hover:bg-muted active:bg-muted/80 touch-manipulation active:scale-[0.98] last:border-b-0"
                 onClick={() => handleSelectProspect(prospect)}
               >
                 <div className="flex items-center gap-3">
@@ -113,14 +113,14 @@ export default function InterviewSearchBar({
                     />
                   ) : (
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-muted">
-                      <span className="text-sm font-semibold text-gray-600">
+                      <span className="text-sm font-semibold text-muted-foreground">
                         {prospect.full_name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-base text-black">{prospect.full_name}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="font-medium text-base">{prospect.full_name}</div>
+                    <div className="text-sm text-muted-foreground">
                       {prospect.email}
                     </div>
                   </div>
@@ -128,7 +128,7 @@ export default function InterviewSearchBar({
               </div>
             ))}
             {filteredData.length === 0 && searchInput && (
-              <div className="px-4 py-4 text-center text-gray-600">
+              <div className="px-4 py-4 text-center text-muted-foreground">
                 No prospects found matching "{searchInput}"
               </div>
             )}

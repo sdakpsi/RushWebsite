@@ -37,7 +37,7 @@ export default function MainPageContent() {
               <p className="font-semibold text-warning mb-1">
                 Picture Required
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 You must upload a picture of yourself before you can access the application. Please ensure your photo is well-lit and shows your face clearly.
               </p>
             </div>
@@ -61,16 +61,16 @@ export default function MainPageContent() {
 
       {/* Application Opening Soon Notice */}
       {hasPhoto && APPLICATION_OPEN === 'coming_soon' && (
-        <div className="rounded-lg bg-gray-900 border border-gray-700 p-4">
+        <div className="rounded-lg bg-white border border-gray-300 p-4">
           <div className="flex items-start space-x-3">
-            <svg className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="font-semibold text-gray-100 mb-1">
+              <p className="font-semibold text-gray-900 mb-1">
                 Applications Opening Soon
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-600">
                 Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned!
               </p>
             </div>
@@ -89,7 +89,7 @@ export default function MainPageContent() {
               <p className="font-semibold text-warning mb-1">
                 Applications Closed
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 Applications for {RUSH_YEAR} Rush have closed. Thank you for your interest!
               </p>
             </div>
@@ -148,7 +148,7 @@ export default function MainPageContent() {
             {/* Close button */}
             <button
               onClick={() => setIsPhotoModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-300 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Close modal"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,10 +163,10 @@ export default function MainPageContent() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-foreground mb-2">
                 {hasPhoto ? "Update Your Photo" : "Upload Your Photo"}
               </h3>
-              <p className="text-gray-300 mb-3">
+              <p className="text-muted-foreground mb-3">
                 {hasPhoto 
                   ? "You can update your photo anytime" 
                   : "A photo is required to access the application"
@@ -175,7 +175,7 @@ export default function MainPageContent() {
               {!hasPhoto && (
                 <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 text-left">
                   <p className="text-sm font-medium text-warning mb-2">Professional Photo Guidelines:</p>
-                  <ul className="text-xs text-gray-400 space-y-1">
+                  <ul className="text-xs text-gray-300 space-y-1">
                     <li>• Clear, well-lit photo showing your face</li>
                     <li>• Neutral background preferred</li>
                     <li>• High resolution (avoid blurry images)</li>

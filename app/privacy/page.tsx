@@ -41,7 +41,7 @@ export default function Page() {
             <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent mb-4">
               Privacy Policy
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-muted-foreground">
               UCSD AKPsi Application
             </p>
           </div>
@@ -50,13 +50,13 @@ export default function Page() {
           <div className="card glass">
             <div className="card-content">
               <div className="text-lg text-left space-y-6">
-                <div className="text-gray-300">
+                <div className="text-muted-foreground">
                   This Privacy Policy describes how we collect, use, and protect your information when you use the Alpha Kappa Psi application portal at the University of California, San Diego (UCSD).
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Information We Collect</h3>
-                  <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <h3 className="font-bold mb-2 text-foreground">Information We Collect</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
                     <li>Personal information you provide during the application process (name, email, academic information)</li>
                     <li>Application materials (essays, resume, cover letter)</li>
                     <li>Usage data and analytics to improve the portal experience</li>
@@ -64,8 +64,8 @@ export default function Page() {
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">How We Use Your Information</h3>
-                  <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <h3 className="font-bold mb-2 text-foreground">How We Use Your Information</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
                     <li>To process and evaluate your application for membership</li>
                     <li>To communicate with you about your application status</li>
                     <li>To improve our application process and portal functionality</li>
@@ -74,29 +74,29 @@ export default function Page() {
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Information Sharing</h3>
-                  <p className="text-gray-300">
+                  <h3 className="font-bold mb-2 text-foreground">Information Sharing</h3>
+                  <p className="text-muted-foreground">
                     We do not sell, trade, or otherwise transfer your personal information to third parties. Information is only shared with UCSD AKPsi members involved in the application review process and is kept confidential within the organization.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Data Security</h3>
-                  <p className="text-gray-300">
+                  <h3 className="font-bold mb-2 text-foreground">Data Security</h3>
+                  <p className="text-muted-foreground">
                     We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes secure hosting, encrypted data transmission, and restricted access controls.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Data Retention</h3>
-                  <p className="text-gray-300">
+                  <h3 className="font-bold mb-2 text-foreground">Data Retention</h3>
+                  <p className="text-muted-foreground">
                     We retain your information for the duration of the application process and for a reasonable period thereafter for organizational records. You may request deletion of your personal data by contacting us directly.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Your Rights</h3>
-                  <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <h3 className="font-bold mb-2 text-foreground">Your Rights</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
                     <li>You have the right to access and review your personal information</li>
                     <li>You may request corrections to inaccurate information</li>
                     <li>You may request deletion of your personal data</li>
@@ -105,15 +105,15 @@ export default function Page() {
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Updates to This Policy</h3>
-                  <p className="text-gray-300">
+                  <h3 className="font-bold mb-2 text-foreground">Updates to This Policy</h3>
+                  <p className="text-muted-foreground">
                     We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new policy on this page and updating the effective date.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="font-bold mb-2 text-white">Contact Us</h3>
-                  <p className="text-gray-300">
+                  <h3 className="font-bold mb-2 text-foreground">Contact Us</h3>
+                  <p className="text-muted-foreground">
                     If you have any questions about this Privacy Policy or our data practices, please contact us through the information provided on our website.
                   </p>
                 </div>

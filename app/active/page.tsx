@@ -19,7 +19,7 @@ export default async function ProtectedPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="min-h-screen bg-gradient-bg text-foreground">
+    <div className="min-h-screen bg-gradient-bg">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl animate-float" />

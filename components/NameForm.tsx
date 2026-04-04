@@ -390,7 +390,7 @@ export default function NameForm() {
     return (
       <div className="text-center space-y-4 py-12">
         <LoadingSpinner size="large" fullScreen={false} type="form" />
-        <div className="text-lg font-semibold text-gray-300">
+        <div className="text-lg font-semibold text-muted-foreground">
           Submitting application...
         </div>
       </div>
@@ -399,7 +399,7 @@ export default function NameForm() {
 
   return (
     <div>
-      <div className="save-status px-4 text-gray-300 sm:px-0">
+      <div className="save-status px-4 text-muted-foreground sm:px-0">
         {isSaving ? "Saving..." : lastSaved && `Last saved on ${lastSaved}`}
       </div>
       <div className="submit-status px-4 text-green-600 sm:px-0">
@@ -409,8 +409,8 @@ export default function NameForm() {
         <div className="space-y-12">
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-white">Personal Information</h2>
-              <p className="text-gray-300">Please provide your basic personal details.</p>
+              <h2 className="text-2xl font-bold text-foreground">Personal Information</h2>
+              <p className="text-muted-foreground">Please provide your basic personal details.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               <div className="mb-6">
@@ -484,7 +484,7 @@ export default function NameForm() {
                 </option>
               ))}
                 </select>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-300" aria-hidden>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
                   <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
                 </span>
                 </div>
@@ -507,7 +507,7 @@ export default function NameForm() {
                 </option>
               ))}
                 </select>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-300" aria-hidden>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
                   <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
                 </span>
                 </div>
@@ -551,7 +551,7 @@ export default function NameForm() {
                 </option>
               ))}
                 </select>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-300" aria-hidden>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
                   <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
                 </span>
                 </div>
@@ -613,14 +613,14 @@ export default function NameForm() {
           {/* Social Media & Academic Information Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-white">Social Media & Academic Information</h2>
-              <p className="text-gray-300">Share your social media and academic details.</p>
+              <h2 className="text-2xl font-bold text-foreground">Social Media & Academic Information</h2>
+              <p className="text-muted-foreground">Share your social media and academic details.</p>
             </div>
 
             <div className="mb-8">
             <div className="mb-6">
               <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
-              <div className="mb-6 text-lg text-gray-300">
+              <div className="mb-6 text-lg text-muted-foreground">
                 Your social medias! Please use links if possible :)
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -712,8 +712,8 @@ export default function NameForm() {
           {/* Essay Questions Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-white">Essay Questions</h2>
-              <p className="text-gray-300">Please answer the following questions thoughtfully. Each response should be 500 words maximum.</p>
+              <h2 className="text-2xl font-bold text-foreground">Essay Questions</h2>
+              <p className="text-muted-foreground">Please answer the following questions thoughtfully. Each response should be 500 words maximum.</p>
             </div>
 
           <div className="mb-8">
@@ -808,8 +808,8 @@ export default function NameForm() {
           {/* File Upload Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-white">Documents</h2>
-              <p className="text-gray-300">Please upload your resume and cover letter.</p>
+              <h2 className="text-2xl font-bold text-foreground">Documents</h2>
+              <p className="text-muted-foreground">Please upload your resume and cover letter.</p>
             </div>
 
             <div className="mb-4">
@@ -818,7 +818,7 @@ export default function NameForm() {
                 className={`${
                   resumeFileUrl
                     ? "text-primary hover:opacity-90 underline underline-offset-2"
-                    : "text-gray-300"
+                    : "text-muted-foreground"
                 } ${!resumeFileUrl && "pointer-events-none"}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -837,7 +837,7 @@ export default function NameForm() {
                 className={`${
                   coverLetterFileUrl
                     ? "text-primary hover:opacity-90 underline underline-offset-2"
-                    : "text-gray-300"
+                    : "text-muted-foreground"
                 } ${!coverLetterFileUrl && "pointer-events-none"}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -857,8 +857,8 @@ export default function NameForm() {
           {/* Submit Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-white">Submit Application</h2>
-              <p className="text-gray-300">Review your information and submit your application.</p>
+              <h2 className="text-2xl font-bold text-foreground">Submit Application</h2>
+              <p className="text-muted-foreground">Review your information and submit your application.</p>
             </div>
             <div className="flex justify-center">
               <button
@@ -871,7 +871,7 @@ export default function NameForm() {
           </div>
         </div>
       </form>
-      <p className="mt-4 text-gray-300">
+      <p className="mt-4 text-muted-foreground">
         If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
       </p>
     </div>

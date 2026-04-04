@@ -52,7 +52,7 @@ export default function PastCommentSubmissions({
 
   return (
     <div className="mb-6">
-      <label className="block text-xl font-medium text-black">
+      <label className="block text-xl font-medium text-foreground">
         Your Comments:
       </label>
       <div className="relative mt-1">
@@ -63,7 +63,7 @@ export default function PastCommentSubmissions({
                 key={index}
                 className="mx-4 my-2 flex items-center justify-between rounded-lg border border-border bg-card p-3 shadow-sm"
               >
-                <span className="font-semibold text-black">
+                <span className="font-semibold text-foreground">
                   {comment.prospect_name}
                 </span>
                 <span className="rounded-full border border-emerald-300 bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-900">
@@ -73,7 +73,7 @@ export default function PastCommentSubmissions({
             ))}
           </ul>
         ) : (
-          <p className="mx-4 my-2 text-gray-600">
+          <p className="mx-4 my-2 text-muted-foreground">
             No previous comments submitted
           </p>
         )}

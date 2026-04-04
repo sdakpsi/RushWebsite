@@ -91,7 +91,7 @@ export default function Login({
           <div className="card-content">
             <form className="space-y-6">
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-white">
+                <label htmlFor="email" className="text-sm font-medium text-foreground">
                   Email Address
                 </label>
                 <input
@@ -105,7 +105,7 @@ export default function Login({
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-white">
+                <label htmlFor="password" className="text-sm font-medium text-foreground">
                   Password
                 </label>
                 <input

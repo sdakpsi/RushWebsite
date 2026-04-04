@@ -103,22 +103,22 @@ export default function ActiveInterviewForm({
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-background p-5 text-black">
+    <div className="rounded-lg border border-border bg-card p-5 text-foreground">
       <div className="mb-5 flex items-center justify-between">
         <button
           type="button"
           onClick={() => handleBack()}
-          className="cursor-pointer rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-base text-gray-800 hover:bg-gray-200"
+          className="cursor-pointer rounded-lg border border-border bg-muted px-4 py-2 text-base text-foreground hover:bg-muted/80"
         >
           &#x276E; Back{" "}
         </button>
-        <h1 className="text-center text-2xl text-black">
+        <h1 className="text-center text-2xl text-foreground">
           Interviewing: {selectedProspect.full_name}
         </h1>
         <div></div>
       </div>
       <p
-        className="interview-guidance-glow mt-4 bg-red-700 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
+        className="interview-guidance-glow mt-4 animate-pulse bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
         role="heading"
         aria-level={2}
       >
@@ -126,7 +126,7 @@ export default function ActiveInterviewForm({
         nice) and do your best to stick to the script.
       </p>
       <p
-        className="interview-guidance-glow mb-4 mt-2 bg-red-700 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
+        className="interview-guidance-glow mb-4 mt-2 animate-pulse bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
         role="heading"
         aria-level={2}
       >
@@ -136,14 +136,14 @@ export default function ActiveInterviewForm({
         <div className="mb-5 flex items-center space-x-4">
           <label
             htmlFor="name"
-            className="mb-0 flex-shrink-0 font-medium text-black"
+            className="mb-0 flex-shrink-0 font-medium text-foreground"
           >
             Active Name:
           </label>
           <input
             type="text"
             id="name"
-            className="flex-grow cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 p-1 text-base text-gray-700"
+            className="flex-grow cursor-not-allowed rounded-lg border border-border bg-muted p-1 text-base text-foreground"
             readOnly
             {...register("name", {
               required: "Name is required",
@@ -158,14 +158,14 @@ export default function ActiveInterviewForm({
         <div className="mb-5 flex items-center space-x-4">
           <label
             htmlFor="otherActives"
-            className="mb-0 flex-shrink-0 font-medium text-black"
+            className="mb-0 flex-shrink-0 font-medium text-foreground"
           >
             Other Actives:
           </label>
           <input
             type="text"
             id="otherActives"
-            className="flex-grow rounded-lg border border-gray-300 bg-white p-1 text-base text-black"
+            className="flex-grow rounded-lg border border-border bg-background p-1 text-base text-foreground"
             {...register("otherActives", {
               required: "Other Actives on Panel is required",
             })}
@@ -176,7 +176,7 @@ export default function ActiveInterviewForm({
             }`}</p>
           )}
         </div>
-        <p className="mt-4 text-center text-black">
+        <p className="mt-4 text-center text-foreground">
           <span aria-hidden="true">***</span>
           Script is in{" "}
           <span className="text-lg font-semibold text-blue-700">BLUE</span> and
@@ -184,7 +184,7 @@ export default function ActiveInterviewForm({
           <span className="text-sm italic text-gray-600">GRAY</span>
           <span aria-hidden="true">***</span>
         </p>
-        <div className="my-8 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent p-[1px]" />
+        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
         <div className="space-y-4">
           {note("[Lead] Beginning Blurb")}
           {script(
@@ -197,7 +197,7 @@ export default function ActiveInterviewForm({
             "Congratulations on making it through rush week and we're excited to get to know you better right now. During the interview, we will be taking notes as you answer, so please don't be intimidated by any typing."
           )}
         </div>
-        <div className="my-8 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent p-[1px]" />
+        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
         <div className="mb-5 mt-5 text-center">
           <label className="mb-2 block">
             {script(
@@ -215,7 +215,7 @@ export default function ActiveInterviewForm({
         {...register(`events.${option.value}`)}
         defaultChecked={option.value === "Interview"}
       />
-      <label htmlFor={option.value} className="text-black">
+      <label htmlFor={option.value} className="text-foreground">
         {option.label}
       </label>
     </div>
@@ -226,7 +226,7 @@ export default function ActiveInterviewForm({
           )}
         </div>
 
-        <div className="my-8 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent p-[1px]" />
+        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
         <div>
           {/* im like the look at me using a loop n shi */}
           {questions.map((question, index) => (
@@ -277,7 +277,7 @@ export default function ActiveInterviewForm({
               )}
               <textarea
                 id={question.name}
-                className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black"
+                className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
                 {...register(question.name, {
                   required:
                     index !== 7 && index !== 14
@@ -293,7 +293,7 @@ export default function ActiveInterviewForm({
             </div>
           ))}
         </div>
-        <div className="my-8 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent p-[1px]" />
+        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
         <div className="mb-4 mt-4">
           {note("*** END OF INTERVIEW *** [Lead]")}
         </div>
@@ -302,7 +302,7 @@ export default function ActiveInterviewForm({
             "Thank you for taking time out of your day to participate in the interview and for taking interest in our fraternity. We will get back to you about your potential membership early this coming week, and should you receive an invitation to join AKPsi, please keep your Thursday evening free. Have a nice weekend!"
           )}
         </div>
-        <div className="my-8 w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent p-[1px]" />
+        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
         <div>
           <div className="mb-5">
             <label htmlFor={"additionalComments"} className="mb-2 block">
@@ -310,7 +310,7 @@ export default function ActiveInterviewForm({
             </label>
             <textarea
               id={"additionalComments"}
-              className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-white"
+              className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
               {...register("additionalComments", {
                 required: false,
               })}
@@ -326,7 +326,7 @@ export default function ActiveInterviewForm({
         <div className="flex flex-col">
           {scorableTraits.map((trait) => (
             <div key={trait.propertyName} className="mb-5 mt-2 flex flex-col">
-              <label className="mb-2 text-center text-black">
+              <label className="mb-2 text-center text-foreground">
                 {trait.displayName}
               </label>
               <div className="flex flex-row items-center space-x-4">
@@ -334,7 +334,7 @@ export default function ActiveInterviewForm({
                 {/* Added alignment and spacing between items */}
                 <div className="w-1/4">
                   <select
-                    className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-black"
+                    className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
                     {...register(`${trait.propertyName}`, {
                       required: `Please select a value for ${trait.propertyName}`,
                     })}

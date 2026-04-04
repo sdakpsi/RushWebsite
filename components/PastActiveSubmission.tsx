@@ -105,7 +105,7 @@ export default function PastActiveSubmission({
 
   return (
     <div className="mb-6">
-      <label className="block text-xl font-medium text-black">
+      <label className="block text-xl font-medium text-foreground">
         {type === "case_studies"
           ? "Your Case Studies:"
           : "Your Interviews:"}
@@ -118,7 +118,7 @@ export default function PastActiveSubmission({
                 key={index}
                 className="mx-4 my-2 flex items-center justify-between rounded-lg border border-border bg-card p-3 shadow-sm"
               >
-                <span className="font-semibold text-black">{prospect.name}</span>
+                <span className="font-semibold text-foreground">{prospect.name}</span>
                 <div className="flex items-center gap-2">
                   <span
                     className={`rounded-full border px-2 py-1 text-xs font-medium ${
@@ -144,7 +144,7 @@ export default function PastActiveSubmission({
             ))}
           </ul>
         ) : (
-          <p className="mx-4 my-2 text-gray-600">No previous submissions</p>
+          <p className="mx-4 my-2 text-muted-foreground">No previous submissions</p>
         )}
       </div>
       
@@ -160,10 +160,10 @@ export default function PastActiveSubmission({
               maxWidth: 'calc(100vw - 2rem)'
             }}
           >
-            <h3 className="mb-4 text-lg font-semibold text-black">Confirm Delete</h3>
-            <p className="mb-6 text-gray-700">
+            <h3 className="mb-4 text-lg font-semibold text-foreground">Confirm Delete</h3>
+            <p className="mb-6 text-muted-foreground">
               Are you sure you want to delete the case study for{" "}
-              <span className="font-semibold text-black">
+              <span className="font-semibold text-foreground">
                 {finalProspectData?.find(p => p.id === confirmDeleteId)?.name}
               </span>
               ? This action cannot be undone. No like fr this CANNOT be undone, PIC cannot help you after this.
@@ -172,7 +172,7 @@ export default function PastActiveSubmission({
               <button
                 type="button"
                 onClick={handleCancelDelete}
-                className="rounded-lg border border-border bg-muted px-4 py-2 text-gray-800 transition-colors hover:bg-muted/80"
+                className="rounded-lg border border-border bg-muted px-4 py-2 text-foreground transition-colors hover:bg-muted/80"
               >
                 Cancel
               </button>
