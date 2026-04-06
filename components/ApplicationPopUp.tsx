@@ -81,7 +81,7 @@ interface Comment {
   active_name: string;
   comment: string;
   interaction: string;
-  invite: string;
+  rubric_categories?: string[] | null;
 }
 
 interface ApplicationPopupProps {
@@ -1156,7 +1156,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       Interaction
                     </div>
                     <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-blue-900 shadow-sm">
-                      Invite?
+                      Rubric Tags
                     </div>
                     <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-blue-900 shadow-sm">
                       Comment
@@ -1172,7 +1172,20 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           {comment.interaction}
                         </div>
                         <div className="text-foreground">
-                          {comment.invite}
+                          {comment.rubric_categories?.length ? (
+                            <div className="flex flex-wrap gap-2">
+                              {comment.rubric_categories.map((category: string) => (
+                                <span
+                                  key={category}
+                                  className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                                >
+                                  {category}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">Untagged</span>
+                          )}
                         </div>
                         <div className="text-foreground text-sm whitespace-pre-line">
                           {comment.comment}

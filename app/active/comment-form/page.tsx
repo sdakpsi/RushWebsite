@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
@@ -9,13 +9,28 @@ import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
 import Checkbox from "@/components/Checkbox";
 import { v4 as uuidv4 } from "uuid";
+import { faInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getUsersForComments, getUserComments } from "@/app/supabase/clientQueries";
 import ProspectGrid from "@/components/ProspectGrid";
 import PastCommentSubmissions from "@/components/PastCommentSubmissions";
 
 // Mirror implementation of interview page
 
-import { type ProspectInterview } from "@/lib/types";
+import {
+  RUBRIC_CATEGORIES,
+  type ProspectInterview,
+  type RubricCategory,
+} from "@/lib/types";
+
+const RUBRIC_CATEGORY_DETAILS: Record<RubricCategory, string> = {
+  "Values Community":
+    "Prioritizes others over trying to impress them, has demonstrated selflessness and a willingness to give back, and seems to be looking for a real family or community at UCSD.",
+  "Growth Potential":
+    "Shows a growth mindset, knows their weaknesses, is eager to work on them, and applies that effort to both professional and personal growth.",
+  "Vulnerability / Introspection":
+    "Shows strong self-awareness and emotional awareness, can be vulnerable while still holding up a conversation, and is inclusive of other prospects. This is more than just being socially skilled.",
+};
 
 function useSelectedProspect() {
   const [selectedProspect, setSelectedProspect] =
@@ -42,10 +57,12 @@ export default function Page(this: any) {
   const [viewMode, setViewMode] = useState<'search' | 'grid'>('search');
   const [comment, setComment] = useState("");
   const [interaction, setInteraction] = useState("");
-  const [invite, setInvite] = useState("");
+  const [rubricCategories, setRubricCategories] = useState<RubricCategory[]>([]);
+  const [isRubricInfoOpen, setIsRubricInfoOpen] = useState(false);
   const [newProspectName, setNewProspectName] = useState("");
   const [checked, setChecked] = useState(false);
   const queryClient = useQueryClient();
+  const rubricInfoRef = useRef<HTMLDivElement | null>(null);
 
   // React Query for fetching prospects - only enabled when in grid mode
   const { data: prospects = [], isLoading: prospectsLoading, error: prospectsError } = useQuery({
@@ -79,7 +96,11 @@ export default function Page(this: any) {
   const submitCommentMutation = useMutation({
     mutationFn: async ({ prospectData, commentData }: {
       prospectData: { id?: string; name: string };
-      commentData: { comment: string; interaction: string; invite: string };
+      commentData: {
+        comment: string;
+        interaction: string;
+        rubricCategories: RubricCategory[];
+      };
     }) => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -91,7 +112,9 @@ export default function Page(this: any) {
         active_name: user?.user_metadata.name,
         comment: commentData.comment,
         interaction: commentData.interaction,
-        invite: commentData.invite,
+        rubric_categories: commentData.rubricCategories.length
+          ? commentData.rubricCategories
+          : null,
       }]);
       
       if (error) throw error;
@@ -101,7 +124,8 @@ export default function Page(this: any) {
       customToast(`Submitted comment for ${result.prospectName}: ${comment}`, "success");
       setComment("");
       setInteraction("");
-      setInvite("");
+      setRubricCategories([]);
+      setIsRubricInfoOpen(false);
       setSelectedProspect(null);
       setChecked(false);
       setNewProspectName("");
@@ -120,8 +144,8 @@ export default function Page(this: any) {
       return;
     }
 
-    if (interaction === "" || invite === "" || comment === "") {
-      customToast("All fields are required.", "error");
+    if (interaction === "" || comment === "") {
+      customToast("Interaction and comment are required.", "error");
       return;
     }
 
@@ -135,10 +159,50 @@ export default function Page(this: any) {
       ? { name: newProspectName }
       : { id: selectedProspect?.id, name: selectedProspect?.full_name || "" };
       
-    const commentData = { comment, interaction, invite };
+    const commentData = { comment, interaction, rubricCategories };
     
     submitCommentMutation.mutate({ prospectData, commentData });
   };
+
+  const toggleRubricCategory = (category: RubricCategory) => {
+    setRubricCategories((currentCategories) =>
+      currentCategories.includes(category)
+        ? currentCategories.filter((currentCategory) => currentCategory !== category)
+        : [...currentCategories, category]
+    );
+  };
+
+  useEffect(() => {
+    if (!isRubricInfoOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      if (
+        rubricInfoRef.current &&
+        event.target instanceof Node &&
+        !rubricInfoRef.current.contains(event.target)
+      ) {
+        setIsRubricInfoOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsRubricInfoOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isRubricInfoOpen]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -318,42 +382,66 @@ export default function Page(this: any) {
                     </div>
                   </div>
 
-                  {/* Invite to Social Night Question */}
-                  <div className="flex flex-col text-white">
-                    <label className="mb-2 mt-4 text-gray-700">
-                      Invite to social night?
-                    </label>
-                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                      <button
-                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
-                          invite === "Yes" 
-                            ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
-                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
-                        }`}
-                        onClick={() => setInvite("Yes")}
-                      >
-                        Yes
-                      </button>
-                      <button
-                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
-                          invite === "No" 
-                            ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
-                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
-                        }`}
-                        onClick={() => setInvite("No")}
-                      >
-                        No
-                      </button>
-                      <button
-                        className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
-                          invite === "N/A" 
-                            ? "bg-blue-600 shadow-lg border-2 border-blue-400" 
-                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
-                        }`}
-                        onClick={() => setInvite("N/A")}
-                      >
-                        N/A
-                      </button>
+                  <div className="mt-4 flex flex-col">
+                    <div className="mb-2 flex items-center gap-2">
+                      <label className="text-gray-700">
+                        Relevant rubric categories (optional)
+                      </label>
+                      <div className="relative" ref={rubricInfoRef}>
+                        <button
+                          type="button"
+                          className="flex h-5 w-5 items-center justify-center rounded-full border border-black bg-background text-black shadow-sm transition-transform duration-150 hover:scale-105 hover:bg-muted/40"
+                          aria-label="Show rubric category descriptions"
+                          aria-expanded={isRubricInfoOpen}
+                          aria-haspopup="dialog"
+                          onClick={() => setIsRubricInfoOpen((currentValue) => !currentValue)}
+                        >
+                          <FontAwesomeIcon icon={faInfo} className="h-2 w-2" />
+                        </button>
+                        {isRubricInfoOpen && (
+                          <div
+                            className="absolute right-0 top-7 z-20 w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] rounded-xl border border-border bg-card p-4 text-left text-sm text-foreground shadow-xl sm:left-0 sm:right-auto sm:top-8 sm:w-[22rem] sm:max-w-[22rem]"
+                            role="dialog"
+                          >
+                            <p className="mb-3 font-semibold text-foreground">
+                              If applicable, tag comment forms based on these traits PIC is specifically looking for:
+                            </p>
+                            <div className="space-y-3">
+                              {RUBRIC_CATEGORIES.map((category) => (
+                                <div key={category}>
+                                  <p className="font-semibold text-foreground">
+                                    {category}
+                                  </p>
+                                  <p className="text-muted-foreground">
+                                    {RUBRIC_CATEGORY_DETAILS[category]}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      {RUBRIC_CATEGORIES.map((category) => {
+                        const isSelected = rubricCategories.includes(category);
+
+                        return (
+                          <button
+                            key={category}
+                            type="button"
+                            className={`rounded-lg px-4 py-3 text-left font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
+                              isSelected
+                                ? "border-2 border-blue-400 bg-blue-600 text-white shadow-lg"
+                                : "border-2 border-transparent bg-gray-500 text-white hover:bg-gray-600"
+                            }`}
+                            onClick={() => toggleRubricCategory(category)}
+                            aria-pressed={isSelected}
+                          >
+                            {category}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                   <label className="mb-2 mt-4 text-gray-700">

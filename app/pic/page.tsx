@@ -137,7 +137,7 @@ export default function ProtectedPage() {
                     }`}
                     onClick={toggleFilterTwoPlus}
                   >
-                    {filterTwoPlus ? "Show All" : "2+ Yes Invites"}
+                    {filterTwoPlus ? "Show All" : "2+ Good Interactions"}
                   </button>
                   <button
                     className="rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"

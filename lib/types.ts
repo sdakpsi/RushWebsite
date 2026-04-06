@@ -38,6 +38,14 @@ export type ProspectInterview = {
   photo_url?: string;
 };
 
+export const RUBRIC_CATEGORIES = [
+  "Values Community",
+  "Growth Potential",
+  "Vulnerability / Introspection",
+] as const;
+
+export type RubricCategory = (typeof RUBRIC_CATEGORIES)[number];
+
 export interface ApplicationFormState {
   applicationId: string;
   firstName: string;
@@ -150,6 +158,7 @@ export interface Comment {
   comment: string | null;
   interaction: string | null;
   invite: string | null;
+  rubric_categories?: RubricCategory[] | null;
   prospect_photo_url?: string | null;
 }
 

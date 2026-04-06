@@ -410,7 +410,7 @@ export async function getProspectComments(userId: string) {
 
   const { data, error } = await supabase
     .from("comments")
-    .select("active_name, comment, interaction, invite")
+    .select("active_name, comment, interaction, rubric_categories")
     .eq("prospect_id", userId);
 
   if (error) {

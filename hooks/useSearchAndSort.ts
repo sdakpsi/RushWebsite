@@ -14,18 +14,24 @@ export function useSearchAndSort(usersData: Packet[], commentsData: Comment[] = 
     setFilterTwoPlus((prev) => !prev);
   };
 
-  // Create a map of prospect_id -> count of "Yes" invites
-  const yesInviteCounts = useMemo(() => {
-    const counts = new Map<string, number>();
+  // Create a map of prospect_id -> count of "Good" interactions
+  const goodInteractionCounts = useMemo(() => {
+    const counts = new Map<string, Set<string>>();
 
     commentsData.forEach((comment) => {
-      if (comment.invite === 'Yes') {
-        const currentCount = counts.get(comment.prospect_id) || 0;
-        counts.set(comment.prospect_id, currentCount + 1);
+      if (comment.interaction === 'Good') {
+        const currentProspectSet = counts.get(comment.prospect_id) || new Set<string>();
+        currentProspectSet.add(comment.active_id);
+        counts.set(comment.prospect_id, currentProspectSet);
       }
     });
 
-    return counts;
+    return new Map(
+      Array.from(counts.entries()).map(([prospectId, activeIds]) => [
+        prospectId,
+        activeIds.size,
+      ])
+    );
   }, [commentsData]);
 
   const filteredUsersData = useMemo(() => {
@@ -33,11 +39,11 @@ export function useSearchAndSort(usersData: Packet[], commentsData: Comment[] = 
       applicant.full_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Apply 2+ yes invites filter
+    // Apply 2+ good interactions filter
     if (filterTwoPlus) {
       filtered = filtered.filter((applicant) => {
-        const yesCount = yesInviteCounts.get(applicant.id) || 0;
-        return yesCount >= 2;
+        const goodCount = goodInteractionCounts.get(applicant.id) || 0;
+        return goodCount >= 2;
       });
     }
 
@@ -48,7 +54,7 @@ export function useSearchAndSort(usersData: Packet[], commentsData: Comment[] = 
     }
 
     return filtered;
-  }, [usersData, searchQuery, sortType, filterTwoPlus, yesInviteCounts]);
+  }, [usersData, searchQuery, sortType, filterTwoPlus, goodInteractionCounts]);
 
   return {
     searchQuery,
@@ -58,6 +64,6 @@ export function useSearchAndSort(usersData: Packet[], commentsData: Comment[] = 
     filteredUsersData,
     filterTwoPlus,
     toggleFilterTwoPlus,
-    yesInviteCounts
+    goodInteractionCounts
   };
 }

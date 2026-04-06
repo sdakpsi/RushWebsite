@@ -10,6 +10,13 @@ import { getUsersForComments } from "@/app/supabase/clientQueries";
 import { createClient } from "@/utils/supabase/client";
 import customToast from "@/components/CustomToast";
 import { redirect } from "next/navigation";
+import { RUBRIC_CATEGORIES, type RubricCategory } from "@/lib/types";
+
+const RUBRIC_CATEGORY_STYLES: Record<RubricCategory, string> = {
+  "Values Community": "border-emerald-200 bg-emerald-50 text-emerald-900",
+  "Growth Potential": "border-amber-200 bg-amber-50 text-amber-900",
+  "Vulnerability / Introspection": "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
+};
 
 export default function ProtectedPage() {
   const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
@@ -81,7 +88,7 @@ export default function ProtectedPage() {
 
   // Simple string similarity calculation (Levenshtein distance based)
   const calculateSimilarity = (str1: string, str2: string): number => {
-    const matrix = [];
+    const matrix: number[][] = [];
     const len1 = str1.length;
     const len2 = str2.length;
 
@@ -93,26 +100,26 @@ export default function ProtectedPage() {
       matrix[i] = [i];
     }
     for (let j = 0; j <= len1; j++) {
-      matrix[0][j] = j;
+      matrix[0]![j] = j;
     }
 
     // Fill matrix
     for (let i = 1; i <= len2; i++) {
       for (let j = 1; j <= len1; j++) {
         if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
+          matrix[i]![j] = matrix[i - 1]![j - 1]!;
         } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1,
-            matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+          matrix[i]![j] = Math.min(
+            matrix[i - 1]![j - 1]! + 1,
+            matrix[i]![j - 1]! + 1,
+            matrix[i - 1]![j]! + 1
           );
         }
       }
     }
 
     const maxLen = Math.max(len1, len2);
-    return (maxLen - matrix[len2][len1]) / maxLen;
+    return (maxLen - matrix[len2]![len1]!) / maxLen;
   };
   
   // Use useCallback to prevent the function from being recreated on every render
@@ -188,9 +195,9 @@ export default function ProtectedPage() {
 
   // Separate into categories
   const sections = {
-    twoPlusYes: [] as string[],
-    oneYes: [] as string[],
-    zeroYes: [] as string[],
+    twoPlusGood: [] as string[],
+    oneGood: [] as string[],
+    zeroGood: [] as string[],
     notLinked: [] as string[],
   };
 
@@ -200,20 +207,20 @@ export default function ProtectedPage() {
       return;
     }
 
-    // Count unique active members who said "Yes" (only one comment per active)
-    const uniqueYesActives = new Set(
+    // Count unique active members who had a "Good" interaction
+    const uniqueGoodActives = new Set(
       comments
-        .filter((c: any) => c.invite === "Yes")
+        .filter((c: any) => c.interaction === "Good")
         .map((c: any) => c.active_id)
     );
-    const yesCount = uniqueYesActives.size;
+    const goodCount = uniqueGoodActives.size;
 
-    if (yesCount >= 2) {
-      sections.twoPlusYes.push(prospectId);
-    } else if (yesCount === 1) {
-      sections.oneYes.push(prospectId);
+    if (goodCount >= 2) {
+      sections.twoPlusGood.push(prospectId);
+    } else if (goodCount === 1) {
+      sections.oneGood.push(prospectId);
     } else {
-      sections.zeroYes.push(prospectId);
+      sections.zeroGood.push(prospectId);
     }
   });
 
@@ -266,20 +273,19 @@ export default function ProtectedPage() {
             "Unknown Prospect";
           const prospectPhotoUrl = prospectComments[prospectComments.length - 1].prospect_photo_url;
 
-          // Count unique active members for Yes/No invites (one comment per active)
-          const uniqueYesActives = new Set(
+          const uniqueGoodActives = new Set(
             prospectComments
-              .filter((c: any) => c.invite === "Yes")
+              .filter((c: any) => c.interaction === "Good")
               .map((c: any) => c.active_id)
           );
-          const uniqueNoActives = new Set(
-            prospectComments
-              .filter((c: any) => c.invite === "No")
-              .map((c: any) => c.active_id)
-          );
-          const yesInviteCount = uniqueYesActives.size;
-          const noInviteCount = uniqueNoActives.size;
+          const goodInteractionCount = uniqueGoodActives.size;
           const numberOfComments = prospectComments.length;
+          const rubricCounts = RUBRIC_CATEGORIES.reduce((counts, category) => {
+            counts[category] = prospectComments.filter((comment: any) =>
+              comment.rubric_categories?.includes(category)
+            ).length;
+            return counts;
+          }, {} as Record<RubricCategory, number>);
           
           // Create a truly unique key for this specific card instance
           const uniqueKey = `${title}-${prospectId}-${index}-${prospectComments[0]?.id || 'unknown'}`;
@@ -321,17 +327,27 @@ export default function ProtectedPage() {
                   </span>
                 </div>
                 <div className="flex shrink-0 items-center gap-4">
-                  <span className="whitespace-nowrap text-sm text-muted-foreground">
-                    <span className="font-semibold text-green-600">
-                      {yesInviteCount} Yes
-                    </span>{" "}
-                    |{" "}
-                    <span className="font-semibold text-red-600">
-                      {noInviteCount} No
-                    </span>{" "}
-                    | {numberOfComments}{" "}
-                    {numberOfComments > 1 ? "Comments" : "Comment"}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="whitespace-nowrap text-sm text-muted-foreground">
+                      <span className="font-semibold text-green-600">
+                        {goodInteractionCount} Good
+                      </span>{" "}
+                      | {numberOfComments}{" "}
+                      {numberOfComments > 1 ? "Comments" : "Comment"}
+                    </span>
+                    <div className="flex flex-wrap justify-end gap-2">
+                      {RUBRIC_CATEGORIES.map((category) => (
+                        <span
+                          key={category}
+                          className={`rounded-full border px-2 py-1 text-xs font-medium ${
+                            RUBRIC_CATEGORY_STYLES[category]
+                          }`}
+                        >
+                          {category}: {rubricCounts[category]}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                   {isUnlinkedSection && (
                     <button
                       onClick={(e) => {
@@ -365,9 +381,26 @@ export default function ProtectedPage() {
                         </p>
                         <p>
                           <strong>{comment.interaction || "No data"}</strong>{" "}
-                          interaction |{" "}
-                          <strong>{comment.invite || "No data"}</strong> invite
+                          interaction
                         </p>
+                        <div className="flex flex-wrap gap-2 py-1">
+                          {comment.rubric_categories?.length ? (
+                            comment.rubric_categories.map((category: RubricCategory) => (
+                              <span
+                                key={`${comment.id}-${category}`}
+                                className={`rounded-full border px-2 py-1 text-xs font-medium ${
+                                  RUBRIC_CATEGORY_STYLES[category]
+                                }`}
+                              >
+                                {category}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="rounded-full border border-border bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                              Untagged
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm italic">
                           "{comment.comment || "No comment"}"
                         </p>
@@ -493,11 +526,11 @@ export default function ProtectedPage() {
 
               <div className="space-y-10">
                 {renderSection(
-                  "Prospects with 2+ Yes Invites",
-                  sections.twoPlusYes
+                  "Prospects with 2+ Good Interactions",
+                  sections.twoPlusGood
                 )}
-                {renderSection("Prospects with 1 Yes Invite", sections.oneYes)}
-                {renderSection("Prospects with 0 Yes Invites", sections.zeroYes)}
+                {renderSection("Prospects with 1 Good Interaction", sections.oneGood)}
+                {renderSection("Prospects with 0 Good Interactions", sections.zeroGood)}
                 {renderSection("Unlinked Comment Forms", sections.notLinked)}
               </div>
             </div>
