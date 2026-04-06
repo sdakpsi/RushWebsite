@@ -1,43 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import React from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { User } from '@supabase/supabase-js';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-
-const handleSignInWithGoogle = async () => {
-  const supabase = createClient();
-  try {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      },
-    });
-    if (error) throw error;
-  } catch (error: unknown) {
-    // Type error as unknown
-    // Now we need to narrow down the type of 'error' before we can access its properties
-    if (error instanceof Error) {
-      console.error('Error signing in with Google:', error.message);
-    } else {
-      console.error('An unexpected error occurred:', error);
-    }
-  }
-};
+import { createClient } from '@/utils/supabase/client';
+import GoogleIdentityButton from '@/components/GoogleIdentityButton';
 
 const AuthButton: React.FC = () => {
   const { user, photoUrl, hasPhoto, isActive, isPIC, isLoading } = useCurrentUser();
   const queryClient = useQueryClient();
-  const router = useRouter();
   
   const signOut = async () => {
     try {
@@ -108,12 +80,14 @@ const AuthButton: React.FC = () => {
       </button>
     </div>
   ) : (
-    <button onClick={handleSignInWithGoogle} className="flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-2.5 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation active:scale-95 sm:w-auto">
-      <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
-      </svg>
-      Login
-    </button>
+    <GoogleIdentityButton>
+      <button className="flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-2.5 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation active:scale-95 sm:w-auto">
+        <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4m-5-4l5-5-5-5m5 5H3" />
+        </svg>
+        Login
+      </button>
+    </GoogleIdentityButton>
   );
 };
 
