@@ -23,6 +23,7 @@ interface Application {
   gpa: number;
   classes: string;
   extracirriculars: string;
+  previous_rush_terms: string;
   accomplishment: string;
   why_akpsi: string;
   goals: string;
@@ -830,6 +831,12 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         Extracurriculars
                       </div>
                       <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.extracirriculars}</div>
+                    </div>
+                    <div className="rounded-lg border border-border bg-muted/50 p-4">
+                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
+                        Previous AKPsi Rush
+                      </div>
+                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.previous_rush_terms}</div>
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">

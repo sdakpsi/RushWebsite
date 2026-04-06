@@ -1,38 +1,55 @@
 "use client";
 
-import React, {
-  useState,
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
-import { useQuery } from '@tanstack/react-query';
-import { debounce } from "lodash";
-import FileDropzone from "./Dropzone";
+import { getApplicationData } from "@/app/supabase/clientQueries";
 import {
   ApplicationFileTypes,
-  ApplicationFormState,
   StudentYears,
   UCSDColleges,
   UCSDQuarters,
+  type ApplicationFormState,
 } from "@/lib/types";
-import { formatTimestamp, extractFileName } from "@/utils/format";
-import { getApplicationData } from '@/app/supabase/clientQueries';
-import customToast from "./CustomToast";
-import { delay } from "@/utils/delay";
-import { smallInput, selectWithDropdownIcon, textLabel, largeInput } from "./NameForm.styles";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import LoadingSpinner from "./LoadingSpinner";
 import { RUSH_CHAIR_INFO } from "@/utils/constants";
+import { delay } from "@/utils/delay";
+import { extractFileName, formatTimestamp } from "@/utils/format";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQuery } from "@tanstack/react-query";
+import { debounce } from "lodash";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
+import customToast from "./CustomToast";
+import FileDropzone from "./Dropzone";
+import LoadingSpinner from "./LoadingSpinner";
+import {
+  largeInput,
+  selectWithDropdownIcon,
+  smallInput,
+  textLabel,
+} from "./NameForm.styles";
+
+const ESSAY_WORD_LIMIT = 350;
+
+function countWords(value: string) {
+  const trimmedValue = value.trim();
+  return trimmedValue ? trimmedValue.split(/\s+/).length : 0;
+}
+
 export default function NameForm() {
   const [submitting, setSubmitting] = useState(false);
-  
+
   // React Query for fetching application data
-  const { data: applicationData, isLoading: loading, error } = useQuery({
-    queryKey: ['applicationData'],
+  const {
+    data: applicationData,
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["applicationData"],
     queryFn: getApplicationData,
     staleTime: 2 * 60 * 1000, // 2 minutes
     refetchOnWindowFocus: false,
@@ -93,6 +110,7 @@ export default function NameForm() {
       setCumulativeGPA(data.gpa || "");
       setCurrentClasses(data.classes);
       setExtracurricularActivities(data.extracirriculars);
+      setPreviousRushTerms(data.previous_rush_terms || "");
       setProudAccomplishment(data.accomplishment);
       setJoinReason(data.why_akpsi);
       setLifeGoals(data.goals);
@@ -134,6 +152,7 @@ export default function NameForm() {
   const [currentClasses, setCurrentClasses] = useState<string>("");
   const [extracurricularActivities, setExtracurricularActivities] =
     useState<string>("");
+  const [previousRushTerms, setPreviousRushTerms] = useState<string>("");
   const [proudAccomplishment, setProudAccomplishment] = useState<string>("");
   const [joinReason, setJoinReason] = useState<string>("");
   const [lifeGoals, setLifeGoals] = useState<string>("");
@@ -149,6 +168,44 @@ export default function NameForm() {
   const [tiktok, setTiktok] = useState<string>("");
   const [college, setCollege] = useState<string>("");
 
+  const essayFields = [
+    { name: "Proud Accomplishment", value: proudAccomplishment },
+    { name: "Join Reason", value: joinReason },
+    { name: "Life Goals", value: lifeGoals },
+    { name: "Comfort Zone", value: comfortZone },
+    { name: "Business Type", value: businessType },
+    { name: "Additional Details", value: additionalDetails },
+  ];
+
+  const overLimitEssayFields = essayFields.filter(
+    (field) => countWords(field.value) > ESSAY_WORD_LIMIT
+  );
+
+  const getEssayTextareaClassName = (value: string) =>
+    `${largeInput} ${
+      countWords(value) > ESSAY_WORD_LIMIT
+        ? "border-destructive focus:border-destructive focus:ring-destructive/20"
+        : ""
+    }`;
+
+  const renderEssayWordCount = (value: string) => {
+    const wordCount = countWords(value);
+    const isOverLimit = wordCount > ESSAY_WORD_LIMIT;
+
+    return (
+      <p
+        className={`mt-2 text-sm ${
+          isOverLimit ? "text-destructive" : "text-muted-foreground"
+        }`}
+      >
+        {wordCount}/{ESSAY_WORD_LIMIT} words
+        {isOverLimit
+          ? " - please shorten this response before submitting."
+          : ""}
+      </p>
+    );
+  };
+
   const formStateRef = useRef<ApplicationFormState>({
     applicationId,
     firstName,
@@ -163,6 +220,7 @@ export default function NameForm() {
     cumulativeGPA,
     currentClasses,
     extracurricularActivities,
+    previousRushTerms,
     proudAccomplishment,
     joinReason,
     lifeGoals,
@@ -193,6 +251,7 @@ export default function NameForm() {
       cumulativeGPA,
       currentClasses,
       extracurricularActivities,
+      previousRushTerms,
       proudAccomplishment,
       joinReason,
       lifeGoals,
@@ -221,6 +280,7 @@ export default function NameForm() {
     cumulativeGPA,
     currentClasses,
     extracurricularActivities,
+    previousRushTerms,
     proudAccomplishment,
     joinReason,
     lifeGoals,
@@ -238,7 +298,13 @@ export default function NameForm() {
 
   useEffect(() => {
     debouncedSave();
-  }, [resumeFileUrl, coverLetterFileUrl, graduationYear, cumulativeGPA, debouncedSave]);
+  }, [
+    resumeFileUrl,
+    coverLetterFileUrl,
+    graduationYear,
+    cumulativeGPA,
+    debouncedSave,
+  ]);
 
   // Cleanup debounced function on unmount
   useEffect(() => {
@@ -297,6 +363,15 @@ export default function NameForm() {
       customToast("Cumulative GPA is invalid.", "error");
       return;
     }
+    if (overLimitEssayFields.length > 0) {
+      customToast(
+        `These essay responses exceed ${ESSAY_WORD_LIMIT} words: ${overLimitEssayFields
+          .map((field) => field.name)
+          .join(", ")}`,
+        "error"
+      );
+      return;
+    }
 
     const fields = [
       { name: "First Name", value: firstName },
@@ -310,6 +385,7 @@ export default function NameForm() {
       { name: "Cumulative GPA", value: cumulativeGPA },
       { name: "Current Classes", value: currentClasses },
       { name: "Extracurricular Activities", value: extracurricularActivities },
+      { name: "Previous AKPsi Rush Participation", value: previousRushTerms },
       { name: "Proud Accomplishment", value: proudAccomplishment },
       { name: "Join Reason", value: joinReason },
       { name: "Life Goals", value: lifeGoals },
@@ -353,9 +429,15 @@ export default function NameForm() {
           try {
             const errorData = await response.json();
             errorMessage = errorData.error || errorData.message || errorMessage;
-            console.error("Application submission failed:", { status: response.status, error: errorData });
+            console.error("Application submission failed:", {
+              status: response.status,
+              error: errorData,
+            });
           } catch (e) {
-            console.error("Application submission failed with status:", response.status);
+            console.error(
+              "Application submission failed with status:",
+              response.status
+            );
           }
           throw new Error(errorMessage);
         }
@@ -370,7 +452,10 @@ export default function NameForm() {
         );
       } catch (error) {
         console.error("Error submitting application:", error);
-        const errorMessage = error instanceof Error ? error.message : "An error occurred while submitting the application";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "An error occurred while submitting the application";
         customToast(errorMessage, "error");
       } finally {
         setSubmitting(false);
@@ -388,7 +473,7 @@ export default function NameForm() {
 
   if (submitting) {
     return (
-      <div className="text-center space-y-4 py-12">
+      <div className="space-y-4 py-12 text-center">
         <LoadingSpinner size="large" fullScreen={false} type="form" />
         <div className="text-lg font-semibold text-muted-foreground">
           Submitting application...
@@ -405,14 +490,21 @@ export default function NameForm() {
       <div className="submit-status px-4 text-green-600 sm:px-0">
         {lastSubmitted && `Last submitted at: ${lastSubmitted}`}
       </div>
-      <form onSubmit={handleSubmit} className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      >
         <div className="space-y-12">
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-foreground">Personal Information</h2>
-              <p className="text-muted-foreground">Please provide your basic personal details.</p>
+              <h2 className="text-2xl font-bold text-foreground">
+                Personal Information
+              </h2>
+              <p className="text-muted-foreground">
+                Please provide your basic personal details.
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               <div className="mb-6">
                 <label className={textLabel} htmlFor="firstName">
                   First Name:
@@ -428,388 +520,436 @@ export default function NameForm() {
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="lastName">
-              Last Name:
+                  Last Name:
                 </label>
                 <input
-              className={smallInput}
-              id="lastName"
-              type="text"
-              value={lastName}
-              onChange={handleChange(setLastName)}
-              placeholder="Enter your last name"
+                  className={smallInput}
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={handleChange(setLastName)}
+                  placeholder="Enter your last name"
                 />
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="pronouns">
-              Pronouns:
+                  Pronouns:
                 </label>
                 <input
-              className={smallInput}
-              id="pronouns"
-              type="text"
-              value={pronouns}
-              onChange={handleChange(setPronouns)}
-              placeholder="Enter your preferred pronouns"
+                  className={smallInput}
+                  id="pronouns"
+                  type="text"
+                  value={pronouns}
+                  onChange={handleChange(setPronouns)}
+                  placeholder="Enter your preferred pronouns"
                 />
               </div>
 
               <div className="mb-6">
                 <label className={textLabel} htmlFor="phoneNumber">
-              Phone Number:
+                  Phone Number:
                 </label>
                 <input
-              className={smallInput}
-              id="phoneNumber"
-              type="tel"
-              value={phoneNumber}
-              onChange={handleChange(setPhoneNumber)}
-              placeholder="Enter your phone number"
+                  className={smallInput}
+                  id="phoneNumber"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={handleChange(setPhoneNumber)}
+                  placeholder="Enter your phone number"
                 />
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="yearInCollege">
-              Year in College:
+                  Year in College:
                 </label>
                 <div className="relative">
-                <select
-              className={selectWithDropdownIcon}
-              id="yearInCollege"
-              value={yearInCollege}
-              onChange={handleChange(setYearInCollege)}
-            >
-              <option value="">Select Year</option>
-              {Object.values(StudentYears).map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-                </select>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
-                  <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
-                </span>
+                  <select
+                    className={selectWithDropdownIcon}
+                    id="yearInCollege"
+                    value={yearInCollege}
+                    onChange={handleChange(setYearInCollege)}
+                  >
+                    <option value="">Select Year</option>
+                    {Object.values(StudentYears).map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                  <span
+                    className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                    aria-hidden
+                  >
+                    <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
+                  </span>
                 </div>
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="college">
-              College:
+                  College:
                 </label>
                 <div className="relative">
-                <select
-              className={selectWithDropdownIcon}
-              id="college"
-              value={college}
-              onChange={handleChange(setCollege)}
-            >
-              <option value="">Select College</option>
-              {Object.values(UCSDColleges).map((college) => (
-                <option key={college} value={college}>
-                  {college}
-                </option>
-              ))}
-                </select>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
-                  <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
-                </span>
+                  <select
+                    className={selectWithDropdownIcon}
+                    id="college"
+                    value={college}
+                    onChange={handleChange(setCollege)}
+                  >
+                    <option value="">Select College</option>
+                    {Object.values(UCSDColleges).map((college) => (
+                      <option key={college} value={college}>
+                        {college}
+                      </option>
+                    ))}
+                  </select>
+                  <span
+                    className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                    aria-hidden
+                  >
+                    <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
+                  </span>
                 </div>
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="graduationYear">
-              Graduation Year:
+                  Graduation Year:
                 </label>
                 <input
-              className={`${smallInput} ${
-                !isGraduationYearValid ? "border-red-500" : ""
-              }`}
-              id="graduationYear"
-              type="number"
-              value={graduationYear?.toString() || ""}
-              onChange={handleGraduationYearChange}
-              placeholder="Enter graduation year"
-            />
-            {!isGraduationYearValid && (
-              <p className="text-xs italic text-red-500">
-                Please enter a valid grad year
-              </p>
-            )}
-          </div>
+                  className={`${smallInput} ${
+                    !isGraduationYearValid ? "border-red-500" : ""
+                  }`}
+                  id="graduationYear"
+                  type="number"
+                  value={graduationYear?.toString() || ""}
+                  onChange={handleGraduationYearChange}
+                  placeholder="Enter graduation year"
+                />
+                {!isGraduationYearValid && (
+                  <p className="text-xs italic text-red-500">
+                    Please enter a valid grad year
+                  </p>
+                )}
+              </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="graduationQuarter">
-              Graduation Quarter:
+                  Graduation Quarter:
                 </label>
                 <div className="relative">
-                <select
-              className={selectWithDropdownIcon}
-              id="graduationQuarter"
-              value={graduationQuarter}
-              onChange={handleChange(setGraduationQuarter)}
-            >
-              {" "}
-              <option value="">Select Quarter</option>
-              {Object.values(UCSDQuarters).map((quarter) => (
-                <option key={quarter} value={quarter}>
-                  {quarter}
-                </option>
-              ))}
-                </select>
-                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" aria-hidden>
-                  <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
-                </span>
+                  <select
+                    className={selectWithDropdownIcon}
+                    id="graduationQuarter"
+                    value={graduationQuarter}
+                    onChange={handleChange(setGraduationQuarter)}
+                  >
+                    {" "}
+                    <option value="">Select Quarter</option>
+                    {Object.values(UCSDQuarters).map((quarter) => (
+                      <option key={quarter} value={quarter}>
+                        {quarter}
+                      </option>
+                    ))}
+                  </select>
+                  <span
+                    className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                    aria-hidden
+                  >
+                    <FontAwesomeIcon icon={faChevronDown} className="h-4 w-4" />
+                  </span>
                 </div>
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="major">
-              Major:
+                  Major:
                 </label>
                 <input
-              className={smallInput}
-              id="major"
-              type="text"
-              value={major}
-              onChange={handleChange(setMajor)}
-              placeholder="Enter your major"
+                  className={smallInput}
+                  id="major"
+                  type="text"
+                  value={major}
+                  onChange={handleChange(setMajor)}
+                  placeholder="Enter your major"
                 />
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="minor">
-              Minor (optional):
+                  Minor (optional):
                 </label>
                 <input
-              className={smallInput}
-              id="minor"
-              type="text"
-              value={minor}
-              onChange={handleChange(setMinor)}
-              placeholder="Enter your minor"
+                  className={smallInput}
+                  id="minor"
+                  type="text"
+                  value={minor}
+                  onChange={handleChange(setMinor)}
+                  placeholder="Enter your minor"
                 />
               </div>
               <div className="mb-6">
                 <label className={textLabel} htmlFor="cumulativeGPA">
-              Cumulative GPA (/4.0):
+                  Cumulative GPA (/4.0):
                 </label>
                 <input
-              className={`${smallInput} ${
-                !isCumulativeGPAValid ? "border-red-500" : ""
-              }`}
-              id="graduationYear"
-              type="number"
-              value={cumulativeGPA?.toString() || ""}
-              onChange={handleCumulativeGPAChange}
-              step="0.01"
-              placeholder="Enter GPA"
-            />
-            {!isCumulativeGPAValid && (
-              <p className="text-xs italic text-red-500">
-                Please enter a valid GPA
-              </p>
-            )}
-            <div className="mt-2 text-xs italic">
-              (High School GPA for Freshmen or Previous College GPA for
-              Transfers)
-            </div>
-          </div>
+                  className={`${smallInput} ${
+                    !isCumulativeGPAValid ? "border-red-500" : ""
+                  }`}
+                  id="graduationYear"
+                  type="number"
+                  value={cumulativeGPA?.toString() || ""}
+                  onChange={handleCumulativeGPAChange}
+                  step="0.01"
+                  placeholder="Enter GPA"
+                />
+                {!isCumulativeGPAValid && (
+                  <p className="text-xs italic text-red-500">
+                    Please enter a valid GPA
+                  </p>
+                )}
+                <div className="mt-2 text-xs italic">
+                  (High School GPA for Freshmen or Previous College GPA for
+                  Transfers)
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Social Media & Academic Information Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-foreground">Social Media & Academic Information</h2>
-              <p className="text-muted-foreground">Share your social media and academic details.</p>
+              <h2 className="text-2xl font-bold text-foreground">
+                Social Media & Academic Information
+              </h2>
+              <p className="text-muted-foreground">
+                Share your social media and academic details.
+              </p>
             </div>
 
             <div className="mb-8">
-            <div className="mb-6">
-              <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
-              <div className="mb-6 text-lg text-muted-foreground">
-                Your social medias! Please use links if possible :)
+              <div className="mb-6">
+                <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
+                <div className="mb-6 text-lg text-muted-foreground">
+                  Your social medias! Please use links if possible :)
+                </div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <label className={textLabel} htmlFor="facebook">
+                      Facebook:
+                    </label>
+                    <input
+                      className={smallInput}
+                      id="facebook"
+                      type="text"
+                      value={facebook}
+                      onChange={handleChange(setFacebook)}
+                      placeholder="Facebook profile or link"
+                    />
+                  </div>
+                  <div>
+                    <label className={textLabel} htmlFor="instagram">
+                      Instagram:
+                    </label>
+                    <input
+                      className={smallInput}
+                      id="instagram"
+                      type="text"
+                      value={instagram}
+                      onChange={handleChange(setInstagram)}
+                      placeholder="Instagram handle or link"
+                    />
+                  </div>
+                  <div>
+                    <label className={textLabel} htmlFor="linkedIn">
+                      LinkedIn:
+                    </label>
+                    <input
+                      className={smallInput}
+                      id="linkedIn"
+                      type="text"
+                      value={linkedIn}
+                      onChange={handleChange(setLinkedIn)}
+                      placeholder="LinkedIn profile or link"
+                    />
+                  </div>
+                  <div>
+                    <label className={textLabel} htmlFor="tiktok">
+                      TikTok:
+                    </label>
+                    <input
+                      className={smallInput}
+                      id="tiktok"
+                      type="text"
+                      value={tiktok}
+                      onChange={handleChange(setTiktok)}
+                      placeholder="TikTok handle or link"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
-                  <label className={textLabel} htmlFor="facebook">
-                    Facebook:
-                  </label>
-                  <input
-                    className={smallInput}
-                    id="facebook"
-                    type="text"
-                    value={facebook}
-                    onChange={handleChange(setFacebook)}
-                    placeholder="Facebook profile or link"
-                  />
-                </div>
-                <div>
-                  <label className={textLabel} htmlFor="instagram">
-                    Instagram:
-                  </label>
-                  <input
-                    className={smallInput}
-                    id="instagram"
-                    type="text"
-                    value={instagram}
-                    onChange={handleChange(setInstagram)}
-                    placeholder="Instagram handle or link"
-                  />
-                </div>
-                <div>
-                  <label className={textLabel} htmlFor="linkedIn">
-                    LinkedIn:
-                  </label>
-                  <input
-                    className={smallInput}
-                    id="linkedIn"
-                  type="text"
-                  value={linkedIn}
-                  onChange={handleChange(setLinkedIn)}
-                  placeholder="LinkedIn profile or link"
-                />
-                </div>
-                <div>
-                  <label className={textLabel} htmlFor="tiktok">
-                    TikTok:
-                  </label>
-                  <input
-                    className={smallInput}
-                    id="tiktok"
-                    type="text"
-                    value={tiktok}
-                    onChange={handleChange(setTiktok)}
-                    placeholder="TikTok handle or link"
-                  />
-                </div>
-              </div>
+              <label className={textLabel} htmlFor="currentClasses">
+                What classes are you currently enrolled in for this quarter?
+                Please list all days and times, and include any discussion
+                sections.
+              </label>
+              <textarea
+                className={largeInput}
+                id="currentClasses"
+                value={currentClasses}
+                onChange={handleChange(setCurrentClasses)}
+                placeholder="MGT 3. Lecture: TuTh 9:00 AM - 10:20 AM. Discussion: M 3:00 PM"
+                rows={4}
+              />
             </div>
-            <label className={textLabel} htmlFor="currentClasses">
-              What classes are you currently enrolled in for this quarter?
-              Please list all days and times, and include any discussion
-              sections.
-            </label>
-            <textarea
-              className={largeInput}
-              id="currentClasses"
-              value={currentClasses}
-              onChange={handleChange(setCurrentClasses)}
-              placeholder="Enter your classes"
-              rows={4}
-                />
-              </div>
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="extracurricularActivities">
-              Please list the extracurricular activities you are involved in for
-              this quarter. (Ex: clubs, jobs, sports, etc). and how much time
-              you anticipate each activity will take.
-            </label>
-            <textarea
-              className={largeInput}
-              id="extracurricularActivities"
-              value={extracurricularActivities}
-              onChange={handleChange(setExtracurricularActivities)}
-              placeholder="Enter your activities"
-              rows={4}
-                />
-              </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="extracurricularActivities">
+                Please list the extracurricular activities you are involved in
+                for this quarter. (Ex: clubs, jobs, sports, etc). and how much
+                time you anticipate each activity will take.
+              </label>
+              <textarea
+                className={largeInput}
+                id="extracurricularActivities"
+                value={extracurricularActivities}
+                onChange={handleChange(setExtracurricularActivities)}
+                placeholder="Enter your activities"
+                rows={4}
+              />
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="previousRushTerms">
+                Have you participated in an Alpha Kappa Psi rush week before? If
+                so, please indicate which term or terms. If not, you may write
+                &quot;N/A&quot; in this section.
+              </label>
+              <input
+                className={smallInput}
+                id="previousRushTerms"
+                type="text"
+                value={previousRushTerms}
+                onChange={handleChange(setPreviousRushTerms)}
+                placeholder="Ex. Fall 2025, Spring 2025, or N/A"
+              />
+            </div>
           </div>
 
           {/* Essay Questions Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-foreground">Essay Questions</h2>
-              <p className="text-muted-foreground">Please answer the following questions thoughtfully. Each response should be 500 words maximum.</p>
+              <h2 className="text-2xl font-bold text-foreground">
+                Essay Questions
+              </h2>
+              <p className="text-muted-foreground">
+                Please answer the following questions thoughtfully. Each
+                response should be 350 words maximum.
+              </p>
             </div>
 
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="proudAccomplishment">
-              What accomplishment are you most proud of (personal or
-              professional)? (500 words max)
-            </label>
-            <textarea
-              className={largeInput}
-              id="proudAccomplishment"
-              value={proudAccomplishment}
-              onChange={handleChange(setProudAccomplishment)}
-              placeholder="Enter your accomplishment"
-              rows={4}
-                />
-              </div>
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="joinReason">
-              Why do you want to join Alpha Kappa Psi? What do you seek to gain
-              from this fraternity? What do you expect to be able to add to our
-              community? (500 words max)
-            </label>
-            <textarea
-              className={largeInput}
-              id="joinReason"
-              value={joinReason}
-              onChange={handleChange(setJoinReason)}
-              placeholder="Enter your reasons"
-              rows={4}
-                />
-              </div>
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="lifeGoals">
-              What are your current life goals (personal or professional) and
-              how do you believe Alpha Kappa Psi will help you achieve those
-              goals? (500 words max)
-            </label>
-            <textarea
-              className={largeInput}
-              id="lifeGoals"
-              value={lifeGoals}
-              onChange={handleChange(setLifeGoals)}
-              placeholder="Enter your goals"
-              rows={4}
-                />
-              </div>
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="comfortZone">
-              Tell us about a time you went out of your comfort zone. Why did
-              you decide to take this risk and what did you learn? (500 words
-              max)
-            </label>
-            <textarea
-              className={largeInput}
-              id="comfortZone"
-              value={comfortZone}
-              onChange={handleChange(setComfortZone)}
-              placeholder="Enter your experience"
-              rows={4}
-                />
-              </div>
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="businessType">
-              What type of business would you create if money was not a limiting
-              factor? (500 words max)
-            </label>
-            <textarea
-              className={largeInput}
-              id="businessType"
-              value={businessType}
-              onChange={handleChange(setBusinessType)}
-              placeholder="Enter your business idea"
-              rows={4}
-                />
-              </div>
-          <div className="mb-8">
-            <label className={textLabel} htmlFor="additionalDetails">
-              Add any details about yourself that you were not able to convey
-              with the questions above!
-            </label>
-            <textarea
-              className={largeInput}
-              id="additionalDetails"
-              value={additionalDetails}
-              onChange={handleChange(setAdditionalDetails)}
-              placeholder="Enter additional details"
-              rows={4}
-                />
-              </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="proudAccomplishment">
+                What accomplishment are you most proud of (personal or
+                professional)?
+              </label>
+              <textarea
+                className={getEssayTextareaClassName(proudAccomplishment)}
+                id="proudAccomplishment"
+                value={proudAccomplishment}
+                onChange={handleChange(setProudAccomplishment)}
+                placeholder="Enter your accomplishment"
+                rows={4}
+                aria-invalid={
+                  countWords(proudAccomplishment) > ESSAY_WORD_LIMIT
+                }
+              />
+              {renderEssayWordCount(proudAccomplishment)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="comfortZone">
+                Tell us about a time you went out of your comfort zone. Why did
+                you decide to take this risk and what did you learn?
+              </label>
+              <textarea
+                className={getEssayTextareaClassName(comfortZone)}
+                id="comfortZone"
+                value={comfortZone}
+                onChange={handleChange(setComfortZone)}
+                placeholder="Enter your experience"
+                rows={4}
+                aria-invalid={countWords(comfortZone) > ESSAY_WORD_LIMIT}
+              />
+              {renderEssayWordCount(comfortZone)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="joinReason">
+                What was a valuable community you’ve been a part of and what
+                specifically made it valuable to you?
+              </label>
+              <textarea
+                className={getEssayTextareaClassName(joinReason)}
+                id="joinReason"
+                value={joinReason}
+                onChange={handleChange(setJoinReason)}
+                placeholder="Enter your reasons"
+                rows={4}
+                aria-invalid={countWords(joinReason) > ESSAY_WORD_LIMIT}
+              />
+              {renderEssayWordCount(joinReason)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="lifeGoals">
+                Describe your personal and professional goals for the end of
+                this year and for the next three years. What steps are you
+                currently taking toward these goals, and how would Alpha Kappa
+                Psi help you further achieve them?
+              </label>
+              <textarea
+                className={getEssayTextareaClassName(lifeGoals)}
+                id="lifeGoals"
+                value={lifeGoals}
+                onChange={handleChange(setLifeGoals)}
+                placeholder="Enter your goals"
+                rows={4}
+                aria-invalid={countWords(lifeGoals) > ESSAY_WORD_LIMIT}
+              />
+              {renderEssayWordCount(lifeGoals)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="businessType">
+                What type of business would you create if money was not a
+                limiting factor?
+              </label>
+              <textarea
+                className={getEssayTextareaClassName(businessType)}
+                id="businessType"
+                value={businessType}
+                onChange={handleChange(setBusinessType)}
+                placeholder="Enter your business idea"
+                rows={4}
+                aria-invalid={countWords(businessType) > ESSAY_WORD_LIMIT}
+              />
+              {renderEssayWordCount(businessType)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="additionalDetails">
+                Add any details about yourself that you were not able to convey
+                with the questions above!
+              </label>
+              <textarea
+                className={getEssayTextareaClassName(additionalDetails)}
+                id="additionalDetails"
+                value={additionalDetails}
+                onChange={handleChange(setAdditionalDetails)}
+                placeholder="Enter additional details"
+                rows={4}
+                aria-invalid={countWords(additionalDetails) > ESSAY_WORD_LIMIT}
+              />
+              {renderEssayWordCount(additionalDetails)}
+            </div>
           </div>
 
           {/* File Upload Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
               <h2 className="text-2xl font-bold text-foreground">Documents</h2>
-              <p className="text-muted-foreground">Please upload your resume and cover letter.</p>
+              <p className="text-muted-foreground">
+                Please upload your resume and cover letter.
+              </p>
             </div>
 
             <div className="mb-4">
@@ -817,14 +957,16 @@ export default function NameForm() {
                 href={resumeFileUrl ? resumeFileUrl : "#"}
                 className={`${
                   resumeFileUrl
-                    ? "text-primary hover:opacity-90 underline underline-offset-2"
+                    ? "text-primary underline underline-offset-2 hover:opacity-90"
                     : "text-muted-foreground"
                 } ${!resumeFileUrl && "pointer-events-none"}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Resume:{" "}
-                {resumeFileUrl ? extractFileName(resumeFileUrl) : "Not Uploaded"}
+                {resumeFileUrl
+                  ? extractFileName(resumeFileUrl)
+                  : "Not Uploaded"}
               </a>
             </div>
             <FileDropzone
@@ -836,7 +978,7 @@ export default function NameForm() {
                 href={coverLetterFileUrl ? coverLetterFileUrl : "#"}
                 className={`${
                   coverLetterFileUrl
-                    ? "text-primary hover:opacity-90 underline underline-offset-2"
+                    ? "text-primary underline underline-offset-2 hover:opacity-90"
                     : "text-muted-foreground"
                 } ${!coverLetterFileUrl && "pointer-events-none"}`}
                 target="_blank"
@@ -857,12 +999,16 @@ export default function NameForm() {
           {/* Submit Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
-              <h2 className="text-2xl font-bold text-foreground">Submit Application</h2>
-              <p className="text-muted-foreground">Review your information and submit your application.</p>
+              <h2 className="text-2xl font-bold text-foreground">
+                Submit Application
+              </h2>
+              <p className="text-muted-foreground">
+                Review your information and submit your application.
+              </p>
             </div>
             <div className="flex justify-center">
               <button
-                className="btn-primary text-lg px-12 py-4 rounded-xl font-semibold transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                className="btn-primary transform rounded-xl px-12 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
                 type="submit"
               >
                 Submit Application
@@ -872,7 +1018,8 @@ export default function NameForm() {
         </div>
       </form>
       <p className="mt-4 text-muted-foreground">
-        If you're having any issues or have any questions, please {RUSH_CHAIR_INFO}!
+        If you're having any issues or have any questions, please{" "}
+        {RUSH_CHAIR_INFO}!
       </p>
     </div>
   );

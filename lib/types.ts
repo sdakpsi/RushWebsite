@@ -52,6 +52,7 @@ export interface ApplicationFormState {
   cumulativeGPA: string;
   currentClasses: string;
   extracurricularActivities: string;
+  previousRushTerms: string;
   proudAccomplishment: string;
   joinReason: string;
   lifeGoals: string;
