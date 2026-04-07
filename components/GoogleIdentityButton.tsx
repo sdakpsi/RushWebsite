@@ -110,35 +110,20 @@ export default function GoogleIdentityButton({ children }: GoogleIdentityButtonP
               const exchangeResult = await exchangeResponse.json();
 
               if (!exchangeResponse.ok || !exchangeResult.idToken) {
-                throw new Error(exchangeResult.error ?? "Failed to exchange Google authorization code.");
+                // Surface the server's rejection message directly (e.g. domain restriction).
+                customToast(exchangeResult.error ?? "Google sign-in failed. Please try again.", "error");
+                isSigningInRef.current = false;
+                return;
               }
 
               const supabase = createClient();
-              const { data: signInData, error } = await supabase.auth.signInWithIdToken({
+              const { error } = await supabase.auth.signInWithIdToken({
                 provider: "google",
                 token: exchangeResult.idToken,
               });
 
               if (error) {
                 throw error;
-              }
-
-              const user = signInData.user;
-              const email = user?.email ?? "";
-
-              // Check if this user already has a profile row in the database.
-              // If not, this is a brand-new account — enforce @ucsd.edu.
-              const { data: existingUser } = await supabase
-                .from("users")
-                .select("id")
-                .eq("id", user?.id)
-                .maybeSingle();
-
-              if (!existingUser && !email.endsWith("@ucsd.edu")) {
-                await supabase.auth.signOut();
-                customToast("Only @ucsd.edu email addresses can create an account.", "error");
-                isSigningInRef.current = false;
-                return;
               }
 
               await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
