@@ -121,6 +121,13 @@ export default function Navbar() {
                         >
                           Active Analytics
                         </Link>
+                        <Link
+                          href="/pic/prospect-analytics"
+                          className="block rounded-lg border border-border bg-card px-3 py-3 text-center text-sm font-medium text-foreground shadow-sm transition-all duration-150 hover:bg-accent hover:text-accent-foreground active:scale-95 touch-manipulation"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Prospect Analytics
+                        </Link>
                       </div>
                     </div>
                   </div>

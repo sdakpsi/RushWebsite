@@ -95,6 +95,15 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
                 Active Analytics
               </Link>
             </li>
+            <li>
+              <Link
+                href="/pic/prospect-analytics"
+                className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
+                onClick={closeDropdown}
+              >
+                Prospect Analytics
+              </Link>
+            </li>
           </ul>
         </div>
       )}

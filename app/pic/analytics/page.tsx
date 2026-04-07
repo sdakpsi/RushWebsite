@@ -2,10 +2,9 @@
 
 import React from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAllAnalytics } from "@/hooks/useAllAnalytics";
-import { COMMENT_TRACKING_DATES } from "@/lib/analyticsCommentDates";
+import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
 import { redirect } from "next/navigation";
 
 const StatCard = ({
@@ -41,6 +40,22 @@ const StatCard = ({
   );
 };
 
+function formatLastActivity(lastActivity: string | null) {
+  if (!lastActivity) return "No activity";
+
+  const date = new Date(lastActivity);
+  const now = new Date();
+  const diffInHours = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+  );
+
+  if (diffInHours < 1) return "< 1 hour ago";
+  if (diffInHours < 24) return `${diffInHours} hours ago`;
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays} days ago`;
+}
+
 export default function AnalyticsPage() {
   const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const {
@@ -49,7 +64,8 @@ export default function AnalyticsPage() {
     error,
   } = useAllAnalytics();
 
-  // Single loading state for everything
+  const visibleEvents = getVisibleCommentTrackingEvents();
+
   if (isPICLoading || (isPIC && analyticsLoading)) {
     return (
       <div className="flex w-full items-center justify-center">
@@ -60,25 +76,22 @@ export default function AnalyticsPage() {
     );
   }
 
-  // Not PIC
   if (!isActive) {
-    return redirect('/')
+    return redirect("/");
   }
+
   if (!isPIC) {
     return (
       <div className="flex w-full items-center justify-center">
         <div className="animate-in w-full max-w-7xl opacity-0">
           <div className="mt-8 flex items-center justify-center">
-            <p className="text-sm sm:text-lg">
-              You are not on PIC.
-            </p>
+            <p className="text-sm sm:text-lg">You are not on PIC.</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="flex w-full items-center justify-center">
@@ -86,9 +99,7 @@ export default function AnalyticsPage() {
           <div className="container mx-auto px-4 pb-24 pt-6">
             <div className="flex min-h-[400px] items-center justify-center">
               <div className="text-center">
-                <p className="text-lg text-red-400">
-                  Error loading analytics data
-                </p>
+                <p className="text-lg text-red-400">Error loading analytics data</p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Please try refreshing the page
                 </p>
@@ -115,11 +126,11 @@ export default function AnalyticsPage() {
                 Active Analytics
               </h1>
               <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
-                Track participation and see who&apos;s a bum and who&apos;s goated
+                Track participation and see who&apos;s contributing across each rush
+                event.
               </p>
             </div>
 
-            {/* Summary Cards */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Active Members"
@@ -146,7 +157,6 @@ export default function AnalyticsPage() {
               />
             </div>
 
-            {/* Breakdown Cards */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <StatCard
                 title="Case Studies"
@@ -160,11 +170,17 @@ export default function AnalyticsPage() {
               />
             </div>
 
-            {/* Active Member Participation */}
             <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-bold text-foreground">
-                Active Member Participation
-              </h2>
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">
+                    Active Member Participation
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Event columns appear as each rush stage opens up.
+                  </p>
+                </div>
+              </div>
               {participation.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -176,12 +192,12 @@ export default function AnalyticsPage() {
                         <th className="pb-3 text-center font-medium text-muted-foreground">
                           Comments
                         </th>
-                        {COMMENT_TRACKING_DATES.map((trackedDate) => (
+                        {visibleEvents.map((trackedEvent) => (
                           <th
-                            key={trackedDate.dateKey}
+                            key={trackedEvent.eventKey}
                             className="pb-3 text-center font-medium text-muted-foreground"
                           >
-                            {trackedDate.label}
+                            {trackedEvent.label}
                           </th>
                         ))}
                         <th className="pb-3 text-center font-medium text-muted-foreground">
@@ -199,7 +215,7 @@ export default function AnalyticsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {participation
+                      {[...participation]
                         .sort((a, b) => b.totalEvaluations - a.totalEvaluations)
                         .map((active, index) => (
                           <tr
@@ -219,12 +235,12 @@ export default function AnalyticsPage() {
                             <td className="py-3 text-center text-muted-foreground">
                               {active.commentsCount}
                             </td>
-                            {COMMENT_TRACKING_DATES.map((trackedDate) => (
+                            {visibleEvents.map((trackedEvent) => (
                               <td
-                                key={`${active.activeId}-${trackedDate.dateKey}`}
+                                key={`${active.activeId}-${trackedEvent.eventKey}`}
                                 className="py-3 text-center text-muted-foreground"
                               >
-                                {active.commentCountsByDate?.[trackedDate.dateKey] || 0}
+                                {active.commentCountsByEvent?.[trackedEvent.eventKey] || 0}
                               </td>
                             ))}
                             <td className="py-3 text-center text-muted-foreground">
@@ -241,24 +257,7 @@ export default function AnalyticsPage() {
                               </span>
                             </td>
                             <td className="py-3 text-xs text-muted-foreground">
-                              {active.lastActivity
-                                ? (() => {
-                                    const date = new Date(active.lastActivity);
-                                    const now = new Date();
-                                    const diffInHours = Math.floor(
-                                      (now.getTime() - date.getTime()) /
-                                        (1000 * 60 * 60)
-                                    );
-
-                                    if (diffInHours < 1) return "< 1 hour ago";
-                                    if (diffInHours < 24)
-                                      return `${diffInHours} hours ago`;
-                                    const diffInDays = Math.floor(
-                                      diffInHours / 24
-                                    );
-                                    return `${diffInDays} days ago`;
-                                  })()
-                                : "No activity"}
+                              {formatLastActivity(active.lastActivity)}
                             </td>
                           </tr>
                         ))}
@@ -272,7 +271,6 @@ export default function AnalyticsPage() {
               )}
             </div>
 
-            {/* Prospect Coverage */}
             <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
               <h2 className="mb-4 text-xl font-bold text-foreground">
                 Prospect Evaluation Coverage
@@ -300,11 +298,9 @@ export default function AnalyticsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {coverage
+                      {[...coverage]
                         .sort((a, b) => {
-                          if (
-                            a.needsMoreEvaluations !== b.needsMoreEvaluations
-                          ) {
+                          if (a.needsMoreEvaluations !== b.needsMoreEvaluations) {
                             return a.needsMoreEvaluations ? -1 : 1;
                           }
                           return a.totalEvaluations - b.totalEvaluations;
@@ -338,9 +334,7 @@ export default function AnalyticsPage() {
                               <span
                                 className={`rounded px-2 py-1 text-xs ${prospect.needsMoreEvaluations ? "bg-rose-100 font-medium text-rose-800" : "bg-emerald-100 font-medium text-emerald-800"}`}
                               >
-                                {prospect.needsMoreEvaluations
-                                  ? "Needs More"
-                                  : "Complete"}
+                                {prospect.needsMoreEvaluations ? "Needs More" : "Complete"}
                               </span>
                             </td>
                           </tr>
@@ -353,7 +347,6 @@ export default function AnalyticsPage() {
               )}
             </div>
 
-            {/* Timeline Summary */}
             {timeline.length > 0 && (
               <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-bold text-foreground">
@@ -373,9 +366,7 @@ export default function AnalyticsPage() {
                         {day.totalEvaluations}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {day.commentsCount +
-                          day.caseStudiesCount +
-                          day.interviewsCount >
+                        {day.commentsCount + day.caseStudiesCount + day.interviewsCount >
                           0 && (
                           <div>
                             {day.commentsCount > 0 && (

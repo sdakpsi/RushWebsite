@@ -1,43 +1,70 @@
-export interface CommentTrackingDate {
-  dateKey: string;
+export interface CommentTrackingEvent {
+  eventKey: string;
   label: string;
-  rangeStart: string;
-  rangeEnd: string;
+  rangeStart: string | null;
+  rangeEnd: string | null;
 }
 
-export const COMMENT_TRACKING_DATES: CommentTrackingDate[] = [
+export const COMMENT_TRACKING_EVENTS: CommentTrackingEvent[] = [
   {
-    dateKey: "2026-04-06",
-    label: "Mon 4/6",
-    rangeStart: "2026-04-06T00:00:00-07:00",
-    rangeEnd: "2026-04-07T00:00:00-07:00",
+    eventKey: "info",
+    label: "Info",
+    rangeStart: null,
+    rangeEnd: "2026-04-07T18:00:00-07:00",
   },
   {
-    dateKey: "2026-04-07",
-    label: "Tue 4/7",
-    rangeStart: "2026-04-07T00:00:00-07:00",
-    rangeEnd: "2026-04-08T00:00:00-07:00",
+    eventKey: "resume",
+    label: "Resume",
+    rangeStart: "2026-04-07T18:00:00-07:00",
+    rangeEnd: "2026-04-08T17:00:00-07:00",
   },
   {
-    dateKey: "2026-04-08",
-    label: "Wed 4/8",
-    rangeStart: "2026-04-08T00:00:00-07:00",
-    rangeEnd: "2026-04-09T00:00:00-07:00",
+    eventKey: "case",
+    label: "Case",
+    rangeStart: "2026-04-08T17:00:00-07:00",
+    rangeEnd: "2026-04-10T17:00:00-07:00",
   },
   {
-    dateKey: "2026-04-09",
-    label: "Thu 4/9",
-    rangeStart: "2026-04-09T00:00:00-07:00",
-    rangeEnd: "2026-04-10T00:00:00-07:00",
+    eventKey: "social",
+    label: "Social",
+    rangeStart: "2026-04-10T17:00:00-07:00",
+    rangeEnd: "2026-04-11T09:00:00-07:00",
+  },
+  {
+    eventKey: "interview",
+    label: "Interview",
+    rangeStart: "2026-04-11T09:00:00-07:00",
+    rangeEnd: null,
   },
 ];
 
-export function createEmptyCommentCountsByDate(): Record<string, number> {
-  return COMMENT_TRACKING_DATES.reduce<Record<string, number>>(
-    (counts, { dateKey }) => {
-      counts[dateKey] = 0;
+export function createEmptyCommentCountsByEvent(): Record<string, number> {
+  return COMMENT_TRACKING_EVENTS.reduce<Record<string, number>>(
+    (counts, { eventKey }) => {
+      counts[eventKey] = 0;
       return counts;
     },
     {}
   );
+}
+
+export function getCommentTrackingEventForTimestamp(
+  value: string | Date
+): CommentTrackingEvent | undefined {
+  const timestamp = new Date(value).getTime();
+
+  return COMMENT_TRACKING_EVENTS.find(({ rangeStart, rangeEnd }) => {
+    const start = rangeStart ? new Date(rangeStart).getTime() : Number.NEGATIVE_INFINITY;
+    const end = rangeEnd ? new Date(rangeEnd).getTime() : Number.POSITIVE_INFINITY;
+    return timestamp >= start && timestamp < end;
+  });
+}
+
+export function getVisibleCommentTrackingEvents(now: string | Date = new Date()) {
+  const currentTime = new Date(now).getTime();
+
+  return COMMENT_TRACKING_EVENTS.filter(({ rangeStart }) => {
+    if (!rangeStart) return true;
+    return new Date(rangeStart).getTime() <= currentTime;
+  });
 }

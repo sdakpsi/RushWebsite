@@ -2,15 +2,16 @@
 
 import { createClient } from "@/utils/supabase/server";
 import {
-  COMMENT_TRACKING_DATES,
-  createEmptyCommentCountsByDate,
+  createEmptyCommentCountsByEvent,
+  getCommentTrackingEventForTimestamp,
 } from "@/lib/analyticsCommentDates";
+import { RUBRIC_CATEGORIES, type RubricCategory } from "@/lib/types";
 
 export interface ActiveParticipationMetrics {
   activeId: string;
   activeName: string;
   commentsCount: number;
-  commentCountsByDate: Record<string, number>;
+  commentCountsByEvent: Record<string, number>;
   caseStudiesCount: number;
   interviewsCount: number;
   totalEvaluations: number;
@@ -35,6 +36,31 @@ export interface ProspectCoverageData {
   needsMoreEvaluations: boolean;
 }
 
+export interface ProspectAnalyticsComment {
+  id: string;
+  activeName: string;
+  comment: string;
+  interaction: string;
+  rubricCategories: RubricCategory[];
+  createdAt: string;
+}
+
+export interface ProspectAnalyticsRow {
+  prospectId: string;
+  prospectName: string;
+  photoUrl: string | null;
+  goodCommentsCount: number;
+  neutralCommentsCount: number;
+  badCommentsCount: number;
+  communityCommentsCount: number;
+  growthCommentsCount: number;
+  vulnerabilityCommentsCount: number;
+  commentCountsByEvent: Record<string, number>;
+  startedApp: boolean;
+  startedEssays: boolean;
+  comments: ProspectAnalyticsComment[];
+}
+
 export interface AnalyticsSummary {
   totalActiveMembers: number;
   participatingActives: number;
@@ -47,15 +73,44 @@ export interface AnalyticsSummary {
   prospectsNeedingEvaluations: number;
 }
 
+type CommentRow = {
+  id: string;
+  created_at: string | null;
+  prospect_id: string | null;
+  prospect_name: string | null;
+  active_name: string | null;
+  comment: string | null;
+  interaction: string | null;
+  rubric_categories?: RubricCategory[] | null;
+};
+
+type ApplicationRow = {
+  id: string;
+  user_id: string | null;
+  accomplishment: string | null;
+  why_akpsi: string | null;
+  goals: string | null;
+  comfort_zone: string | null;
+  business: string | null;
+  additional: string | null;
+};
+
 function toIsoDateKey(value: string | Date): string {
   return new Date(value).toISOString().slice(0, 10);
+}
+
+function hasTextValue(value: string | null | undefined): boolean {
+  return Boolean(value?.trim());
+}
+
+function compareLastActivity(a: string, b: string) {
+  return new Date(b).getTime() - new Date(a).getTime();
 }
 
 export async function getActiveParticipationMetrics(): Promise<ActiveParticipationMetrics[]> {
   const supabase = createClient();
 
   try {
-    // Get all active members
     const { data: activeMembers, error: activesError } = await supabase
       .from("users")
       .select("id, full_name")
@@ -70,53 +125,34 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
       return [];
     }
 
-    const firstTrackedRangeStart = COMMENT_TRACKING_DATES[0]?.rangeStart;
-    const lastTrackedRangeEnd =
-      COMMENT_TRACKING_DATES[COMMENT_TRACKING_DATES.length - 1]?.rangeEnd;
+    const { data: trackedComments, error: trackedCommentsError } = await supabase
+      .from("comments")
+      .select("active_id, created_at");
 
-    let commentsByActiveAndDate = new Map<string, Record<string, number>>();
-
-    if (firstTrackedRangeStart && lastTrackedRangeEnd) {
-      const { data: trackedComments, error: trackedCommentsError } = await supabase
-        .from("comments")
-        .select("active_id, created_at")
-        .gte("created_at", firstTrackedRangeStart)
-        .lt("created_at", lastTrackedRangeEnd);
-
-      if (trackedCommentsError) {
-        console.error(
-          "Error fetching tracked comments by date:",
-          trackedCommentsError
-        );
-      }
-
-      trackedComments?.forEach((comment) => {
-        if (!comment.active_id || !comment.created_at) return;
-
-        const createdAt = new Date(comment.created_at).getTime();
-        const trackedDate = COMMENT_TRACKING_DATES.find(({ rangeStart, rangeEnd }) => {
-          const start = new Date(rangeStart).getTime();
-          const end = new Date(rangeEnd).getTime();
-          return createdAt >= start && createdAt < end;
-        });
-
-        if (!trackedDate) return;
-
-        const currentCounts =
-          commentsByActiveAndDate.get(comment.active_id) ||
-          createEmptyCommentCountsByDate();
-
-        currentCounts[trackedDate.dateKey] =
-          (currentCounts[trackedDate.dateKey] || 0) + 1;
-
-        commentsByActiveAndDate.set(comment.active_id, currentCounts);
-      });
+    if (trackedCommentsError) {
+      console.error("Error fetching tracked comments by event:", trackedCommentsError);
     }
 
-    // Get participation data for each active
+    const commentsByActiveAndEvent = new Map<string, Record<string, number>>();
+
+    trackedComments?.forEach((comment) => {
+      if (!comment.active_id || !comment.created_at) return;
+
+      const trackedEvent = getCommentTrackingEventForTimestamp(comment.created_at);
+      if (!trackedEvent) return;
+
+      const currentCounts =
+        commentsByActiveAndEvent.get(comment.active_id) ||
+        createEmptyCommentCountsByEvent();
+
+      currentCounts[trackedEvent.eventKey] =
+        (currentCounts[trackedEvent.eventKey] || 0) + 1;
+
+      commentsByActiveAndEvent.set(comment.active_id, currentCounts);
+    });
+
     const participationData = await Promise.all(
       activeMembers.map(async (active) => {
-        // Get comments count
         const { count: commentsCount, error: commentsError } = await supabase
           .from("comments")
           .select("*", { count: "exact", head: true })
@@ -126,7 +162,6 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           console.error("Error fetching comments count:", commentsError);
         }
 
-        // Get case studies count
         const { count: caseStudiesCount, error: caseStudiesError } = await supabase
           .from("case_studies")
           .select("*", { count: "exact", head: true })
@@ -136,7 +171,6 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           console.error("Error fetching case studies count:", caseStudiesError);
         }
 
-        // Get interviews count
         const { count: interviewsCount, error: interviewsError } = await supabase
           .from("interviews")
           .select("*", { count: "exact", head: true })
@@ -146,31 +180,30 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           console.error("Error fetching interviews count:", interviewsError);
         }
 
-        // Get last activity timestamp
-        const activities = [];
-        
+        const activities: string[] = [];
+
         const { data: lastComment, error: lastCommentError } = await supabase
           .from("comments")
           .select("created_at")
           .eq("active_id", active.id)
           .order("created_at", { ascending: false })
           .limit(1);
-        
+
         if (lastCommentError) {
           console.error("Error fetching last comment:", lastCommentError);
         }
-        
+
         const { data: lastCaseStudy, error: lastCaseStudyError } = await supabase
           .from("case_studies")
           .select("created_at")
           .eq("active", active.id)
           .order("created_at", { ascending: false })
           .limit(1);
-        
+
         if (lastCaseStudyError) {
           console.error("Error fetching last case study:", lastCaseStudyError);
         }
-        
+
         const { data: lastInterview, error: lastInterviewError } = await supabase
           .from("interviews")
           .select("created_at")
@@ -186,21 +219,23 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
         if (lastCaseStudy?.[0]?.created_at) activities.push(lastCaseStudy[0].created_at);
         if (lastInterview?.[0]?.created_at) activities.push(lastInterview[0].created_at);
 
-        const lastActivity = activities.length > 0 
-          ? activities.sort().reverse()[0] 
-          : null;
+        const lastActivity =
+          activities.length > 0
+            ? activities.sort(compareLastActivity)[0] || null
+            : null;
 
         return {
           activeId: active.id,
           activeName: active.full_name || "Unknown",
           commentsCount: commentsCount || 0,
-          commentCountsByDate:
-            commentsByActiveAndDate.get(active.id) ||
-            createEmptyCommentCountsByDate(),
+          commentCountsByEvent:
+            commentsByActiveAndEvent.get(active.id) ||
+            createEmptyCommentCountsByEvent(),
           caseStudiesCount: caseStudiesCount || 0,
           interviewsCount: interviewsCount || 0,
-          totalEvaluations: (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0),
-          lastActivity
+          totalEvaluations:
+            (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0),
+          lastActivity,
         };
       })
     );
@@ -216,12 +251,10 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
   const supabase = createClient();
 
   try {
-    // Get last 7 days of activity
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const dateFilter = sevenDaysAgo.toISOString();
 
-    // Get all evaluation data by date
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
       .select("created_at")
@@ -249,60 +282,50 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
       console.error("Error fetching interviews for timeline:", interviewsError);
     }
 
-    // Create timeline for last 7 days
     const today = new Date();
     const dateMap = new Map<string, EvaluationTimelineData>();
 
-    // Initialize all 7 days with zeros
-    for (let i = 6; i >= 0; i--) {
+    for (let index = 6; index >= 0; index -= 1) {
       const date = new Date(today);
-      date.setDate(date.getDate() - i);
+      date.setDate(date.getDate() - index);
       const dateStr = toIsoDateKey(date);
-      
+
       dateMap.set(dateStr, {
         date: dateStr,
         commentsCount: 0,
         caseStudiesCount: 0,
         interviewsCount: 0,
-        totalEvaluations: 0
+        totalEvaluations: 0,
       });
     }
 
-    // Process all evaluation data
-    comments?.forEach(comment => {
-      if (comment.created_at) {
-        const date = toIsoDateKey(comment.created_at);
-        const dayData = dateMap.get(date);
-        if (dayData) {
-          dayData.commentsCount++;
-          dayData.totalEvaluations++;
-        }
-      }
+    comments?.forEach((comment) => {
+      if (!comment.created_at) return;
+      const date = toIsoDateKey(comment.created_at);
+      const dayData = dateMap.get(date);
+      if (!dayData) return;
+      dayData.commentsCount += 1;
+      dayData.totalEvaluations += 1;
     });
 
-    caseStudies?.forEach(caseStudy => {
-      if (caseStudy.created_at) {
-        const date = toIsoDateKey(caseStudy.created_at);
-        const dayData = dateMap.get(date);
-        if (dayData) {
-          dayData.caseStudiesCount++;
-          dayData.totalEvaluations++;
-        }
-      }
+    caseStudies?.forEach((caseStudy) => {
+      if (!caseStudy.created_at) return;
+      const date = toIsoDateKey(caseStudy.created_at);
+      const dayData = dateMap.get(date);
+      if (!dayData) return;
+      dayData.caseStudiesCount += 1;
+      dayData.totalEvaluations += 1;
     });
 
-    interviews?.forEach(interview => {
-      if (interview.created_at) {
-        const date = toIsoDateKey(interview.created_at);
-        const dayData = dateMap.get(date);
-        if (dayData) {
-          dayData.interviewsCount++;
-          dayData.totalEvaluations++;
-        }
-      }
+    interviews?.forEach((interview) => {
+      if (!interview.created_at) return;
+      const date = toIsoDateKey(interview.created_at);
+      const dayData = dateMap.get(date);
+      if (!dayData) return;
+      dayData.interviewsCount += 1;
+      dayData.totalEvaluations += 1;
     });
 
-    // Return sorted timeline
     return Array.from(dateMap.values()).sort((a, b) => a.date.localeCompare(b.date));
   } catch (error) {
     console.error("Error fetching evaluation timeline:", error);
@@ -314,7 +337,6 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
   const supabase = createClient();
 
   try {
-    // Get all prospects with submitted applications
     const { data: prospects, error: prospectsError } = await supabase
       .from("users")
       .select("id, full_name")
@@ -330,7 +352,6 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
 
     const coverageData = await Promise.all(
       prospects.map(async (prospect) => {
-        // Check if they have a submitted application
         const { data: application, error: applicationError } = await supabase
           .from("applications")
           .select("id")
@@ -345,7 +366,6 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
 
         if (!application?.length) return null;
 
-        // Get evaluation counts
         const { count: commentsCount, error: commentsError } = await supabase
           .from("comments")
           .select("*", { count: "exact", head: true })
@@ -373,8 +393,10 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
           console.error("Error fetching prospect interviews count:", interviewsError);
         }
 
-        const totalEvaluations = (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0);
-        const needsMoreEvaluations = (caseStudiesCount || 0) < 3 || (interviewsCount || 0) < 3;
+        const totalEvaluations =
+          (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0);
+        const needsMoreEvaluations =
+          (caseStudiesCount || 0) < 3 || (interviewsCount || 0) < 3;
 
         return {
           prospectId: prospect.id,
@@ -383,7 +405,7 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
           caseStudiesCount: caseStudiesCount || 0,
           interviewsCount: interviewsCount || 0,
           totalEvaluations,
-          needsMoreEvaluations
+          needsMoreEvaluations,
         };
       })
     );
@@ -395,11 +417,166 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
   }
 }
 
+export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
+  const supabase = createClient();
+
+  try {
+    const { data: comments, error: commentsError } = await supabase
+      .from("comments")
+      .select(
+        "id, created_at, prospect_id, prospect_name, active_name, comment, interaction, rubric_categories"
+      );
+
+    if (commentsError) {
+      console.error("Error fetching prospect analytics comments:", commentsError);
+      return [];
+    }
+
+    const { data: applications, error: applicationsError } = await supabase
+      .from("applications")
+      .select(
+        "id, user_id, accomplishment, why_akpsi, goals, comfort_zone, business, additional"
+      );
+
+    if (applicationsError) {
+      console.error("Error fetching prospect analytics applications:", applicationsError);
+      return [];
+    }
+
+    const filteredComments = (comments || []).filter(
+      (comment: CommentRow) =>
+        Boolean(comment.prospect_id) && !comment.prospect_id!.startsWith("66666")
+    ) as CommentRow[];
+
+    const signalIds = new Set<string>();
+
+    filteredComments.forEach((comment) => {
+      if (comment.prospect_id) signalIds.add(comment.prospect_id);
+    });
+
+    (applications || []).forEach((application: ApplicationRow) => {
+      if (application.user_id) signalIds.add(application.user_id);
+    });
+
+    if (!signalIds.size) {
+      return [];
+    }
+
+    const { data: prospects, error: prospectsError } = await supabase
+      .from("users")
+      .select("id, full_name, photo_url, is_active, is_pic")
+      .in("id", Array.from(signalIds))
+      .eq("is_active", false)
+      .eq("is_pic", false);
+
+    if (prospectsError) {
+      console.error("Error fetching prospect analytics users:", prospectsError);
+      return [];
+    }
+
+    const commentsByProspect = new Map<string, CommentRow[]>();
+    filteredComments.forEach((comment) => {
+      if (!comment.prospect_id) return;
+      const currentComments = commentsByProspect.get(comment.prospect_id) || [];
+      currentComments.push(comment);
+      commentsByProspect.set(comment.prospect_id, currentComments);
+    });
+
+    const applicationsByProspect = new Map<string, ApplicationRow[]>();
+    (applications || []).forEach((application: ApplicationRow) => {
+      if (!application.user_id) return;
+      const currentApplications = applicationsByProspect.get(application.user_id) || [];
+      currentApplications.push(application);
+      applicationsByProspect.set(application.user_id, currentApplications);
+    });
+
+    const rows = (prospects || [])
+      .map((prospect) => {
+        const prospectComments = [...(commentsByProspect.get(prospect.id) || [])].sort(
+          (a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
+        );
+        const prospectApplications = applicationsByProspect.get(prospect.id) || [];
+
+        const commentCountsByEvent = createEmptyCommentCountsByEvent();
+
+        prospectComments.forEach((comment) => {
+          if (!comment.created_at) return;
+          const trackedEvent = getCommentTrackingEventForTimestamp(comment.created_at);
+          if (!trackedEvent) return;
+          commentCountsByEvent[trackedEvent.eventKey] =
+            (commentCountsByEvent[trackedEvent.eventKey] || 0) + 1;
+        });
+
+        const startedEssays = prospectApplications.some((application) =>
+          [
+            application.accomplishment,
+            application.why_akpsi,
+            application.goals,
+            application.comfort_zone,
+            application.business,
+            application.additional,
+          ].some(hasTextValue)
+        );
+
+        return {
+          prospectId: prospect.id,
+          prospectName: prospect.full_name || "Unknown",
+          photoUrl: prospect.photo_url || null,
+          goodCommentsCount: prospectComments.filter(
+            (comment) => comment.interaction === "Good"
+          ).length,
+          neutralCommentsCount: prospectComments.filter(
+            (comment) => comment.interaction === "Neutral"
+          ).length,
+          badCommentsCount: prospectComments.filter(
+            (comment) => comment.interaction === "Bad"
+          ).length,
+          communityCommentsCount: prospectComments.filter((comment) =>
+            comment.rubric_categories?.includes(RUBRIC_CATEGORIES[0])
+          ).length,
+          growthCommentsCount: prospectComments.filter((comment) =>
+            comment.rubric_categories?.includes(RUBRIC_CATEGORIES[1])
+          ).length,
+          vulnerabilityCommentsCount: prospectComments.filter((comment) =>
+            comment.rubric_categories?.includes(RUBRIC_CATEGORIES[2])
+          ).length,
+          commentCountsByEvent,
+          startedApp: prospectApplications.length > 0,
+          startedEssays,
+          comments: prospectComments.map((comment) => ({
+            id: comment.id,
+            activeName: comment.active_name || "Unknown",
+            comment: comment.comment || "",
+            interaction: comment.interaction || "Unknown",
+            rubricCategories: comment.rubric_categories || [],
+            createdAt: comment.created_at || "",
+          })),
+        };
+      })
+      .filter((prospect) => prospect.comments.length > 0 || prospect.startedApp);
+
+    return rows.sort((a, b) => {
+      if (b.goodCommentsCount !== a.goodCommentsCount) {
+        return b.goodCommentsCount - a.goodCommentsCount;
+      }
+      if (b.neutralCommentsCount !== a.neutralCommentsCount) {
+        return b.neutralCommentsCount - a.neutralCommentsCount;
+      }
+      if (a.badCommentsCount !== b.badCommentsCount) {
+        return a.badCommentsCount - b.badCommentsCount;
+      }
+      return a.prospectName.localeCompare(b.prospectName);
+    });
+  } catch (error) {
+    console.error("Error fetching prospect analytics:", error);
+    return [];
+  }
+}
+
 export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const supabase = createClient();
 
   try {
-    // Get total active members
     const { count: totalActiveMembers, error: activeMembersError } = await supabase
       .from("users")
       .select("*", { count: "exact", head: true })
@@ -409,7 +586,6 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       console.error("Error fetching active members count:", activeMembersError);
     }
 
-    // Get total evaluations
     const { count: totalComments, error: totalCommentsError } = await supabase
       .from("comments")
       .select("*", { count: "exact", head: true });
@@ -434,36 +610,50 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       console.error("Error fetching total interviews count:", totalInterviewsError);
     }
 
-    // Get participating actives (those with at least one evaluation)
     const [commentsActives, caseStudyActives, interviewActives] = await Promise.all([
       supabase.from("comments").select("active_id"),
       supabase.from("case_studies").select("active"),
-      supabase.from("interviews").select("active_id")
+      supabase.from("interviews").select("active_id"),
     ]);
 
     if (commentsActives.error) {
-      console.error("Error fetching participating comments actives:", commentsActives.error);
+      console.error(
+        "Error fetching participating comments actives:",
+        commentsActives.error
+      );
     }
     if (caseStudyActives.error) {
-      console.error("Error fetching participating case study actives:", caseStudyActives.error);
+      console.error(
+        "Error fetching participating case study actives:",
+        caseStudyActives.error
+      );
     }
     if (interviewActives.error) {
-      console.error("Error fetching participating interview actives:", interviewActives.error);
+      console.error(
+        "Error fetching participating interview actives:",
+        interviewActives.error
+      );
     }
 
     const uniqueParticipatingActives = new Set([
-      ...(commentsActives.data?.map(p => p.active_id) || []),
-      ...(caseStudyActives.data?.map(p => p.active) || []),
-      ...(interviewActives.data?.map(p => p.active_id) || [])
+      ...(commentsActives.data?.map((participant) => participant.active_id) || []),
+      ...(caseStudyActives.data?.map((participant) => participant.active) || []),
+      ...(interviewActives.data?.map((participant) => participant.active_id) || []),
     ]).size;
 
-    // Get prospects needing evaluations
     const prospectCoverage = await getProspectCoverage();
-    const prospectsNeedingEvaluations = prospectCoverage.filter(p => p.needsMoreEvaluations).length;
+    const prospectsNeedingEvaluations = prospectCoverage.filter(
+      (prospect) => prospect.needsMoreEvaluations
+    ).length;
 
-    const totalEvaluations = (totalComments || 0) + (totalCaseStudies || 0) + (totalInterviews || 0);
-    const participationRate = totalActiveMembers ? (uniqueParticipatingActives / totalActiveMembers) * 100 : 0;
-    const averageEvaluationsPerActive = totalActiveMembers ? totalEvaluations / totalActiveMembers : 0;
+    const totalEvaluations =
+      (totalComments || 0) + (totalCaseStudies || 0) + (totalInterviews || 0);
+    const participationRate = totalActiveMembers
+      ? (uniqueParticipatingActives / totalActiveMembers) * 100
+      : 0;
+    const averageEvaluationsPerActive = totalActiveMembers
+      ? totalEvaluations / totalActiveMembers
+      : 0;
 
     return {
       totalActiveMembers: totalActiveMembers || 0,
@@ -474,7 +664,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       totalComments: totalComments || 0,
       totalCaseStudies: totalCaseStudies || 0,
       totalInterviews: totalInterviews || 0,
-      prospectsNeedingEvaluations
+      prospectsNeedingEvaluations,
     };
   } catch (error) {
     console.error("Error fetching analytics summary:", error);
@@ -487,7 +677,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       totalComments: 0,
       totalCaseStudies: 0,
       totalInterviews: 0,
-      prospectsNeedingEvaluations: 0
+      prospectsNeedingEvaluations: 0,
     };
   }
 }
