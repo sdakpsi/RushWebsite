@@ -6,7 +6,7 @@
     "start": "next start"
   },
   "engines": {
-    "node": "24.x"
+    "node": "22.x"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.6.0",

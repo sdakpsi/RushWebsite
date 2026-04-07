@@ -34,11 +34,6 @@ export default function Login({
     const origin = headers().get("origin");
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-
-    if (!email.endsWith("@ucsd.edu")) {
-      return redirect("/login?message=Only @ucsd.edu email addresses are allowed");
-    }
-
     const supabase = createClient();
 
     const { error } = await supabase.auth.signUp({

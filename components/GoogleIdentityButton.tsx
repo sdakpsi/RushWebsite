@@ -114,21 +114,13 @@ export default function GoogleIdentityButton({ children }: GoogleIdentityButtonP
               }
 
               const supabase = createClient();
-              const { data: signInData, error } = await supabase.auth.signInWithIdToken({
+              const { error } = await supabase.auth.signInWithIdToken({
                 provider: "google",
                 token: exchangeResult.idToken,
               });
 
               if (error) {
                 throw error;
-              }
-
-              const email = signInData.user?.email ?? "";
-              if (!email.endsWith("@ucsd.edu")) {
-                await supabase.auth.signOut();
-                customToast("Only @ucsd.edu email addresses are allowed.", "error");
-                isSigningInRef.current = false;
-                return;
               }
 
               await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
