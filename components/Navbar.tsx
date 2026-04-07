@@ -119,7 +119,7 @@ export default function Navbar() {
                           className="block rounded-lg border border-border bg-card px-3 py-3 text-center text-sm font-medium text-foreground shadow-sm transition-all duration-150 hover:bg-accent hover:text-accent-foreground active:scale-95 touch-manipulation"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          Analytics
+                          Active Analytics
                         </Link>
                       </div>
                     </div>

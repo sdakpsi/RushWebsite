@@ -1,11 +1,16 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import {
+  COMMENT_TRACKING_DATES,
+  createEmptyCommentCountsByDate,
+} from "@/lib/analyticsCommentDates";
 
 export interface ActiveParticipationMetrics {
   activeId: string;
   activeName: string;
   commentsCount: number;
+  commentCountsByDate: Record<string, number>;
   caseStudiesCount: number;
   interviewsCount: number;
   totalEvaluations: number;
@@ -42,6 +47,10 @@ export interface AnalyticsSummary {
   prospectsNeedingEvaluations: number;
 }
 
+function toIsoDateKey(value: string | Date): string {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
 export async function getActiveParticipationMetrics(): Promise<ActiveParticipationMetrics[]> {
   const supabase = createClient();
 
@@ -55,6 +64,53 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
     if (activesError) {
       console.error("Error fetching active members:", activesError);
       return [];
+    }
+
+    if (!activeMembers?.length) {
+      return [];
+    }
+
+    const firstTrackedRangeStart = COMMENT_TRACKING_DATES[0]?.rangeStart;
+    const lastTrackedRangeEnd =
+      COMMENT_TRACKING_DATES[COMMENT_TRACKING_DATES.length - 1]?.rangeEnd;
+
+    let commentsByActiveAndDate = new Map<string, Record<string, number>>();
+
+    if (firstTrackedRangeStart && lastTrackedRangeEnd) {
+      const { data: trackedComments, error: trackedCommentsError } = await supabase
+        .from("comments")
+        .select("active_id, created_at")
+        .gte("created_at", firstTrackedRangeStart)
+        .lt("created_at", lastTrackedRangeEnd);
+
+      if (trackedCommentsError) {
+        console.error(
+          "Error fetching tracked comments by date:",
+          trackedCommentsError
+        );
+      }
+
+      trackedComments?.forEach((comment) => {
+        if (!comment.active_id || !comment.created_at) return;
+
+        const createdAt = new Date(comment.created_at).getTime();
+        const trackedDate = COMMENT_TRACKING_DATES.find(({ rangeStart, rangeEnd }) => {
+          const start = new Date(rangeStart).getTime();
+          const end = new Date(rangeEnd).getTime();
+          return createdAt >= start && createdAt < end;
+        });
+
+        if (!trackedDate) return;
+
+        const currentCounts =
+          commentsByActiveAndDate.get(comment.active_id) ||
+          createEmptyCommentCountsByDate();
+
+        currentCounts[trackedDate.dateKey] =
+          (currentCounts[trackedDate.dateKey] || 0) + 1;
+
+        commentsByActiveAndDate.set(comment.active_id, currentCounts);
+      });
     }
 
     // Get participation data for each active
@@ -138,6 +194,9 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           activeId: active.id,
           activeName: active.full_name || "Unknown",
           commentsCount: commentsCount || 0,
+          commentCountsByDate:
+            commentsByActiveAndDate.get(active.id) ||
+            createEmptyCommentCountsByDate(),
           caseStudiesCount: caseStudiesCount || 0,
           interviewsCount: interviewsCount || 0,
           totalEvaluations: (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0),
@@ -198,7 +257,7 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = toIsoDateKey(date);
       
       dateMap.set(dateStr, {
         date: dateStr,
@@ -212,7 +271,7 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
     // Process all evaluation data
     comments?.forEach(comment => {
       if (comment.created_at) {
-        const date = new Date(comment.created_at).toISOString().split('T')[0];
+        const date = toIsoDateKey(comment.created_at);
         const dayData = dateMap.get(date);
         if (dayData) {
           dayData.commentsCount++;
@@ -223,7 +282,7 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
 
     caseStudies?.forEach(caseStudy => {
       if (caseStudy.created_at) {
-        const date = new Date(caseStudy.created_at).toISOString().split('T')[0];
+        const date = toIsoDateKey(caseStudy.created_at);
         const dayData = dateMap.get(date);
         if (dayData) {
           dayData.caseStudiesCount++;
@@ -234,7 +293,7 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
 
     interviews?.forEach(interview => {
       if (interview.created_at) {
-        const date = new Date(interview.created_at).toISOString().split('T')[0];
+        const date = toIsoDateKey(interview.created_at);
         const dayData = dateMap.get(date);
         if (dayData) {
           dayData.interviewsCount++;

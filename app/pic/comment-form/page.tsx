@@ -302,32 +302,32 @@ export default function ProtectedPage() {
             >
               <button
                 type="button"
-                className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-muted px-4 py-2 text-left text-foreground hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex w-full cursor-pointer flex-col gap-3 rounded-lg bg-muted px-4 py-3 text-left text-foreground hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
                 onClick={(event) => toggleProspect(cardId, event)}
               >
-                <div className="flex min-w-0 flex-1 items-center gap-3">
-                  {prospectPhotoUrl ? (
-                    <img
-                      src={prospectPhotoUrl}
-                      alt={prospectName}
-                      className="h-12 w-12 flex-shrink-0 rounded-full border-2 border-border object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted">
-                      <span className="text-sm font-semibold text-muted-foreground">
-                        {prospectName.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                  <span className="min-w-0 truncate text-lg font-bold text-foreground">
-                    {prospectId.slice(0, 5) === "66666" && (
-                      <span className="text-red-600">*</span>
-                    )}{" "}
-                    {prospectName}
-                  </span>
-                </div>
-                <div className="flex shrink-0 items-center gap-4">
-                  <div className="flex flex-col items-end gap-2">
+                <div className="flex w-full flex-wrap items-start justify-between gap-3">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    {prospectPhotoUrl ? (
+                      <img
+                        src={prospectPhotoUrl}
+                        alt={prospectName}
+                        className="h-12 w-12 flex-shrink-0 rounded-full border-2 border-border object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted">
+                        <span className="text-sm font-semibold text-muted-foreground">
+                          {prospectName.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <span className="min-w-0 truncate text-lg font-bold text-foreground">
+                      {prospectId.slice(0, 5) === "66666" && (
+                        <span className="text-red-600">*</span>
+                      )}{" "}
+                      {prospectName}
+                    </span>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
                     <span className="whitespace-nowrap text-sm text-muted-foreground">
                       <span className="font-semibold text-green-600">
                         {goodInteractionCount} Good
@@ -335,32 +335,40 @@ export default function ProtectedPage() {
                       | {numberOfComments}{" "}
                       {numberOfComments > 1 ? "Comments" : "Comment"}
                     </span>
-                    <div className="flex flex-wrap justify-end gap-2">
-                      {RUBRIC_CATEGORIES.map((category) => (
-                        <span
-                          key={category}
-                          className={`rounded-full border px-2 py-1 text-xs font-medium ${
-                            RUBRIC_CATEGORY_STYLES[category]
-                          }`}
-                        >
-                          {category}: {rubricCounts[category]}
-                        </span>
-                      ))}
-                    </div>
+                    {isUnlinkedSection && (
+                      <span className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                        {linkingMode[prospectId] ? "Cancel" : "Link"}
+                      </span>
+                    )}
                   </div>
-                  {isUnlinkedSection && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setLinkingMode(prev => ({ ...prev, [prospectId]: !prev[prospectId] }));
-                      }}
-                      className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {RUBRIC_CATEGORIES.map((category) => (
+                    <span
+                      key={category}
+                      className={`rounded-full border px-2 py-1 text-xs font-medium ${
+                        RUBRIC_CATEGORY_STYLES[category]
+                      }`}
                     >
-                      {linkingMode[prospectId] ? 'Cancel' : 'Link'}
-                    </button>
-                  )}
+                      {category}: {rubricCounts[category]}
+                    </span>
+                  ))}
                 </div>
               </button>
+
+              {isUnlinkedSection && (
+                <div className="mt-2 px-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLinkingMode(prev => ({ ...prev, [prospectId]: !prev[prospectId] }))
+                    }
+                    className="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    {linkingMode[prospectId] ? "Hide Linking Options" : "Link to Existing Prospect"}
+                  </button>
+                </div>
+              )}
 
               {isExpanded && (
                 <div 

@@ -92,7 +92,7 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
                 className="block px-4 py-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg mx-2 transition-all duration-150 touch-manipulation active:scale-95 active:bg-accent"
                 onClick={closeDropdown}
               >
-                Analytics
+                Active Analytics
               </Link>
             </li>
           </ul>

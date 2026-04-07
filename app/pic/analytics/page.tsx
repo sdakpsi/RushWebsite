@@ -5,6 +5,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAllAnalytics } from "@/hooks/useAllAnalytics";
+import { COMMENT_TRACKING_DATES } from "@/lib/analyticsCommentDates";
 import { redirect } from "next/navigation";
 
 const StatCard = ({
@@ -111,7 +112,7 @@ export default function AnalyticsPage() {
           <div className="flex flex-col space-y-6">
             <div className="text-center">
               <h1 className="mt-10 text-2xl font-semibold text-foreground md:text-5xl">
-                Rush Analytics Dashboard
+                Active Analytics
               </h1>
               <p className="mx-auto mt-4 max-w-3xl text-lg text-muted-foreground">
                 Track participation and see who&apos;s a bum and who&apos;s goated
@@ -175,6 +176,14 @@ export default function AnalyticsPage() {
                         <th className="pb-3 text-center font-medium text-muted-foreground">
                           Comments
                         </th>
+                        {COMMENT_TRACKING_DATES.map((trackedDate) => (
+                          <th
+                            key={trackedDate.dateKey}
+                            className="pb-3 text-center font-medium text-muted-foreground"
+                          >
+                            {trackedDate.label}
+                          </th>
+                        ))}
                         <th className="pb-3 text-center font-medium text-muted-foreground">
                           Case Studies
                         </th>
@@ -210,6 +219,14 @@ export default function AnalyticsPage() {
                             <td className="py-3 text-center text-muted-foreground">
                               {active.commentsCount}
                             </td>
+                            {COMMENT_TRACKING_DATES.map((trackedDate) => (
+                              <td
+                                key={`${active.activeId}-${trackedDate.dateKey}`}
+                                className="py-3 text-center text-muted-foreground"
+                              >
+                                {active.commentCountsByDate?.[trackedDate.dateKey] || 0}
+                              </td>
+                            ))}
                             <td className="py-3 text-center text-muted-foreground">
                               {active.caseStudiesCount}
                             </td>
