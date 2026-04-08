@@ -447,6 +447,35 @@ export default function ActiveCaseStudyForm({
           ))}
         </div>
         <div className="mt-5">
+          <label className="mb-2 block text-foreground">
+            Invite to social night? (weighted similarly to comment forms)
+          </label>
+          <input type="hidden" {...register("socialNight", { required: "Please select a social night response" })} />
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
+            {(["Yes", "Maybe", "No"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setValue("socialNight", option, { shouldValidate: true })}
+                className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 active:scale-95 ${
+                  watch("socialNight") === option
+                    ? option === "Yes"
+                      ? "bg-green-600 shadow-lg border-2 border-green-400"
+                      : option === "Maybe"
+                      ? "bg-yellow-600 shadow-lg border-2 border-yellow-400"
+                      : "bg-red-600 shadow-lg border-2 border-red-400"
+                    : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          {errors.socialNight && (
+            <p className="mt-1 text-red-500">{`${errors.socialNight.message ?? "Required!"}`}</p>
+          )}
+        </div>
+        <div className="mt-5">
           <label htmlFor={"additionalComments"} className="mb-2 block text-foreground">
             Additional Comments
           </label>

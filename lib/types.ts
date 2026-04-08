@@ -125,6 +125,7 @@ export interface CaseStudyForm {
   additionalComments: string;
   role: string;
   thoughts: string;
+  socialNight: string;
 }
 
 export type InterestForm = {

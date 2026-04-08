@@ -203,6 +203,7 @@ export async function createOrUpdateCaseStudy(data: CaseStudyForm, selectedProsp
             additional: data.additionalComments ?? "",
             role: data.role,
             thoughts: data.thoughts,
+            social_invite: data.socialNight.toLowerCase(),
         };
 
         let result;
@@ -267,8 +268,11 @@ export async function createCaseStudy(data: CaseStudyForm, selectedProspect: Pro
 export async function loadCaseStudyFormData(prospectId: string) {
     try {
         const existingSubmission = await getExistingCaseStudy(prospectId);
-        
+
         if (existingSubmission) {
+            // Capitalize the stored lowercase enum value back to title case for the form
+            const socialInviteMap: Record<string, string> = { yes: "Yes", maybe: "Maybe", no: "No" };
+
             const formData = {
                 name: existingSubmission.active_name,
                 otherActives: existingSubmission.other_actives,
@@ -283,6 +287,7 @@ export async function loadCaseStudyFormData(prospectId: string) {
                 additionalComments: existingSubmission.additional,
                 role: existingSubmission.role,
                 thoughts: existingSubmission.thoughts,
+                socialNight: socialInviteMap[existingSubmission.social_invite] ?? "",
             };
             
             return {
