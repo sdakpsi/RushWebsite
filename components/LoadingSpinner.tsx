@@ -48,13 +48,6 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           </div>
         </div>
         
-        {/* Floating particles */}
-        <div className="absolute -inset-4">
-          <div className="absolute top-0 left-1/2 w-1 h-1 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-          <div className="absolute top-1/2 right-0 w-1 h-1 bg-secondary/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-accent/60 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-0 w-1 h-1 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-        </div>
       </div>
       
       {/* Loading text with typing animation */}
