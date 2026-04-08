@@ -52,6 +52,7 @@ export interface ApplicationFormState {
   lastName: string;
   pronouns: string;
   phoneNumber: string;
+  personalEmail: string;
   yearInCollege: string;
   graduationYear: number | null;
   graduationQuarter: string;

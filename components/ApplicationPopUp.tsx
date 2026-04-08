@@ -13,6 +13,7 @@ interface Application {
   name: string;
   pronouns: string;
   phone_number: string;
+  personal_email: string | null;
   social_media: string | null;
   year: string;
   graduation_qtr: string;
@@ -644,6 +645,12 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Phone Number:</span>
                         <span className="text-foreground">{application.phone_number}</span>
+                      </li>
+                      <li className="flex flex-col">
+                        <span className="font-semibold text-blue-900">Personal Email:</span>
+                        <span className="text-foreground">
+                          {application.personal_email || "N/A"}
+                        </span>
                       </li>
                       <li className="flex flex-col">
                         <span className="font-semibold text-blue-900">Social Media:</span>

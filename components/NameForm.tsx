@@ -11,7 +11,7 @@ import {
 import { RUSH_CHAIR_INFO } from "@/utils/constants";
 import { delay } from "@/utils/delay";
 import { extractFileName, formatTimestamp } from "@/utils/format";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
 import { debounce } from "lodash";
@@ -102,6 +102,7 @@ export default function NameForm() {
       setLastName(data.name.split(" ")[1]);
       setPronouns(data.pronouns);
       setPhoneNumber(data.phone_number);
+      setPersonalEmail(data.personal_email || "");
       setYearInCollege(data.year);
       setGraduationYear(data.graduation_year || "");
       setGraduationQuarter(data.graduation_qtr);
@@ -139,6 +140,7 @@ export default function NameForm() {
   const [lastName, setLastName] = useState<string>("");
   const [pronouns, setPronouns] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [personalEmail, setPersonalEmail] = useState<string>("");
   const [yearInCollege, setYearInCollege] = useState<string>("");
   const [graduationYear, setGraduationYear] = useState<number | null>(null);
   const [isGraduationYearValid, setIsGraduationYearValid] =
@@ -212,6 +214,7 @@ export default function NameForm() {
     lastName,
     pronouns,
     phoneNumber,
+    personalEmail,
     yearInCollege,
     graduationYear,
     graduationQuarter,
@@ -243,6 +246,7 @@ export default function NameForm() {
       lastName,
       pronouns,
       phoneNumber,
+      personalEmail,
       yearInCollege,
       graduationYear,
       graduationQuarter,
@@ -272,6 +276,7 @@ export default function NameForm() {
     lastName,
     pronouns,
     phoneNumber,
+    personalEmail,
     yearInCollege,
     graduationYear,
     graduationQuarter,
@@ -556,6 +561,39 @@ export default function NameForm() {
                   value={phoneNumber}
                   onChange={handleChange(setPhoneNumber)}
                   placeholder="Enter your phone number"
+                />
+              </div>
+              <div className="mb-6">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <label
+                    className={`${textLabel} mb-0 leading-none`}
+                    htmlFor="personalEmail"
+                  >
+                    Personal Email:
+                  </label>
+                  <div className="group relative mr-2">
+                    <button
+                      type="button"
+                      className="flex h-5 w-5 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                      aria-label="Why we ask for your personal email"
+                    >
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className="h-4 w-4"
+                      />
+                    </button>
+                    <div className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-56 rounded-lg border border-border bg-popover px-3 py-2 text-xs font-normal text-popover-foreground opacity-0 shadow-lg transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100">
+                      To count participation from rush week check ins
+                    </div>
+                  </div>
+                </div>
+                <input
+                  className={smallInput}
+                  id="personalEmail"
+                  type="email"
+                  value={personalEmail}
+                  onChange={handleChange(setPersonalEmail)}
+                  placeholder="Enter your personal email"
                 />
               </div>
               <div className="mb-6">

@@ -347,6 +347,14 @@
   .animate-float {
     animation: none !important;
   }
+
+  .Toastify__toast-container *,
+  .Toastify__toast-container *::before,
+  .Toastify__toast-container *::after {
+    animation-duration: revert !important;
+    animation-iteration-count: revert !important;
+    transition-duration: revert !important;
+  }
 }
 
 /* Enhanced Animations */
