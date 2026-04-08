@@ -8,6 +8,7 @@ interface ProspectGridProps {
   onSelectProspect: (prospect: ProspectInterview) => void;
   isLoading?: boolean;
   existingCommentProspectIds?: Set<string>;
+  goodCommentCounts?: Record<string, number>;
 }
 
 export default function ProspectGrid({
@@ -15,7 +16,8 @@ export default function ProspectGrid({
   selectedProspect,
   onSelectProspect,
   isLoading = false,
-  existingCommentProspectIds
+  existingCommentProspectIds,
+  goodCommentCounts = {},
 }: ProspectGridProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -81,6 +83,7 @@ export default function ProspectGrid({
               isSelected={selectedProspect?.id === prospect.id}
               onClick={() => handleProspectClick(prospect)}
               hasExistingComment={existingCommentProspectIds?.has(prospect.id)}
+              goodCommentCount={goodCommentCounts[prospect.id] ?? 0}
             />
           ))}
         </div>

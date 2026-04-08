@@ -5,13 +5,15 @@ interface ProspectCardProps {
   isSelected: boolean;
   onClick: () => void;
   hasExistingComment?: boolean;
+  goodCommentCount?: number;
 }
 
-function ProspectCard({ 
-  prospect, 
-  isSelected, 
-  onClick, 
-  hasExistingComment = false 
+function ProspectCard({
+  prospect,
+  isSelected,
+  onClick,
+  hasExistingComment = false,
+  goodCommentCount = 0,
 }: ProspectCardProps) {
   return (
     <div
@@ -53,9 +55,16 @@ function ProspectCard({
           
           {/* Name and Email */}
           <div className="flex flex-col space-y-1 flex-1 min-w-0">
-            <span className="text-xl font-bold truncate">
-              {prospect.full_name}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold truncate">
+                {prospect.full_name}
+              </span>
+              {goodCommentCount < 2 && (
+                <span className="flex-shrink-0 rounded-full bg-rose-600 px-2 py-0.5 text-xs font-semibold text-white">
+                  {goodCommentCount} good
+                </span>
+              )}
+            </div>
             <span className={`text-base truncate ${isSelected ? 'text-gray-700' : 'text-gray-600'}`}>
               {prospect.email}
             </span>

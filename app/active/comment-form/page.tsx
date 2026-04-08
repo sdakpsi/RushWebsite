@@ -11,7 +11,7 @@ import Checkbox from "@/components/Checkbox";
 import { v4 as uuidv4 } from "uuid";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getUsersForComments, getUserComments } from "@/app/supabase/clientQueries";
+import { getUsersForComments, getUserComments, getGoodCommentCounts } from "@/app/supabase/clientQueries";
 import ProspectGrid from "@/components/ProspectGrid";
 import PastCommentSubmissions from "@/components/PastCommentSubmissions";
 
@@ -80,6 +80,15 @@ export default function Page(this: any) {
     queryFn: getUserComments,
     enabled: isActive,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
+
+  // Fetch good comment counts per prospect (only needed in grid mode)
+  const { data: goodCommentCounts = {} } = useQuery({
+    queryKey: ['goodCommentCounts'],
+    queryFn: getGoodCommentCounts,
+    enabled: isActive && viewMode === 'grid',
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
@@ -266,6 +275,7 @@ export default function Page(this: any) {
                   onSelectProspect={setSelectedProspect}
                   isLoading={prospectsLoading}
                   existingCommentProspectIds={existingCommentProspectIds}
+                  goodCommentCounts={goodCommentCounts}
                 />
               )}
 

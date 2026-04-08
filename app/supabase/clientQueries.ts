@@ -582,6 +582,26 @@ export async function getUserComments() {
   return data || [];
 }
 
+export async function getGoodCommentCounts(): Promise<Record<string, number>> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("comments")
+    .select("prospect_id")
+    .eq("interaction", "Good");
+
+  if (error) {
+    console.error("Error fetching good comment counts:", error.message);
+    throw error;
+  }
+
+  const counts: Record<string, number> = {};
+  for (const row of data || []) {
+    counts[row.prospect_id] = (counts[row.prospect_id] || 0) + 1;
+  }
+  return counts;
+}
+
 export async function getDelibsUsers() {
   const supabase = createClient();
 
