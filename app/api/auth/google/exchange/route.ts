@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
 type GoogleTokenExchangeResponse = {
@@ -5,6 +6,16 @@ type GoogleTokenExchangeResponse = {
   error_description?: string;
   id_token?: string;
 };
+
+function decodeJwtEmail(token: string): string | null {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = Buffer.from(payload, "base64url").toString("utf-8");
+    return JSON.parse(decoded).email ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,6 +73,41 @@ export async function POST(request: NextRequest) {
         { error: "Google token exchange did not return an ID token." },
         { status: 400 },
       );
+    }
+
+    const email = decodeJwtEmail(tokenResult.id_token);
+
+    // If not a @ucsd.edu address, check whether this person already has an
+    // account in the users table before allowing sign-in.
+    if (!email?.endsWith("@ucsd.edu")) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!supabaseUrl || !serviceRoleKey) {
+        return NextResponse.json(
+          { error: "Server configuration error." },
+          { status: 500 },
+        );
+      }
+
+      const adminClient = createClient(supabaseUrl, serviceRoleKey);
+      const { data: existingUser, error: dbError } = await adminClient
+        .from("users")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (dbError) {
+        console.error("Error checking user existence:", dbError.message);
+        return NextResponse.json({ error: "Failed to verify account." }, { status: 500 });
+      }
+
+      if (!existingUser) {
+        return NextResponse.json(
+          { error: "Only @ucsd.edu email addresses can create an account." },
+          { status: 403 },
+        );
+      }
     }
 
     return NextResponse.json({ idToken: tokenResult.id_token });

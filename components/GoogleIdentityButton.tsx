@@ -110,7 +110,10 @@ export default function GoogleIdentityButton({ children }: GoogleIdentityButtonP
               const exchangeResult = await exchangeResponse.json();
 
               if (!exchangeResponse.ok || !exchangeResult.idToken) {
-                throw new Error(exchangeResult.error ?? "Failed to exchange Google authorization code.");
+                // Surface the server's rejection message directly (e.g. domain restriction).
+                customToast(exchangeResult.error ?? "Google sign-in failed. Please try again.", "error");
+                isSigningInRef.current = false;
+                return;
               }
 
               const supabase = createClient();
