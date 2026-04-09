@@ -217,6 +217,11 @@ export default function MultipleCaseStudyManager({
     setConfirmDeleteFormId(null);
   };
 
+  /** After successful submit, remove the tab without confirmation (× still confirms). */
+  const removeFormAfterSubmit = (formId: string) => {
+    removeForm(formId);
+  };
+
   const handleFormSubmit = async (formId: string) => {
     const form = forms.find(f => f.id === formId);
     if (!form) return;
@@ -391,7 +396,7 @@ export default function MultipleCaseStudyManager({
               debouncedAutoSave(activeForm.id, formData, activeForm.prospect, activeForm.existingSubmissionId);
             }}
             onFormSubmit={() => handleFormSubmit(activeForm.id)}
-            onFormClose={() => handleTabClose(activeForm.id)}
+            onFormClose={() => removeFormAfterSubmit(activeForm.id)}
             isSubmitting={activeForm.status === 'submitting'}
             isMultiFormContext={true}
             existingSubmissionId={activeForm.existingSubmissionId}
