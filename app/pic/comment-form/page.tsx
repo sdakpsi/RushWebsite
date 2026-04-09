@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProspectComments } from "@/hooks/useProspectComments";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUsersForComments } from "@/app/supabase/clientQueries";
+import { groupCommentThreadsByProspect, groupCommentsIntoThreads } from "@/lib/commentThreads";
 import { createClient } from "@/utils/supabase/client";
 import customToast from "@/components/CustomToast";
 import { redirect } from "next/navigation";
@@ -32,6 +33,7 @@ export default function ProtectedPage() {
   });
 
   const [expandedProspects, setExpandedProspects] = useState<{[key: string]: boolean}>({});
+  const [expandedThreadHistory, setExpandedThreadHistory] = useState<{[key: string]: boolean}>({});
   const [linkingMode, setLinkingMode] = useState<{[key: string]: boolean}>({});
   const [selectedProspectForLinking, setSelectedProspectForLinking] = useState<{[key: string]: string}>({});
 
@@ -181,17 +183,11 @@ export default function ProtectedPage() {
     );
   }
 
-  // Group comments by prospect_id
-  const groupedComments = commentsData.reduce((acc: any, comment: any) => {
-    if (!acc[comment.prospect_id]) {
-      acc[comment.prospect_id] = [];
-    }
-    acc[comment.prospect_id].push(comment);
-    return acc;
-  }, {});
-  
-  // Debug: Log all prospect IDs to check for duplicates (can be removed in production)
-  // console.log('All prospect IDs:', Object.keys(groupedComments));
+  const commentThreads = groupCommentsIntoThreads(commentsData);
+  const prospectGroups = groupCommentThreadsByProspect(commentThreads);
+  const prospectGroupsById = new Map(
+    prospectGroups.map((group) => [group.prospect_id, group])
+  );
 
   // Separate into categories
   const sections = {
@@ -201,19 +197,17 @@ export default function ProtectedPage() {
     notLinked: [] as string[],
   };
 
-  Object.entries(groupedComments).forEach(([prospectId, comments]: any) => {
+  prospectGroups.forEach((group) => {
+    const prospectId = group.prospect_id;
+
     if (prospectId.slice(0, 5) === "66666") {
       sections.notLinked.push(prospectId);
       return;
     }
 
-    // Count unique active members who had a "Good" interaction
-    const uniqueGoodActives = new Set(
-      comments
-        .filter((c: any) => c.interaction === "Good")
-        .map((c: any) => c.active_id)
-    );
-    const goodCount = uniqueGoodActives.size;
+    const goodCount = group.threads.filter(
+      (thread) => thread.latest_comment.interaction === "Good"
+    ).length;
 
     if (goodCount >= 2) {
       sections.twoPlusGood.push(prospectId);
@@ -227,10 +221,7 @@ export default function ProtectedPage() {
   // Copy function for prospect names
   const copyProspectNames = (prospectIds: string[]) => {
     const names = prospectIds
-      .map(prospectId => {
-        const prospectComments = groupedComments[prospectId];
-        return prospectComments[prospectComments.length - 1]?.prospect_name || "Unknown";
-      })
+      .map((prospectId) => prospectGroupsById.get(prospectId)?.prospect_name ?? "Unknown")
       .filter(name => name !== "Unknown")
       .join(", ");
 
@@ -267,29 +258,27 @@ export default function ProtectedPage() {
         </div>
         <div className="flex flex-wrap gap-6">
           {prospectIds.map((prospectId, index) => {
-          const prospectComments = groupedComments[prospectId];
-          const prospectName =
-            prospectComments[prospectComments.length - 1].prospect_name ||
-            "Unknown Prospect";
-          const prospectPhotoUrl = prospectComments[prospectComments.length - 1].prospect_photo_url;
+          const prospectGroup = prospectGroupsById.get(prospectId);
 
-          const uniqueGoodActives = new Set(
-            prospectComments
-              .filter((c: any) => c.interaction === "Good")
-              .map((c: any) => c.active_id)
-          );
-          const goodInteractionCount = uniqueGoodActives.size;
-          const numberOfComments = prospectComments.length;
+          if (!prospectGroup) {
+            return null;
+          }
+
+          const prospectName = prospectGroup.prospect_name || "Unknown Prospect";
+          const prospectPhotoUrl = prospectGroup.prospect_photo_url;
+          const goodInteractionCount = prospectGroup.threads.filter(
+            (thread) => thread.latest_comment.interaction === "Good"
+          ).length;
+          const numberOfComments = prospectGroup.threads.length;
           const rubricCounts = RUBRIC_CATEGORIES.reduce((counts, category) => {
-            counts[category] = prospectComments.filter((comment: any) =>
-              comment.rubric_categories?.includes(category)
+            counts[category] = prospectGroup.threads.filter((thread) =>
+              thread.latest_comment.rubric_categories?.includes(category)
             ).length;
             return counts;
           }, {} as Record<RubricCategory, number>);
           
-          // Create a truly unique key for this specific card instance
-          const uniqueKey = `${title}-${prospectId}-${index}-${prospectComments[0]?.id || 'unknown'}`;
-          const cardId = `card-${index}-${prospectComments[0]?.id || Math.random()}`;
+          const uniqueKey = `${title}-${prospectId}-${index}`;
+          const cardId = `card-${prospectId}`;
           const isExpanded = expandedProspects[cardId] || false;
           
           // console.log(`Rendering prospect ${prospectName} with key: ${uniqueKey}, uniqueId: ${uniqueProspectId}, expanded: ${expandedProspects[uniqueProspectId]}`);
@@ -377,25 +366,25 @@ export default function ProtectedPage() {
                   data-prospect={prospectName}
                   data-expanded="true"
                 >
-                  {prospectComments.map((comment: any) => (
+                  {prospectGroup.threads.map((thread) => (
                     <div
-                      key={comment.id}
-                      className="flex items-start justify-between rounded-lg border border-border bg-background p-4 text-foreground"
+                      key={thread.threadKey}
+                      className="rounded-lg border border-border bg-background p-4 text-foreground"
                     >
                       <div className="flex flex-col space-y-1 text-sm">
                         <p>
                           <strong>Submitted by:</strong>{" "}
-                          {comment.active_name || "Unknown"}
+                          {thread.active_name || "Unknown"}
                         </p>
                         <p>
-                          <strong>{comment.interaction || "No data"}</strong>{" "}
+                          <strong>{thread.latest_comment.interaction || "No data"}</strong>{" "}
                           interaction
                         </p>
                         <div className="flex flex-wrap gap-2 py-1">
-                          {comment.rubric_categories?.length ? (
-                            comment.rubric_categories.map((category: RubricCategory) => (
+                          {thread.latest_comment.rubric_categories?.length ? (
+                            thread.latest_comment.rubric_categories.map((category: RubricCategory) => (
                               <span
-                                key={`${comment.id}-${category}`}
+                                key={`${thread.latest_comment.id}-${category}`}
                                 className={`rounded-full border px-2 py-1 text-xs font-medium ${
                                   RUBRIC_CATEGORY_STYLES[category]
                                 }`}
@@ -409,8 +398,8 @@ export default function ProtectedPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm italic">
-                          "{comment.comment || "No comment"}"
+                        <p className="whitespace-pre-line text-sm italic">
+                          {thread.latest_comment.comment || "No comment"}
                         </p>
                         <div className="text-xs text-muted-foreground">
                           {new Intl.DateTimeFormat("en-US", {
@@ -420,8 +409,69 @@ export default function ProtectedPage() {
                             hour: "2-digit",
                             minute: "2-digit",
                             second: "2-digit",
-                          }).format(new Date(comment.created_at))}
+                          }).format(new Date(thread.latest_comment.created_at))}
                         </div>
+
+                        {thread.history.length > 1 ? (
+                          <div className="pt-2">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedThreadHistory((currentValue) => ({
+                                  ...currentValue,
+                                  [thread.threadKey]: !currentValue[thread.threadKey],
+                                }))
+                              }
+                              className="text-xs font-semibold text-blue-700 hover:text-blue-900"
+                            >
+                              {expandedThreadHistory[thread.threadKey]
+                                ? "Hide Full History"
+                                : `Show Full History (${thread.history.length})`}
+                            </button>
+
+                            {expandedThreadHistory[thread.threadKey] ? (
+                              <div className="mt-3 space-y-2">
+                                {thread.history.map((commentEntry) => (
+                                  <div
+                                    key={commentEntry.id}
+                                    className="rounded-lg border border-border bg-muted/30 p-3"
+                                  >
+                                    <div className="mb-2 text-xs text-muted-foreground">
+                                      {new Intl.DateTimeFormat("en-US", {
+                                        dateStyle: "medium",
+                                        timeStyle: "short",
+                                      }).format(new Date(commentEntry.created_at))}
+                                    </div>
+                                    <div className="mb-2 flex flex-wrap gap-2">
+                                      <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">
+                                        {commentEntry.interaction || "No data"}
+                                      </span>
+                                      {commentEntry.rubric_categories?.length ? (
+                                        commentEntry.rubric_categories.map((category) => (
+                                          <span
+                                            key={`${commentEntry.id}-${category}`}
+                                            className={`rounded-full border px-2 py-1 text-xs font-medium ${
+                                              RUBRIC_CATEGORY_STYLES[category]
+                                            }`}
+                                          >
+                                            {category}
+                                          </span>
+                                        ))
+                                      ) : (
+                                        <span className="rounded-full border border-border bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                                          Untagged
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="whitespace-pre-line text-sm italic">
+                                      {commentEntry.comment || "No comment"}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   ))}

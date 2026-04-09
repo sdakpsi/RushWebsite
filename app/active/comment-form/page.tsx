@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InterviewSearchBar from "@/components/InterviewSearchBar";
@@ -7,11 +7,11 @@ import ActiveLoginComponent from "@/components/ActiveLoginComponent";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import customToast from "@/components/CustomToast";
 import { createClient } from "@/utils/supabase/client";
-import Checkbox from "@/components/Checkbox";
 import { v4 as uuidv4 } from "uuid";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getUsersForComments, getUserComments, getGoodCommentCounts } from "@/app/supabase/clientQueries";
+import { groupCommentsIntoThreads } from "@/lib/commentThreads";
 import ProspectGrid from "@/components/ProspectGrid";
 import PastCommentSubmissions from "@/components/PastCommentSubmissions";
 
@@ -19,6 +19,7 @@ import PastCommentSubmissions from "@/components/PastCommentSubmissions";
 
 import {
   RUBRIC_CATEGORIES,
+  type CommentThread,
   type ProspectInterview,
   type RubricCategory,
 } from "@/lib/types";
@@ -35,23 +36,22 @@ const RUBRIC_CATEGORY_DETAILS: Record<RubricCategory, string> = {
 function useSelectedProspect() {
   const [selectedProspect, setSelectedProspect] =
     useState<ProspectInterview | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   return {
     selectedProspect,
     setSelectedProspect,
-    isSubmitting,
-    setIsSubmitting,
   };
 }
 
-export default function Page(this: any) {
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Unknown error";
+}
+
+export default function Page() {
   const { isActive, isLoading } = useCurrentUser();
   const {
     selectedProspect,
     setSelectedProspect,
-    isSubmitting,
-    setIsSubmitting,
   } = useSelectedProspect();
 
   const [viewMode, setViewMode] = useState<'search' | 'grid'>('search');
@@ -64,7 +64,6 @@ export default function Page(this: any) {
   const queryClient = useQueryClient();
   const rubricInfoRef = useRef<HTMLDivElement | null>(null);
 
-  // React Query for fetching prospects - only enabled when in grid mode
   const { data: prospects = [], isLoading: prospectsLoading, error: prospectsError } = useQuery({
     queryKey: ['prospectsForComments'],
     queryFn: getUsersForComments,
@@ -92,17 +91,40 @@ export default function Page(this: any) {
     refetchOnWindowFocus: false,
   });
 
-  // Create a Set of prospect IDs that have existing comments
-  const existingCommentProspectIds = new Set(userComments.map(c => c.prospect_id));
+  const userCommentThreads = useMemo(
+    () => groupCommentsIntoThreads(userComments),
+    [userComments]
+  );
+
+  const existingCommentProspectIds = new Set(
+    userCommentThreads.map((thread) => thread.prospect_id)
+  );
+
+  const normalizeProspectName = (value: string | null | undefined) =>
+    value?.trim().toLocaleLowerCase() ?? "";
+
+  const existingThread: CommentThread | undefined = selectedProspect
+    ? userCommentThreads.find((thread) => thread.prospect_id === selectedProspect.id)
+    : checked && newProspectName.trim()
+      ? userCommentThreads.find(
+          (thread) =>
+            normalizeProspectName(thread.prospect_name) ===
+            normalizeProspectName(newProspectName)
+        )
+      : undefined;
+
+  const resetDraftState = () => {
+    setComment("");
+    setInteraction("");
+    setRubricCategories([]);
+    setIsRubricInfoOpen(false);
+  };
 
   if (prospectsError) {
     console.error("Error fetching prospects:", prospectsError);
   }
 
-  const supabase = createClient();
-
-  // React Query mutation for submitting comments
-  const submitCommentMutation = useMutation({
+  const createCommentMutation = useMutation({
     mutationFn: async ({ prospectData, commentData }: {
       prospectData: { id?: string; name: string };
       commentData: {
@@ -113,47 +135,98 @@ export default function Page(this: any) {
     }) => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
+      const activeName =
+        typeof user?.user_metadata.name === "string"
+          ? user.user_metadata.name
+          : null;
+
       const { data, error } = await supabase.from("comments").insert([{
-        prospect_id: prospectData.id || "66666" + uuidv4().slice(5),
+        prospect_id: prospectData.id ?? `66666${uuidv4().slice(5)}`,
         prospect_name: prospectData.name,
         active_id: user?.id,
-        active_name: user?.user_metadata.name,
+        active_name: activeName,
         comment: commentData.comment,
         interaction: commentData.interaction,
         rubric_categories: commentData.rubricCategories.length
           ? commentData.rubricCategories
           : null,
       }]);
-      
+
       if (error) throw error;
       return { data, prospectName: prospectData.name };
     },
     onSuccess: (result) => {
-      customToast(`Submitted comment for ${result.prospectName}: ${comment}`, "success");
-      setComment("");
-      setInteraction("");
-      setRubricCategories([]);
-      setIsRubricInfoOpen(false);
+      customToast(`Submitted comment for ${result.prospectName}.`, "success");
+      resetDraftState();
       setSelectedProspect(null);
       setChecked(false);
       setNewProspectName("");
       // Invalidate prospect comments queries
-      queryClient.invalidateQueries({ queryKey: ['prospectComments'] });
-      queryClient.invalidateQueries({ queryKey: ['userComments'] });
+      void queryClient.invalidateQueries({ queryKey: ['prospectComments'] });
+      void queryClient.invalidateQueries({ queryKey: ['userComments'] });
+      void queryClient.invalidateQueries({ queryKey: ['goodCommentCounts'] });
     },
-    onError: (error: any) => {
-      customToast(`Error submitting comment: ${error.message}`, "error");
+    onError: (error: unknown) => {
+      customToast(`Error submitting comment: ${getErrorMessage(error)}`, "error");
     },
   });
 
-  const submitComment = async () => {
+  const updateThreadMutation = useMutation({
+    mutationFn: async ({
+      thread,
+      commentData,
+    }: {
+      thread: CommentThread;
+      commentData: {
+        comment: string;
+        interaction: string;
+        rubricCategories: RubricCategory[];
+      };
+    }) => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      const activeName =
+        typeof user?.user_metadata.name === "string"
+          ? user.user_metadata.name
+          : thread.active_name;
+
+      const { error } = await supabase.from("comments").insert([{
+        prospect_id: thread.prospect_id,
+        prospect_name: thread.prospect_name,
+        active_id: thread.active_id,
+        active_name: activeName,
+        comment: commentData.comment,
+        interaction: commentData.interaction,
+        rubric_categories: commentData.rubricCategories.length
+          ? commentData.rubricCategories
+          : null,
+      }]);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      customToast("Saved comment update.", "success");
+      void queryClient.invalidateQueries({ queryKey: ['prospectComments'] });
+      void queryClient.invalidateQueries({ queryKey: ['userComments'] });
+      void queryClient.invalidateQueries({ queryKey: ['goodCommentCounts'] });
+    },
+    onError: (error: unknown) => {
+      customToast(`Error saving update: ${getErrorMessage(error)}`, "error");
+    },
+  });
+
+  const submitComment = () => {
     if (!selectedProspect && (!checked || newProspectName.length === 0)) {
       customToast("Please enter a prospect before submitting.", "error");
       return;
     }
 
-    if (interaction === "" || comment === "") {
+    if (comment.trim() === "") {
+      customToast("Interaction and comment are required.", "error");
+      return;
+    }
+
+    if (interaction === "") {
       customToast("Interaction and comment are required.", "error");
       return;
     }
@@ -166,11 +239,32 @@ export default function Page(this: any) {
 
     const prospectData = checked 
       ? { name: newProspectName }
-      : { id: selectedProspect?.id, name: selectedProspect?.full_name || "" };
+      : { id: selectedProspect?.id, name: selectedProspect?.full_name ?? "" };
       
     const commentData = { comment, interaction, rubricCategories };
     
-    submitCommentMutation.mutate({ prospectData, commentData });
+    createCommentMutation.mutate({ prospectData, commentData });
+  };
+
+  const submitThreadUpdate = async (
+    thread: CommentThread,
+    commentData: {
+      comment: string;
+      interaction: string;
+      rubricCategories: RubricCategory[];
+    }
+  ) => {
+    if (commentData.comment.trim() === "") {
+      customToast("Please add an update before saving.", "error");
+      throw new Error("Missing update text");
+    }
+
+    if (commentData.interaction === "") {
+      customToast("Please choose an interaction before saving.", "error");
+      throw new Error("Missing interaction");
+    }
+
+    await updateThreadMutation.mutateAsync({ thread, commentData });
   };
 
   const toggleRubricCategory = (category: RubricCategory) => {
@@ -259,6 +353,8 @@ export default function Page(this: any) {
               <PastCommentSubmissions
                 preloadedData={userComments}
                 isPreloaded={true}
+                onSubmitUpdate={submitThreadUpdate}
+                isSubmittingThreadKey={updateThreadMutation.isPending ? updateThreadMutation.variables?.thread.threadKey ?? null : null}
               />
 
               {viewMode === 'search' && (
@@ -334,35 +430,49 @@ export default function Page(this: any) {
                 <div className="flex justify-center">
                   <button
                     className="rounded-lg bg-gray-500 px-6 py-3 text-white font-medium hover:bg-gray-600 transition-all duration-200 touch-manipulation active:scale-95 shadow-md"
-                    onClick={() => setSelectedProspect(null)}
+                    onClick={() => {
+                      setSelectedProspect(null);
+                      resetDraftState();
+                    }}
                   >
                     Back to Grid
                   </button>
                 </div>
               )}
 
+              {existingThread && (selectedProspect != null || checked) ? (
+                <div className="mx-auto w-full max-w-2xl rounded-lg border border-slate-300 bg-slate-100 p-4 text-slate-800">
+                  <p className="text-sm font-semibold text-slate-900">
+                    You already have a comment thread for this prospect.
+                  </p>
+                  <p className="mt-1 text-sm text-slate-700">
+                    Use the matching card in <strong>Your Comments</strong> above to review history and add an inline update.
+                  </p>
+                </div>
+              ) : null}
+
               {/* Comment Input */}
-              {(selectedProspect || checked) && (
+              {(selectedProspect != null || checked) && !existingThread && (
                 <div className="flex flex-col" data-comment-form>
-                  {/* Interaction Question */}
-                  <div className="flex flex-col">
-                    {checked && !selectedProspect && (
-                      <textarea
-                        className="rounzded border p-1 text-gray-700"
-                        placeholder="Enter prospect name"
-                        value={newProspectName}
-                        onChange={(e) => setNewProspectName(e.target.value)}
-                        rows={1}
-                      />
-                    )}
+                  {checked && !selectedProspect && (
+                    <textarea
+                      className="rounzded border p-1 text-gray-700"
+                      placeholder="Enter prospect name"
+                      value={newProspectName}
+                      onChange={(e) => setNewProspectName(e.target.value)}
+                      rows={1}
+                    />
+                  )}
+
+                  <div className="mt-4 flex flex-col">
                     <label className="mb-2 text-gray-700">
                       How was the interaction?
                     </label>
                     <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
                       <button
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
-                          interaction === "Good" 
-                            ? "bg-green-600 shadow-lg border-2 border-green-400" 
+                          interaction === "Good"
+                            ? "bg-green-600 shadow-lg border-2 border-green-400"
                             : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Good")}
@@ -371,8 +481,8 @@ export default function Page(this: any) {
                       </button>
                       <button
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
-                          interaction === "Neutral" 
-                            ? "bg-yellow-600 shadow-lg border-2 border-yellow-400" 
+                          interaction === "Neutral"
+                            ? "bg-yellow-600 shadow-lg border-2 border-yellow-400"
                             : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Neutral")}
@@ -381,8 +491,8 @@ export default function Page(this: any) {
                       </button>
                       <button
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
-                          interaction === "Bad" 
-                            ? "bg-red-600 shadow-lg border-2 border-red-400" 
+                          interaction === "Bad"
+                            ? "bg-red-600 shadow-lg border-2 border-red-400"
                             : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Bad")}
@@ -454,6 +564,7 @@ export default function Page(this: any) {
                       })}
                     </div>
                   </div>
+
                   <label className="mb-2 mt-4 text-gray-700">
                     Explain the interaction (minimum 15 words):
                   </label>
@@ -471,9 +582,9 @@ export default function Page(this: any) {
                   <button
                     className="mb-4 mt-6 self-center rounded-lg bg-blue-600 px-8 py-4 text-white font-semibold text-lg hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={submitComment}
-                    disabled={submitCommentMutation.isPending}
+                    disabled={createCommentMutation.isPending}
                   >
-                    {submitCommentMutation.isPending ? "Submitting..." : "Submit Comment"}
+                    {createCommentMutation.isPending ? "Submitting..." : "Submit Comment"}
                   </button>
                 </div>
               )}

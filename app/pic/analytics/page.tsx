@@ -5,7 +5,9 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAllAnalytics } from "@/hooks/useAllAnalytics";
 import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
-import { type ActiveParticipationComment } from "@/app/supabase/analytics";
+import {
+  type ActiveParticipationCommentThread,
+} from "@/app/supabase/analytics";
 import { redirect } from "next/navigation";
 
 const RUBRIC_STYLES: Record<string, string> = {
@@ -65,41 +67,44 @@ function formatLastActivity(lastActivity: string | null) {
 }
 
 function ActiveCommentCard({
-  comment,
+  thread,
 }: {
-  comment: ActiveParticipationComment;
+  thread: ActiveParticipationCommentThread;
 }) {
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const latestComment = thread.latestComment;
+
   return (
     <div className="rounded-xl border border-border bg-background p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-foreground">
-            {comment.prospectName}
+            {thread.prospectName}
           </p>
           <p className="text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-US", {
               dateStyle: "medium",
               timeStyle: "short",
-            }).format(new Date(comment.createdAt))}
+            }).format(new Date(latestComment.createdAt))}
           </p>
         </div>
         <span
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            comment.interaction === "Good"
+            latestComment.interaction === "Good"
               ? "bg-emerald-100 text-emerald-800"
-              : comment.interaction === "Neutral"
+              : latestComment.interaction === "Neutral"
                 ? "bg-amber-100 text-amber-800"
                 : "bg-rose-100 text-rose-800"
           }`}
         >
-          {comment.interaction}
+          {latestComment.interaction}
         </span>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        {comment.rubricCategories.length ? (
-          comment.rubricCategories.map((category) => (
+        {latestComment.rubricCategories.length ? (
+          latestComment.rubricCategories.map((category) => (
             <span
-              key={`${comment.id}-${category}`}
+              key={`${latestComment.id}-${category}`}
               className={`rounded-full border px-2 py-1 text-xs font-medium ${
                 RUBRIC_STYLES[category] ||
                 "border-border bg-muted text-muted-foreground"
@@ -115,8 +120,44 @@ function ActiveCommentCard({
         )}
       </div>
       <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">
-        {comment.comment || "No comment provided."}
+        {latestComment.comment || "No comment provided."}
       </p>
+      {thread.history.length > 1 ? (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setIsHistoryVisible((currentValue) => !currentValue)}
+            className="text-sm font-medium text-sky-700 hover:text-sky-900"
+          >
+            {isHistoryVisible
+              ? "Hide full history"
+              : `Show full history (${thread.history.length})`}
+          </button>
+          {isHistoryVisible ? (
+            <div className="mt-3 space-y-3">
+              {thread.history.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="rounded-lg border border-border bg-muted/30 p-3"
+                >
+                  <p className="text-xs text-muted-foreground">
+                    {new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(comment.createdAt))}
+                  </p>
+                  <p className="mt-2 text-xs font-semibold text-foreground">
+                    {comment.interaction}
+                  </p>
+                  <p className="mt-2 whitespace-pre-line text-sm text-foreground">
+                    {comment.comment || "No comment provided."}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -348,8 +389,8 @@ export default function AnalyticsPage() {
                                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                                         {active.comments.map((comment) => (
                                           <ActiveCommentCard
-                                            key={comment.id}
-                                            comment={comment}
+                                            key={comment.threadKey}
+                                            thread={comment}
                                           />
                                         ))}
                                       </div>

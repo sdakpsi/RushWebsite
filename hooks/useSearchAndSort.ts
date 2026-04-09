@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { getLatestCommentsByThread } from '@/lib/commentThreads';
 import { Packet, Comment } from '@/lib/types';
 
 export function useSearchAndSort(usersData: Packet[], commentsData: Comment[] = []) {
@@ -17,8 +18,9 @@ export function useSearchAndSort(usersData: Packet[], commentsData: Comment[] = 
   // Create a map of prospect_id -> count of "Good" interactions
   const goodInteractionCounts = useMemo(() => {
     const counts = new Map<string, Set<string>>();
+    const latestComments = getLatestCommentsByThread(commentsData);
 
-    commentsData.forEach((comment) => {
+    latestComments.forEach((comment) => {
       if (comment.interaction === 'Good') {
         const currentProspectSet = counts.get(comment.prospect_id) || new Set<string>();
         currentProspectSet.add(comment.active_id);

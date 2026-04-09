@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { createClient } from "@/utils/supabase/client";
 import { getUserScores, getProspectComments } from '@/app/supabase/clientQueries';
+import { type CommentThread } from "@/lib/types";
 import customToast from "./CustomToast";
 import Image from "next/image";
 import AvatarUpload from "./AvatarUpload";
@@ -78,13 +79,6 @@ interface Case {
   additional: string;
 }
 
-interface Comment {
-  active_name: string;
-  comment: string;
-  interaction: string;
-  rubric_categories?: string[] | null;
-}
-
 interface ApplicationPopupProps {
   application: Application;
   cases: Case[];
@@ -106,6 +100,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 }) => {
   const [viewDocument, setViewDocument] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("application");
+  const [expandedCommentThreads, setExpandedCommentThreads] = useState<Record<string, boolean>>({});
   const supabase = createClient();
   const [score, setScore] = useState("");
 
@@ -1170,35 +1165,98 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </div>
                   </div>
                   <div className="space-y-3">
-                    {prospectComments.map((comment, index) => (
-                      <div key={index} className="grid grid-cols-1 gap-4 rounded-lg border border-border bg-muted/40 p-3 md:grid-cols-4">
-                        <div className="font-semibold text-blue-900">
-                          {comment.active_name}
-                        </div>
-                        <div className="text-foreground">
-                          {comment.interaction}
-                        </div>
-                        <div className="text-foreground">
-                          {comment.rubric_categories?.length ? (
-                            <div className="flex flex-wrap gap-2">
-                              {comment.rubric_categories.map((category: string) => (
-                                <span
-                                  key={category}
-                                  className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
-                                >
-                                  {category}
-                                </span>
-                              ))}
+                    {prospectComments.map((thread: CommentThread) => {
+                      const isExpanded = Boolean(expandedCommentThreads[thread.threadKey]);
+
+                      return (
+                        <div key={thread.threadKey} className="rounded-lg border border-border bg-muted/40 p-3">
+                          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                            <div className="font-semibold text-blue-900">
+                              {thread.active_name}
                             </div>
-                          ) : (
-                            <span className="text-muted-foreground">Untagged</span>
-                          )}
+                            <div className="text-foreground">
+                              {thread.latest_comment.interaction}
+                            </div>
+                            <div className="text-foreground">
+                              {thread.latest_comment.rubric_categories?.length ? (
+                                <div className="flex flex-wrap gap-2">
+                                  {thread.latest_comment.rubric_categories.map((category: string) => (
+                                    <span
+                                      key={`${thread.threadKey}-${category}`}
+                                      className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                                    >
+                                      {category}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">Untagged</span>
+                              )}
+                            </div>
+                            <div className="text-foreground text-sm whitespace-pre-line">
+                              {thread.latest_comment.comment}
+                            </div>
+                          </div>
+
+                          {thread.history.length > 1 ? (
+                            <div className="mt-4">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setExpandedCommentThreads((currentValue) => ({
+                                    ...currentValue,
+                                    [thread.threadKey]: !currentValue[thread.threadKey],
+                                  }))
+                                }
+                                className="text-sm font-medium text-blue-700 hover:text-blue-900"
+                              >
+                                {isExpanded ? "Hide full history" : `Show full history (${thread.history.length})`}
+                              </button>
+
+                              {isExpanded ? (
+                                <div className="mt-3 space-y-3">
+                                  {thread.history.map((commentEntry) => (
+                                    <div
+                                      key={commentEntry.id}
+                                      className="rounded-lg border border-border bg-background p-3"
+                                    >
+                                      <div className="mb-2 text-xs text-muted-foreground">
+                                        {new Intl.DateTimeFormat("en-US", {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        }).format(new Date(commentEntry.created_at))}
+                                      </div>
+                                      <div className="mb-2 flex flex-wrap gap-2">
+                                        <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">
+                                          {commentEntry.interaction}
+                                        </span>
+                                        {commentEntry.rubric_categories?.length ? (
+                                          commentEntry.rubric_categories.map((category) => (
+                                            <span
+                                              key={`${commentEntry.id}-${category}`}
+                                              className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                                            >
+                                              {category}
+                                            </span>
+                                          ))
+                                        ) : (
+                                          <span className="rounded-full border border-border bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                                            Untagged
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div className="text-sm whitespace-pre-line text-foreground">
+                                        {commentEntry.comment}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : null}
+                            </div>
+                          ) : null}
                         </div>
-                        <div className="text-foreground text-sm whitespace-pre-line">
-                          {comment.comment}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </div>

@@ -1,4 +1,5 @@
-import { type ProspectInterview } from "@/lib/types";
+import { getLatestCommentsByThread, groupCommentsIntoThreads } from "@/lib/commentThreads";
+import { type Comment, type CommentThread, type ProspectInterview } from "@/lib/types";
 import { createClient } from "@/utils/supabase/client";
 
 export async function getUsers() {
@@ -405,20 +406,21 @@ export async function getUserScores(userId: string) {
   };
 }
 
-export async function getProspectComments(userId: string) {
+export async function getProspectComments(userId: string): Promise<CommentThread[]> {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from("comments")
-    .select("active_name, comment, interaction, rubric_categories")
-    .eq("prospect_id", userId);
+    .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories")
+    .eq("prospect_id", userId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching prospect comments:", error.message);
     throw error;
   }
 
-  return data || [];
+  return groupCommentsIntoThreads((data as Comment[] | null) ?? []);
 }
 
 export async function getUsersForComments(): Promise<Array<{id: string, full_name: string, email: string, photo_url?: string}>> {
@@ -515,7 +517,7 @@ export async function getApplicationData() {
   return applicationObject.application;
 }
 
-export async function getComments() {
+export async function getComments(): Promise<Comment[]> {
   const supabase = createClient();
 
   // First get all comments
@@ -558,10 +560,10 @@ export async function getComments() {
     prospect_photo_url: photoMap.get(comment.prospect_id) || null,
   }));
 
-  return enrichedComments;
+  return enrichedComments as Comment[];
 }
 
-export async function getUserComments() {
+export async function getUserComments(): Promise<Comment[]> {
   const supabase = createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -571,15 +573,16 @@ export async function getUserComments() {
 
   const { data, error } = await supabase
     .from("comments")
-    .select("prospect_id, prospect_name")
-    .eq("active_id", user.id);
+    .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories")
+    .eq("active_id", user.id)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching user comments:", error.message);
     throw error;
   }
 
-  return data || [];
+  return (data as Comment[] | null) ?? [];
 }
 
 export async function getGoodCommentCounts(): Promise<Record<string, number>> {
@@ -588,8 +591,7 @@ export async function getGoodCommentCounts(): Promise<Record<string, number>> {
   const [commentsResult, caseStudiesResult] = await Promise.all([
     supabase
       .from("comments")
-      .select("prospect_id")
-      .eq("interaction", "Good"),
+      .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories"),
     supabase
       .from("case_studies")
       .select("prospect")
@@ -602,7 +604,13 @@ export async function getGoodCommentCounts(): Promise<Record<string, number>> {
   }
 
   const counts: Record<string, number> = {};
-  for (const row of commentsResult.data || []) {
+  const latestComments = getLatestCommentsByThread((commentsResult.data as Comment[] | null) ?? []);
+
+  for (const row of latestComments) {
+    if (row.interaction !== "Good") {
+      continue;
+    }
+
     counts[row.prospect_id] = (counts[row.prospect_id] || 0) + 1;
   }
   for (const row of caseStudiesResult.data || []) {

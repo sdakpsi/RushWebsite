@@ -1,11 +1,12 @@
 "use server";
 
+import { getLatestCommentsByThread, groupCommentsIntoThreads } from "@/lib/commentThreads";
 import { createClient } from "@/utils/supabase/server";
 import {
   createEmptyCommentCountsByEvent,
   getCommentTrackingEventForTimestamp,
 } from "@/lib/analyticsCommentDates";
-import { RUBRIC_CATEGORIES, type RubricCategory } from "@/lib/types";
+import { RUBRIC_CATEGORIES, type Comment, type RubricCategory } from "@/lib/types";
 
 export interface ActiveParticipationMetrics {
   activeId: string;
@@ -16,7 +17,7 @@ export interface ActiveParticipationMetrics {
   interviewsCount: number;
   totalEvaluations: number;
   lastActivity: string | null;
-  comments: ActiveParticipationComment[];
+  comments: ActiveParticipationCommentThread[];
 }
 
 export interface ActiveParticipationComment {
@@ -26,6 +27,13 @@ export interface ActiveParticipationComment {
   interaction: string;
   rubricCategories: RubricCategory[];
   createdAt: string;
+}
+
+export interface ActiveParticipationCommentThread {
+  threadKey: string;
+  prospectName: string;
+  latestComment: ActiveParticipationComment;
+  history: ActiveParticipationComment[];
 }
 
 export interface EvaluationTimelineData {
@@ -55,6 +63,13 @@ export interface ProspectAnalyticsComment {
   createdAt: string;
 }
 
+export interface ProspectAnalyticsCommentThread {
+  threadKey: string;
+  activeName: string;
+  latestComment: ProspectAnalyticsComment;
+  history: ProspectAnalyticsComment[];
+}
+
 export interface ProspectAnalyticsCaseStudy {
   id: string;
   activeName: string;
@@ -82,7 +97,7 @@ export interface ProspectAnalyticsRow {
   commentCountsByEvent: Record<string, number>;
   startedApp: boolean;
   submittedEssays: boolean;
-  comments: ProspectAnalyticsComment[];
+  comments: ProspectAnalyticsCommentThread[];
   caseStudies: ProspectAnalyticsCaseStudy[];
 }
 
@@ -142,6 +157,50 @@ function compareLastActivity(a: string, b: string) {
   return new Date(b).getTime() - new Date(a).getTime();
 }
 
+function toThreadableComments(rows: CommentRow[] | null | undefined): Comment[] {
+  return (rows ?? [])
+    .filter((row): row is CommentRow & {
+      created_at: string;
+      prospect_id: string;
+      active_id: string;
+    } => Boolean(row.created_at && row.prospect_id && row.active_id))
+    .map((row) => ({
+      id: row.id,
+      created_at: row.created_at,
+      prospect_id: row.prospect_id,
+      active_id: row.active_id,
+      prospect_name: row.prospect_name,
+      active_name: row.active_name,
+      comment: row.comment,
+      interaction: row.interaction,
+      invite: null,
+      rubric_categories: row.rubric_categories,
+      prospect_photo_url: null,
+    }));
+}
+
+function toActiveComment(comment: Comment): ActiveParticipationComment {
+  return {
+    id: comment.id,
+    prospectName: comment.prospect_name || "Unknown Prospect",
+    comment: comment.comment || "",
+    interaction: comment.interaction || "Unknown",
+    rubricCategories: comment.rubric_categories || [],
+    createdAt: comment.created_at,
+  };
+}
+
+function toProspectComment(comment: Comment): ProspectAnalyticsComment {
+  return {
+    id: comment.id,
+    activeName: comment.active_name || "Unknown",
+    comment: comment.comment || "",
+    interaction: comment.interaction || "Unknown",
+    rubricCategories: comment.rubric_categories || [],
+    createdAt: comment.created_at,
+  };
+}
+
 export async function getActiveParticipationMetrics(): Promise<ActiveParticipationMetrics[]> {
   const supabase = createClient();
 
@@ -163,43 +222,43 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
     const { data: trackedComments, error: trackedCommentsError } = await supabase
       .from("comments")
       .select(
-        "id, active_id, created_at, prospect_name, comment, interaction, rubric_categories"
+        "id, active_id, prospect_id, created_at, prospect_name, active_name, comment, interaction, rubric_categories"
       );
 
     if (trackedCommentsError) {
       console.error("Error fetching tracked comments by event:", trackedCommentsError);
     }
 
+    const threadableComments = toThreadableComments(trackedComments as CommentRow[] | null);
+    const commentThreads = groupCommentsIntoThreads(threadableComments);
     const commentsByActiveAndEvent = new Map<string, Record<string, number>>();
-    const commentsByActive = new Map<string, CommentRow[]>();
+    const threadsByActive = new Map<string, typeof commentThreads>();
 
-    (trackedComments as CommentRow[] | null)?.forEach((comment) => {
-      if (!comment.active_id || !comment.created_at) return;
+    commentThreads.forEach((thread) => {
+      const currentThreads = threadsByActive.get(thread.active_id) || [];
+      currentThreads.push(thread);
+      threadsByActive.set(thread.active_id, currentThreads);
 
-      const currentComments = commentsByActive.get(comment.active_id) || [];
-      currentComments.push(comment);
-      commentsByActive.set(comment.active_id, currentComments);
-
-      const trackedEvent = getCommentTrackingEventForTimestamp(comment.created_at);
+      const trackedEvent = getCommentTrackingEventForTimestamp(thread.latest_comment.created_at);
       if (!trackedEvent) return;
 
       const currentCounts =
-        commentsByActiveAndEvent.get(comment.active_id) ||
-        createEmptyCommentCountsByEvent();
+        commentsByActiveAndEvent.get(thread.active_id) || createEmptyCommentCountsByEvent();
 
       currentCounts[trackedEvent.eventKey] =
         (currentCounts[trackedEvent.eventKey] || 0) + 1;
 
-      commentsByActiveAndEvent.set(comment.active_id, currentCounts);
+      commentsByActiveAndEvent.set(thread.active_id, currentCounts);
     });
 
     const participationData = await Promise.all(
       activeMembers.map(async (active) => {
-        const activeComments = [...(commentsByActive.get(active.id) || [])].sort(
+        const activeCommentThreads = [...(threadsByActive.get(active.id) || [])].sort(
           (a, b) =>
-            new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
+            new Date(b.latest_comment.created_at).getTime() -
+            new Date(a.latest_comment.created_at).getTime()
         );
-        const commentsCount = activeComments.length;
+        const commentsCount = activeCommentThreads.length;
 
         const { count: caseStudiesCount, error: caseStudiesError } = await supabase
           .from("case_studies")
@@ -243,7 +302,9 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           console.error("Error fetching last interview:", lastInterviewError);
         }
 
-        if (activeComments[0]?.created_at) activities.push(activeComments[0].created_at);
+        if (activeCommentThreads[0]?.latest_comment.created_at) {
+          activities.push(activeCommentThreads[0].latest_comment.created_at);
+        }
         if (lastCaseStudy?.[0]?.created_at) activities.push(lastCaseStudy[0].created_at);
         if (lastInterview?.[0]?.created_at) activities.push(lastInterview[0].created_at);
 
@@ -264,13 +325,11 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           totalEvaluations:
             (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0),
           lastActivity,
-          comments: activeComments.map((comment) => ({
-            id: comment.id,
-            prospectName: comment.prospect_name || "Unknown Prospect",
-            comment: comment.comment || "",
-            interaction: comment.interaction || "Unknown",
-            rubricCategories: comment.rubric_categories || [],
-            createdAt: comment.created_at || "",
+          comments: activeCommentThreads.map((thread) => ({
+            threadKey: thread.threadKey,
+            prospectName: thread.prospect_name || "Unknown Prospect",
+            latestComment: toActiveComment(thread.latest_comment),
+            history: thread.history.map(toActiveComment),
           })),
         };
       })
@@ -293,8 +352,7 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
 
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
-      .select("created_at")
-      .gte("created_at", dateFilter);
+      .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories");
 
     if (commentsError) {
       console.error("Error fetching comments for timeline:", commentsError);
@@ -335,8 +393,13 @@ export async function getEvaluationTimeline(): Promise<EvaluationTimelineData[]>
       });
     }
 
-    comments?.forEach((comment) => {
-      if (!comment.created_at) return;
+    const latestComments = getLatestCommentsByThread(
+      toThreadableComments(comments as CommentRow[] | null)
+    );
+    const dateFilterTime = new Date(dateFilter).getTime();
+
+    latestComments.forEach((comment) => {
+      if (new Date(comment.created_at).getTime() < dateFilterTime) return;
       const date = toIsoDateKey(comment.created_at);
       const dayData = dateMap.get(date);
       if (!dayData) return;
@@ -386,6 +449,25 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
 
     if (!prospects) return [];
 
+    const { data: comments, error: commentsError } = await supabase
+      .from("comments")
+      .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories");
+
+    if (commentsError) {
+      console.error("Error fetching comments for prospect coverage:", commentsError);
+    }
+
+    const latestComments = getLatestCommentsByThread(
+      toThreadableComments(comments as CommentRow[] | null)
+    );
+    const commentCountsByProspect = latestComments.reduce<Record<string, number>>(
+      (counts, comment) => {
+        counts[comment.prospect_id] = (counts[comment.prospect_id] || 0) + 1;
+        return counts;
+      },
+      {}
+    );
+
     const coverageData = await Promise.all(
       prospects.map(async (prospect) => {
         const { data: application, error: applicationError } = await supabase
@@ -402,14 +484,7 @@ export async function getProspectCoverage(): Promise<ProspectCoverageData[]> {
 
         if (!application?.length) return null;
 
-        const { count: commentsCount, error: commentsError } = await supabase
-          .from("comments")
-          .select("*", { count: "exact", head: true })
-          .eq("prospect_id", prospect.id);
-
-        if (commentsError) {
-          console.error("Error fetching prospect comments count:", commentsError);
-        }
+        const commentsCount = commentCountsByProspect[prospect.id] || 0;
 
         const { count: caseStudiesCount, error: caseStudiesError } = await supabase
           .from("case_studies")
@@ -460,7 +535,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
     const { data: comments, error: commentsError } = await supabase
       .from("comments")
       .select(
-        "id, created_at, prospect_id, prospect_name, active_name, comment, interaction, rubric_categories"
+        "id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories"
       );
 
     if (commentsError) {
@@ -490,15 +565,18 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       return [];
     }
 
-    const filteredComments = (comments || []).filter(
+    const filteredComments = toThreadableComments(
+      ((comments || []).filter(
       (comment: CommentRow) =>
         Boolean(comment.prospect_id) && !comment.prospect_id!.startsWith("66666")
-    ) as CommentRow[];
+    ) as CommentRow[])
+    );
+    const commentThreads = groupCommentsIntoThreads(filteredComments);
 
     const signalIds = new Set<string>();
 
     filteredComments.forEach((comment) => {
-      if (comment.prospect_id) signalIds.add(comment.prospect_id);
+      signalIds.add(comment.prospect_id);
     });
 
     (applications || []).forEach((application: ApplicationRow) => {
@@ -525,12 +603,11 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       return [];
     }
 
-    const commentsByProspect = new Map<string, CommentRow[]>();
-    filteredComments.forEach((comment) => {
-      if (!comment.prospect_id) return;
-      const currentComments = commentsByProspect.get(comment.prospect_id) || [];
-      currentComments.push(comment);
-      commentsByProspect.set(comment.prospect_id, currentComments);
+    const threadsByProspect = new Map<string, typeof commentThreads>();
+    commentThreads.forEach((thread) => {
+      const currentThreads = threadsByProspect.get(thread.prospect_id) || [];
+      currentThreads.push(thread);
+      threadsByProspect.set(thread.prospect_id, currentThreads);
     });
 
     const applicationsByProspect = new Map<string, ApplicationRow[]>();
@@ -551,8 +628,10 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
     const rows = (prospects || [])
       .map((prospect) => {
-        const prospectComments = [...(commentsByProspect.get(prospect.id) || [])].sort(
-          (a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
+        const prospectCommentThreads = [...(threadsByProspect.get(prospect.id) || [])].sort(
+          (a, b) =>
+            new Date(b.latest_comment.created_at).getTime() -
+            new Date(a.latest_comment.created_at).getTime()
         );
         const prospectApplications = applicationsByProspect.get(prospect.id) || [];
         const prospectCaseStudies = [
@@ -564,9 +643,8 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
         const commentCountsByEvent = createEmptyCommentCountsByEvent();
 
-        prospectComments.forEach((comment) => {
-          if (!comment.created_at) return;
-          const trackedEvent = getCommentTrackingEventForTimestamp(comment.created_at);
+        prospectCommentThreads.forEach((thread) => {
+          const trackedEvent = getCommentTrackingEventForTimestamp(thread.latest_comment.created_at);
           if (!trackedEvent) return;
           commentCountsByEvent[trackedEvent.eventKey] =
             (commentCountsByEvent[trackedEvent.eventKey] || 0) + 1;
@@ -576,8 +654,8 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           (application) => Boolean(application.submitted)
         );
 
-        const goodCommentsCount = prospectComments.filter(
-          (comment) => comment.interaction === "Good"
+        const goodCommentsCount = prospectCommentThreads.filter(
+          (thread) => thread.latest_comment.interaction === "Good"
         ).length;
 
         const caseStudyYesInvitesCount = prospectCaseStudies.filter(
@@ -595,31 +673,29 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           caseStudiesCount,
           caseStudyYesInvitesCount,
           totalScore,
-          neutralCommentsCount: prospectComments.filter(
-            (comment) => comment.interaction === "Neutral"
+          neutralCommentsCount: prospectCommentThreads.filter(
+            (thread) => thread.latest_comment.interaction === "Neutral"
           ).length,
-          badCommentsCount: prospectComments.filter(
-            (comment) => comment.interaction === "Bad"
+          badCommentsCount: prospectCommentThreads.filter(
+            (thread) => thread.latest_comment.interaction === "Bad"
           ).length,
-          communityCommentsCount: prospectComments.filter((comment) =>
-            comment.rubric_categories?.includes(RUBRIC_CATEGORIES[0])
+          communityCommentsCount: prospectCommentThreads.filter((thread) =>
+            thread.latest_comment.rubric_categories?.includes(RUBRIC_CATEGORIES[0])
           ).length,
-          growthCommentsCount: prospectComments.filter((comment) =>
-            comment.rubric_categories?.includes(RUBRIC_CATEGORIES[1])
+          growthCommentsCount: prospectCommentThreads.filter((thread) =>
+            thread.latest_comment.rubric_categories?.includes(RUBRIC_CATEGORIES[1])
           ).length,
-          vulnerabilityCommentsCount: prospectComments.filter((comment) =>
-            comment.rubric_categories?.includes(RUBRIC_CATEGORIES[2])
+          vulnerabilityCommentsCount: prospectCommentThreads.filter((thread) =>
+            thread.latest_comment.rubric_categories?.includes(RUBRIC_CATEGORIES[2])
           ).length,
           commentCountsByEvent,
           startedApp: prospectApplications.length > 0,
           submittedEssays,
-          comments: prospectComments.map((comment) => ({
-            id: comment.id,
-            activeName: comment.active_name || "Unknown",
-            comment: comment.comment || "",
-            interaction: comment.interaction || "Unknown",
-            rubricCategories: comment.rubric_categories || [],
-            createdAt: comment.created_at || "",
+          comments: prospectCommentThreads.map((thread) => ({
+            threadKey: thread.threadKey,
+            activeName: thread.active_name || "Unknown",
+            latestComment: toProspectComment(thread.latest_comment),
+            history: thread.history.map(toProspectComment),
           })),
           caseStudies: prospectCaseStudies.map((caseStudy) => ({
             id: caseStudy.id,
@@ -677,9 +753,9 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       console.error("Error fetching active members count:", activeMembersError);
     }
 
-    const { count: totalComments, error: totalCommentsError } = await supabase
+    const { data: totalCommentsRows, error: totalCommentsError } = await supabase
       .from("comments")
-      .select("*", { count: "exact", head: true });
+      .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories");
 
     if (totalCommentsError) {
       console.error("Error fetching total comments count:", totalCommentsError);
@@ -701,18 +777,11 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       console.error("Error fetching total interviews count:", totalInterviewsError);
     }
 
-    const [commentsActives, caseStudyActives, interviewActives] = await Promise.all([
-      supabase.from("comments").select("active_id"),
+    const [caseStudyActives, interviewActives] = await Promise.all([
       supabase.from("case_studies").select("active"),
       supabase.from("interviews").select("active_id"),
     ]);
 
-    if (commentsActives.error) {
-      console.error(
-        "Error fetching participating comments actives:",
-        commentsActives.error
-      );
-    }
     if (caseStudyActives.error) {
       console.error(
         "Error fetching participating case study actives:",
@@ -726,11 +795,15 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       );
     }
 
+    const latestComments = getLatestCommentsByThread(
+      toThreadableComments(totalCommentsRows as CommentRow[] | null)
+    );
+
     const uniqueParticipatingActives = new Set([
-      ...(commentsActives.data?.map((participant) => participant.active_id) || []),
+      ...latestComments.map((comment) => comment.active_id),
       ...(caseStudyActives.data?.map((participant) => participant.active) || []),
       ...(interviewActives.data?.map((participant) => participant.active_id) || []),
-    ]).size;
+    ].filter(Boolean)).size;
 
     const prospectCoverage = await getProspectCoverage();
     const prospectsNeedingEvaluations = prospectCoverage.filter(
@@ -738,7 +811,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     ).length;
 
     const totalEvaluations =
-      (totalComments || 0) + (totalCaseStudies || 0) + (totalInterviews || 0);
+      latestComments.length + (totalCaseStudies || 0) + (totalInterviews || 0);
     const participationRate = totalActiveMembers
       ? (uniqueParticipatingActives / totalActiveMembers) * 100
       : 0;
@@ -752,7 +825,7 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
       participationRate,
       totalEvaluations,
       averageEvaluationsPerActive,
-      totalComments: totalComments || 0,
+      totalComments: latestComments.length,
       totalCaseStudies: totalCaseStudies || 0,
       totalInterviews: totalInterviews || 0,
       prospectsNeedingEvaluations,

@@ -164,6 +164,25 @@ export interface Comment {
   prospect_photo_url?: string | null;
 }
 
+export interface CommentThread<TComment extends Comment = Comment> {
+  threadKey: string;
+  prospect_id: string;
+  prospect_name: string | null;
+  prospect_photo_url?: string | null;
+  active_id: string;
+  active_name: string | null;
+  latest_comment: TComment;
+  history: TComment[];
+}
+
+export interface ProspectCommentThreadGroup<TComment extends Comment = Comment> {
+  prospect_id: string;
+  prospect_name: string | null;
+  prospect_photo_url?: string | null;
+  latest_comment_at: string;
+  threads: CommentThread<TComment>[];
+}
+
 export enum QueueType {
   POSITIVE = 'positive',
   NEGATIVE = 'negative',
