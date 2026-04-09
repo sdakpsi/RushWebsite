@@ -393,7 +393,18 @@ export default function ActiveCaseStudyForm({
           {caseStudyData.map((question, index) => (
             <div key={index} className="mb-5">
               <label htmlFor={question.name} className="mb-2 block text-foreground">
-                {index <= 3 ? `${question.name} Comments` : question.name}
+                {index <= 3 ? (
+                  `${question.name} Comments`
+                ) : question.showQnaPrefix ? (
+                  <>
+                    <span className="font-bold text-red-600">
+                      QUESTION YOU ASK PROSPECT DURING Q&A:{" "}
+                    </span>
+                    <span className="font-bold">{question.name}</span>
+                  </>
+                ) : (
+                  question.name
+                )}
               </label>
               <textarea
                 id={question.name}
