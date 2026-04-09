@@ -457,7 +457,7 @@ export default function ProspectAnalyticsPage() {
                               </td>
                               <td className="border-b border-border py-4 text-center font-medium text-sky-700">
                                 {prospect.caseStudiesCount > 0
-                                  ? prospect.caseStudyYesInvitesCount
+                                  ? `${prospect.caseStudyYesInvitesCount}/${prospect.caseStudiesCount}`
                                   : "N/A"}
                               </td>
                               <td className="border-b border-border py-4 text-center font-semibold text-foreground">
