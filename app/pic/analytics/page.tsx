@@ -1,11 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useAllAnalytics } from "@/hooks/useAllAnalytics";
 import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
+import { type ActiveParticipationComment } from "@/app/supabase/analytics";
 import { redirect } from "next/navigation";
+
+const RUBRIC_STYLES: Record<string, string> = {
+  "Values Community": "border-emerald-200 bg-emerald-50 text-emerald-900",
+  "Growth Potential": "border-amber-200 bg-amber-50 text-amber-900",
+  "Vulnerability / Introspection":
+    "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
+};
 
 const StatCard = ({
   title,
@@ -56,6 +64,63 @@ function formatLastActivity(lastActivity: string | null) {
   return `${diffInDays} days ago`;
 }
 
+function ActiveCommentCard({
+  comment,
+}: {
+  comment: ActiveParticipationComment;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-background p-4 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-foreground">
+            {comment.prospectName}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {new Intl.DateTimeFormat("en-US", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            }).format(new Date(comment.createdAt))}
+          </p>
+        </div>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            comment.interaction === "Good"
+              ? "bg-emerald-100 text-emerald-800"
+              : comment.interaction === "Neutral"
+                ? "bg-amber-100 text-amber-800"
+                : "bg-rose-100 text-rose-800"
+          }`}
+        >
+          {comment.interaction}
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {comment.rubricCategories.length ? (
+          comment.rubricCategories.map((category) => (
+            <span
+              key={`${comment.id}-${category}`}
+              className={`rounded-full border px-2 py-1 text-xs font-medium ${
+                RUBRIC_STYLES[category] ||
+                "border-border bg-muted text-muted-foreground"
+              }`}
+            >
+              {category}
+            </span>
+          ))
+        ) : (
+          <span className="rounded-full border border-border bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+            Untagged
+          </span>
+        )}
+      </div>
+      <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">
+        {comment.comment || "No comment provided."}
+      </p>
+    </div>
+  );
+}
+
 export default function AnalyticsPage() {
   const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const {
@@ -63,8 +128,10 @@ export default function AnalyticsPage() {
     isLoading: analyticsLoading,
     error,
   } = useAllAnalytics();
+  const [expandedActiveId, setExpandedActiveId] = useState<string | null>(null);
 
   const visibleEvents = getVisibleCommentTrackingEvents();
+  const participationColumnCount = 6 + visibleEvents.length;
 
   if (isPICLoading || (isPIC && analyticsLoading)) {
     return (
@@ -177,7 +244,8 @@ export default function AnalyticsPage() {
                     Active Member Participation
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Event columns appear as each rush stage opens up.
+                    Event columns appear as each rush stage opens up. Click any
+                    row to review the comments that active submitted.
                   </p>
                 </div>
               </div>
@@ -217,50 +285,85 @@ export default function AnalyticsPage() {
                     <tbody>
                       {[...participation]
                         .sort((a, b) => b.totalEvaluations - a.totalEvaluations)
-                        .map((active, index) => (
-                          <tr
-                            key={active.activeId}
-                            className="border-b border-border/80"
-                          >
-                            <td className="py-3 text-foreground">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-emerald-100 font-medium text-emerald-900" : "bg-muted text-muted-foreground"}`}
-                                >
-                                  #{index + 1}
-                                </span>
-                                {active.activeName}
-                              </div>
-                            </td>
-                            <td className="py-3 text-center text-muted-foreground">
-                              {active.commentsCount}
-                            </td>
-                            {visibleEvents.map((trackedEvent) => (
-                              <td
-                                key={`${active.activeId}-${trackedEvent.eventKey}`}
-                                className="py-3 text-center text-muted-foreground"
+                        .map((active, index) => {
+                          const isExpanded = expandedActiveId === active.activeId;
+
+                          return (
+                            <React.Fragment key={active.activeId}>
+                              <tr
+                                className={`cursor-pointer border-b border-border/80 transition-colors hover:bg-muted/40 ${
+                                  isExpanded ? "bg-muted/30" : ""
+                                }`}
+                                onClick={() =>
+                                  setExpandedActiveId((current) =>
+                                    current === active.activeId ? null : active.activeId
+                                  )
+                                }
                               >
-                                {active.commentCountsByEvent?.[trackedEvent.eventKey] || 0}
-                              </td>
-                            ))}
-                            <td className="py-3 text-center text-muted-foreground">
-                              {active.caseStudiesCount}
-                            </td>
-                            <td className="py-3 text-center text-muted-foreground">
-                              {active.interviewsCount}
-                            </td>
-                            <td className="py-3 text-center">
-                              <span
-                                className={`font-semibold ${active.totalEvaluations > 10 ? "text-emerald-700" : active.totalEvaluations > 5 ? "text-amber-700" : "text-rose-600"}`}
-                              >
-                                {active.totalEvaluations}
-                              </span>
-                            </td>
-                            <td className="py-3 text-xs text-muted-foreground">
-                              {formatLastActivity(active.lastActivity)}
-                            </td>
-                          </tr>
-                        ))}
+                                <td className="py-3 text-foreground">
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-emerald-100 font-medium text-emerald-900" : "bg-muted text-muted-foreground"}`}
+                                    >
+                                      #{index + 1}
+                                    </span>
+                                    {active.activeName}
+                                  </div>
+                                </td>
+                                <td className="py-3 text-center text-muted-foreground">
+                                  {active.commentsCount}
+                                </td>
+                                {visibleEvents.map((trackedEvent) => (
+                                  <td
+                                    key={`${active.activeId}-${trackedEvent.eventKey}`}
+                                    className="py-3 text-center text-muted-foreground"
+                                  >
+                                    {active.commentCountsByEvent?.[trackedEvent.eventKey] || 0}
+                                  </td>
+                                ))}
+                                <td className="py-3 text-center text-muted-foreground">
+                                  {active.caseStudiesCount}
+                                </td>
+                                <td className="py-3 text-center text-muted-foreground">
+                                  {active.interviewsCount}
+                                </td>
+                                <td className="py-3 text-center">
+                                  <span
+                                    className={`font-semibold ${active.totalEvaluations > 10 ? "text-emerald-700" : active.totalEvaluations > 5 ? "text-amber-700" : "text-rose-600"}`}
+                                  >
+                                    {active.totalEvaluations}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-xs text-muted-foreground">
+                                  {formatLastActivity(active.lastActivity)}
+                                </td>
+                              </tr>
+                              {isExpanded && (
+                                <tr>
+                                  <td
+                                    colSpan={participationColumnCount}
+                                    className="border-b border-border bg-muted/20 px-4 py-5"
+                                  >
+                                    {active.comments.length > 0 ? (
+                                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                        {active.comments.map((comment) => (
+                                          <ActiveCommentCard
+                                            key={comment.id}
+                                            comment={comment}
+                                          />
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <div className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
+                                        No comment forms yet for this active.
+                                      </div>
+                                    )}
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>

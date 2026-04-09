@@ -16,6 +16,16 @@ export interface ActiveParticipationMetrics {
   interviewsCount: number;
   totalEvaluations: number;
   lastActivity: string | null;
+  comments: ActiveParticipationComment[];
+}
+
+export interface ActiveParticipationComment {
+  id: string;
+  prospectName: string;
+  comment: string;
+  interaction: string;
+  rubricCategories: RubricCategory[];
+  createdAt: string;
 }
 
 export interface EvaluationTimelineData {
@@ -80,6 +90,7 @@ type CommentRow = {
   id: string;
   created_at: string | null;
   prospect_id: string | null;
+  active_id?: string | null;
   prospect_name: string | null;
   active_name: string | null;
   comment: string | null;
@@ -132,16 +143,23 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
 
     const { data: trackedComments, error: trackedCommentsError } = await supabase
       .from("comments")
-      .select("active_id, created_at");
+      .select(
+        "id, active_id, created_at, prospect_name, comment, interaction, rubric_categories"
+      );
 
     if (trackedCommentsError) {
       console.error("Error fetching tracked comments by event:", trackedCommentsError);
     }
 
     const commentsByActiveAndEvent = new Map<string, Record<string, number>>();
+    const commentsByActive = new Map<string, CommentRow[]>();
 
-    trackedComments?.forEach((comment) => {
+    (trackedComments as CommentRow[] | null)?.forEach((comment) => {
       if (!comment.active_id || !comment.created_at) return;
+
+      const currentComments = commentsByActive.get(comment.active_id) || [];
+      currentComments.push(comment);
+      commentsByActive.set(comment.active_id, currentComments);
 
       const trackedEvent = getCommentTrackingEventForTimestamp(comment.created_at);
       if (!trackedEvent) return;
@@ -158,14 +176,11 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
 
     const participationData = await Promise.all(
       activeMembers.map(async (active) => {
-        const { count: commentsCount, error: commentsError } = await supabase
-          .from("comments")
-          .select("*", { count: "exact", head: true })
-          .eq("active_id", active.id);
-
-        if (commentsError) {
-          console.error("Error fetching comments count:", commentsError);
-        }
+        const activeComments = [...(commentsByActive.get(active.id) || [])].sort(
+          (a, b) =>
+            new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
+        );
+        const commentsCount = activeComments.length;
 
         const { count: caseStudiesCount, error: caseStudiesError } = await supabase
           .from("case_studies")
@@ -186,17 +201,6 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
         }
 
         const activities: string[] = [];
-
-        const { data: lastComment, error: lastCommentError } = await supabase
-          .from("comments")
-          .select("created_at")
-          .eq("active_id", active.id)
-          .order("created_at", { ascending: false })
-          .limit(1);
-
-        if (lastCommentError) {
-          console.error("Error fetching last comment:", lastCommentError);
-        }
 
         const { data: lastCaseStudy, error: lastCaseStudyError } = await supabase
           .from("case_studies")
@@ -220,7 +224,7 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           console.error("Error fetching last interview:", lastInterviewError);
         }
 
-        if (lastComment?.[0]?.created_at) activities.push(lastComment[0].created_at);
+        if (activeComments[0]?.created_at) activities.push(activeComments[0].created_at);
         if (lastCaseStudy?.[0]?.created_at) activities.push(lastCaseStudy[0].created_at);
         if (lastInterview?.[0]?.created_at) activities.push(lastInterview[0].created_at);
 
@@ -241,6 +245,14 @@ export async function getActiveParticipationMetrics(): Promise<ActiveParticipati
           totalEvaluations:
             (commentsCount || 0) + (caseStudiesCount || 0) + (interviewsCount || 0),
           lastActivity,
+          comments: activeComments.map((comment) => ({
+            id: comment.id,
+            prospectName: comment.prospect_name || "Unknown Prospect",
+            comment: comment.comment || "",
+            interaction: comment.interaction || "Unknown",
+            rubricCategories: comment.rubric_categories || [],
+            createdAt: comment.created_at || "",
+          })),
         };
       })
     );
