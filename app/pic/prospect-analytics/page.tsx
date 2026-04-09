@@ -7,7 +7,10 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProspectAnalytics } from "@/hooks/useProspectAnalytics";
 import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
-import { type ProspectAnalyticsComment } from "@/app/supabase/analytics";
+import {
+  type ProspectAnalyticsCaseStudy,
+  type ProspectAnalyticsComment,
+} from "@/app/supabase/analytics";
 import { redirect } from "next/navigation";
 
 const RUBRIC_STYLES: Record<string, string> = {
@@ -150,6 +153,80 @@ function CommentCard({ comment }: { comment: ProspectAnalyticsComment }) {
   );
 }
 
+function formatSocialInvite(value: string) {
+  if (value === "yes") return "Yes";
+  if (value === "maybe") return "Maybe";
+  if (value === "no") return "No";
+  return "Unknown";
+}
+
+function CaseStudyCard({
+  caseStudy,
+}: {
+  caseStudy: ProspectAnalyticsCaseStudy;
+}) {
+  const inviteLabel = formatSocialInvite(caseStudy.socialInvite);
+
+  return (
+    <div className="rounded-xl border border-border bg-background p-4 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-foreground">
+            {caseStudy.activeName}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {new Intl.DateTimeFormat("en-US", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            }).format(new Date(caseStudy.createdAt))}
+          </p>
+        </div>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            caseStudy.socialInvite === "yes"
+              ? "bg-emerald-100 text-emerald-800"
+              : caseStudy.socialInvite === "maybe"
+                ? "bg-amber-100 text-amber-800"
+                : caseStudy.socialInvite === "no"
+                  ? "bg-rose-100 text-rose-800"
+                  : "bg-slate-100 text-slate-600"
+          }`}
+        >
+          {inviteLabel}
+        </span>
+      </div>
+      <div className="mt-4 rounded-lg border border-border bg-muted/40 px-3 py-2">
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Case Study Invite
+        </p>
+        <p className="mt-1 text-sm font-semibold text-foreground">
+          {inviteLabel}
+        </p>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {[
+          { label: "Leadership", value: caseStudy.leadershipScore },
+          { label: "Teamwork", value: caseStudy.teamworkScore },
+          { label: "Public Speaking", value: caseStudy.publicSpeakingScore },
+          { label: "Analytical", value: caseStudy.analyticalScore },
+        ].map((score) => (
+          <div
+            key={`${caseStudy.id}-${score.label}`}
+            className="rounded-lg border border-border bg-muted/40 px-3 py-2"
+          >
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {score.label}
+            </p>
+            <p className="mt-1 text-sm font-semibold text-foreground">
+              {score.value ?? "N/A"}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ProspectAnalyticsPage() {
   const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const {
@@ -257,7 +334,8 @@ export default function ProspectAnalyticsPage() {
                     Prospect Table
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Click any row to expand and review the full comment forms.
+                    Click any row to expand and review comment forms and case
+                    study submissions.
                   </p>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -470,17 +548,54 @@ export default function ProspectAnalyticsPage() {
                                   colSpan={columnCount}
                                   className="border-b border-border bg-muted/20 px-4 py-5"
                                 >
-                                  {prospect.comments.length > 0 ? (
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                      {prospect.comments.map((comment) => (
-                                        <CommentCard key={comment.id} comment={comment} />
-                                      ))}
+                                  <div className="space-y-6">
+                                    <div>
+                                      <div className="mb-3 flex items-center justify-between gap-3">
+                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                                          Comment Forms
+                                        </h3>
+                                        <span className="text-xs text-muted-foreground">
+                                          {prospect.comments.length} total
+                                        </span>
+                                      </div>
+                                      {prospect.comments.length > 0 ? (
+                                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                          {prospect.comments.map((comment) => (
+                                            <CommentCard key={comment.id} comment={comment} />
+                                          ))}
+                                        </div>
+                                      ) : (
+                                        <div className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
+                                          No comment forms yet for this prospect.
+                                        </div>
+                                      )}
                                     </div>
-                                  ) : (
-                                    <div className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
-                                      No comment forms yet for this prospect.
+
+                                    <div>
+                                      <div className="mb-3 flex items-center justify-between gap-3">
+                                        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                                          Case Study Forms
+                                        </h3>
+                                        <span className="text-xs text-muted-foreground">
+                                          {prospect.caseStudies.length} total
+                                        </span>
+                                      </div>
+                                      {prospect.caseStudies.length > 0 ? (
+                                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                          {prospect.caseStudies.map((caseStudy) => (
+                                            <CaseStudyCard
+                                              key={caseStudy.id}
+                                              caseStudy={caseStudy}
+                                            />
+                                          ))}
+                                        </div>
+                                      ) : (
+                                        <div className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
+                                          No case study forms yet for this prospect.
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
+                                  </div>
                                 </td>
                               </tr>
                             )}

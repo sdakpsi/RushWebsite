@@ -55,6 +55,17 @@ export interface ProspectAnalyticsComment {
   createdAt: string;
 }
 
+export interface ProspectAnalyticsCaseStudy {
+  id: string;
+  activeName: string;
+  socialInvite: string;
+  createdAt: string;
+  leadershipScore: number | null;
+  teamworkScore: number | null;
+  publicSpeakingScore: number | null;
+  analyticalScore: number | null;
+}
+
 export interface ProspectAnalyticsRow {
   prospectId: string;
   prospectName: string;
@@ -72,6 +83,7 @@ export interface ProspectAnalyticsRow {
   startedApp: boolean;
   submittedEssays: boolean;
   comments: ProspectAnalyticsComment[];
+  caseStudies: ProspectAnalyticsCaseStudy[];
 }
 
 export interface AnalyticsSummary {
@@ -111,8 +123,15 @@ type ApplicationRow = {
 };
 
 type CaseStudyRow = {
+  id: string;
   prospect: string | null;
+  active_name: string | null;
   social_invite: string | null;
+  created_at?: string | null;
+  leadership_score?: number | null;
+  teamwork_score?: number | null;
+  public_speaking_score?: number | null;
+  analytical_score?: number | null;
 };
 
 function toIsoDateKey(value: string | Date): string {
@@ -462,7 +481,9 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
     const { data: caseStudies, error: caseStudiesError } = await supabase
       .from("case_studies")
-      .select("prospect, social_invite");
+      .select(
+        "id, prospect, active_name, social_invite, created_at, leadership_score, teamwork_score, public_speaking_score, analytical_score"
+      );
 
     if (caseStudiesError) {
       console.error("Error fetching prospect analytics case studies:", caseStudiesError);
@@ -534,7 +555,12 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           (a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
         );
         const prospectApplications = applicationsByProspect.get(prospect.id) || [];
-        const prospectCaseStudies = caseStudiesByProspect.get(prospect.id) || [];
+        const prospectCaseStudies = [
+          ...(caseStudiesByProspect.get(prospect.id) || []),
+        ].sort(
+          (a, b) =>
+            new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
+        );
 
         const commentCountsByEvent = createEmptyCommentCountsByEvent();
 
@@ -594,6 +620,16 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
             interaction: comment.interaction || "Unknown",
             rubricCategories: comment.rubric_categories || [],
             createdAt: comment.created_at || "",
+          })),
+          caseStudies: prospectCaseStudies.map((caseStudy) => ({
+            id: caseStudy.id,
+            activeName: caseStudy.active_name || "Unknown",
+            socialInvite: caseStudy.social_invite || "unknown",
+            createdAt: caseStudy.created_at || "",
+            leadershipScore: caseStudy.leadership_score ?? null,
+            teamworkScore: caseStudy.teamwork_score ?? null,
+            publicSpeakingScore: caseStudy.public_speaking_score ?? null,
+            analyticalScore: caseStudy.analytical_score ?? null,
           })),
         };
       })
