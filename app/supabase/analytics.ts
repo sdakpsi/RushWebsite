@@ -50,6 +50,9 @@ export interface ProspectAnalyticsRow {
   prospectName: string;
   photoUrl: string | null;
   goodCommentsCount: number;
+  caseStudiesCount: number;
+  caseStudyYesInvitesCount: number;
+  totalScore: number;
   neutralCommentsCount: number;
   badCommentsCount: number;
   communityCommentsCount: number;
@@ -57,7 +60,7 @@ export interface ProspectAnalyticsRow {
   vulnerabilityCommentsCount: number;
   commentCountsByEvent: Record<string, number>;
   startedApp: boolean;
-  startedEssays: boolean;
+  submittedEssays: boolean;
   comments: ProspectAnalyticsComment[];
 }
 
@@ -93,14 +96,16 @@ type ApplicationRow = {
   comfort_zone: string | null;
   business: string | null;
   additional: string | null;
+  submitted: string | null;
+};
+
+type CaseStudyRow = {
+  prospect: string | null;
+  social_invite: string | null;
 };
 
 function toIsoDateKey(value: string | Date): string {
   return new Date(value).toISOString().slice(0, 10);
-}
-
-function hasTextValue(value: string | null | undefined): boolean {
-  return Boolean(value?.trim());
 }
 
 function compareLastActivity(a: string, b: string) {
@@ -435,11 +440,20 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
     const { data: applications, error: applicationsError } = await supabase
       .from("applications")
       .select(
-        "id, user_id, accomplishment, why_akpsi, goals, comfort_zone, business, additional"
+        "id, user_id, accomplishment, why_akpsi, goals, comfort_zone, business, additional, submitted"
       );
 
     if (applicationsError) {
       console.error("Error fetching prospect analytics applications:", applicationsError);
+      return [];
+    }
+
+    const { data: caseStudies, error: caseStudiesError } = await supabase
+      .from("case_studies")
+      .select("prospect, social_invite");
+
+    if (caseStudiesError) {
+      console.error("Error fetching prospect analytics case studies:", caseStudiesError);
       return [];
     }
 
@@ -456,6 +470,10 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
     (applications || []).forEach((application: ApplicationRow) => {
       if (application.user_id) signalIds.add(application.user_id);
+    });
+
+    (caseStudies || []).forEach((caseStudy: CaseStudyRow) => {
+      if (caseStudy.prospect) signalIds.add(caseStudy.prospect);
     });
 
     if (!signalIds.size) {
@@ -490,12 +508,21 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       applicationsByProspect.set(application.user_id, currentApplications);
     });
 
+    const caseStudiesByProspect = new Map<string, CaseStudyRow[]>();
+    (caseStudies || []).forEach((caseStudy: CaseStudyRow) => {
+      if (!caseStudy.prospect) return;
+      const currentCaseStudies = caseStudiesByProspect.get(caseStudy.prospect) || [];
+      currentCaseStudies.push(caseStudy);
+      caseStudiesByProspect.set(caseStudy.prospect, currentCaseStudies);
+    });
+
     const rows = (prospects || [])
       .map((prospect) => {
         const prospectComments = [...(commentsByProspect.get(prospect.id) || [])].sort(
           (a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
         );
         const prospectApplications = applicationsByProspect.get(prospect.id) || [];
+        const prospectCaseStudies = caseStudiesByProspect.get(prospect.id) || [];
 
         const commentCountsByEvent = createEmptyCommentCountsByEvent();
 
@@ -507,24 +534,29 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
             (commentCountsByEvent[trackedEvent.eventKey] || 0) + 1;
         });
 
-        const startedEssays = prospectApplications.some((application) =>
-          [
-            application.accomplishment,
-            application.why_akpsi,
-            application.goals,
-            application.comfort_zone,
-            application.business,
-            application.additional,
-          ].some(hasTextValue)
+        const submittedEssays = prospectApplications.some(
+          (application) => Boolean(application.submitted)
         );
+
+        const goodCommentsCount = prospectComments.filter(
+          (comment) => comment.interaction === "Good"
+        ).length;
+
+        const caseStudyYesInvitesCount = prospectCaseStudies.filter(
+          (caseStudy) => caseStudy.social_invite === "yes"
+        ).length;
+        const caseStudiesCount = prospectCaseStudies.length;
+
+        const totalScore = goodCommentsCount + caseStudyYesInvitesCount * 0.75;
 
         return {
           prospectId: prospect.id,
           prospectName: prospect.full_name || "Unknown",
           photoUrl: prospect.photo_url || null,
-          goodCommentsCount: prospectComments.filter(
-            (comment) => comment.interaction === "Good"
-          ).length,
+          goodCommentsCount,
+          caseStudiesCount,
+          caseStudyYesInvitesCount,
+          totalScore,
           neutralCommentsCount: prospectComments.filter(
             (comment) => comment.interaction === "Neutral"
           ).length,
@@ -542,7 +574,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           ).length,
           commentCountsByEvent,
           startedApp: prospectApplications.length > 0,
-          startedEssays,
+          submittedEssays,
           comments: prospectComments.map((comment) => ({
             id: comment.id,
             activeName: comment.active_name || "Unknown",
@@ -553,11 +585,22 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           })),
         };
       })
-      .filter((prospect) => prospect.comments.length > 0 || prospect.startedApp);
+      .filter(
+        (prospect) =>
+          prospect.comments.length > 0 ||
+          prospect.startedApp ||
+          prospect.caseStudyYesInvitesCount > 0
+      );
 
     return rows.sort((a, b) => {
+      if (b.totalScore !== a.totalScore) {
+        return b.totalScore - a.totalScore;
+      }
       if (b.goodCommentsCount !== a.goodCommentsCount) {
         return b.goodCommentsCount - a.goodCommentsCount;
+      }
+      if (b.caseStudyYesInvitesCount !== a.caseStudyYesInvitesCount) {
+        return b.caseStudyYesInvitesCount - a.caseStudyYesInvitesCount;
       }
       if (b.neutralCommentsCount !== a.neutralCommentsCount) {
         return b.neutralCommentsCount - a.neutralCommentsCount;

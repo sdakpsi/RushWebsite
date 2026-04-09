@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useProspectAnalytics } from "@/hooks/useProspectAnalytics";
@@ -87,6 +89,12 @@ function StatusCheck({ value }: { value: boolean }) {
       </span>
     </div>
   );
+}
+
+function formatScore(score: number) {
+  return Number.isInteger(score)
+    ? score.toString()
+    : score.toFixed(2).replace(/\.?0+$/, "");
 }
 
 function CommentCard({ comment }: { comment: ProspectAnalyticsComment }) {
@@ -225,7 +233,7 @@ export default function ProspectAnalyticsPage() {
     );
   }
 
-  const columnCount = 9 + visibleEvents.length;
+  const columnCount = 11 + visibleEvents.length;
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -292,6 +300,12 @@ export default function ProspectAnalyticsPage() {
                         >
                           Application
                         </th>
+                        <th
+                          className="border-b border-border pb-2 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                          colSpan={2}
+                        >
+                          Score
+                        </th>
                       </tr>
                       <tr className="border-b border-border">
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
@@ -324,7 +338,31 @@ export default function ProspectAnalyticsPage() {
                           Started App
                         </th>
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
-                          Started Essays
+                          Submitted Essays
+                        </th>
+                        <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
+                          Case Study Yes Invites
+                        </th>
+                        <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
+                          <div className="flex items-center justify-center gap-2">
+                            <span>Total Score</span>
+                            <div className="group relative">
+                              <button
+                                type="button"
+                                className="flex h-5 w-5 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                                aria-label="How total score is calculated"
+                                onClick={(event) => event.stopPropagation()}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faCircleInfo}
+                                  className="h-4 w-4"
+                                />
+                              </button>
+                              <div className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-60 rounded-lg border border-border bg-popover px-3 py-2 text-left text-xs font-normal normal-case tracking-normal text-popover-foreground opacity-0 shadow-lg transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100">
+                                Good comment forms + (case study yes invites x 0.75)
+                              </div>
+                            </div>
+                          </div>
                         </th>
                       </tr>
                     </thead>
@@ -415,7 +453,15 @@ export default function ProspectAnalyticsPage() {
                                 <StatusCheck value={prospect.startedApp} />
                               </td>
                               <td className="border-b border-border py-4">
-                                <StatusCheck value={prospect.startedEssays} />
+                                <StatusCheck value={prospect.submittedEssays} />
+                              </td>
+                              <td className="border-b border-border py-4 text-center font-medium text-sky-700">
+                                {prospect.caseStudiesCount > 0
+                                  ? prospect.caseStudyYesInvitesCount
+                                  : "N/A"}
+                              </td>
+                              <td className="border-b border-border py-4 text-center font-semibold text-foreground">
+                                {formatScore(prospect.totalScore)}
                               </td>
                             </tr>
                             {isExpanded && (
