@@ -1,8 +1,8 @@
 export type CaseStudyQuestionItem = {
   name: string;
   label: string;
-  /** When true, label shows a red QnA instruction before the question text */
-  showQnaPrefix?: boolean;
+  /** Bold red label before the question (e.g. which panelist asks it) */
+  qnaRoleLabel?: string;
 };
 
 export const caseStudyData: CaseStudyQuestionItem[] = [
@@ -25,11 +25,11 @@ export const caseStudyData: CaseStudyQuestionItem[] = [
   {
     name: "How do you think the group performed as a whole, and how did you contribute individually?",
     label: "role",
-    showQnaPrefix: true,
+    qnaRoleLabel: "Lead panelist asks",
   },
   {
     name: "What did you like and dislike about the case study, and why?",
     label: "thoughts",
-    showQnaPrefix: true,
+    qnaRoleLabel: "Time keeper asks",
   },
 ];

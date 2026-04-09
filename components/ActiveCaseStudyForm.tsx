@@ -395,10 +395,10 @@ export default function ActiveCaseStudyForm({
               <label htmlFor={question.name} className="mb-2 block text-foreground">
                 {index <= 3 ? (
                   `${question.name} Comments`
-                ) : question.showQnaPrefix ? (
+                ) : question.qnaRoleLabel ? (
                   <>
                     <span className="font-bold text-red-600">
-                      QUESTION YOU ASK PROSPECT DURING Q&A:{" "}
+                      {question.qnaRoleLabel}:{" "}
                     </span>
                     <span className="font-bold">{question.name}</span>
                   </>
