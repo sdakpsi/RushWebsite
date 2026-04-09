@@ -33,6 +33,7 @@ export default function MultipleCaseStudyManager({
   const [selectedProspect, setSelectedProspect] = useState<ProspectInterview | null>(null);
   const [lastKeyPress, setLastKeyPress] = useState<{ key: string; time: number } | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<{[formId: string]: {saving: boolean, lastSaved?: string}}>({});
+  const [confirmDeleteFormId, setConfirmDeleteFormId] = useState<string | null>(null);
 
   // Auto-save for multiple forms - simpler approach
   const debouncedAutoSave = useCallback(
@@ -196,7 +197,24 @@ export default function MultipleCaseStudyManager({
   };
 
   const handleTabClose = (formId: string) => {
-    removeForm(formId);
+    setConfirmDeleteFormId(formId);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!confirmDeleteFormId) return;
+
+    const formToClose = forms.find((form) => form.id === confirmDeleteFormId);
+    const prospectName = formToClose?.prospect.full_name ?? "this prospect";
+
+    setConfirmDeleteFormId(null);
+    
+    if (!formToClose) return;
+    removeForm(confirmDeleteFormId);
+    customToast(`Deleted form for ${prospectName}`, "info");
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDeleteFormId(null);
   };
 
   const handleFormSubmit = async (formId: string) => {
@@ -386,6 +404,38 @@ export default function MultipleCaseStudyManager({
         <div className="text-center py-12">
           <p className="text-muted-foreground text-lg">No case study forms open</p>
           <p className="text-muted-foreground text-sm mt-2">Click &quot;+ Add Form&quot; to get started</p>
+        </div>
+      )}
+
+      {confirmDeleteFormId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 px-4">
+          <div className="w-full max-w-4xl rounded-xl border border-border bg-card p-6 shadow-2xl">
+            <h3 className="mb-6 text-4xl font-bold text-foreground">Confirm Delete</h3>
+            <p className="mb-10 text-lg text-muted-foreground">
+              Are you sure you want to delete the case study for{" "}
+              <span className="font-semibold text-foreground">
+                {forms.find((form) => form.id === confirmDeleteFormId)?.prospect.full_name}
+              </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-4">
+              <button
+                type="button"
+                onClick={handleCancelDelete}
+                className="rounded-2xl border border-border bg-muted px-8 py-3 text-2xl font-semibold text-foreground transition-colors hover:bg-muted/80"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="rounded-2xl bg-red-600 px-8 py-3 text-2xl font-semibold text-white transition-colors hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -82,6 +82,7 @@ export default function ActiveCaseStudyForm({
   const [submissionId, setSubmissionId] = useState(existingSubmissionId);
   const [isAutoSaving, setIsAutoSaving] = useState<boolean>(false);
   const [lastAutoSaved, setLastAutoSaved] = useState<string | null>(null);
+  const isQnaDisabled = true;
 
   const {
     register,
@@ -249,8 +250,21 @@ export default function ActiveCaseStudyForm({
     }
   }, [selectedProspect.id, isMultiFormContext, isEditing, setValue]);
 
+  useEffect(() => {
+    if (isQnaDisabled) {
+      setValue("role", "no time", { shouldValidate: true, shouldDirty: true });
+      setValue("thoughts", "no time", { shouldValidate: true, shouldDirty: true });
+    }
+  }, [isQnaDisabled, setValue]);
+
 
   const onSubmit = async (data: CaseStudyForm) => {
+    const normalizedData: CaseStudyForm = {
+      ...data,
+      role: isQnaDisabled ? "no time" : data.role,
+      thoughts: isQnaDisabled ? "no time" : data.thoughts,
+    };
+
     // Handle submission for both single and multi-form contexts
 
     if (setIsSubmitting && !isMultiFormContext) setIsSubmitting(true);
@@ -261,7 +275,7 @@ export default function ActiveCaseStudyForm({
 
     try {
       const result = await createOrUpdateCaseStudy(
-        data,
+        normalizedData,
         selectedProspect,
         submissionId
       );
@@ -408,12 +422,25 @@ export default function ActiveCaseStudyForm({
               </label>
               <textarea
                 id={question.name}
-                className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+                disabled={
+                  isQnaDisabled &&
+                  (question.label === "role" || question.label === "thoughts")
+                }
+                className={`w-full rounded-lg border border-border p-2.5 text-base text-foreground ${
+                  isQnaDisabled &&
+                  (question.label === "role" || question.label === "thoughts")
+                    ? "cursor-not-allowed bg-muted"
+                    : "bg-background"
+                }`}
                 onInput={handleUserInput}
                 {...registerWithAutoSave(
                   index <= 3 ? `${question.label}_comments` : question.label,
                   {
-                    required: `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`,
+                    required:
+                      isQnaDisabled &&
+                      (question.label === "role" || question.label === "thoughts")
+                        ? false
+                        : `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`,
                   }
                 )}
               ></textarea>
