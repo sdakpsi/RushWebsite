@@ -20,6 +20,8 @@ const RUBRIC_STYLES: Record<string, string> = {
     "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
 };
 
+const PREVIEW_DROPPED_STORAGE_KEY = "prospect-analytics-preview-dropped";
+
 function Avatar({
   photoUrl,
   name,
@@ -282,6 +284,35 @@ export default function ProspectAnalyticsPage() {
   const [previewDroppedProspects, setPreviewDroppedProspects] = useState<string[]>([]);
 
   const visibleEvents = getVisibleCommentTrackingEvents();
+
+  useEffect(() => {
+    try {
+      const storedValue = window.localStorage.getItem(PREVIEW_DROPPED_STORAGE_KEY);
+      if (!storedValue) {
+        return;
+      }
+
+      const parsedValue = JSON.parse(storedValue);
+      if (Array.isArray(parsedValue)) {
+        setPreviewDroppedProspects(
+          parsedValue.filter((value): value is string => typeof value === "string")
+        );
+      }
+    } catch (error) {
+      console.error("Error loading preview dropped prospects:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        PREVIEW_DROPPED_STORAGE_KEY,
+        JSON.stringify(previewDroppedProspects)
+      );
+    } catch (error) {
+      console.error("Error saving preview dropped prospects:", error);
+    }
+  }, [previewDroppedProspects]);
 
   useEffect(() => {
     if (!selectedPhoto) {
