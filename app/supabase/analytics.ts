@@ -85,6 +85,7 @@ export interface ProspectAnalyticsRow {
   prospectId: string;
   prospectName: string;
   photoUrl: string | null;
+  applicationId: string | null;
   goodCommentsCount: number;
   caseStudiesCount: number;
   caseStudyYesInvitesCount: number;
@@ -657,6 +658,10 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
         const submittedEssays = prospectApplications.some(
           (application) => Boolean(application.submitted)
         );
+        const primaryApplication =
+          prospectApplications.find((application) => Boolean(application.submitted)) ||
+          prospectApplications[0] ||
+          null;
 
         const goodCommentsCount = prospectCommentThreads.filter(
           (thread) => thread.latest_comment.interaction === "Good"
@@ -673,6 +678,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           prospectId: prospect.id,
           prospectName: prospect.full_name || "Unknown",
           photoUrl: prospect.photo_url || null,
+          applicationId: primaryApplication?.id || null,
           goodCommentsCount,
           caseStudiesCount,
           caseStudyYesInvitesCount,

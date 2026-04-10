@@ -4,7 +4,10 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { LazyApplicationPopUp } from "@/components/LazyComponents";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useApplicationView } from "@/hooks/useApplicationView";
+import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import { useProspectAnalytics } from "@/hooks/useProspectAnalytics";
 import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
 import {
@@ -275,6 +278,17 @@ export default function ProspectAnalyticsPage() {
     isLoading: analyticsLoading,
     error,
   } = useProspectAnalytics();
+  const {
+    currentApplication,
+    userID,
+    handleViewApplication,
+    handleClosePopup,
+  } = useApplicationView();
+  const {
+    cases,
+    interviews,
+    isLoading: isCasesInterviewsLoading,
+  } = useCasesAndInterviews(userID);
   const [expandedProspectId, setExpandedProspectId] = useState<string | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<{
     photoUrl: string;
@@ -694,9 +708,31 @@ export default function ProspectAnalyticsPage() {
                                         <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                                           Comment Forms
                                         </h3>
-                                        <span className="text-xs text-muted-foreground">
-                                          {prospect.comments.length} total
-                                        </span>
+                                        <div className="flex items-center gap-3">
+                                          <span className="text-xs text-muted-foreground">
+                                            {prospect.comments.length} total
+                                          </span>
+                                          <button
+                                            type="button"
+                                            onClick={(event) => {
+                                              event.stopPropagation();
+                                              if (prospect.applicationId) {
+                                                handleViewApplication(
+                                                  prospect.applicationId,
+                                                  prospect.prospectId
+                                                );
+                                              }
+                                            }}
+                                            disabled={!prospect.applicationId}
+                                            className={`rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${
+                                              prospect.applicationId
+                                                ? "bg-sky-600 text-white hover:bg-sky-700"
+                                                : "cursor-not-allowed border border-border bg-muted text-muted-foreground"
+                                            }`}
+                                          >
+                                            Open Packet
+                                          </button>
+                                        </div>
                                       </div>
                                       {prospect.comments.length > 0 ? (
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -754,6 +790,17 @@ export default function ProspectAnalyticsPage() {
           </div>
         </div>
       </div>
+      {currentApplication && (
+        <LazyApplicationPopUp
+          application={currentApplication}
+          cases={cases || []}
+          interviews={interviews || []}
+          userID={userID}
+          isPIC={isPIC}
+          isLoadingCasesInterviews={isCasesInterviewsLoading}
+          onClose={handleClosePopup}
+        />
+      )}
       {selectedPhoto && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"

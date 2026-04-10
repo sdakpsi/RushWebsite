@@ -848,7 +848,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </div>
                     <div className="rounded-lg border border-border bg-muted/50 p-4">
                       <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Why AKPsi
+                        Valuable Community
                       </div>
                       <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.why_akpsi}</div>
                     </div>
