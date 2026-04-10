@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { LazyApplicationPopUp } from "@/components/LazyComponents";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -10,9 +11,11 @@ import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import { useProspectAnalytics } from "@/hooks/useProspectAnalytics";
 import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
+import { createClient } from "@/utils/supabase/client";
 import {
   type ProspectAnalyticsCaseStudy,
   type ProspectAnalyticsCommentThread,
+  type ProspectAnalyticsRow,
 } from "@/app/supabase/analytics";
 import { redirect } from "next/navigation";
 
@@ -22,8 +25,6 @@ const RUBRIC_STYLES: Record<string, string> = {
   "Vulnerability / Introspection":
     "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
 };
-
-const PREVIEW_DROPPED_STORAGE_KEY = "prospect-analytics-preview-dropped";
 
 function Avatar({
   photoUrl,
@@ -272,6 +273,8 @@ function CaseStudyCard({
 }
 
 export default function ProspectAnalyticsPage() {
+  const supabase = createClient();
+  const queryClient = useQueryClient();
   const { isPIC, isLoading: isPICLoading, isActive } = useCurrentUser();
   const {
     data: prospects = [],
@@ -300,33 +303,57 @@ export default function ProspectAnalyticsPage() {
   const visibleEvents = getVisibleCommentTrackingEvents();
 
   useEffect(() => {
-    try {
-      const storedValue = window.localStorage.getItem(PREVIEW_DROPPED_STORAGE_KEY);
-      if (!storedValue) {
-        return;
-      }
+    setPreviewDroppedProspects(
+      prospects
+        .filter((prospect) => prospect.previewDropped)
+        .map((prospect) => prospect.prospectId)
+    );
+  }, [prospects]);
 
-      const parsedValue = JSON.parse(storedValue);
-      if (Array.isArray(parsedValue)) {
-        setPreviewDroppedProspects(
-          parsedValue.filter((value): value is string => typeof value === "string")
-        );
-      }
-    } catch (error) {
-      console.error("Error loading preview dropped prospects:", error);
-    }
-  }, []);
+  const updatePreviewDroppedMutation = useMutation({
+    mutationFn: async ({
+      prospectId,
+      previewDropped,
+    }: {
+      prospectId: string;
+      previewDropped: boolean;
+    }) => {
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ preview_dropped: previewDropped })
+        .eq("id", prospectId);
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        PREVIEW_DROPPED_STORAGE_KEY,
-        JSON.stringify(previewDroppedProspects)
+      if (updateError) {
+        throw updateError;
+      }
+    },
+    onMutate: async ({ prospectId, previewDropped }) => {
+      await queryClient.cancelQueries({ queryKey: ["prospect-analytics"] });
+
+      const previousProspects =
+        queryClient.getQueryData<ProspectAnalyticsRow[]>(["prospect-analytics"]) || [];
+
+      queryClient.setQueryData<ProspectAnalyticsRow[]>(
+        ["prospect-analytics"],
+        previousProspects.map((prospect) =>
+          prospect.prospectId === prospectId
+            ? { ...prospect, previewDropped }
+            : prospect
+        )
       );
-    } catch (error) {
-      console.error("Error saving preview dropped prospects:", error);
-    }
-  }, [previewDroppedProspects]);
+
+      return { previousProspects };
+    },
+    onError: (error, _variables, context) => {
+      if (context?.previousProspects) {
+        queryClient.setQueryData(["prospect-analytics"], context.previousProspects);
+      }
+      console.error("Error updating preview dropped state:", error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["prospect-analytics"] });
+    },
+  });
 
   useEffect(() => {
     if (!selectedPhoto) {
@@ -409,11 +436,18 @@ export default function ProspectAnalyticsPage() {
   const columnCount = 13 + visibleEvents.length;
 
   const togglePreviewDropped = (prospectId: string) => {
+    const nextPreviewDropped = !previewDroppedProspects.includes(prospectId);
+
     setPreviewDroppedProspects((current) =>
-      current.includes(prospectId)
-        ? current.filter((id) => id !== prospectId)
-        : [...current, prospectId]
+      nextPreviewDropped
+        ? [...current, prospectId]
+        : current.filter((id) => id !== prospectId)
     );
+
+    updatePreviewDroppedMutation.mutate({
+      prospectId,
+      previewDropped: nextPreviewDropped,
+    });
   };
 
   return (

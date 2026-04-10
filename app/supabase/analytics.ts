@@ -86,6 +86,7 @@ export interface ProspectAnalyticsRow {
   prospectName: string;
   photoUrl: string | null;
   applicationId: string | null;
+  previewDropped: boolean;
   goodCommentsCount: number;
   caseStudiesCount: number;
   caseStudyYesInvitesCount: number;
@@ -594,7 +595,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
     const { data: prospects, error: prospectsError } = await supabase
       .from("users")
-      .select("id, full_name, photo_url, is_active, is_pic")
+      .select("id, full_name, photo_url, is_active, is_pic, preview_dropped")
       .in("id", Array.from(signalIds))
       .eq("is_active", false)
       .eq("is_pic", false);
@@ -679,6 +680,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           prospectName: prospect.full_name || "Unknown",
           photoUrl: prospect.photo_url || null,
           applicationId: primaryApplication?.id || null,
+          previewDropped: Boolean(prospect.preview_dropped),
           goodCommentsCount,
           caseStudiesCount,
           caseStudyYesInvitesCount,
