@@ -278,6 +278,8 @@ export default function ProspectAnalyticsPage() {
     photoUrl: string;
     name: string;
   } | null>(null);
+  const [showSubmittedOnly, setShowSubmittedOnly] = useState(true);
+  const [previewDroppedProspects, setPreviewDroppedProspects] = useState<string[]>([]);
 
   const visibleEvents = getVisibleCommentTrackingEvents();
 
@@ -349,7 +351,19 @@ export default function ProspectAnalyticsPage() {
     );
   }
 
-  const columnCount = 11 + visibleEvents.length;
+  const filteredProspects = showSubmittedOnly
+    ? prospects.filter((prospect) => prospect.submittedEssays)
+    : prospects;
+
+  const columnCount = 12 + visibleEvents.length;
+
+  const togglePreviewDropped = (prospectId: string) => {
+    setPreviewDroppedProspects((current) =>
+      current.includes(prospectId)
+        ? current.filter((id) => id !== prospectId)
+        : [...current, prospectId]
+    );
+  };
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -377,16 +391,37 @@ export default function ProspectAnalyticsPage() {
                     study submissions.
                   </p>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {prospects.length} prospect{prospects.length === 1 ? "" : "s"}
-                </p>
+                <div className="flex flex-col items-start gap-2 sm:items-end">
+                  <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      checked={showSubmittedOnly}
+                      onChange={(event) => setShowSubmittedOnly(event.target.checked)}
+                      className="h-4 w-4 rounded border-border"
+                    />
+                    Show submitted applications only
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    {filteredProspects.length} prospect{filteredProspects.length === 1 ? "" : "s"}
+                  </p>
+                </div>
               </div>
 
-              {prospects.length > 0 ? (
+              {filteredProspects.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-sm">
                     <thead>
                       <tr>
+                        <th
+                          className="w-[72px] border-b border-border pb-2 text-center text-[11px] font-semibold uppercase leading-tight tracking-wide text-muted-foreground"
+                          rowSpan={2}
+                        >
+                          <span className="inline-block">
+                            Preview
+                            <br />
+                            Dropped?
+                          </span>
+                        </th>
                         <th
                           className="border-b border-border pb-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                           rowSpan={2}
@@ -484,7 +519,7 @@ export default function ProspectAnalyticsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {prospects.map((prospect) => {
+                      {filteredProspects.map((prospect) => {
                         const isExpanded = expandedProspectId === prospect.prospectId;
 
                         return (
@@ -492,6 +527,10 @@ export default function ProspectAnalyticsPage() {
                             <tr
                               className={`cursor-pointer transition-colors hover:bg-muted/40 ${
                                 isExpanded ? "bg-muted/30" : ""
+                              } ${
+                                previewDroppedProspects.includes(prospect.prospectId)
+                                  ? "opacity-45 grayscale"
+                                  : ""
                               }`}
                               onClick={() =>
                                 setExpandedProspectId((current) =>
@@ -501,6 +540,18 @@ export default function ProspectAnalyticsPage() {
                                 )
                               }
                             >
+                              <td
+                                className="w-[72px] border-b border-border px-2 py-4 text-center"
+                                onClick={(event) => event.stopPropagation()}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={previewDroppedProspects.includes(prospect.prospectId)}
+                                  onChange={() => togglePreviewDropped(prospect.prospectId)}
+                                  className="h-4 w-4 rounded border-border"
+                                  aria-label={`Mark ${prospect.prospectName} as preview dropped`}
+                                />
+                              </td>
                               <td className="border-b border-border py-4 pr-4">
                                 <div className="flex items-center gap-4">
                                   {prospect.photoUrl ? (
@@ -585,7 +636,11 @@ export default function ProspectAnalyticsPage() {
                               <tr>
                                 <td
                                   colSpan={columnCount}
-                                  className="border-b border-border bg-muted/20 px-4 py-5"
+                                  className={`border-b border-border bg-muted/20 px-4 py-5 ${
+                                    previewDroppedProspects.includes(prospect.prospectId)
+                                      ? "opacity-45 grayscale"
+                                      : ""
+                                  }`}
                                 >
                                   <div className="space-y-6">
                                     <div>
@@ -646,7 +701,7 @@ export default function ProspectAnalyticsPage() {
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-border bg-muted/20 p-10 text-center text-muted-foreground">
-                  No prospect analytics data available yet.
+                  No prospects match the current filters.
                 </div>
               )}
             </div>

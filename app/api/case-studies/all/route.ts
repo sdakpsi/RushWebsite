@@ -40,10 +40,15 @@ export async function GET() {
     });
 
     // Combine case studies with user data
-    const enrichedCaseStudies = caseStudies.map((cs: any) => ({
-      ...cs,
-      users: userMap.get(cs.prospect) || null
-    }));
+    const enrichedCaseStudies = caseStudies
+      .map((cs: any) => ({
+        ...cs,
+        users: userMap.get(cs.prospect) || null
+      }))
+      .filter((caseStudy: any) => {
+        const prospectName = caseStudy.users?.full_name || "";
+        return !prospectName.startsWith("(old) ");
+      });
 
     return NextResponse.json(enrichedCaseStudies);
   } catch (error: any) {

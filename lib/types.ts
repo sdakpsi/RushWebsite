@@ -36,6 +36,7 @@ export type ProspectInterview = {
   full_name: string;
   email: string;
   photo_url?: string;
+  has_submitted_application?: boolean;
 };
 
 export const RUBRIC_CATEGORIES = [

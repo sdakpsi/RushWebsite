@@ -18,6 +18,7 @@ export default function InterviewSearchBar({
   isPreloaded = false,
 }: InterviewSearchBarProps) {
   const [searchInput, setSearchInput] = useState("");
+  const [showSubmittedOnly, setShowSubmittedOnly] = useState(true);
 
   const { data: prospectData, isLoading, error } = useQuery({
     queryKey: ['interviewProspects'],
@@ -40,11 +41,17 @@ export default function InterviewSearchBar({
   const finalProspectData = isPreloaded ? preloadedData : prospectData;
   const finalIsLoading = isPreloaded ? false : isLoading;
 
-  const filteredData = searchInput === "" 
-    ? (finalProspectData || [])
-    : (finalProspectData || []).filter((prospect) =>
-        prospect.full_name.toLowerCase().includes(searchInput.toLowerCase())
-      );
+  const filteredData = (finalProspectData || []).filter((prospect) => {
+    const matchesSearch =
+      searchInput === "" ||
+      prospect.full_name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      prospect.email.toLowerCase().includes(searchInput.toLowerCase());
+
+    const matchesSubmissionFilter =
+      !showSubmittedOnly || Boolean(prospect.has_submitted_application);
+
+    return matchesSearch && matchesSubmissionFilter;
+  });
 
   const handleSelectProspect = (prospect: ProspectInterview) => {
     setSelectedProspect(prospect);
@@ -84,6 +91,15 @@ export default function InterviewSearchBar({
         className="mb-3 block text-lg font-medium text-foreground sm:text-xl"
       >
         Search for and select a prospect:
+      </label>
+      <label className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+        <input
+          type="checkbox"
+          checked={showSubmittedOnly}
+          onChange={(e) => setShowSubmittedOnly(e.target.checked)}
+          className="h-4 w-4 rounded border-border"
+        />
+        Show submitted applications only
       </label>
       <div className="relative">
         <input
@@ -130,6 +146,11 @@ export default function InterviewSearchBar({
             {filteredData.length === 0 && searchInput && (
               <div className="px-4 py-4 text-center text-muted-foreground">
                 No prospects found matching "{searchInput}"
+              </div>
+            )}
+            {filteredData.length === 0 && !searchInput && (
+              <div className="px-4 py-4 text-center text-muted-foreground">
+                No prospects match the current filters.
               </div>
             )}
           </div>

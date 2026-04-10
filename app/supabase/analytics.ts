@@ -626,7 +626,11 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       caseStudiesByProspect.set(caseStudy.prospect, currentCaseStudies);
     });
 
-    const rows = (prospects || [])
+    const visibleProspects = (prospects || []).filter(
+      (prospect) => !(prospect.full_name || "").startsWith("(old) ")
+    );
+
+    const rows = visibleProspects
       .map((prospect) => {
         const prospectCommentThreads = [...(threadsByProspect.get(prospect.id) || [])].sort(
           (a, b) =>

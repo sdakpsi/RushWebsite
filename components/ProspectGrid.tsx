@@ -3,7 +3,13 @@ import ProspectCard from './ProspectCard';
 import { type ProspectInterview } from '@/lib/types';
 
 interface ProspectGridProps {
-  prospects: Array<{id: string, full_name: string, email: string, photo_url?: string}>;
+  prospects: Array<{
+    id: string;
+    full_name: string;
+    email: string;
+    photo_url?: string;
+    has_submitted_application?: boolean;
+  }>;
   selectedProspect: ProspectInterview | null;
   onSelectProspect: (prospect: ProspectInterview) => void;
   isLoading?: boolean;
@@ -20,14 +26,24 @@ export default function ProspectGrid({
   goodCommentCounts = {},
 }: ProspectGridProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSubmittedOnly, setShowSubmittedOnly] = useState(true);
 
   // Filter prospects based on search term
   const filteredProspects = prospects.filter(prospect =>
-    prospect.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    prospect.email.toLowerCase().includes(searchTerm.toLowerCase())
+    (
+      prospect.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prospect.email.toLowerCase().includes(searchTerm.toLowerCase())
+    ) &&
+    (!showSubmittedOnly || Boolean(prospect.has_submitted_application))
   );
 
-  const handleProspectClick = (prospect: {id: string, full_name: string, email: string, photo_url?: string}) => {
+  const handleProspectClick = (prospect: {
+    id: string;
+    full_name: string;
+    email: string;
+    photo_url?: string;
+    has_submitted_application?: boolean;
+  }) => {
     // Convert to ProspectInterview format
     const prospectInterview: ProspectInterview = {
       id: prospect.id,
@@ -56,6 +72,26 @@ export default function ProspectGrid({
 
   return (
     <div className="space-y-4">
+      <div className="space-y-3">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search prospects by name or email..."
+          className="block w-full rounded-lg border-2 border-border bg-background px-4 py-3 text-base text-foreground shadow-sm transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/30"
+          style={{ fontSize: '16px' }}
+        />
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={showSubmittedOnly}
+            onChange={(e) => setShowSubmittedOnly(e.target.checked)}
+            className="h-4 w-4 rounded border-border"
+          />
+          Show submitted applications only
+        </label>
+      </div>
+
       {/* Grid */}
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -89,7 +125,7 @@ export default function ProspectGrid({
         </div>
       ) : (
         <div className="text-center text-gray-400 py-8">
-          {searchTerm ? 'No prospects match your search.' : 'No prospects available.'}
+          {searchTerm ? 'No prospects match your search.' : 'No prospects match the current filters.'}
         </div>
       )}
 

@@ -2,6 +2,47 @@ import { getLatestCommentsByThread, groupCommentsIntoThreads } from "@/lib/comme
 import { type Comment, type CommentThread, type ProspectInterview } from "@/lib/types";
 import { createClient } from "@/utils/supabase/client";
 
+const OLD_ACCOUNT_PREFIX = "(old) ";
+
+function filterVisibleProspects<T extends { full_name: string | null | undefined }>(prospects: T[]) {
+  return prospects.filter(
+    (prospect) => !(prospect.full_name || "").startsWith(OLD_ACCOUNT_PREFIX)
+  );
+}
+
+async function attachSubmittedApplicationFlag<T extends ProspectInterview>(
+  supabase: ReturnType<typeof createClient>,
+  prospects: T[]
+): Promise<T[]> {
+  if (prospects.length === 0) {
+    return [];
+  }
+
+  const prospectIds = prospects.map((prospect) => prospect.id);
+  const { data: submittedApplications, error } = await supabase
+    .from("applications")
+    .select("user_id")
+    .in("user_id", prospectIds)
+    .not("submitted", "is", null);
+
+  if (error) {
+    console.error("Error fetching submitted applications for prospects:", error.message);
+    return prospects.map((prospect) => ({
+      ...prospect,
+      has_submitted_application: false,
+    }));
+  }
+
+  const submittedUserIds = new Set(
+    (submittedApplications || []).map((application: { user_id: string }) => application.user_id)
+  );
+
+  return prospects.map((prospect) => ({
+    ...prospect,
+    has_submitted_application: submittedUserIds.has(prospect.id),
+  }));
+}
+
 export async function getUsers() {
   const supabase = createClient();
 
@@ -44,7 +85,7 @@ export async function getUsers() {
         return [];
       }
       
-      usersData = users || [];
+      usersData = filterVisibleProspects(users || []);
     } else {
       // Production: prospects with a submitted application (no embed — avoids
       // "more than one relationship" between users and applications).
@@ -81,7 +122,7 @@ export async function getUsers() {
           return [];
         }
 
-        usersData = users || [];
+        usersData = filterVisibleProspects(users || []);
       }
     }
   }
@@ -183,7 +224,8 @@ export async function getInterviewProspects(): Promise<ProspectInterview[]> {
     return [];
   }
 
-  return prospects || [];
+  const visibleProspects = filterVisibleProspects(prospects || []);
+  return attachSubmittedApplicationFlag(supabase, visibleProspects);
 }
 
 export async function getCases(prospectID: string) {
@@ -460,7 +502,8 @@ export async function getUsersForComments(): Promise<Array<{id: string, full_nam
     throw prospectsError;
   }
 
-  return prospects || [];
+  const visibleProspects = filterVisibleProspects(prospects || []);
+  return attachSubmittedApplicationFlag(supabase, visibleProspects);
 }
 
 export async function getInterestFormSubmissions() {
