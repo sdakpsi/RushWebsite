@@ -385,6 +385,12 @@ export default function ProspectAnalyticsPage() {
   const filteredProspects = showSubmittedOnly
     ? prospects.filter((prospect) => prospect.submittedEssays)
     : prospects;
+  const numberedProspects = filteredProspects.filter(
+    (prospect) => !previewDroppedProspects.includes(prospect.prospectId)
+  );
+  const rowNumberByProspectId = new Map(
+    numberedProspects.map((prospect, index) => [prospect.prospectId, index + 1])
+  );
 
   const columnCount = 13 + visibleEvents.length;
 
@@ -433,7 +439,7 @@ export default function ProspectAnalyticsPage() {
                     Show submitted applications only
                   </label>
                   <p className="text-sm text-muted-foreground">
-                    {filteredProspects.length} prospect{filteredProspects.length === 1 ? "" : "s"}
+                    {numberedProspects.length} prospect{numberedProspects.length === 1 ? "" : "s"}
                   </p>
                 </div>
               </div>
@@ -556,7 +562,7 @@ export default function ProspectAnalyticsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredProspects.map((prospect, index) => {
+                      {filteredProspects.map((prospect) => {
                         const isExpanded = expandedProspectId === prospect.prospectId;
 
                         return (
@@ -578,7 +584,7 @@ export default function ProspectAnalyticsPage() {
                               }
                             >
                               <td className="border-b border-border py-4 text-center font-semibold text-muted-foreground">
-                                {index + 1}
+                                {rowNumberByProspectId.get(prospect.prospectId) ?? ""}
                               </td>
                               <td
                                 className="w-[72px] border-b border-border px-2 py-4 text-center"
