@@ -386,7 +386,7 @@ export default function ProspectAnalyticsPage() {
     ? prospects.filter((prospect) => prospect.submittedEssays)
     : prospects;
 
-  const columnCount = 12 + visibleEvents.length;
+  const columnCount = 13 + visibleEvents.length;
 
   const togglePreviewDropped = (prospectId: string) => {
     setPreviewDroppedProspects((current) =>
@@ -443,6 +443,12 @@ export default function ProspectAnalyticsPage() {
                   <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-sm">
                     <thead>
                       <tr>
+                        <th
+                          className="border-b border-border pb-2 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                          rowSpan={2}
+                        >
+                          #
+                        </th>
                         <th
                           className="w-[72px] border-b border-border pb-2 text-center text-[11px] font-semibold uppercase leading-tight tracking-wide text-muted-foreground"
                           rowSpan={2}
@@ -550,7 +556,7 @@ export default function ProspectAnalyticsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredProspects.map((prospect) => {
+                      {filteredProspects.map((prospect, index) => {
                         const isExpanded = expandedProspectId === prospect.prospectId;
 
                         return (
@@ -571,6 +577,9 @@ export default function ProspectAnalyticsPage() {
                                 )
                               }
                             >
+                              <td className="border-b border-border py-4 text-center font-semibold text-muted-foreground">
+                                {index + 1}
+                              </td>
                               <td
                                 className="w-[72px] border-b border-border px-2 py-4 text-center"
                                 onClick={(event) => event.stopPropagation()}
