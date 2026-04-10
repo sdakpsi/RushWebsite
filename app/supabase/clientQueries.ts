@@ -431,20 +431,69 @@ export async function getCurrentUserData() {
 export async function getUserScores(userId: string) {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("users")
-    .select("app_score, resume_score")
-    .eq("id", userId)
-    .single();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error("Error fetching user scores:", error.message);
-    throw error;
+  const [
+    { data: packetScores, error: packetScoresError },
+    { data: legacyScores, error: legacyScoresError },
+  ] = await Promise.all([
+    supabase
+      .from("packet_scores")
+      .select("score_type, score, scorer_id")
+      .eq("prospect_id", userId),
+    supabase
+      .from("users")
+      .select("app_score, resume_score")
+      .eq("id", userId)
+      .single(),
+  ]);
+
+  if (packetScoresError) {
+    console.error("Error fetching packet scores:", packetScoresError.message);
+    throw packetScoresError;
   }
 
+  if (legacyScoresError) {
+    console.error("Error fetching legacy user scores:", legacyScoresError.message);
+    throw legacyScoresError;
+  }
+
+  const applicationScores = (packetScores || []).filter(
+    (scoreRow) => scoreRow.score_type === "application"
+  );
+  const resumeScores = (packetScores || []).filter(
+    (scoreRow) => scoreRow.score_type === "resume"
+  );
+
+  const averageScore = (scores: Array<{ score: number }>) => {
+    if (scores.length === 0) {
+      return null;
+    }
+
+    return scores.reduce((total, scoreRow) => total + scoreRow.score, 0) / scores.length;
+  };
+
   return {
-    appScore: data?.app_score || "",
-    resumeScore: data?.resume_score || ""
+    appScore:
+      applicationScores.find((scoreRow) => scoreRow.scorer_id === user?.id)?.score?.toString() ||
+      "",
+    resumeScore:
+      resumeScores.find((scoreRow) => scoreRow.scorer_id === user?.id)?.score?.toString() ||
+      "",
+    averageAppScore:
+      averageScore(applicationScores) ??
+      (legacyScores?.app_score != null ? Number(legacyScores.app_score) : null),
+    averageResumeScore:
+      averageScore(resumeScores) ??
+      (legacyScores?.resume_score != null ? Number(legacyScores.resume_score) : null),
+    appScoreCount: applicationScores.length,
+    resumeScoreCount: resumeScores.length,
+    usesLegacyAppScore:
+      applicationScores.length === 0 && legacyScores?.app_score != null,
+    usesLegacyResumeScore:
+      resumeScores.length === 0 && legacyScores?.resume_score != null,
   };
 }
 

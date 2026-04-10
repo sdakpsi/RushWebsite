@@ -144,14 +144,37 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   // Extract scores from React Query data
   const currentAppScore = userScores?.appScore || "";
   const currentScoreResume = userScores?.resumeScore || "";
+  const averageAppScore = userScores?.averageAppScore ?? null;
+  const averageResumeScore = userScores?.averageResumeScore ?? null;
+  const appScoreCount = userScores?.appScoreCount ?? 0;
+  const resumeScoreCount = userScores?.resumeScoreCount ?? 0;
+  const usesLegacyAppScore = userScores?.usesLegacyAppScore ?? false;
+  const usesLegacyResumeScore = userScores?.usesLegacyResumeScore ?? false;
 
   // React Query mutations
   const updateAppScoreMutation = useMutation({
     mutationFn: async (newScore: string) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("You must be signed in to score a packet.");
+      }
+
       const { data, error } = await supabase
-        .from("users")
-        .update({ app_score: newScore })
-        .eq("id", userID);
+        .from("packet_scores")
+        .upsert(
+          {
+            prospect_id: userID,
+            scorer_id: user.id,
+            score_type: "application",
+            score: Number(newScore),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "prospect_id,scorer_id,score_type" }
+        )
+        .select();
       if (error) throw error;
       return data;
     },
@@ -167,10 +190,27 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
   const updateResumeScoreMutation = useMutation({
     mutationFn: async (newScore: string) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("You must be signed in to score a packet.");
+      }
+
       const { data, error } = await supabase
-        .from("users")
-        .update({ resume_score: newScore })
-        .eq("id", userID);
+        .from("packet_scores")
+        .upsert(
+          {
+            prospect_id: userID,
+            scorer_id: user.id,
+            score_type: "resume",
+            score: Number(newScore),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "prospect_id,scorer_id,score_type" }
+        )
+        .select();
       if (error) throw error;
       return data;
     },
@@ -299,49 +339,15 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, []);
 
   const calculateAverages = useCallback((cases: Case[]) => {
-    if (cases.length === 3) {
-      // Check if all three cases exist before accessing them
-      if (cases[0] && cases[1] && cases[2]) {
-        // Calculate the average scores from the 3 cases
-        const avgCase: Case = {
-          id: "average",
-          prospect: "",
-          active: "Average",
-          leadership_comments: "",
-          teamwork_comments: "",
-          analytical_comments: "",
-          public_speaking_comments: "",
-          role: "",
-          thoughts: "",
-          additional: "",
-          leadership_score:
-            (cases[0].leadership_score +
-              cases[1].leadership_score +
-              cases[2].leadership_score) /
-            3,
-          teamwork_score:
-            (cases[0].teamwork_score +
-              cases[1].teamwork_score +
-              cases[2].teamwork_score) /
-            3,
-          analytical_score:
-            (cases[0].analytical_score +
-              cases[1].analytical_score +
-              cases[2].analytical_score) /
-            3,
-          public_speaking_score:
-            (cases[0].public_speaking_score +
-              cases[1].public_speaking_score +
-              cases[2].public_speaking_score) /
-            3,
-        };
-
-        // Add this average as a fourth case
-        cases = [...cases, avgCase];
-      }
+    if (cases.length === 0) {
+      return {
+        leadership_avg: 0,
+        teamwork_avg: 0,
+        analytical_avg: 0,
+        public_speaking_avg: 0,
+      };
     }
 
-    // Now proceed with normal averaging (all cases will have 4 evaluators)
     const totalScores = cases.reduce(
       (acc, curr) => ({
         leadership_score: acc.leadership_score + curr.leadership_score,
@@ -357,11 +363,12 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
         public_speaking_score: 0,
       }
     );
+
     const averages = {
-      leadership_avg: totalScores.leadership_score / 4, // Always divide by 4 now
-      teamwork_avg: totalScores.teamwork_score / 4,
-      analytical_avg: totalScores.analytical_score / 4,
-      public_speaking_avg: totalScores.public_speaking_score / 4,
+      leadership_avg: totalScores.leadership_score / cases.length,
+      teamwork_avg: totalScores.teamwork_score / cases.length,
+      analytical_avg: totalScores.analytical_score / cases.length,
+      public_speaking_avg: totalScores.public_speaking_score / cases.length,
     };
 
     return averages;
@@ -381,7 +388,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const handleScoreChange = (e: any) => {
     const value = e.target.value;
     const numValue = Number(value);
-    if (value === "" || (numValue >= 1 && numValue <= 10)) {
+    if (value === "" || (numValue >= 1 && numValue <= 8)) {
       setScore(value);
     }
   };
@@ -390,7 +397,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const handleScoreChangeResume = (e: any) => {
     const value = e.target.value;
     const numValue = Number(value);
-    if (value === "" || (numValue >= 1 && numValue <= 10)) {
+    if (value === "" || (numValue >= 1 && numValue <= 8)) {
       setScoreResume(value);
     }
   };
@@ -417,16 +424,18 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
 
   const scoreComponents = useMemo(() => {
+    const normalizedResumeScore =
+      averageResumeScore != null ? Number((averageResumeScore / 8).toFixed(2)) * 14 : 0;
+    const normalizedApplicationScore =
+      averageAppScore != null ? Number((averageAppScore / 8).toFixed(2)) * 25 : 0;
     const pledgeFactor = Number((ivAverages.pledgeable / 5).toFixed(2)) * 15;
     const professionalFactor =
       Number((ivAverages.open_minded / 5).toFixed(2)) * 10;
     const curious = Number((ivAverages.motivated / 5).toFixed(2)) * 7;
     const events = Number(ivAverages.events_attended - 2);
-    const resumeScore =
-      Number((parseInt(currentScoreResume) / 8).toFixed(2)) * 14;
+    const resumeScore = normalizedResumeScore;
     const coverLetterScore = application.cover_letter ? 1 : 0;
-    const applicationScore =
-      Number((parseInt(currentAppScore) / 8).toFixed(2)) * 25;
+    const applicationScore = normalizedApplicationScore;
     const teamworkScore = Number((averages.teamwork_avg / 5).toFixed(2)) * 10;
     const leadershipScore =
       Number((averages.leadership_avg / 5).toFixed(2)) * 10;
@@ -463,8 +472,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [
     ivAverages,
     averages,
-    currentAppScore,
-    currentScoreResume,
+    averageAppScore,
+    averageResumeScore,
     application.cover_letter,
   ]);
 
@@ -757,9 +766,25 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           <span className="font-semibold text-blue-900">
                             Application Score:
                           </span>
-                          <span className="text-foreground font-mono mb-2">
-                            {currentAppScore !== "" ? currentAppScore : "not set"}
+                          <span className="text-foreground font-mono">
+                            {averageAppScore != null ? averageAppScore.toFixed(2) : "not set"}
                           </span>
+                          <span className="mb-2 text-xs text-muted-foreground">
+                            {usesLegacyAppScore
+                              ? "Using legacy application score"
+                              : appScoreCount > 0
+                                ? `Avg from ${appScoreCount} PIC score${appScoreCount === 1 ? "" : "s"}`
+                                : "No PIC application scores yet"}
+                            {currentAppScore !== "" ? ` • your score: ${currentAppScore}` : ""}
+                          </span>
+                          <span className="mb-2 text-xs text-muted-foreground">
+                            One application score per PIC member
+                          </span>
+                          {isPIC && currentAppScore !== "" && score === "" ? (
+                            <span className="mb-2 text-xs text-muted-foreground">
+                              Submit again to replace your existing application score.
+                            </span>
+                          ) : null}
                           {isPIC && (
                             <div className="flex items-center space-x-2">
                               <input
@@ -782,11 +807,25 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </li>
                         <li className="flex flex-col">
                           <span className="font-semibold text-blue-900">Resume Score:</span>
-                          <span className="text-foreground font-mono mb-2">
-                            {currentScoreResume !== ""
-                              ? currentScoreResume
-                              : "not set"}
+                          <span className="text-foreground font-mono">
+                            {averageResumeScore != null ? averageResumeScore.toFixed(2) : "not set"}
                           </span>
+                          <span className="mb-2 text-xs text-muted-foreground">
+                            {usesLegacyResumeScore
+                              ? "Using legacy resume score"
+                              : resumeScoreCount > 0
+                                ? `Avg from ${resumeScoreCount} PIC score${resumeScoreCount === 1 ? "" : "s"}`
+                                : "No PIC resume scores yet"}
+                            {currentScoreResume !== "" ? ` • your score: ${currentScoreResume}` : ""}
+                          </span>
+                          <span className="mb-2 text-xs text-muted-foreground">
+                            One resume score per PIC member
+                          </span>
+                          {isPIC && currentScoreResume !== "" && scoreResume === "" ? (
+                            <span className="mb-2 text-xs text-muted-foreground">
+                              Submit again to replace your existing resume score.
+                            </span>
+                          ) : null}
                           {isPIC && (
                             <div className="flex items-center space-x-2">
                               <input
