@@ -10,7 +10,6 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useApplicationView } from "@/hooks/useApplicationView";
 import { useCasesAndInterviews } from "@/hooks/getCasesAndInterviews";
 import { useProspectAnalytics } from "@/hooks/useProspectAnalytics";
-import { getVisibleCommentTrackingEvents } from "@/lib/analyticsCommentDates";
 import { createClient } from "@/utils/supabase/client";
 import {
   type ProspectAnalyticsCaseStudy,
@@ -300,8 +299,6 @@ export default function ProspectAnalyticsPage() {
   const [showSubmittedOnly, setShowSubmittedOnly] = useState(true);
   const [previewDroppedProspects, setPreviewDroppedProspects] = useState<string[]>([]);
 
-  const visibleEvents = getVisibleCommentTrackingEvents();
-
   useEffect(() => {
     setPreviewDroppedProspects(
       prospects
@@ -433,7 +430,7 @@ export default function ProspectAnalyticsPage() {
     numberedProspects.map((prospect, index) => [prospect.prospectId, index + 1])
   );
 
-  const columnCount = 13 + visibleEvents.length;
+  const columnCount = 15;
 
   const togglePreviewDropped = (prospectId: string) => {
     const nextPreviewDropped = !previewDroppedProspects.includes(prospectId);
@@ -533,19 +530,13 @@ export default function ProspectAnalyticsPage() {
                         </th>
                         <th
                           className="border-b border-border pb-2 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-                          colSpan={visibleEvents.length}
-                        >
-                          Events
-                        </th>
-                        <th
-                          className="border-b border-border pb-2 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                           colSpan={2}
                         >
                           Application
                         </th>
                         <th
                           className="border-b border-border pb-2 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-                          colSpan={2}
+                          colSpan={4}
                         >
                           Score
                         </th>
@@ -569,19 +560,17 @@ export default function ProspectAnalyticsPage() {
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
                           Vulnerability
                         </th>
-                        {visibleEvents.map((trackedEvent) => (
-                          <th
-                            key={trackedEvent.eventKey}
-                            className="pb-3 pt-2 text-center font-medium text-muted-foreground"
-                          >
-                            {trackedEvent.label}
-                          </th>
-                        ))}
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
                           Started App
                         </th>
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
                           Submitted Essays
+                        </th>
+                        <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
+                          App Score
+                        </th>
+                        <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
+                          Resume Score
                         </th>
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
                           Case Study Yes Invites
@@ -703,19 +692,21 @@ export default function ProspectAnalyticsPage() {
                               <td className="border-b border-border py-4 text-center text-muted-foreground">
                                 {prospect.vulnerabilityCommentsCount}
                               </td>
-                              {visibleEvents.map((trackedEvent) => (
-                                <td
-                                  key={`${prospect.prospectId}-${trackedEvent.eventKey}`}
-                                  className="border-b border-border py-4 text-center text-muted-foreground"
-                                >
-                                  {prospect.commentCountsByEvent[trackedEvent.eventKey] || 0}
-                                </td>
-                              ))}
                               <td className="border-b border-border py-4">
                                 <StatusCheck value={prospect.startedApp} />
                               </td>
                               <td className="border-b border-border py-4">
                                 <StatusCheck value={prospect.submittedEssays} />
+                              </td>
+                              <td className="border-b border-border py-4 text-center font-medium text-foreground">
+                                {prospect.applicationScore != null
+                                  ? formatScore(prospect.applicationScore)
+                                  : "N/A"}
+                              </td>
+                              <td className="border-b border-border py-4 text-center font-medium text-foreground">
+                                {prospect.resumeScore != null
+                                  ? formatScore(prospect.resumeScore)
+                                  : "N/A"}
                               </td>
                               <td className="border-b border-border py-4 text-center font-medium text-sky-700">
                                 {prospect.caseStudiesCount > 0

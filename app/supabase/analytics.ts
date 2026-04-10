@@ -90,6 +90,8 @@ export interface ProspectAnalyticsRow {
   goodCommentsCount: number;
   caseStudiesCount: number;
   caseStudyYesInvitesCount: number;
+  applicationScore: number | null;
+  resumeScore: number | null;
   totalScore: number;
   neutralCommentsCount: number;
   badCommentsCount: number;
@@ -149,6 +151,12 @@ type CaseStudyRow = {
   teamwork_score?: number | null;
   public_speaking_score?: number | null;
   analytical_score?: number | null;
+};
+
+type PacketScoreRow = {
+  prospect_id: string | null;
+  score_type: string | null;
+  score: number | null;
 };
 
 function toIsoDateKey(value: string | Date): string {
@@ -567,6 +575,15 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       return [];
     }
 
+    const { data: packetScores, error: packetScoresError } = await supabase
+      .from("packet_scores")
+      .select("prospect_id, score_type, score");
+
+    if (packetScoresError) {
+      console.error("Error fetching prospect analytics packet scores:", packetScoresError);
+      return [];
+    }
+
     const filteredComments = toThreadableComments(
       ((comments || []).filter(
       (comment: CommentRow) =>
@@ -595,7 +612,9 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
     const { data: prospects, error: prospectsError } = await supabase
       .from("users")
-      .select("id, full_name, photo_url, is_active, is_pic, preview_dropped")
+      .select(
+        "id, full_name, photo_url, is_active, is_pic, preview_dropped, app_score, resume_score"
+      )
       .in("id", Array.from(signalIds))
       .eq("is_active", false)
       .eq("is_pic", false);
@@ -628,9 +647,35 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       caseStudiesByProspect.set(caseStudy.prospect, currentCaseStudies);
     });
 
+    const packetScoresByProspect = new Map<string, PacketScoreRow[]>();
+    (packetScores || []).forEach((packetScore: PacketScoreRow) => {
+      if (!packetScore.prospect_id) return;
+      const currentPacketScores =
+        packetScoresByProspect.get(packetScore.prospect_id) || [];
+      currentPacketScores.push(packetScore);
+      packetScoresByProspect.set(packetScore.prospect_id, currentPacketScores);
+    });
+
     const visibleProspects = (prospects || []).filter(
       (prospect) => !(prospect.full_name || "").startsWith("(old) ")
     );
+
+    const averagePacketScore = (scores: PacketScoreRow[], scoreType: string) => {
+      const matchingScores = scores.filter(
+        (scoreRow) => scoreRow.score_type === scoreType && scoreRow.score != null
+      );
+
+      if (matchingScores.length === 0) {
+        return null;
+      }
+
+      const total = matchingScores.reduce(
+        (sum, scoreRow) => sum + Number(scoreRow.score || 0),
+        0
+      );
+
+      return total / matchingScores.length;
+    };
 
     const rows = visibleProspects
       .map((prospect) => {
@@ -646,6 +691,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           (a, b) =>
             new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
         );
+        const prospectPacketScores = packetScoresByProspect.get(prospect.id) || [];
 
         const commentCountsByEvent = createEmptyCommentCountsByEvent();
 
@@ -672,6 +718,12 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           (caseStudy) => caseStudy.social_invite === "yes"
         ).length;
         const caseStudiesCount = prospectCaseStudies.length;
+        const applicationScore =
+          averagePacketScore(prospectPacketScores, "application") ??
+          (prospect.app_score != null ? Number(prospect.app_score) : null);
+        const resumeScore =
+          averagePacketScore(prospectPacketScores, "resume") ??
+          (prospect.resume_score != null ? Number(prospect.resume_score) : null);
 
         const totalScore = goodCommentsCount + caseStudyYesInvitesCount * 0.75;
 
@@ -684,6 +736,8 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           goodCommentsCount,
           caseStudiesCount,
           caseStudyYesInvitesCount,
+          applicationScore,
+          resumeScore,
           totalScore,
           neutralCommentsCount: prospectCommentThreads.filter(
             (thread) => thread.latest_comment.interaction === "Neutral"
