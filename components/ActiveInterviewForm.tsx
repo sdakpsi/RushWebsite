@@ -1,5 +1,7 @@
 import { createInterview } from "@/app/supabase/interview";
+import { getCases } from "@/app/supabase/clientQueries";
 import { InterviewForm, ProspectInterview } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { questions, scorableTraits } from "../lib/InterviewQuestions";
@@ -22,6 +24,131 @@ const options = [
   { value: "Interview", label: "Interview" },
 ];
 
+type CaseStudyScore = {
+  id: string;
+  active_name: string | null;
+  created_at: string | null;
+  social_invite: string | null;
+  leadership_score: number | null;
+  teamwork_score: number | null;
+  public_speaking_score: number | null;
+  analytical_score: number | null;
+};
+
+function formatSocialInvite(value: string | null) {
+  if (value === "yes") return "Yes";
+  if (value === "maybe") return "Maybe";
+  if (value === "no") return "No";
+  return "Unknown";
+}
+
+function formatCaseDate(value: string | null) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
+function CompactCaseStudyScores({
+  caseStudyScores,
+  isLoading,
+}: {
+  caseStudyScores: CaseStudyScore[];
+  isLoading: boolean;
+}) {
+  if (isLoading) {
+    return (
+      <div className="mb-4 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
+        Loading case study scores...
+      </div>
+    );
+  }
+
+  if (caseStudyScores.length === 0) {
+    return (
+      <div className="mb-4 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
+        No case study scores found for this candidate yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold uppercase text-muted-foreground">
+          Case Study Scores
+        </p>
+        <span className="text-xs text-muted-foreground">
+          {caseStudyScores.length} total
+        </span>
+      </div>
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+        {caseStudyScores.map((caseStudy) => {
+          const inviteLabel = formatSocialInvite(caseStudy.social_invite);
+          const caseDate = formatCaseDate(caseStudy.created_at);
+          const scoreItems = [
+            { label: "Leadership", value: caseStudy.leadership_score },
+            { label: "Teamwork", value: caseStudy.teamwork_score },
+            { label: "Speaking", value: caseStudy.public_speaking_score },
+            { label: "Analytical", value: caseStudy.analytical_score },
+          ];
+
+          return (
+            <div
+              key={caseStudy.id}
+              className="rounded-lg border border-border bg-background px-3 py-2 shadow-sm"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">
+                    {caseStudy.active_name || "Unknown Active"}
+                  </p>
+                  {caseDate ? (
+                    <p className="text-xs text-muted-foreground">{caseDate}</p>
+                  ) : null}
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                    caseStudy.social_invite === "yes"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : caseStudy.social_invite === "maybe"
+                        ? "bg-amber-100 text-amber-800"
+                        : caseStudy.social_invite === "no"
+                          ? "bg-rose-100 text-rose-800"
+                          : "bg-slate-100 text-slate-600"
+                  }`}
+                >
+                  {inviteLabel}
+                </span>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-1">
+                {scoreItems.map((score) => (
+                  <div
+                    key={`${caseStudy.id}-${score.label}`}
+                    className="rounded-md border border-border bg-muted/40 px-1 py-1 text-center"
+                  >
+                    <p className="text-[10px] font-medium uppercase text-muted-foreground">
+                      {score.label}
+                    </p>
+                    <p className="font-mono text-sm font-semibold text-foreground">
+                      {score.value ?? "N/A"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function ActiveInterviewForm({
   selectedProspect,
   setSelectedProspect,
@@ -40,6 +167,28 @@ export default function ActiveInterviewForm({
   } = useForm({
     defaultValues: savedFormData,
   });
+
+  const { data: caseStudyScores = [], isLoading: isLoadingCaseStudyScores } =
+    useQuery<CaseStudyScore[]>({
+      queryKey: ["interviewCaseStudyScores", selectedProspect.id],
+      queryFn: async () => {
+        const cases = (await getCases(selectedProspect.id)) as CaseStudyScore[];
+
+        return cases.map((caseStudy) => ({
+          id: caseStudy.id,
+          active_name: caseStudy.active_name,
+          created_at: caseStudy.created_at,
+          social_invite: caseStudy.social_invite,
+          leadership_score: caseStudy.leadership_score,
+          teamwork_score: caseStudy.teamwork_score,
+          public_speaking_score: caseStudy.public_speaking_score,
+          analytical_score: caseStudy.analytical_score,
+        }));
+      },
+      enabled: Boolean(selectedProspect.id),
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    });
 
   function note(note: string) {
     return (
@@ -259,6 +408,11 @@ export default function ActiveInterviewForm({
                   {script(
                     "○ A pizza place is losing customers but the pizza tastes great. What's wrong?"
                   )}
+                  <div className="mt-3">
+                    {note(
+                      "Feel free to choose a question based on their existing performance and any gaps you identify."
+                    )}
+                  </div>
                 </label>
               ) : index === 10 ? (
                 <label htmlFor={question.name} className="mb-4 block space-y-2">
@@ -284,6 +438,12 @@ export default function ActiveInterviewForm({
                   {question.note ? note(question.note) : <></>}
                 </label>
               )}
+              {index === 7 ? (
+                <CompactCaseStudyScores
+                  caseStudyScores={caseStudyScores}
+                  isLoading={isLoadingCaseStudyScores}
+                />
+              ) : null}
               <textarea
                 id={question.name}
                 className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
