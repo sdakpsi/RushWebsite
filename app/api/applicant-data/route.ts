@@ -5,6 +5,34 @@ export async function POST(request: Request) {
   const supabase = createClient();
 
   try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("is_active, is_pic")
+      .eq("id", user.id)
+      .single();
+
+    if (userError) {
+      return NextResponse.json(
+        { error: "Failed to verify user status" },
+        { status: 400 }
+      );
+    }
+
+    if (!userData?.is_active && !userData?.is_pic) {
+      return NextResponse.json(
+        { error: "Only active members can view applicant data" },
+        { status: 403 }
+      );
+    }
+
     const { userId } = await request.json();
 
     if (!userId) {
