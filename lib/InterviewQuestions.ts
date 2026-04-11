@@ -35,32 +35,31 @@ export const questions = [
     note: "(2 mins) Pls Pls press with questions/have them elaborate if they say they handle criticism poorly. This is our chance to see how they might take program critiques!",
   },
   {
-    label: "7. What is an achievement that you are proud of?",
+    label: "7. What is a life lesson that shapes who you are?",
     name: "learningAbout",
-    note: "(2 mins) Very open ended, goal is to give them the floor to showcase something unique or impressive about them.",
   },
   {
     label:
-      "8. Silly Questions: If you had to describe your personality as a kitchen item, what would you choose? ●  Explain one of your uncommon opinions. ● Who would you want to play you in a movie? ● Who would you want to be your fictional sidekick?  ● What is your comfort food? ● You’ve been given an elephant. You can’t give it away or sell it. What would you do with the elephant? ● If you were an ice cream flavor which one would you be and why? How would you sell ice cream in Alaska?",
+      "8. Silly Question (pick ONE): ● Creativity/innovation: ○ If you could add one class to every school's curriculum, what would it be? ○ If you could have dinner with anyone — living, dead, or fictional — who and why? ● Mindfulness: ○ What's something most people don't appreciate enough? ● Problem-solving: ○ You're put in charge of making Mondays better for everyone. What's your plan? ○ How would you sell ice cream in Alaska? ● Personality: ○ What's a skill you have that nobody would guess just by looking at you? ● Analytical (only if they didn't show analytical skills at Case Study Night): ○ A pizza place is losing customers but the pizza tastes great. What's wrong?",
     name: "sillyQuestion",
     note: "Choose ONE.",
   },
   {
     label:
-      "9. Do you have any questions about the pledging process? (Give them time to answer before moving on) It is expected of all members to complete this pledging process, which takes up the time equivalent of a 4-unit class. If you are given an invitation to join AKPsi, would you be able to commit to weekly meetings on Thursday evenings (past 8pm) and Sunday afternoons? (*pause for answer) What other time commitments do you have this quarter? (If they are a red flag, follow the red flag doc) ",
-    name: "questionsAndCommitments",
-  },
-  {
-    label:
-      "10. Why should we give you a bid? What do you hope to gain from AKPsi?",
+      "9. Why should we give you a bid? Imagine you were given a bid and have been in AKPsi for a year. Explain what a successful year in AKPsi looks like to you? Take your time. (1 min)",
     name: "whyGiveBid",
-    note: "(1 min) Actives... try to see if they take this opportunity to give it their all. we want kids who believe they belong here. Note what they personally want to gain from AKPsi too.",
+    note: "See if they give it their all \u2014 we want candidates who believe they belong here. Note what they personally want to gain. Make sure they take their time imagining and what their values are (community, prof)",
   },
   {
     label:
-      "11. Who was the most influential active AKPsi member you met or talked to this week? Why?",
+      "10. Who was the most influential active AKPsi member you met this week? Why? (1 min)",
     name: "mostInfluential",
-    note: "(1 min) No alumni members! If they mention a member, please pay attention to why they chose them; if they had a conversation about family, friendship, etc., with another member.. pls take note of it! If they connected to a story in this example, they value family!",
+    note: "No alumni. Pay attention to why they chose them — connections around family, friendship, or personal stories signal they value those things.",
+  },
+  {
+    label:
+      "11. Do you have any questions about the pledging process? (Give them time to answer before moving on) It is expected of all members to complete this pledging process, which takes up the time equivalent of a 4-unit class. If you are given an invitation to join AKPsi, would you be able to commit to weekly meetings on Thursday evenings (past 8pm) and Sunday afternoons? (*pause for answer) What other time commitments do you have this quarter? (If they are a red flag, follow the red flag doc) ",
+    name: "questionsAndCommitments",
   },
   {
     label: "12. Do you have any more questions for us?",

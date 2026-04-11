@@ -79,6 +79,7 @@ export interface ApplicationFormState {
 }
 
 export interface RushEvents {
+  "Pre Rush Social": boolean;
   "Info Night": boolean;
   "Business Workshop": boolean;
   "Case Study": boolean;

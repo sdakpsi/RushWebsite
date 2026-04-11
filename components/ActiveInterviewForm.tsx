@@ -14,6 +14,7 @@ interface ActiveInterviewFormProps {
 }
 
 const options = [
+  { value: "Pre Rush Social", label: "Pre Rush Social" },
   { value: "Info Night", label: "Info Night" },
   { value: "Business Workshop", label: "Business Workshop" },
   { value: "Case Study", label: "Case Study" },
@@ -233,28 +234,36 @@ export default function ActiveInterviewForm({
             <div key={index} className="mb-5">
               {index === 7 ? (
                 <label htmlFor={question.name} className="mb-2 block text-left">
-                  {note("8. Silly Question (Optional): Choose ONE")}
+                  {note("8. Silly Question (Optional): Pick ONE")}
+                  {note("Creativity/innovation:")}
                   {script(
-                    "• If you had to describe your personality as a kitchen item, what would you choose?"
-                  )}
-                  {script("• Explain one of your uncommon opinions.")}
-                  {script("• Who would you want to play you in a movie?")}
-                  {script(
-                    "• Who would you want to be your fictional sidekick?"
-                  )}
-                  {script("• What is your comfort food?")}
-                  {script(
-                    "• You’ve been given an elephant. You can’t give it away or sell it. What would you do with the elephant?"
+                    "○ If you could add one class to every school's curriculum, what would it be?"
                   )}
                   {script(
-                    "• If you were an ice cream flavor which one would you be and why?"
+                    "○ If you could have dinner with anyone — living, dead, or fictional — who and why?"
                   )}
-                  {script("• How would you sell ice cream in Alaska?")}
+                  {note("Mindfulness:")}
+                  {script(
+                    "○ What's something most people don't appreciate enough?"
+                  )}
+                  {note("Problem-solving:")}
+                  {script(
+                    "○ You're put in charge of making Mondays better for everyone. What's your plan?"
+                  )}
+                  {script("○ How would you sell ice cream in Alaska?")}
+                  {note("Personality:")}
+                  {script(
+                    "○ What's a skill you have that nobody would guess just by looking at you?"
+                  )}
+                  {note("Analytical (only if they didn't show analytical skills at Case Study Night):")}
+                  {script(
+                    "○ A pizza place is losing customers but the pizza tastes great. What's wrong?"
+                  )}
                 </label>
-              ) : index === 8 ? (
+              ) : index === 10 ? (
                 <label htmlFor={question.name} className="mb-4 block space-y-2">
                   {script(
-                    "9. Do you have any questions about the pledging process?"
+                    "11. Do you have any questions about the pledging process?"
                   )}
                   {note("Pause for answer")}
                   {script(
