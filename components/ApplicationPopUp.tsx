@@ -247,59 +247,17 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   });
 
   const calculateIvAverages = useCallback((interviews: Interview[]) => {
-    if (interviews.length === 3) {
-      // Check if all three interviews exist before accessing them
-      if (interviews[0] && interviews[1] && interviews[2]) {
-        // Calculate the average scores from the 3 interviews
-        const avgInterview: Interview = {
-          active_name: "Average",
-          other_actives: "",
-          about_yourself: "",
-          career_interests: "",
-          instance_for_friend: "",
-          failure_overcome: "",
-          disagreement_handled: "",
-          handling_criticism: "",
-          learning_about: "",
-          silly_question: null,
-          questions_and_commitments: "",
-          why_give_bid: "",
-          most_influential: "",
-          more_questions: "",
-          events_attended: "Average",
-          empathy:
-            (interviews[0].empathy +
-              interviews[1].empathy +
-              interviews[2].empathy) /
-            3,
-          open_minded:
-            (interviews[0].open_minded +
-              interviews[1].open_minded +
-              interviews[2].open_minded) /
-            3,
-          pledgeable:
-            (interviews[0].pledgeable +
-              interviews[1].pledgeable +
-              interviews[2].pledgeable) /
-            3,
-          motivated:
-            (interviews[0].motivated +
-              interviews[1].motivated +
-              interviews[2].motivated) /
-            3,
-          socially_aware:
-            (interviews[0].socially_aware +
-              interviews[1].socially_aware +
-              interviews[2].socially_aware) /
-            3,
-        };
-
-        // Add this average as a fourth interview
-        interviews = [...interviews, avgInterview];
-      }
+    if (interviews.length === 0) {
+      return {
+        empathy: 0,
+        open_minded: 0,
+        pledgeable: 0,
+        motivated: 0,
+        socially_aware: 0,
+        events_attended: 0,
+      };
     }
 
-    // Now proceed with normal averaging (all cases will have 4 interviews)
     const totalScores = interviews.reduce(
       (acc, curr) => {
         const eventsCount = curr.events_attended
@@ -325,11 +283,11 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     );
 
     const averages = {
-      empathy: totalScores.empathy / 4, // Always divide by 4 now
-      open_minded: totalScores.open_minded / 4,
-      pledgeable: totalScores.pledgeable / 4,
-      motivated: totalScores.motivated / 4,
-      socially_aware: totalScores.socially_aware / 4,
+      empathy: totalScores.empathy / interviews.length,
+      open_minded: totalScores.open_minded / interviews.length,
+      pledgeable: totalScores.pledgeable / interviews.length,
+      motivated: totalScores.motivated / interviews.length,
+      socially_aware: totalScores.socially_aware / interviews.length,
       events_attended: Math.ceil(
         totalScores.events_attended / interviews.length
       ),
