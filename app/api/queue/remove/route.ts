@@ -18,68 +18,39 @@ export async function POST(req: NextRequest) {
     const { entry_id, self_remove } = await req.json();
 
     if (self_remove) {
-      console.log('Self-remove attempt by user ID:', user.id);
-      
-      // First check what entries exist for this user
-      const { data: allEntries, error: queryError } = await supabase
-        .from('delib_queue')
-        .select('*')
-        .eq('user_id', user.id);
-      
-      console.log('All entries for user:', allEntries);
-      
-      // Check pending/speaking entries specifically
       const { data: activeEntries, error: activeError } = await supabase
         .from('delib_queue')
-        .select('*')
+        .select('id')
         .eq('user_id', user.id)
-        .in('status', [QueueStatus.PENDING, QueueStatus.SPEAKING]);
-        
-      console.log('Active entries for user:', activeEntries);
-      console.log('QueueStatus values:', { PENDING: QueueStatus.PENDING, SPEAKING: QueueStatus.SPEAKING });
+        .in('status', [QueueStatus.PENDING, QueueStatus.SPEAKING])
+        .limit(1);
 
-      // Try updating by specific ID instead of user_id
-      if (activeEntries && activeEntries.length > 0) {
-        const entryToUpdate = activeEntries[0]; // Get the first active entry
-        console.log('Updating entry by ID:', entryToUpdate.id);
-        
-        const { data: updatedEntries, error: updateError } = await supabase
-          .from('delib_queue')
-          .update({ 
-            status: QueueStatus.COMPLETED,
-            completed_at: new Date().toISOString()
-          })
-          .eq('id', entryToUpdate.id)
-          .select('*');
-
-        console.log('Update by ID result:', { updatedEntries, updateError });
-
-        if (updateError) {
-          return NextResponse.json({ error: 'Failed to remove yourself from queue' }, { status: 400 });
-        }
-
-        if (updatedEntries && updatedEntries.length > 0) {
-          return NextResponse.json({ 
-            message: 'Successfully removed yourself from queue',
-            entries: updatedEntries 
-          }, { status: 200 });
-        }
+      if (activeError) {
+        return NextResponse.json({ error: 'Failed to check queue status' }, { status: 400 });
       }
 
-      // If we get here, the update failed
-      console.log('Update failed - no entries were updated');
+      const entryToUpdate = activeEntries?.[0];
+      if (!entryToUpdate) {
+        return NextResponse.json({ error: 'You are not currently in the queue' }, { status: 404 });
+      }
+
+      const { data: updatedEntry, error: updateError } = await supabase
+        .from('delib_queue')
+        .update({
+          status: QueueStatus.COMPLETED,
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', entryToUpdate.id)
+        .select('*')
+        .single();
 
       if (updateError) {
         return NextResponse.json({ error: 'Failed to remove yourself from queue' }, { status: 400 });
       }
 
-      if (!updatedEntries || updatedEntries.length === 0) {
-        return NextResponse.json({ error: 'You are not currently in the queue' }, { status: 404 });
-      }
-
       return NextResponse.json({ 
         message: 'Successfully removed yourself from queue',
-        entries: updatedEntries 
+        entry: updatedEntry
       }, { status: 200 });
     }
 
