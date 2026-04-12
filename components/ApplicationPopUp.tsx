@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/utils/supabase/client";
 import { getUserScores, getProspectComments } from '@/app/supabase/clientQueries';
 import { type CommentThread } from "@/lib/types";
@@ -88,6 +90,66 @@ interface ApplicationPopupProps {
   isLoadingCasesInterviews?: boolean;
   onClose: () => void;
 }
+
+const SCORE_COMPONENT_COPY: Record<
+  string,
+  { label: string; tooltip: string }
+> = {
+  pledgeFactor: {
+    label: "Downbad for AKPsi",
+    tooltip:
+      "From the interview rubric's Downbad for AKPsi / pledgeable score. Average interview score divided by 5, then scaled to 15 points.",
+  },
+  professionalFactor: {
+    label: "Open-mindedness",
+    tooltip:
+      "From the interview rubric's Open-mindedness score. Average interview score divided by 5, then scaled to 10 points.",
+  },
+  curious: {
+    label: "Motivated",
+    tooltip:
+      "From the interview rubric's Motivated score. Average interview score divided by 5, then scaled to 7 points.",
+  },
+  events: {
+    label: "Events",
+    tooltip:
+      "From interview events attended. Average event count is rounded up, then 2 is subtracted for a 3-point component.",
+  },
+  resumeScore: {
+    label: "Resume Score",
+    tooltip:
+      "From PIC resume scores. Average resume score divided by 8, then scaled to 14 points.",
+  },
+  coverLetterScore: {
+    label: "Cover Letter Score",
+    tooltip: "From application cover letter presence. 1 point if present, 0 if not.",
+  },
+  applicationProfessionalismScore: {
+    label: "Application Professionalism Score",
+    tooltip:
+      "From PIC application professionalism scores. Average score divided by 5, then scaled to 12.5 points.",
+  },
+  applicationBrotherhoodScore: {
+    label: "Application Brotherhood Score",
+    tooltip:
+      "From PIC application brotherhood scores. Average score divided by 5, then scaled to 12.5 points.",
+  },
+  teamworkScore: {
+    label: "Teamwork Score",
+    tooltip:
+      "From case study teamwork scores. Average score divided by 5, then scaled to 10 points.",
+  },
+  leadershipScore: {
+    label: "Leadership Score",
+    tooltip:
+      "From case study leadership scores. Average score divided by 5, then scaled to 10 points.",
+  },
+  analyticalScore: {
+    label: "Analytical Score",
+    tooltip:
+      "From case study analytical scores. Average score divided by 5, then scaled to 5 points.",
+  },
+};
 
 const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   application,
@@ -1447,19 +1509,41 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   <h4 className="mb-4 text-xl font-semibold text-foreground">Score Components</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                     {Object.entries(scoreComponents.components).map(
-                      ([key, { score, outOf }]) => (
-                        <div
-                          key={key}
-                          className="rounded-lg border border-border bg-muted/50 p-4"
-                        >
-                          <div className="text-blue-900 font-semibold capitalize mb-2">
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                      ([key, { score, outOf }]) => {
+                        const componentCopy = SCORE_COMPONENT_COPY[key] || {
+                          label: key.replace(/([A-Z])/g, ' $1').trim(),
+                          tooltip: "Score component",
+                        };
+
+                        return (
+                          <div
+                            key={key}
+                            className="rounded-lg border border-border bg-muted/50 p-4"
+                          >
+                            <div className="mb-2 flex items-center gap-2 font-semibold text-blue-900">
+                              <span>{componentCopy.label}</span>
+                              <span className="group relative inline-flex">
+                                <button
+                                  type="button"
+                                  className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                                  aria-label={componentCopy.tooltip}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCircleInfo}
+                                    className="h-4 w-4"
+                                  />
+                                </button>
+                                <span className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-72 rounded-lg border border-border bg-popover px-3 py-2 text-left text-xs font-normal normal-case text-popover-foreground opacity-0 shadow-lg transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+                                  {componentCopy.tooltip}
+                                </span>
+                              </span>
+                            </div>
+                            <div className="font-mono text-lg text-foreground">
+                              {score.toFixed(2)} / {outOf}
+                            </div>
                           </div>
-                          <div className="font-mono text-lg text-foreground">
-                            {score.toFixed(2)} / {outOf}
-                          </div>
-                        </div>
-                      )
+                        );
+                      }
                     )}
                   </div>
                   <div className="text-center">
