@@ -91,6 +91,68 @@ interface ApplicationPopupProps {
   onClose: () => void;
 }
 
+type ApplicationResponseKey =
+  | "classes"
+  | "extracirriculars"
+  | "previous_rush_terms"
+  | "accomplishment"
+  | "why_akpsi"
+  | "goals"
+  | "comfort_zone"
+  | "business"
+  | "additional";
+
+const APPLICATION_RESPONSE_FIELDS: Array<{
+  key: ApplicationResponseKey;
+  prompt: string;
+}> = [
+  {
+    key: "classes",
+    prompt:
+      "What classes are you currently enrolled in for this quarter? Please list all days and times, and include any discussion sections.",
+  },
+  {
+    key: "extracirriculars",
+    prompt:
+      "Please list the extracurricular activities you are involved in for this quarter. (Ex: clubs, jobs, sports, etc). and how much time you anticipate each activity will take.",
+  },
+  {
+    key: "previous_rush_terms",
+    prompt:
+      'Have you participated in an Alpha Kappa Psi rush week before? If so, please indicate which term or terms. If not, you may write "N/A" in this section.',
+  },
+  {
+    key: "accomplishment",
+    prompt:
+      "What accomplishment are you most proud of (personal or professional)?",
+  },
+  {
+    key: "comfort_zone",
+    prompt:
+      "Tell us about a time you went out of your comfort zone. Why did you decide to take this risk and what did you learn?",
+  },
+  {
+    key: "why_akpsi",
+    prompt:
+      "What was a valuable community you've been a part of and what specifically made it valuable to you?",
+  },
+  {
+    key: "goals",
+    prompt:
+      "Describe your personal and professional goals for the end of this year and for the next three years. What steps are you currently taking toward these goals, and how would Alpha Kappa Psi help you further achieve them?",
+  },
+  {
+    key: "business",
+    prompt:
+      "What type of business would you create if money was not a limiting factor?",
+  },
+  {
+    key: "additional",
+    prompt:
+      "Add any details about yourself that you were not able to convey with the questions above!",
+  },
+];
+
 const SCORE_COMPONENT_COPY: Record<
   string,
   { label: string; tooltip: string }
@@ -1063,60 +1125,19 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     Long Response
                   </h3>
                   <div className="grid grid-cols-1 gap-6 text-muted-foreground md:grid-cols-2 lg:grid-cols-3">
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Classes
+                    {APPLICATION_RESPONSE_FIELDS.map(({ key, prompt }) => (
+                      <div
+                        key={key}
+                        className="rounded-lg border border-border bg-muted/50 p-4"
+                      >
+                        <div className="mb-3 text-left text-base font-semibold leading-relaxed text-blue-900">
+                          {prompt}
+                        </div>
+                        <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">
+                          {application[key]}
+                        </div>
                       </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.classes}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Extracurriculars
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.extracirriculars}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Previous AKPsi Rush
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.previous_rush_terms}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Accomplishment
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.accomplishment}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Valuable Community
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.why_akpsi}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Goals
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.goals}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Comfort Zone
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.comfort_zone}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Business Idea
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.business}</div>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-4">
-                      <div className="mb-3 text-center text-lg font-semibold text-blue-900">
-                        Additional Details
-                      </div>
-                      <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">{application.additional}</div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
