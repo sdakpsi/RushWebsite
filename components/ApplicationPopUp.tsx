@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/utils/supabase/client";
 import { getUserScores, getProspectComments } from '@/app/supabase/clientQueries';
+import { calculatePacketScoreComponents, formatScore } from "@/lib/packetScore";
 import { type CommentThread } from "@/lib/types";
 import customToast from "./CustomToast";
 import Image from "next/image";
@@ -124,27 +125,27 @@ const APPLICATION_RESPONSE_FIELDS: Array<{
   {
     key: "accomplishment",
     prompt:
-      "What accomplishment are you most proud of (personal or professional)?",
+      "What accomplishment are you most proud of (personal or professional)? (350 words)",
   },
   {
     key: "comfort_zone",
     prompt:
-      "Tell us about a time you went out of your comfort zone. Why did you decide to take this risk and what did you learn?",
+      "Tell us about a time you went out of your comfort zone. Why did you decide to take this risk and what did you learn? (350 words)",
   },
   {
     key: "why_akpsi",
     prompt:
-      "What was a valuable community you've been a part of and what specifically made it valuable to you?",
+      "What was a valuable community you've been a part of and what specifically made it valuable to you? (350 words)",
   },
   {
     key: "goals",
     prompt:
-      "Describe your personal and professional goals for the end of this year and for the next three years. What steps are you currently taking toward these goals, and how would Alpha Kappa Psi help you further achieve them?",
+      "Describe your personal and professional goals for the end of this year and for the next three years. What steps are you currently taking toward these goals, and how would Alpha Kappa Psi help you further achieve them? (350 words)",
   },
   {
     key: "business",
     prompt:
-      "What type of business would you create if money was not a limiting factor?",
+      "What type of business would you create if money was not a limiting factor? (350 words)",
   },
   {
     key: "additional",
@@ -225,7 +226,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const [viewDocument, setViewDocument] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("application");
   const [expandedCommentThreads, setExpandedCommentThreads] = useState<Record<string, boolean>>({});
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [appProfessionalismScore, setAppProfessionalismScore] = useState("");
   const [appBrotherhoodScore, setAppBrotherhoodScore] = useState("");
   const [packetFlagsDraft, setPacketFlagsDraft] = useState("");
@@ -234,7 +235,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const queryClient = useQueryClient();
 
   // React Query hooks for data fetching
-  const { data: userScores } = useQuery({
+  const { data: userScores, isSuccess: hasLoadedUserScores } = useQuery({
     queryKey: ['userScores', userID],
     queryFn: () => getUserScores(userID),
     enabled: !!userID,
@@ -432,21 +433,6 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
 
 
-  const [averages, setAverages] = useState({
-    leadership_avg: 0,
-    teamwork_avg: 0,
-    analytical_avg: 0,
-    public_speaking_avg: 0,
-  });
-  const [ivAverages, setIvAverages] = useState({
-    empathy: 0,
-    open_minded: 0,
-    pledgeable: 0,
-    motivated: 0,
-    socially_aware: 0,
-    events_attended: 0,
-  });
-
   const calculateIvAverages = useCallback((interviews: Interview[]) => {
     if (interviews.length === 0) {
       return {
@@ -533,16 +519,14 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     return averages;
   }, []);
 
-  // Calculate and set averages when data changes
-  useMemo(() => {
-    const newIvAverages = calculateIvAverages(interviews);
-    setIvAverages(newIvAverages);
-  }, [interviews, calculateIvAverages]);
-
-  useMemo(() => {
-    const newAverages = calculateAverages(cases);
-    setAverages(newAverages);
-  }, [cases, calculateAverages]);
+  const ivAverages = useMemo(
+    () => calculateIvAverages(interviews),
+    [interviews, calculateIvAverages]
+  );
+  const averages = useMemo(
+    () => calculateAverages(cases),
+    [cases, calculateAverages]
+  );
 
   const handleAppProfessionalismScoreChange = (e: any) => {
     const value = e.target.value;
@@ -607,77 +591,34 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
 
   const scoreComponents = useMemo(() => {
-    const normalizedResumeScore =
-      averageResumeScore != null ? Number((averageResumeScore / 8).toFixed(2)) * 14 : 0;
-    const normalizedApplicationProfessionalismScore =
-      averageAppProfessionalismScore != null
-        ? Number((averageAppProfessionalismScore / 5).toFixed(2)) * 12.5
-        : 0;
-    const normalizedApplicationBrotherhoodScore =
-      averageAppBrotherhoodScore != null
-        ? Number((averageAppBrotherhoodScore / 5).toFixed(2)) * 12.5
-        : 0;
-    const pledgeFactor = Number((ivAverages.pledgeable / 5).toFixed(2)) * 15;
-    const professionalFactor =
-      Number((ivAverages.open_minded / 5).toFixed(2)) * 10;
-    const curious = Number((ivAverages.motivated / 5).toFixed(2)) * 7;
-    const events = Number(ivAverages.events_attended - 2);
-    const resumeScore = normalizedResumeScore;
-    const coverLetterScore = application.cover_letter ? 1 : 0;
-    const applicationProfessionalismScore = normalizedApplicationProfessionalismScore;
-    const applicationBrotherhoodScore = normalizedApplicationBrotherhoodScore;
-    const teamworkScore = Number((averages.teamwork_avg / 5).toFixed(2)) * 10;
-    const leadershipScore =
-      Number((averages.leadership_avg / 5).toFixed(2)) * 10;
-    const analyticalScore =
-      Number((averages.analytical_avg / 5).toFixed(2)) * 5;
-
-    const totalScore =
-      pledgeFactor +
-      professionalFactor +
-      curious +
-      events +
-      resumeScore +
-      coverLetterScore +
-      applicationProfessionalismScore +
-      applicationBrotherhoodScore +
-      teamworkScore +
-      leadershipScore +
-      analyticalScore;
-
-    return {
-      totalScore,
-      components: {
-        pledgeFactor: { score: pledgeFactor, outOf: 15 },
-        professionalFactor: { score: professionalFactor, outOf: 10 },
-        curious: { score: curious, outOf: 7 },
-        events: { score: events, outOf: 3 },
-        resumeScore: { score: resumeScore, outOf: 14 },
-        coverLetterScore: { score: coverLetterScore, outOf: 1 },
-        applicationProfessionalismScore: { score: applicationProfessionalismScore, outOf: 12.5 },
-        applicationBrotherhoodScore: { score: applicationBrotherhoodScore, outOf: 12.5 },
-        teamworkScore: { score: teamworkScore, outOf: 10 },
-        leadershipScore: { score: leadershipScore, outOf: 10 },
-        analyticalScore: { score: analyticalScore, outOf: 5 },
-      },
-    };
+    return calculatePacketScoreComponents({
+      applicationProfessionalismScore: averageAppProfessionalismScore,
+      applicationBrotherhoodScore: averageAppBrotherhoodScore,
+      resumeScore: averageResumeScore,
+      caseStudies: cases,
+      interviews,
+      hasCoverLetter: Boolean(application.cover_letter),
+    });
   }, [
-    ivAverages,
-    averages,
     averageAppProfessionalismScore,
     averageAppBrotherhoodScore,
     averageResumeScore,
+    cases,
+    interviews,
     application.cover_letter,
   ]);
 
-  // Update total score when it changes (using useMemo with side effect)
-  useMemo(() => {
-    if (scoreComponents.totalScore > 0) {
+  useEffect(() => {
+    if (
+      hasLoadedUserScores &&
+      !isLoadingCasesInterviews &&
+      scoreComponents.totalScore > 0
+    ) {
       const updateTotalScore = async () => {
         try {
           const { error } = await supabase
             .from("users")
-            .update({ total_score: scoreComponents.totalScore })
+            .update({ total_score: Number(scoreComponents.totalScore.toFixed(2)) })
             .eq("id", userID);
 
           if (error) {
@@ -693,7 +634,14 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
       updateTotalScore();
     }
-  }, [scoreComponents.totalScore, userID, supabase, queryClient]);
+  }, [
+    hasLoadedUserScores,
+    isLoadingCasesInterviews,
+    scoreComponents.totalScore,
+    userID,
+    supabase,
+    queryClient,
+  ]);
 
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/40 pt-8 pb-8">
@@ -1112,7 +1060,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </li>
                         <li className="flex flex-col border-t border-border pt-2">
                           <span className="text-lg font-bold text-emerald-700">
-                            Total Score: <span className="font-mono">{scoreComponents.totalScore.toFixed(2)}</span>
+                            Total Score: <span className="font-mono">{formatScore(scoreComponents.totalScore)}</span>
                           </span>
                         </li>
                       </ul>
@@ -1560,7 +1508,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                               </span>
                             </div>
                             <div className="font-mono text-lg text-foreground">
-                              {score.toFixed(2)} / {outOf}
+                              {formatScore(score)} / {formatScore(outOf)}
                             </div>
                           </div>
                         );
@@ -1571,7 +1519,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     <div className="inline-block rounded-lg border border-emerald-300 bg-emerald-100 p-4">
                       <div className="mb-2 font-semibold text-emerald-900">Total Score</div>
                       <div className="font-mono text-2xl font-bold text-foreground">
-                        {scoreComponents.totalScore.toFixed(2)}
+                        {formatScore(scoreComponents.totalScore)}
                       </div>
                     </div>
                   </div>

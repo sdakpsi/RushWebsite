@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { averagePacketScore, calculatePacketScoreComponents } from "@/lib/packetScore";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -43,7 +44,14 @@ export async function POST(request: Request) {
     }
 
     // user_avatar is optional; many prospects only have users.photo_url
-    const [avatarRow, userRow, casesResult, interviewsResult] = await Promise.all([
+    const [
+      avatarRow,
+      userRow,
+      applicationResult,
+      casesResult,
+      interviewsResult,
+      packetScoresResult,
+    ] = await Promise.all([
       supabase
         .from("user_avatar")
         .select("avatar_url")
@@ -52,18 +60,31 @@ export async function POST(request: Request) {
 
       supabase
         .from("users")
-        .select("total_score, photo_url")
+        .select("photo_url, resume_score")
         .eq("id", userId)
         .maybeSingle(),
 
       supabase
+        .from("applications")
+        .select("cover_letter")
+        .eq("user_id", userId)
+        .not("submitted", "is", null)
+        .limit(1)
+        .maybeSingle(),
+
+      supabase
         .from("case_studies")
-        .select("active_name")
+        .select("active_name, leadership_score, teamwork_score, analytical_score")
         .eq("prospect", userId),
 
       supabase
         .from("interviews")
-        .select("active_name")
+        .select("active_name, pledgeable, open_minded, motivated, events_attended")
+        .eq("prospect_id", userId),
+
+      supabase
+        .from("packet_scores")
+        .select("score_type, score")
         .eq("prospect_id", userId),
     ]);
 
@@ -71,12 +92,29 @@ export async function POST(request: Request) {
       avatarRow.data?.avatar_url?.trim() ||
       userRow.data?.photo_url?.trim() ||
       null;
+    const packetScores = packetScoresResult.data || [];
+    const packetScore = calculatePacketScoreComponents({
+      applicationProfessionalismScore: averagePacketScore(
+        packetScores,
+        "application_professionalism"
+      ),
+      applicationBrotherhoodScore: averagePacketScore(
+        packetScores,
+        "application_brotherhood"
+      ),
+      resumeScore:
+        averagePacketScore(packetScores, "resume") ??
+        (userRow.data?.resume_score != null ? Number(userRow.data.resume_score) : null),
+      caseStudies: casesResult.data || [],
+      interviews: interviewsResult.data || [],
+      hasCoverLetter: Boolean(applicationResult.data?.cover_letter),
+    }).totalScore;
 
     return NextResponse.json({
       avatarUrl,
       caseStudies: casesResult.data || [],
       interviews: interviewsResult.data || [],
-      totalScore: userRow.data?.total_score ?? 0,
+      totalScore: Number(packetScore.toFixed(2)),
     });
   } catch (error) {
     console.error("Error fetching batched applicant data:", error);

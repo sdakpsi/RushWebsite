@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBatchedApplicantData } from "@/app/supabase/clientQueries";
+import { formatScore } from "@/lib/packetScore";
 import type { Packet } from "@/lib/types";
 
 interface ApplicantCardProps {
@@ -89,7 +90,7 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
           )}
         </div>
         <div className="mt-2 text-sm text-foreground">
-          <span>Total Score: {totalScore}</span>
+          <span>Total Score: {formatScore(totalScore)}</span>
         </div>
       </div>
     </button>

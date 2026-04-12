@@ -882,7 +882,7 @@ export default function NameForm() {
             <div className="mb-8">
               <label className={textLabel} htmlFor="proudAccomplishment">
                 What accomplishment are you most proud of (personal or
-                professional)?
+                professional)? (350 words)
               </label>
               <textarea
                 className={getEssayTextareaClassName(proudAccomplishment)}
@@ -900,7 +900,7 @@ export default function NameForm() {
             <div className="mb-8">
               <label className={textLabel} htmlFor="comfortZone">
                 Tell us about a time you went out of your comfort zone. Why did
-                you decide to take this risk and what did you learn?
+                you decide to take this risk and what did you learn? (350 words)
               </label>
               <textarea
                 className={getEssayTextareaClassName(comfortZone)}
@@ -916,7 +916,7 @@ export default function NameForm() {
             <div className="mb-8">
               <label className={textLabel} htmlFor="joinReason">
                 What was a valuable community you’ve been a part of and what
-                specifically made it valuable to you?
+                specifically made it valuable to you? (350 words)
               </label>
               <textarea
                 className={getEssayTextareaClassName(joinReason)}
@@ -934,7 +934,7 @@ export default function NameForm() {
                 Describe your personal and professional goals for the end of
                 this year and for the next three years. What steps are you
                 currently taking toward these goals, and how would Alpha Kappa
-                Psi help you further achieve them?
+                Psi help you further achieve them? (350 words)
               </label>
               <textarea
                 className={getEssayTextareaClassName(lifeGoals)}
@@ -950,7 +950,7 @@ export default function NameForm() {
             <div className="mb-8">
               <label className={textLabel} htmlFor="businessType">
                 What type of business would you create if money was not a
-                limiting factor?
+                limiting factor? (350 words)
               </label>
               <textarea
                 className={getEssayTextareaClassName(businessType)}
