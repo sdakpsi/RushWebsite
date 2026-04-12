@@ -34,6 +34,8 @@ export type PacketScoreComponents = Record<
   { score: number; outOf: number }
 >;
 
+export const GOOD_COMMENT_SCORE_WEIGHT = 2;
+
 export function averagePacketScore(
   scores: PacketScoreRow[],
   scoreType: string
@@ -182,6 +184,16 @@ export function calculatePacketScoreComponents({
     totalScore,
     components,
   };
+}
+
+export function calculateTotalScoreWithGoodComments({
+  packetScore,
+  goodCommentsCount,
+}: {
+  packetScore: number;
+  goodCommentsCount: number;
+}) {
+  return packetScore + goodCommentsCount * GOOD_COMMENT_SCORE_WEIGHT;
 }
 
 export function formatScore(score: number | null | undefined) {

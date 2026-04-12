@@ -1,5 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
-import { averagePacketScore, calculatePacketScoreComponents } from "@/lib/packetScore";
+import { getLatestCommentsByThread } from "@/lib/commentThreads";
+import {
+  averagePacketScore,
+  calculatePacketScoreComponents,
+  calculateTotalScoreWithGoodComments,
+} from "@/lib/packetScore";
+import { type Comment } from "@/lib/types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -51,6 +57,7 @@ export async function POST(request: Request) {
       casesResult,
       interviewsResult,
       packetScoresResult,
+      commentsResult,
     ] = await Promise.all([
       supabase
         .from("user_avatar")
@@ -86,6 +93,11 @@ export async function POST(request: Request) {
         .from("packet_scores")
         .select("score_type, score")
         .eq("prospect_id", userId),
+
+      supabase
+        .from("comments")
+        .select("id, created_at, prospect_id, active_id, prospect_name, active_name, comment, interaction, rubric_categories")
+        .eq("prospect_id", userId),
     ]);
 
     const avatarUrl =
@@ -109,12 +121,19 @@ export async function POST(request: Request) {
       interviews: interviewsResult.data || [],
       hasCoverLetter: Boolean(applicationResult.data?.cover_letter),
     }).totalScore;
+    const goodCommentsCount = getLatestCommentsByThread(
+      (commentsResult.data as Comment[] | null) ?? []
+    ).filter((comment) => comment.interaction === "Good").length;
+    const totalScore = calculateTotalScoreWithGoodComments({
+      packetScore,
+      goodCommentsCount,
+    });
 
     return NextResponse.json({
       avatarUrl,
       caseStudies: casesResult.data || [],
       interviews: interviewsResult.data || [],
-      totalScore: Number(packetScore.toFixed(2)),
+      totalScore: Number(totalScore.toFixed(2)),
     });
   } catch (error) {
     console.error("Error fetching batched applicant data:", error);

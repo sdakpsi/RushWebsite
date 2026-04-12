@@ -5,7 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { createClient } from "@/utils/supabase/client";
 import { getUserScores, getProspectComments } from '@/app/supabase/clientQueries';
-import { calculatePacketScoreComponents, formatScore } from "@/lib/packetScore";
+import {
+  GOOD_COMMENT_SCORE_WEIGHT,
+  calculatePacketScoreComponents,
+  calculateTotalScoreWithGoodComments,
+  formatScore,
+} from "@/lib/packetScore";
 import { type CommentThread } from "@/lib/types";
 import customToast from "./CustomToast";
 import Image from "next/image";
@@ -214,6 +219,23 @@ const SCORE_COMPONENT_COPY: Record<
   },
 };
 
+function TotalScoreInfoButton({ tooltip }: { tooltip: string }) {
+  return (
+    <span className="group relative inline-flex">
+      <button
+        type="button"
+        className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+        aria-label={tooltip}
+      >
+        <FontAwesomeIcon icon={faCircleInfo} className="h-4 w-4" />
+      </button>
+      <span className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-72 rounded-lg border border-border bg-popover px-3 py-2 text-left text-xs font-normal normal-case text-popover-foreground opacity-0 shadow-lg transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+        {tooltip}
+      </span>
+    </span>
+  );
+}
+
 const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   application,
   cases,
@@ -243,7 +265,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     refetchOnWindowFocus: false,
   });
 
-  const { data: prospectComments = [] } = useQuery({
+  const { data: prospectComments = [], isSuccess: hasLoadedProspectComments } = useQuery({
     queryKey: ['prospectComments', userID],
     queryFn: () => getProspectComments(userID),
     enabled: !!userID,
@@ -607,18 +629,38 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     interviews,
     application.cover_letter,
   ]);
+  const goodCommentsCount = useMemo(
+    () =>
+      prospectComments.filter(
+        (thread) => thread.latest_comment.interaction === "Good"
+      ).length,
+    [prospectComments]
+  );
+  const totalScoreWithGoodComments = useMemo(
+    () =>
+      calculateTotalScoreWithGoodComments({
+        packetScore: scoreComponents.totalScore,
+        goodCommentsCount,
+      }),
+    [scoreComponents.totalScore, goodCommentsCount]
+  );
+  const totalScoreTooltip =
+    `Total score = packet score (${formatScore(scoreComponents.totalScore)}) + ` +
+    `${GOOD_COMMENT_SCORE_WEIGHT} x good comments (${goodCommentsCount}) = ` +
+    `${formatScore(totalScoreWithGoodComments)}.`;
 
   useEffect(() => {
     if (
       hasLoadedUserScores &&
+      hasLoadedProspectComments &&
       !isLoadingCasesInterviews &&
-      scoreComponents.totalScore > 0
+      totalScoreWithGoodComments > 0
     ) {
       const updateTotalScore = async () => {
         try {
           const { error } = await supabase
             .from("users")
-            .update({ total_score: Number(scoreComponents.totalScore.toFixed(2)) })
+            .update({ total_score: Number(totalScoreWithGoodComments.toFixed(2)) })
             .eq("id", userID);
 
           if (error) {
@@ -636,8 +678,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     }
   }, [
     hasLoadedUserScores,
+    hasLoadedProspectComments,
     isLoadingCasesInterviews,
-    scoreComponents.totalScore,
+    totalScoreWithGoodComments,
     userID,
     supabase,
     queryClient,
@@ -1059,8 +1102,11 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           )}
                         </li>
                         <li className="flex flex-col border-t border-border pt-2">
-                          <span className="text-lg font-bold text-emerald-700">
-                            Total Score: <span className="font-mono">{formatScore(scoreComponents.totalScore)}</span>
+                          <span className="flex items-center gap-2 text-lg font-bold text-emerald-700">
+                            <span>
+                              Total Score: <span className="font-mono">{formatScore(totalScoreWithGoodComments)}</span>
+                            </span>
+                            <TotalScoreInfoButton tooltip={totalScoreTooltip} />
                           </span>
                         </li>
                       </ul>
@@ -1518,8 +1564,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                   <div className="text-center">
                     <div className="inline-block rounded-lg border border-emerald-300 bg-emerald-100 p-4">
                       <div className="mb-2 font-semibold text-emerald-900">Total Score</div>
-                      <div className="font-mono text-2xl font-bold text-foreground">
-                        {formatScore(scoreComponents.totalScore)}
+                      <div className="flex items-center justify-center gap-2 font-mono text-2xl font-bold text-foreground">
+                        <span>{formatScore(totalScoreWithGoodComments)}</span>
+                        <TotalScoreInfoButton tooltip={totalScoreTooltip} />
                       </div>
                     </div>
                   </div>
