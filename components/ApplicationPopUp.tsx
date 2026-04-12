@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { createClient } from "@/utils/supabase/client";
@@ -102,7 +102,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   const [activeSection, setActiveSection] = useState<string>("application");
   const [expandedCommentThreads, setExpandedCommentThreads] = useState<Record<string, boolean>>({});
   const supabase = createClient();
-  const [score, setScore] = useState("");
+  const [appProfessionalismScore, setAppProfessionalismScore] = useState("");
+  const [appBrotherhoodScore, setAppBrotherhoodScore] = useState("");
+  const [packetFlagsDraft, setPacketFlagsDraft] = useState("");
 
   const [scoreResume, setScoreResume] = useState("");
   const queryClient = useQueryClient();
@@ -124,6 +126,23 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     refetchOnWindowFocus: false,
   });
 
+  const { data: packetFlags = "" } = useQuery({
+    queryKey: ['packetFlags', userID],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("packet_flags")
+        .select("flags")
+        .eq("prospect_id", userID)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data?.flags || "";
+    },
+    enabled: !!userID,
+    staleTime: 30 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
   const { data: avatarUrl = "" } = useQuery({
     queryKey: ['userAvatar', userID],
     queryFn: async () => {
@@ -142,18 +161,38 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   });
 
   // Extract scores from React Query data
-  const currentAppScore = userScores?.appScore || "";
+  const currentOldAppScore = userScores?.appScore || "";
+  const currentAppProfessionalismScore = userScores?.appProfessionalismScore || "";
+  const currentAppBrotherhoodScore = userScores?.appBrotherhoodScore || "";
   const currentScoreResume = userScores?.resumeScore || "";
-  const averageAppScore = userScores?.averageAppScore ?? null;
+  const averageOldAppScore = userScores?.averageOldAppScore ?? null;
+  const averageAppProfessionalismScore = userScores?.averageAppProfessionalismScore ?? null;
+  const averageAppBrotherhoodScore = userScores?.averageAppBrotherhoodScore ?? null;
   const averageResumeScore = userScores?.averageResumeScore ?? null;
   const appScoreCount = userScores?.appScoreCount ?? 0;
+  const appProfessionalismScoreCount = userScores?.appProfessionalismScoreCount ?? 0;
+  const appBrotherhoodScoreCount = userScores?.appBrotherhoodScoreCount ?? 0;
   const resumeScoreCount = userScores?.resumeScoreCount ?? 0;
   const usesLegacyAppScore = userScores?.usesLegacyAppScore ?? false;
   const usesLegacyResumeScore = userScores?.usesLegacyResumeScore ?? false;
+  const hasCompleteSplitApplicationScores =
+    averageAppProfessionalismScore != null && averageAppBrotherhoodScore != null;
+  const showOldApplicationScoreReference =
+    averageOldAppScore != null && !hasCompleteSplitApplicationScores;
+
+  useEffect(() => {
+    setPacketFlagsDraft(packetFlags);
+  }, [packetFlags]);
 
   // React Query mutations
   const updateAppScoreMutation = useMutation({
-    mutationFn: async (newScore: string) => {
+    mutationFn: async ({
+      scoreType,
+      newScore,
+    }: {
+      scoreType: "application_professionalism" | "application_brotherhood";
+      newScore: string;
+    }) => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -168,7 +207,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           {
             prospect_id: userID,
             scorer_id: user.id,
-            score_type: "application",
+            score_type: scoreType,
             score: Number(newScore),
             updated_at: new Date().toISOString(),
           },
@@ -179,8 +218,9 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       return data;
     },
     onSuccess: () => {
-      customToast("Score updated successfully!", "success");
-      setScore("");
+      customToast("Application score updated successfully!", "success");
+      setAppProfessionalismScore("");
+      setAppBrotherhoodScore("");
       queryClient.invalidateQueries({ queryKey: ['userScores', userID] });
     },
     onError: (error: any) => {
@@ -218,6 +258,41 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       customToast("Resume score updated successfully!", "success");
       setScoreResume("");
       queryClient.invalidateQueries({ queryKey: ['userScores', userID] });
+    },
+    onError: (error: any) => {
+      customToast(`Error: ${error.message}`, "error");
+    },
+  });
+
+  const updatePacketFlagsMutation = useMutation({
+    mutationFn: async (newFlags: string) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("You must be signed in to edit packet flags.");
+      }
+
+      const { data, error } = await supabase
+        .from("packet_flags")
+        .upsert(
+          {
+            prospect_id: userID,
+            flags: newFlags,
+            updated_by: user.id,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "prospect_id" }
+        )
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      customToast("Packet flags updated successfully!", "success");
+      queryClient.invalidateQueries({ queryKey: ['packetFlags', userID] });
     },
     onError: (error: any) => {
       customToast(`Error: ${error.message}`, "error");
@@ -343,11 +418,17 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     setAverages(newAverages);
   }, [cases, calculateAverages]);
 
-  const handleScoreChange = (e: any) => {
+  const handleAppProfessionalismScoreChange = (e: any) => {
     const value = e.target.value;
-    const numValue = Number(value);
-    if (value === "" || (numValue >= 1 && numValue <= 8)) {
-      setScore(value);
+    if (value === "" || /^[1-5]$/.test(value)) {
+      setAppProfessionalismScore(value);
+    }
+  };
+
+  const handleAppBrotherhoodScoreChange = (e: any) => {
+    const value = e.target.value;
+    if (value === "" || /^[1-5]$/.test(value)) {
+      setAppBrotherhoodScore(value);
     }
   };
 
@@ -363,11 +444,25 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
 
   const handleSubmit = async () => {
-    if (score === "") {
+    const scoreUpdates = [
+      {
+        scoreType: "application_professionalism" as const,
+        newScore: appProfessionalismScore,
+      },
+      {
+        scoreType: "application_brotherhood" as const,
+        newScore: appBrotherhoodScore,
+      },
+    ].filter((scoreUpdate) => scoreUpdate.newScore !== "");
+
+    if (scoreUpdates.length === 0) {
       customToast("Please enter a score before submitting.", "error");
       return;
     }
-    updateAppScoreMutation.mutate(score);
+
+    scoreUpdates.forEach((scoreUpdate) => {
+      updateAppScoreMutation.mutate(scoreUpdate);
+    });
   };
 
   const handleSubmitResume = async () => {
@@ -378,14 +473,24 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     updateResumeScoreMutation.mutate(scoreResume);
   };
 
+  const handleSubmitPacketFlags = async () => {
+    updatePacketFlagsMutation.mutate(packetFlagsDraft);
+  };
+
 
 
 
   const scoreComponents = useMemo(() => {
     const normalizedResumeScore =
       averageResumeScore != null ? Number((averageResumeScore / 8).toFixed(2)) * 14 : 0;
-    const normalizedApplicationScore =
-      averageAppScore != null ? Number((averageAppScore / 8).toFixed(2)) * 25 : 0;
+    const normalizedApplicationProfessionalismScore =
+      averageAppProfessionalismScore != null
+        ? Number((averageAppProfessionalismScore / 5).toFixed(2)) * 12.5
+        : 0;
+    const normalizedApplicationBrotherhoodScore =
+      averageAppBrotherhoodScore != null
+        ? Number((averageAppBrotherhoodScore / 5).toFixed(2)) * 12.5
+        : 0;
     const pledgeFactor = Number((ivAverages.pledgeable / 5).toFixed(2)) * 15;
     const professionalFactor =
       Number((ivAverages.open_minded / 5).toFixed(2)) * 10;
@@ -393,7 +498,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
     const events = Number(ivAverages.events_attended - 2);
     const resumeScore = normalizedResumeScore;
     const coverLetterScore = application.cover_letter ? 1 : 0;
-    const applicationScore = normalizedApplicationScore;
+    const applicationProfessionalismScore = normalizedApplicationProfessionalismScore;
+    const applicationBrotherhoodScore = normalizedApplicationBrotherhoodScore;
     const teamworkScore = Number((averages.teamwork_avg / 5).toFixed(2)) * 10;
     const leadershipScore =
       Number((averages.leadership_avg / 5).toFixed(2)) * 10;
@@ -407,7 +513,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       events +
       resumeScore +
       coverLetterScore +
-      applicationScore +
+      applicationProfessionalismScore +
+      applicationBrotherhoodScore +
       teamworkScore +
       leadershipScore +
       analyticalScore;
@@ -421,7 +528,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
         events: { score: events, outOf: 3 },
         resumeScore: { score: resumeScore, outOf: 14 },
         coverLetterScore: { score: coverLetterScore, outOf: 1 },
-        applicationScore: { score: applicationScore, outOf: 25 },
+        applicationProfessionalismScore: { score: applicationProfessionalismScore, outOf: 12.5 },
+        applicationBrotherhoodScore: { score: applicationBrotherhoodScore, outOf: 12.5 },
         teamworkScore: { score: teamworkScore, outOf: 10 },
         leadershipScore: { score: leadershipScore, outOf: 10 },
         analyticalScore: { score: analyticalScore, outOf: 5 },
@@ -430,7 +538,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
   }, [
     ivAverages,
     averages,
-    averageAppScore,
+    averageAppProfessionalismScore,
+    averageAppBrotherhoodScore,
     averageResumeScore,
     application.cover_letter,
   ]);
@@ -594,6 +703,36 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
           <div className="space-y-4">
             {activeSection === "application" && (
               <div className="space-y-4">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <h3 className="text-xl font-bold text-foreground">
+                      Flags
+                    </h3>
+                    {isPIC && (
+                      <button
+                        onClick={handleSubmitPacketFlags}
+                        disabled={updatePacketFlagsMutation.isPending}
+                        className="btn btn-primary rounded-lg px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {updatePacketFlagsMutation.isPending ? "Saving..." : "Save Flags"}
+                      </button>
+                    )}
+                  </div>
+                  {isPIC ? (
+                    <div className="space-y-3">
+                      <textarea
+                        className="min-h-24 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+                        placeholder="Add packet flags for PIC..."
+                        value={packetFlagsDraft}
+                        onChange={(event) => setPacketFlagsDraft(event.target.value)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="min-h-20 rounded-lg border border-border bg-muted/50 p-4 text-sm leading-relaxed text-foreground whitespace-pre-line">
+                      {packetFlags.trim() || "No flags added."}
+                    </div>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
                     <h3 className="mb-4 text-xl font-bold text-foreground">
@@ -724,41 +863,82 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           <span className="font-semibold text-blue-900">
                             Application Score:
                           </span>
-                          <span className="text-foreground font-mono">
-                            {averageAppScore != null ? averageAppScore.toFixed(2) : "not set"}
+                          <span className="mb-3 text-base text-foreground">
+                            Prof:{" "}
+                            <span className="font-mono">
+                              {averageAppProfessionalismScore != null
+                                ? `${averageAppProfessionalismScore.toFixed(2)} / 5`
+                                : "not set"}
+                            </span>
+                            {" • "}
+                            Broho:{" "}
+                            <span className="font-mono">
+                              {averageAppBrotherhoodScore != null
+                                ? `${averageAppBrotherhoodScore.toFixed(2)} / 5`
+                                : "not set"}
+                            </span>
                           </span>
-                          <span className="mb-2 text-xs text-muted-foreground">
-                            {usesLegacyAppScore
-                              ? "Using legacy application score"
-                              : appScoreCount > 0
-                                ? `Avg from ${appScoreCount} PIC score${appScoreCount === 1 ? "" : "s"}`
-                                : "No PIC application scores yet"}
-                            {currentAppScore !== "" ? ` • your score: ${currentAppScore}` : ""}
+                          <span className="mb-1 text-xs leading-snug text-muted-foreground">
+                            Prof avg from {appProfessionalismScoreCount} PIC score{appProfessionalismScoreCount === 1 ? "" : "s"}.
+                            {" "}Broho avg from {appBrotherhoodScoreCount} PIC score{appBrotherhoodScoreCount === 1 ? "" : "s"}.
+                            {currentAppProfessionalismScore !== "" ? ` • your prof: ${currentAppProfessionalismScore}` : ""}
+                            {currentAppBrotherhoodScore !== "" ? ` • your broho: ${currentAppBrotherhoodScore}` : ""}
                           </span>
-                          <span className="mb-2 text-xs text-muted-foreground">
-                            One application score per PIC member
+                          {showOldApplicationScoreReference ? (
+                            <span className="mb-1 text-xs leading-snug text-muted-foreground">
+                              Old application score reference: {averageOldAppScore?.toFixed(2)} / 8
+                              {usesLegacyAppScore
+                                ? " from legacy user score"
+                                : ` from ${appScoreCount} previous PIC score${appScoreCount === 1 ? "" : "s"}`}
+                              {currentOldAppScore !== "" ? ` • your old score: ${currentOldAppScore}` : ""}
+                            </span>
+                          ) : null}
+                          <span className="mb-1 text-xs leading-snug text-muted-foreground">
+                            One prof score and one broho score per PIC member
                           </span>
-                          {isPIC && currentAppScore !== "" && score === "" ? (
-                            <span className="mb-2 text-xs text-muted-foreground">
-                              Submit again to replace your existing application score.
+                          {isPIC &&
+                          (currentAppProfessionalismScore !== "" ||
+                            currentAppBrotherhoodScore !== "") &&
+                          appProfessionalismScore === "" &&
+                          appBrotherhoodScore === "" ? (
+                            <span className="mb-2 text-xs leading-snug text-muted-foreground">
+                              Submit again to replace your existing application scores.
                             </span>
                           ) : null}
                           {isPIC && (
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="text"
-                                inputMode="numeric"
-                                pattern="[1-7]|8"
-                                className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
-                                placeholder="1-8"
-                                value={score}
-                                onChange={handleScoreChange}
-                              />
+                            <div className="space-y-2">
+                              <div className="flex flex-col gap-2 sm:flex-row">
+                                <label className="flex flex-col text-xs font-semibold text-blue-900">
+                                  Prof
+                                  <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[1-5]"
+                                    className="mt-1 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+                                    placeholder="1-5"
+                                    value={appProfessionalismScore}
+                                    onChange={handleAppProfessionalismScoreChange}
+                                  />
+                                </label>
+                                <label className="flex flex-col text-xs font-semibold text-blue-900">
+                                  Broho
+                                  <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[1-5]"
+                                    className="mt-1 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+                                    placeholder="1-5"
+                                    value={appBrotherhoodScore}
+                                    onChange={handleAppBrotherhoodScoreChange}
+                                  />
+                                </label>
+                              </div>
                               <button
                                 onClick={handleSubmit}
-                                className="btn btn-primary rounded-lg px-3 py-2 text-sm font-semibold"
+                                disabled={updateAppScoreMutation.isPending}
+                                className="btn btn-primary rounded-lg px-3 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
                               >
-                                Submit
+                                {updateAppScoreMutation.isPending ? "Submitting..." : "Submit Application Scores"}
                               </button>
                             </div>
                           )}

@@ -463,6 +463,12 @@ export async function getUserScores(userId: string) {
   const applicationScores = (packetScores || []).filter(
     (scoreRow) => scoreRow.score_type === "application"
   );
+  const applicationProfessionalismScores = (packetScores || []).filter(
+    (scoreRow) => scoreRow.score_type === "application_professionalism"
+  );
+  const applicationBrotherhoodScores = (packetScores || []).filter(
+    (scoreRow) => scoreRow.score_type === "application_brotherhood"
+  );
   const resumeScores = (packetScores || []).filter(
     (scoreRow) => scoreRow.score_type === "resume"
   );
@@ -479,16 +485,28 @@ export async function getUserScores(userId: string) {
     appScore:
       applicationScores.find((scoreRow) => scoreRow.scorer_id === user?.id)?.score?.toString() ||
       "",
+    appProfessionalismScore:
+      applicationProfessionalismScores.find((scoreRow) => scoreRow.scorer_id === user?.id)?.score?.toString() ||
+      "",
+    appBrotherhoodScore:
+      applicationBrotherhoodScores.find((scoreRow) => scoreRow.scorer_id === user?.id)?.score?.toString() ||
+      "",
     resumeScore:
       resumeScores.find((scoreRow) => scoreRow.scorer_id === user?.id)?.score?.toString() ||
       "",
-    averageAppScore:
+    averageOldAppScore:
       averageScore(applicationScores) ??
       (legacyScores?.app_score != null ? Number(legacyScores.app_score) : null),
+    averageAppProfessionalismScore:
+      averageScore(applicationProfessionalismScores),
+    averageAppBrotherhoodScore:
+      averageScore(applicationBrotherhoodScores),
     averageResumeScore:
       averageScore(resumeScores) ??
       (legacyScores?.resume_score != null ? Number(legacyScores.resume_score) : null),
     appScoreCount: applicationScores.length,
+    appProfessionalismScoreCount: applicationProfessionalismScores.length,
+    appBrotherhoodScoreCount: applicationBrotherhoodScores.length,
     resumeScoreCount: resumeScores.length,
     usesLegacyAppScore:
       applicationScores.length === 0 && legacyScores?.app_score != null,

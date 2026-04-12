@@ -718,9 +718,22 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           (caseStudy) => caseStudy.social_invite === "yes"
         ).length;
         const caseStudiesCount = prospectCaseStudies.length;
-        const applicationScore =
+        const applicationProfessionalismScore = averagePacketScore(
+          prospectPacketScores,
+          "application_professionalism"
+        );
+        const applicationBrotherhoodScore = averagePacketScore(
+          prospectPacketScores,
+          "application_brotherhood"
+        );
+        const splitApplicationScore =
+          applicationProfessionalismScore != null && applicationBrotherhoodScore != null
+            ? applicationProfessionalismScore + applicationBrotherhoodScore
+            : null;
+        const oldApplicationScore =
           averagePacketScore(prospectPacketScores, "application") ??
           (prospect.app_score != null ? Number(prospect.app_score) : null);
+        const applicationScore = splitApplicationScore ?? oldApplicationScore;
         const resumeScore =
           averagePacketScore(prospectPacketScores, "resume") ??
           (prospect.resume_score != null ? Number(prospect.resume_score) : null);
