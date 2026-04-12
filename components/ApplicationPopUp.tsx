@@ -222,6 +222,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       setAppProfessionalismScore("");
       setAppBrotherhoodScore("");
       queryClient.invalidateQueries({ queryKey: ['userScores', userID] });
+      queryClient.invalidateQueries({ queryKey: ['prospect-analytics'] });
     },
     onError: (error: any) => {
       customToast(`Error: ${error.message}`, "error");
@@ -258,6 +259,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
       customToast("Resume score updated successfully!", "success");
       setScoreResume("");
       queryClient.invalidateQueries({ queryKey: ['userScores', userID] });
+      queryClient.invalidateQueries({ queryKey: ['prospect-analytics'] });
     },
     onError: (error: any) => {
       customToast(`Error: ${error.message}`, "error");

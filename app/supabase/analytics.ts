@@ -92,6 +92,7 @@ export interface ProspectAnalyticsRow {
   caseStudyYesInvitesCount: number;
   applicationScore: number | null;
   resumeScore: number | null;
+  packetScore: number | null;
   totalScore: number;
   neutralCommentsCount: number;
   badCommentsCount: number;
@@ -138,6 +139,7 @@ type ApplicationRow = {
   comfort_zone: string | null;
   business: string | null;
   additional: string | null;
+  cover_letter?: string | null;
   submitted: string | null;
 };
 
@@ -157,6 +159,14 @@ type PacketScoreRow = {
   prospect_id: string | null;
   score_type: string | null;
   score: number | null;
+};
+
+type InterviewRow = {
+  prospect_id: string | null;
+  pledgeable?: number | null;
+  open_minded?: number | null;
+  motivated?: number | null;
+  events_attended?: string | null;
 };
 
 function toIsoDateKey(value: string | Date): string {
@@ -556,7 +566,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
     const { data: applications, error: applicationsError } = await supabase
       .from("applications")
       .select(
-        "id, user_id, accomplishment, why_akpsi, goals, comfort_zone, business, additional, submitted"
+        "id, user_id, accomplishment, why_akpsi, goals, comfort_zone, business, additional, cover_letter, submitted"
       );
 
     if (applicationsError) {
@@ -584,6 +594,15 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       return [];
     }
 
+    const { data: interviews, error: interviewsError } = await supabase
+      .from("interviews")
+      .select("prospect_id, pledgeable, open_minded, motivated, events_attended");
+
+    if (interviewsError) {
+      console.error("Error fetching prospect analytics interviews:", interviewsError);
+      return [];
+    }
+
     const filteredComments = toThreadableComments(
       ((comments || []).filter(
       (comment: CommentRow) =>
@@ -604,6 +623,10 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
 
     (caseStudies || []).forEach((caseStudy: CaseStudyRow) => {
       if (caseStudy.prospect) signalIds.add(caseStudy.prospect);
+    });
+
+    (interviews || []).forEach((interview: InterviewRow) => {
+      if (interview.prospect_id) signalIds.add(interview.prospect_id);
     });
 
     if (!signalIds.size) {
@@ -656,6 +679,14 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       packetScoresByProspect.set(packetScore.prospect_id, currentPacketScores);
     });
 
+    const interviewsByProspect = new Map<string, InterviewRow[]>();
+    (interviews || []).forEach((interview: InterviewRow) => {
+      if (!interview.prospect_id) return;
+      const currentInterviews = interviewsByProspect.get(interview.prospect_id) || [];
+      currentInterviews.push(interview);
+      interviewsByProspect.set(interview.prospect_id, currentInterviews);
+    });
+
     const visibleProspects = (prospects || []).filter(
       (prospect) => !(prospect.full_name || "").startsWith("(old) ")
     );
@@ -677,6 +708,82 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
       return total / matchingScores.length;
     };
 
+    const averageCaseScore = (
+      caseStudies: CaseStudyRow[],
+      scoreKey: "leadership_score" | "teamwork_score" | "analytical_score"
+    ) => {
+      if (caseStudies.length === 0) return 0;
+
+      return (
+        caseStudies.reduce(
+          (sum, caseStudy) => sum + Number(caseStudy[scoreKey] || 0),
+          0
+        ) / caseStudies.length
+      );
+    };
+
+    const calculatePacketScore = ({
+      applicationProfessionalismScore,
+      applicationBrotherhoodScore,
+      resumeScore,
+      caseStudies,
+      interviews,
+      hasCoverLetter,
+    }: {
+      applicationProfessionalismScore: number | null;
+      applicationBrotherhoodScore: number | null;
+      resumeScore: number | null;
+      caseStudies: CaseStudyRow[];
+      interviews: InterviewRow[];
+      hasCoverLetter: boolean;
+    }) => {
+      const normalizedResumeScore =
+        resumeScore != null ? Number((resumeScore / 8).toFixed(2)) * 14 : 0;
+      const normalizedApplicationProfessionalismScore =
+        applicationProfessionalismScore != null
+          ? Number((applicationProfessionalismScore / 5).toFixed(2)) * 12.5
+          : 0;
+      const normalizedApplicationBrotherhoodScore =
+        applicationBrotherhoodScore != null
+          ? Number((applicationBrotherhoodScore / 5).toFixed(2)) * 12.5
+          : 0;
+      const averageInterviewScore = (scoreKey: "pledgeable" | "open_minded" | "motivated") => {
+        if (interviews.length === 0) return 0;
+
+        return (
+          interviews.reduce(
+            (sum, interview) => sum + Number(interview[scoreKey] || 0),
+            0
+          ) / interviews.length
+        );
+      };
+      const averageEventsAttended =
+        interviews.length > 0
+          ? Math.ceil(
+              interviews.reduce((sum, interview) => {
+                const eventsCount = interview.events_attended
+                  ? interview.events_attended.split(",").length
+                  : 0;
+                return sum + eventsCount;
+              }, 0) / interviews.length
+            )
+          : 0;
+
+      return (
+        Number((averageInterviewScore("pledgeable") / 5).toFixed(2)) * 15 +
+        Number((averageInterviewScore("open_minded") / 5).toFixed(2)) * 10 +
+        Number((averageInterviewScore("motivated") / 5).toFixed(2)) * 7 +
+        Number(averageEventsAttended - 2) +
+        normalizedResumeScore +
+        (hasCoverLetter ? 1 : 0) +
+        normalizedApplicationProfessionalismScore +
+        normalizedApplicationBrotherhoodScore +
+        Number((averageCaseScore(caseStudies, "teamwork_score") / 5).toFixed(2)) * 10 +
+        Number((averageCaseScore(caseStudies, "leadership_score") / 5).toFixed(2)) * 10 +
+        Number((averageCaseScore(caseStudies, "analytical_score") / 5).toFixed(2)) * 5
+      );
+    };
+
     const rows = visibleProspects
       .map((prospect) => {
         const prospectCommentThreads = [...(threadsByProspect.get(prospect.id) || [])].sort(
@@ -692,6 +799,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
             new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime()
         );
         const prospectPacketScores = packetScoresByProspect.get(prospect.id) || [];
+        const prospectInterviews = interviewsByProspect.get(prospect.id) || [];
 
         const commentCountsByEvent = createEmptyCommentCountsByEvent();
 
@@ -737,6 +845,14 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
         const resumeScore =
           averagePacketScore(prospectPacketScores, "resume") ??
           (prospect.resume_score != null ? Number(prospect.resume_score) : null);
+        const packetScore = calculatePacketScore({
+          applicationProfessionalismScore,
+          applicationBrotherhoodScore,
+          resumeScore,
+          caseStudies: prospectCaseStudies,
+          interviews: prospectInterviews,
+          hasCoverLetter: Boolean(primaryApplication?.cover_letter),
+        });
 
         const totalScore = goodCommentsCount + caseStudyYesInvitesCount * 0.75;
 
@@ -751,6 +867,7 @@ export async function getProspectAnalytics(): Promise<ProspectAnalyticsRow[]> {
           caseStudyYesInvitesCount,
           applicationScore,
           resumeScore,
+          packetScore,
           totalScore,
           neutralCommentsCount: prospectCommentThreads.filter(
             (thread) => thread.latest_comment.interaction === "Neutral"

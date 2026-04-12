@@ -25,6 +25,23 @@ const RUBRIC_STYLES: Record<string, string> = {
     "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
 };
 
+type ProspectSortOption =
+  | "comments_case"
+  | "packet_scores"
+  | "packet_scores_comments";
+
+const PROSPECT_SORT_OPTIONS: Array<{
+  value: ProspectSortOption;
+  label: string;
+}> = [
+  { value: "comments_case", label: "Good Comments + Case" },
+  { value: "packet_scores", label: "Packet Scores" },
+  {
+    value: "packet_scores_comments",
+    label: "Packet Scores + Good Comments",
+  },
+];
+
 function Avatar({
   photoUrl,
   name,
@@ -103,6 +120,117 @@ function formatScore(score: number) {
   return Number.isInteger(score)
     ? score.toString()
     : score.toFixed(2).replace(/\.?0+$/, "");
+}
+
+function getPacketScore(prospect: ProspectAnalyticsRow) {
+  return prospect.packetScore ?? 0;
+}
+
+function getSortMetricValue(
+  prospect: ProspectAnalyticsRow,
+  sortOption: ProspectSortOption
+) {
+  switch (sortOption) {
+    case "packet_scores":
+      return getPacketScore(prospect);
+    case "packet_scores_comments":
+      return getPacketScore(prospect) + prospect.goodCommentsCount * 2;
+    case "comments_case":
+    default:
+      return prospect.totalScore;
+  }
+}
+
+function getSortMetricLabel(sortOption: ProspectSortOption) {
+  switch (sortOption) {
+    case "packet_scores":
+      return "Packet Scores";
+    case "packet_scores_comments":
+      return "Packet Scores + Good Comments";
+    case "comments_case":
+    default:
+      return "Good Comments + Case";
+  }
+}
+
+function getSortMetricDescription(sortOption: ProspectSortOption) {
+  switch (sortOption) {
+    case "packet_scores":
+      return "Total score from the Scoring tab";
+    case "packet_scores_comments":
+      return "Scoring tab total score + (good comment forms x 2)";
+    case "comments_case":
+    default:
+      return "Good comment forms + (case study yes invites x 0.75)";
+  }
+}
+
+function compareByCommentsCase(
+  a: ProspectAnalyticsRow,
+  b: ProspectAnalyticsRow
+) {
+  if (b.totalScore !== a.totalScore) {
+    return b.totalScore - a.totalScore;
+  }
+  if (b.goodCommentsCount !== a.goodCommentsCount) {
+    return b.goodCommentsCount - a.goodCommentsCount;
+  }
+  if (b.caseStudyYesInvitesCount !== a.caseStudyYesInvitesCount) {
+    return b.caseStudyYesInvitesCount - a.caseStudyYesInvitesCount;
+  }
+  if (b.neutralCommentsCount !== a.neutralCommentsCount) {
+    return b.neutralCommentsCount - a.neutralCommentsCount;
+  }
+  if (a.badCommentsCount !== b.badCommentsCount) {
+    return a.badCommentsCount - b.badCommentsCount;
+  }
+  return a.prospectName.localeCompare(b.prospectName);
+}
+
+function compareByPacketScores(
+  a: ProspectAnalyticsRow,
+  b: ProspectAnalyticsRow
+) {
+  const packetScoreDifference = getPacketScore(b) - getPacketScore(a);
+
+  if (packetScoreDifference !== 0) {
+    return packetScoreDifference;
+  }
+
+  return compareByCommentsCase(a, b);
+}
+
+function compareByPacketScoresComments(
+  a: ProspectAnalyticsRow,
+  b: ProspectAnalyticsRow
+) {
+  const packetScoresCommentsDifference =
+    getPacketScore(b) +
+    b.goodCommentsCount * 2 -
+    (getPacketScore(a) + a.goodCommentsCount * 2);
+
+  if (packetScoresCommentsDifference !== 0) {
+    return packetScoresCommentsDifference;
+  }
+
+  return compareByPacketScores(a, b);
+}
+
+function sortProspects(
+  prospects: ProspectAnalyticsRow[],
+  sortOption: ProspectSortOption
+) {
+  const sortedProspects = [...prospects];
+
+  switch (sortOption) {
+    case "packet_scores":
+      return sortedProspects.sort(compareByPacketScores);
+    case "packet_scores_comments":
+      return sortedProspects.sort(compareByPacketScoresComments);
+    case "comments_case":
+    default:
+      return sortedProspects.sort(compareByCommentsCase);
+  }
 }
 
 function CommentCard({ thread }: { thread: ProspectAnalyticsCommentThread }) {
@@ -291,13 +419,19 @@ export default function ProspectAnalyticsPage() {
     interviews,
     isLoading: isCasesInterviewsLoading,
   } = useCasesAndInterviews(userID);
-  const [expandedProspectId, setExpandedProspectId] = useState<string | null>(null);
+  const [expandedProspectId, setExpandedProspectId] = useState<string | null>(
+    null
+  );
   const [selectedPhoto, setSelectedPhoto] = useState<{
     photoUrl: string;
     name: string;
   } | null>(null);
   const [showSubmittedOnly, setShowSubmittedOnly] = useState(true);
-  const [previewDroppedProspects, setPreviewDroppedProspects] = useState<string[]>([]);
+  const [sortOption, setSortOption] =
+    useState<ProspectSortOption>("comments_case");
+  const [previewDroppedProspects, setPreviewDroppedProspects] = useState<
+    string[]
+  >([]);
 
   useEffect(() => {
     setPreviewDroppedProspects(
@@ -328,7 +462,9 @@ export default function ProspectAnalyticsPage() {
       await queryClient.cancelQueries({ queryKey: ["prospect-analytics"] });
 
       const previousProspects =
-        queryClient.getQueryData<ProspectAnalyticsRow[]>(["prospect-analytics"]) || [];
+        queryClient.getQueryData<ProspectAnalyticsRow[]>([
+          "prospect-analytics",
+        ]) || [];
 
       queryClient.setQueryData<ProspectAnalyticsRow[]>(
         ["prospect-analytics"],
@@ -343,7 +479,10 @@ export default function ProspectAnalyticsPage() {
     },
     onError: (error, _variables, context) => {
       if (context?.previousProspects) {
-        queryClient.setQueryData(["prospect-analytics"], context.previousProspects);
+        queryClient.setQueryData(
+          ["prospect-analytics"],
+          context.previousProspects
+        );
       }
       console.error("Error updating preview dropped state:", error);
     },
@@ -420,9 +559,14 @@ export default function ProspectAnalyticsPage() {
     );
   }
 
-  const filteredProspects = showSubmittedOnly
-    ? prospects.filter((prospect) => prospect.submittedEssays)
-    : prospects;
+  const filteredProspects = sortProspects(
+    showSubmittedOnly
+      ? prospects.filter((prospect) => prospect.submittedEssays)
+      : prospects,
+    sortOption
+  );
+  const sortMetricLabel = getSortMetricLabel(sortOption);
+  const sortMetricDescription = getSortMetricDescription(sortOption);
   const numberedProspects = filteredProspects.filter(
     (prospect) => !previewDroppedProspects.includes(prospect.prospectId)
   );
@@ -474,17 +618,40 @@ export default function ProspectAnalyticsPage() {
                   </p>
                 </div>
                 <div className="flex flex-col items-start gap-2 sm:items-end">
+                  <label
+                    htmlFor="prospect-sort"
+                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                  >
+                    Sort by
+                    <select
+                      id="prospect-sort"
+                      value={sortOption}
+                      onChange={(event) =>
+                        setSortOption(event.target.value as ProspectSortOption)
+                      }
+                      className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground"
+                    >
+                      {PROSPECT_SORT_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                   <label className="flex items-center gap-2 text-sm text-muted-foreground">
                     <input
                       type="checkbox"
                       checked={showSubmittedOnly}
-                      onChange={(event) => setShowSubmittedOnly(event.target.checked)}
+                      onChange={(event) =>
+                        setShowSubmittedOnly(event.target.checked)
+                      }
                       className="h-4 w-4 rounded border-border"
                     />
                     Show submitted applications only
                   </label>
                   <p className="text-sm text-muted-foreground">
-                    {numberedProspects.length} prospect{numberedProspects.length === 1 ? "" : "s"}
+                    {numberedProspects.length} prospect
+                    {numberedProspects.length === 1 ? "" : "s"}
                   </p>
                 </div>
               </div>
@@ -577,7 +744,7 @@ export default function ProspectAnalyticsPage() {
                         </th>
                         <th className="pb-3 pt-2 text-center font-medium text-muted-foreground">
                           <div className="flex items-center justify-center gap-2">
-                            <span>Total Score</span>
+                            <span>{sortMetricLabel}</span>
                             <div className="group relative">
                               <button
                                 type="button"
@@ -591,7 +758,7 @@ export default function ProspectAnalyticsPage() {
                                 />
                               </button>
                               <div className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-60 rounded-lg border border-border bg-popover px-3 py-2 text-left text-xs font-normal normal-case tracking-normal text-popover-foreground opacity-0 shadow-lg transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100">
-                                Good comment forms + (case study yes invites x 0.75)
+                                {sortMetricDescription}
                               </div>
                             </div>
                           </div>
@@ -600,7 +767,8 @@ export default function ProspectAnalyticsPage() {
                     </thead>
                     <tbody>
                       {filteredProspects.map((prospect) => {
-                        const isExpanded = expandedProspectId === prospect.prospectId;
+                        const isExpanded =
+                          expandedProspectId === prospect.prospectId;
 
                         return (
                           <React.Fragment key={prospect.prospectId}>
@@ -608,7 +776,9 @@ export default function ProspectAnalyticsPage() {
                               className={`cursor-pointer transition-colors hover:bg-muted/40 ${
                                 isExpanded ? "bg-muted/30" : ""
                               } ${
-                                previewDroppedProspects.includes(prospect.prospectId)
+                                previewDroppedProspects.includes(
+                                  prospect.prospectId
+                                )
                                   ? "opacity-45 grayscale"
                                   : ""
                               }`}
@@ -621,7 +791,9 @@ export default function ProspectAnalyticsPage() {
                               }
                             >
                               <td className="border-b border-border py-4 text-center font-semibold text-muted-foreground">
-                                {rowNumberByProspectId.get(prospect.prospectId) ?? ""}
+                                {rowNumberByProspectId.get(
+                                  prospect.prospectId
+                                ) ?? ""}
                               </td>
                               <td
                                 className="w-[72px] border-b border-border px-2 py-4 text-center"
@@ -629,8 +801,12 @@ export default function ProspectAnalyticsPage() {
                               >
                                 <input
                                   type="checkbox"
-                                  checked={previewDroppedProspects.includes(prospect.prospectId)}
-                                  onChange={() => togglePreviewDropped(prospect.prospectId)}
+                                  checked={previewDroppedProspects.includes(
+                                    prospect.prospectId
+                                  )}
+                                  onChange={() =>
+                                    togglePreviewDropped(prospect.prospectId)
+                                  }
                                   className="h-4 w-4 rounded border-border"
                                   aria-label={`Mark ${prospect.prospectName} as preview dropped`}
                                 />
@@ -669,7 +845,9 @@ export default function ProspectAnalyticsPage() {
                                     </div>
                                     <div className="text-sm text-muted-foreground">
                                       {prospect.comments.length} comment
-                                      {prospect.comments.length === 1 ? "" : "s"}
+                                      {prospect.comments.length === 1
+                                        ? ""
+                                        : "s"}
                                     </div>
                                   </div>
                                 </div>
@@ -714,7 +892,9 @@ export default function ProspectAnalyticsPage() {
                                   : "N/A"}
                               </td>
                               <td className="border-b border-border py-4 text-center font-semibold text-foreground">
-                                {formatScore(prospect.totalScore)}
+                                {formatScore(
+                                  getSortMetricValue(prospect, sortOption)
+                                )}
                               </td>
                             </tr>
                             {isExpanded && (
@@ -722,7 +902,9 @@ export default function ProspectAnalyticsPage() {
                                 <td
                                   colSpan={columnCount}
                                   className={`border-b border-border bg-muted/20 px-4 py-5 ${
-                                    previewDroppedProspects.includes(prospect.prospectId)
+                                    previewDroppedProspects.includes(
+                                      prospect.prospectId
+                                    )
                                       ? "opacity-45 grayscale"
                                       : ""
                                   }`}
@@ -762,12 +944,16 @@ export default function ProspectAnalyticsPage() {
                                       {prospect.comments.length > 0 ? (
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                                           {prospect.comments.map((comment) => (
-                                            <CommentCard key={comment.threadKey} thread={comment} />
+                                            <CommentCard
+                                              key={comment.threadKey}
+                                              thread={comment}
+                                            />
                                           ))}
                                         </div>
                                       ) : (
                                         <div className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
-                                          No comment forms yet for this prospect.
+                                          No comment forms yet for this
+                                          prospect.
                                         </div>
                                       )}
                                     </div>
@@ -783,16 +969,19 @@ export default function ProspectAnalyticsPage() {
                                       </div>
                                       {prospect.caseStudies.length > 0 ? (
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                          {prospect.caseStudies.map((caseStudy) => (
-                                            <CaseStudyCard
-                                              key={caseStudy.id}
-                                              caseStudy={caseStudy}
-                                            />
-                                          ))}
+                                          {prospect.caseStudies.map(
+                                            (caseStudy) => (
+                                              <CaseStudyCard
+                                                key={caseStudy.id}
+                                                caseStudy={caseStudy}
+                                              />
+                                            )
+                                          )}
                                         </div>
                                       ) : (
                                         <div className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
-                                          No case study forms yet for this prospect.
+                                          No case study forms yet for this
+                                          prospect.
                                         </div>
                                       )}
                                     </div>
@@ -846,7 +1035,7 @@ export default function ProspectAnalyticsPage() {
             <img
               src={selectedPhoto.photoUrl}
               alt={selectedPhoto.name}
-              className="max-h-[80vh] w-full object-contain bg-black/5"
+              className="max-h-[80vh] w-full bg-black/5 object-contain"
             />
             <div className="border-t border-border bg-background px-5 py-4">
               <p className="text-lg font-semibold text-foreground">
