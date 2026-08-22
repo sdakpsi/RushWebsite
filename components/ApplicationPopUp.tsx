@@ -12,6 +12,18 @@ import {
   formatScore,
 } from "@/lib/packetScore";
 import { type CommentThread } from "@/lib/types";
+import {
+  ADDITIONAL_DETAILS_QUESTION,
+  COMFORT_ZONE_QUESTION,
+  COMMUNITY_CONTRIBUTION_QUESTION,
+  CURRENT_CLASSES_QUESTION,
+  EXTRACURRICULAR_ACTIVITIES_QUESTION,
+  JOY_QUESTION,
+  KARAOKE_SONG_QUESTION,
+  PREVIOUS_RUSH_QUESTION,
+  PROUD_ACCOMPLISHMENT_QUESTION,
+  WHY_AKPSI_QUESTION,
+} from "@/utils/applicationQuestions";
 import customToast from "./CustomToast";
 import Image from "next/image";
 import AvatarUpload from "./AvatarUpload";
@@ -39,6 +51,7 @@ interface Application {
   goals: string;
   comfort_zone: string;
   business: string;
+  karaoke_song: string | null;
   additional: string;
   resume: string;
   cover_letter: string;
@@ -106,6 +119,7 @@ type ApplicationResponseKey =
   | "goals"
   | "comfort_zone"
   | "business"
+  | "karaoke_song"
   | "additional";
 
 const APPLICATION_RESPONSE_FIELDS: Array<{
@@ -114,48 +128,43 @@ const APPLICATION_RESPONSE_FIELDS: Array<{
 }> = [
   {
     key: "classes",
-    prompt:
-      "What classes are you currently enrolled in for this quarter? Please list all days and times, and include any discussion sections.",
+    prompt: CURRENT_CLASSES_QUESTION,
   },
   {
     key: "extracirriculars",
-    prompt:
-      "Please list the extracurricular activities you are involved in for this quarter. (Ex: clubs, jobs, sports, etc). and how much time you anticipate each activity will take.",
+    prompt: EXTRACURRICULAR_ACTIVITIES_QUESTION,
   },
   {
     key: "previous_rush_terms",
-    prompt:
-      'Have you participated in an Alpha Kappa Psi rush week before? If so, please indicate which term or terms. If not, you may write "N/A" in this section.',
+    prompt: PREVIOUS_RUSH_QUESTION,
   },
   {
     key: "accomplishment",
-    prompt:
-      "What accomplishment are you most proud of (personal or professional)? (350 words)",
-  },
-  {
-    key: "comfort_zone",
-    prompt:
-      "Tell us about a time you went out of your comfort zone. Why did you decide to take this risk and what did you learn? (350 words)",
+    prompt: PROUD_ACCOMPLISHMENT_QUESTION,
   },
   {
     key: "why_akpsi",
-    prompt:
-      "What was a valuable community you've been a part of and what specifically made it valuable to you? (350 words)",
+    prompt: WHY_AKPSI_QUESTION,
   },
   {
     key: "goals",
-    prompt:
-      "Describe your personal and professional goals for the end of this year and for the next three years. What steps are you currently taking toward these goals, and how would Alpha Kappa Psi help you further achieve them? (350 words)",
+    prompt: COMMUNITY_CONTRIBUTION_QUESTION,
+  },
+  {
+    key: "comfort_zone",
+    prompt: COMFORT_ZONE_QUESTION,
   },
   {
     key: "business",
-    prompt:
-      "What type of business would you create if money was not a limiting factor? (350 words)",
+    prompt: JOY_QUESTION,
+  },
+  {
+    key: "karaoke_song",
+    prompt: KARAOKE_SONG_QUESTION,
   },
   {
     key: "additional",
-    prompt:
-      "Add any details about yourself that you were not able to convey with the questions above!",
+    prompt: ADDITIONAL_DETAILS_QUESTION,
   },
 ];
 

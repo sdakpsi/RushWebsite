@@ -68,6 +68,7 @@ export interface ApplicationFormState {
   lifeGoals: string;
   comfortZone: string;
   businessType: string;
+  karaokeSong: string;
   additionalDetails: string;
   resumeFileUrl: string;
   coverLetterFileUrl: string;

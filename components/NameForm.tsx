@@ -8,6 +8,18 @@ import {
   UCSDQuarters,
   type ApplicationFormState,
 } from "@/lib/types";
+import {
+  ADDITIONAL_DETAILS_QUESTION,
+  COMFORT_ZONE_QUESTION,
+  COMMUNITY_CONTRIBUTION_QUESTION,
+  CURRENT_CLASSES_QUESTION,
+  EXTRACURRICULAR_ACTIVITIES_QUESTION,
+  JOY_QUESTION,
+  KARAOKE_SONG_QUESTION,
+  PREVIOUS_RUSH_QUESTION,
+  PROUD_ACCOMPLISHMENT_QUESTION,
+  WHY_AKPSI_QUESTION,
+} from "@/utils/applicationQuestions";
 import { RUSH_CHAIR_INFO } from "@/utils/constants";
 import { delay } from "@/utils/delay";
 import { extractFileName, formatTimestamp } from "@/utils/format";
@@ -32,8 +44,6 @@ import {
   smallInput,
   textLabel,
 } from "./NameForm.styles";
-
-const ESSAY_WORD_LIMIT = 350;
 
 function countWords(value: string) {
   const trimmedValue = value.trim();
@@ -117,6 +127,7 @@ export default function NameForm() {
       setLifeGoals(data.goals);
       setComfortZone(data.comfort_zone);
       setBusinessType(data.business);
+      setKaraokeSong(data.karaoke_song || "");
       setAdditionalDetails(data.additional);
       setResumeFileUrl(data.resume);
       setCoverLetterFileUrl(data.cover_letter);
@@ -160,6 +171,7 @@ export default function NameForm() {
   const [lifeGoals, setLifeGoals] = useState<string>("");
   const [comfortZone, setComfortZone] = useState<string>("");
   const [businessType, setBusinessType] = useState<string>("");
+  const [karaokeSong, setKaraokeSong] = useState<string>("");
   const [additionalDetails, setAdditionalDetails] = useState<string>("");
   const [resumeFileUrl, setResumeFileUrl] = useState<string>("");
   const [coverLetterFileUrl, setCoverLetterFileUrl] = useState<string>("");
@@ -170,29 +182,28 @@ export default function NameForm() {
   const [tiktok, setTiktok] = useState<string>("");
   const [college, setCollege] = useState<string>("");
 
-  const essayFields = [
-    { name: "Proud Accomplishment", value: proudAccomplishment },
-    { name: "Join Reason", value: joinReason },
-    { name: "Life Goals", value: lifeGoals },
-    { name: "Comfort Zone", value: comfortZone },
-    { name: "Business Type", value: businessType },
-    { name: "Additional Details", value: additionalDetails },
+  const limitedResponseFields = [
+    { name: "Proud Accomplishment", value: proudAccomplishment, limit: 350 },
+    { name: "Why AKPsi and Life Goals", value: joinReason, limit: 350 },
+    { name: "Community Contribution", value: lifeGoals, limit: 150 },
+    { name: "Comfort Zone", value: comfortZone, limit: 350 },
+    { name: "What Brings You Joy", value: businessType, limit: 100 },
   ];
 
-  const overLimitEssayFields = essayFields.filter(
-    (field) => countWords(field.value) > ESSAY_WORD_LIMIT
+  const overLimitResponseFields = limitedResponseFields.filter(
+    (field) => countWords(field.value) > field.limit
   );
 
-  const getEssayTextareaClassName = (value: string) =>
+  const getResponseClassName = (value: string, limit: number) =>
     `${largeInput} ${
-      countWords(value) > ESSAY_WORD_LIMIT
+      countWords(value) > limit
         ? "border-destructive focus:border-destructive focus:ring-destructive/20"
         : ""
     }`;
 
-  const renderEssayWordCount = (value: string) => {
+  const renderWordCount = (value: string, limit: number) => {
     const wordCount = countWords(value);
-    const isOverLimit = wordCount > ESSAY_WORD_LIMIT;
+    const isOverLimit = wordCount > limit;
 
     return (
       <p
@@ -200,7 +211,7 @@ export default function NameForm() {
           isOverLimit ? "text-destructive" : "text-muted-foreground"
         }`}
       >
-        {wordCount}/{ESSAY_WORD_LIMIT} words
+        {wordCount}/{limit} words
         {isOverLimit
           ? " - please shorten this response before submitting."
           : ""}
@@ -229,6 +240,7 @@ export default function NameForm() {
     lifeGoals,
     comfortZone,
     businessType,
+    karaokeSong,
     additionalDetails,
     resumeFileUrl,
     coverLetterFileUrl,
@@ -261,6 +273,7 @@ export default function NameForm() {
       lifeGoals,
       comfortZone,
       businessType,
+      karaokeSong,
       additionalDetails,
       resumeFileUrl,
       coverLetterFileUrl,
@@ -291,6 +304,7 @@ export default function NameForm() {
     lifeGoals,
     comfortZone,
     businessType,
+    karaokeSong,
     additionalDetails,
     resumeFileUrl,
     coverLetterFileUrl,
@@ -368,10 +382,10 @@ export default function NameForm() {
       customToast("Cumulative GPA is invalid.", "error");
       return;
     }
-    if (overLimitEssayFields.length > 0) {
+    if (overLimitResponseFields.length > 0) {
       customToast(
-        `These essay responses exceed ${ESSAY_WORD_LIMIT} words: ${overLimitEssayFields
-          .map((field) => field.name)
+        `These responses exceed their word limits: ${overLimitResponseFields
+          .map((field) => `${field.name} (${field.limit} words)`)
           .join(", ")}`,
         "error"
       );
@@ -392,10 +406,11 @@ export default function NameForm() {
       { name: "Extracurricular Activities", value: extracurricularActivities },
       { name: "Previous AKPsi Rush Participation", value: previousRushTerms },
       { name: "Proud Accomplishment", value: proudAccomplishment },
-      { name: "Join Reason", value: joinReason },
-      { name: "Life Goals", value: lifeGoals },
+      { name: "Why AKPsi and Life Goals", value: joinReason },
+      { name: "Community Contribution", value: lifeGoals },
       { name: "Comfort Zone", value: comfortZone },
-      { name: "Business Type", value: businessType },
+      { name: "What Brings You Joy", value: businessType },
+      { name: "Karaoke Song", value: karaokeSong },
       { name: "Additional Details", value: additionalDetails },
       { name: "Resume File URL", value: resumeFileUrl },
       { name: "College", value: college },
@@ -822,9 +837,7 @@ export default function NameForm() {
                 </div>
               </div>
               <label className={textLabel} htmlFor="currentClasses">
-                What classes are you currently enrolled in for this quarter?
-                Please list all days and times, and include any discussion
-                sections.
+                {CURRENT_CLASSES_QUESTION}
               </label>
               <textarea
                 className={largeInput}
@@ -837,9 +850,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="extracurricularActivities">
-                Please list the extracurricular activities you are involved in
-                for this quarter. (Ex: clubs, jobs, sports, etc). and how much
-                time you anticipate each activity will take.
+                {EXTRACURRICULAR_ACTIVITIES_QUESTION}
               </label>
               <textarea
                 className={largeInput}
@@ -852,9 +863,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="previousRushTerms">
-                Have you participated in an Alpha Kappa Psi rush week before? If
-                so, please indicate which term or terms. If not, you may write
-                &quot;N/A&quot; in this section.
+                {PREVIOUS_RUSH_QUESTION}
               </label>
               <input
                 className={smallInput}
@@ -874,110 +883,113 @@ export default function NameForm() {
                 Essay Questions
               </h2>
               <p className="text-muted-foreground">
-                Please answer the following questions thoughtfully. Each
-                response should be 350 words maximum.
+                Please answer the following questions thoughtfully and observe
+                the word limit shown below each response.
               </p>
             </div>
 
             <div className="mb-8">
               <label className={textLabel} htmlFor="proudAccomplishment">
-                What accomplishment are you most proud of (personal or
-                professional)? (350 words)
+                {PROUD_ACCOMPLISHMENT_QUESTION}
               </label>
               <textarea
-                className={getEssayTextareaClassName(proudAccomplishment)}
+                className={getResponseClassName(proudAccomplishment, 350)}
                 id="proudAccomplishment"
                 value={proudAccomplishment}
                 onChange={handleChange(setProudAccomplishment)}
                 placeholder="Enter your accomplishment"
                 rows={4}
                 aria-invalid={
-                  countWords(proudAccomplishment) > ESSAY_WORD_LIMIT
+                  countWords(proudAccomplishment) > 350
                 }
               />
-              {renderEssayWordCount(proudAccomplishment)}
+              {renderWordCount(proudAccomplishment, 350)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="joinReason">
+                {WHY_AKPSI_QUESTION}
+              </label>
+              <textarea
+                className={getResponseClassName(joinReason, 350)}
+                id="joinReason"
+                value={joinReason}
+                onChange={handleChange(setJoinReason)}
+                placeholder="Enter your reasons and goals"
+                rows={4}
+                aria-invalid={countWords(joinReason) > 350}
+              />
+              {renderWordCount(joinReason, 350)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="lifeGoals">
+                {COMMUNITY_CONTRIBUTION_QUESTION}
+              </label>
+              <textarea
+                className={getResponseClassName(lifeGoals, 150)}
+                id="lifeGoals"
+                value={lifeGoals}
+                onChange={handleChange(setLifeGoals)}
+                placeholder="Enter what you would add to our community"
+                rows={4}
+                aria-invalid={countWords(lifeGoals) > 150}
+              />
+              {renderWordCount(lifeGoals, 150)}
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="comfortZone">
-                Tell us about a time you went out of your comfort zone. Why did
-                you decide to take this risk and what did you learn? (350 words)
+                {COMFORT_ZONE_QUESTION}
               </label>
               <textarea
-                className={getEssayTextareaClassName(comfortZone)}
+                className={getResponseClassName(comfortZone, 350)}
                 id="comfortZone"
                 value={comfortZone}
                 onChange={handleChange(setComfortZone)}
                 placeholder="Enter your experience"
                 rows={4}
-                aria-invalid={countWords(comfortZone) > ESSAY_WORD_LIMIT}
+                aria-invalid={countWords(comfortZone) > 350}
               />
-              {renderEssayWordCount(comfortZone)}
-            </div>
-            <div className="mb-8">
-              <label className={textLabel} htmlFor="joinReason">
-                What was a valuable community you’ve been a part of and what
-                specifically made it valuable to you? (350 words)
-              </label>
-              <textarea
-                className={getEssayTextareaClassName(joinReason)}
-                id="joinReason"
-                value={joinReason}
-                onChange={handleChange(setJoinReason)}
-                placeholder="Enter your reasons"
-                rows={4}
-                aria-invalid={countWords(joinReason) > ESSAY_WORD_LIMIT}
-              />
-              {renderEssayWordCount(joinReason)}
-            </div>
-            <div className="mb-8">
-              <label className={textLabel} htmlFor="lifeGoals">
-                Describe your personal and professional goals for the end of
-                this year and for the next three years. What steps are you
-                currently taking toward these goals, and how would Alpha Kappa
-                Psi help you further achieve them? (350 words)
-              </label>
-              <textarea
-                className={getEssayTextareaClassName(lifeGoals)}
-                id="lifeGoals"
-                value={lifeGoals}
-                onChange={handleChange(setLifeGoals)}
-                placeholder="Enter your goals"
-                rows={4}
-                aria-invalid={countWords(lifeGoals) > ESSAY_WORD_LIMIT}
-              />
-              {renderEssayWordCount(lifeGoals)}
+              {renderWordCount(comfortZone, 350)}
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="businessType">
-                What type of business would you create if money was not a
-                limiting factor? (350 words)
+                {JOY_QUESTION}
               </label>
               <textarea
-                className={getEssayTextareaClassName(businessType)}
+                className={getResponseClassName(businessType, 100)}
                 id="businessType"
                 value={businessType}
                 onChange={handleChange(setBusinessType)}
-                placeholder="Enter your business idea"
+                placeholder="Enter what brings you joy"
                 rows={4}
-                aria-invalid={countWords(businessType) > ESSAY_WORD_LIMIT}
+                aria-invalid={countWords(businessType) > 100}
               />
-              {renderEssayWordCount(businessType)}
+              {renderWordCount(businessType, 100)}
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="karaokeSong">
+                {KARAOKE_SONG_QUESTION}
+              </label>
+              <input
+                className={smallInput}
+                id="karaokeSong"
+                type="text"
+                value={karaokeSong}
+                onChange={handleChange(setKaraokeSong)}
+                placeholder="Enter your go-to karaoke song"
+              />
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="additionalDetails">
-                Add any details about yourself that you were not able to convey
-                with the questions above!
+                {ADDITIONAL_DETAILS_QUESTION}
               </label>
               <textarea
-                className={getEssayTextareaClassName(additionalDetails)}
+                className={largeInput}
                 id="additionalDetails"
                 value={additionalDetails}
                 onChange={handleChange(setAdditionalDetails)}
                 placeholder="Enter additional details"
                 rows={4}
-                aria-invalid={countWords(additionalDetails) > ESSAY_WORD_LIMIT}
               />
-              {renderEssayWordCount(additionalDetails)}
             </div>
           </div>
 
