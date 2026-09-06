@@ -27,7 +27,7 @@ export default function MainPageContent() {
   return (
     <div className="space-y-6">
       {/* Professional Headshot Requirement Notice */}
-      {user && !hasPhoto && (
+      {user && !hasPhoto && APPLICATION_OPEN === 'open' && (
         <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <svg className="h-6 w-6 text-warning mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@ export default function MainPageContent() {
       )}
 
       {/* Application Opening Soon Notice */}
-      {hasPhoto && APPLICATION_OPEN === 'coming_soon' && (
+      {user && APPLICATION_OPEN === 'coming_soon' && (
         <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <svg className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +79,7 @@ export default function MainPageContent() {
       )}
 
       {/* Application Closed Notice */}
-      {hasPhoto && APPLICATION_OPEN === 'closed' && (
+      {user && APPLICATION_OPEN === 'closed' && (
         <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <svg className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +112,7 @@ export default function MainPageContent() {
           )}
           
           {/* Show photo upload for non-active users */}
-          {!isActive && (
+          {!isActive && APPLICATION_OPEN === 'open' && (
             <button 
               onClick={() => setIsPhotoModalOpen(true)}
               className={`w-full sm:w-auto flex items-center justify-center ${
