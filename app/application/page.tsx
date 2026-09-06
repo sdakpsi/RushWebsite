@@ -15,7 +15,7 @@ export default function ProtectedPage() {
     if (!isLoading && (!user || !hasPhoto || isActive)) {
       router.push('/');
     }
-  }, [user, hasPhoto, isLoading, router]);
+  }, [user, hasPhoto, isActive, isLoading, router]);
 
   // Show loading while checking auth/photo status
   if (isLoading || !user || !hasPhoto) {

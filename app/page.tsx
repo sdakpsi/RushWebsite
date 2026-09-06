@@ -237,7 +237,7 @@ export default function Index() {
                       </p>
                     ) : (
                       <p className="text-sm text-muted-foreground">
-                      If you're having any issues or have questions, contact {currentTheme.branding.rushChairs}, or email{" "}
+                      If you&apos;re having any issues or have questions, contact {currentTheme.branding.rushChairs}, or email{" "}
                       <a className="underline hover:text-foreground" href={`mailto:${RUSH_EMAIL}`}>
                         {RUSH_EMAIL}
                       </a>.
