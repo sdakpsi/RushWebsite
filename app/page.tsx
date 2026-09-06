@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import background from "./spring26background.png";
-import tagline from "./spring26tagline.png";
+import background from "./fall26background.jpeg";
+import tagline from "./fall26tagline.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
 import { APPLICATION_DEADLINE } from "@/utils/constants";

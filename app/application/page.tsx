@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { RUSH_YEAR, APPLICATION_OPEN, RUSH_CHAIR_INFO, APPLICATION_DEADLINE } from '@/utils/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import background from '../spring26background.png';
+import background from '../fall26background.jpeg';
 import NameForm from '@/components/NameForm';
 
 export default function ProtectedPage() {
