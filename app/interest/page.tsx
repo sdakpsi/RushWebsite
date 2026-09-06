@@ -5,7 +5,12 @@ import logo from "../../components/akpsilogo.png";
 import background from "../fall26background.jpeg";
 import { InterestForm as InterestFormType } from "@/lib/types";
 import customToast from "@/components/CustomToast";
-import { RUSH_YEAR } from "@/utils/constants";
+import {
+  RUSH_EMAIL,
+  RUSH_INSTAGRAM_HANDLE,
+  RUSH_INSTAGRAM_URL,
+  RUSH_YEAR,
+} from "@/utils/constants";
 
 const GentleOrb = ({
   top,
@@ -254,8 +259,8 @@ const InterestForm = () => {
 
         {/* Contact Info */}
         <div className="text-center mt-8 text-sm text-gray-300 animate-fade-in">
-          <p>Questions? Follow us on Instagram <a href="https://www.instagram.com/ucsdakpsi" target="_blank" className="text-white hover:underline">@ucsdakpsi</a></p>
-          <p>Or email us at <a href="mailto:akpfall2025@gmail.com" className="text-white hover:underline">akpfall2025@gmail.com</a></p>
+          <p>Questions? Follow us on Instagram <a href={RUSH_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-white hover:underline">{RUSH_INSTAGRAM_HANDLE}</a></p>
+          <p>Or email us at <a href={`mailto:${RUSH_EMAIL}`} className="text-white hover:underline">{RUSH_EMAIL}</a></p>
         </div>
       </div>
     </div>

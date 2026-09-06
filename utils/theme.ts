@@ -31,6 +31,9 @@ export interface Theme {
     organization: string;
     website: string;
     rushChairs: string;
+    email: string;
+    instagramHandle: string;
+    instagramUrl: string;
     applicationOpen: 'open' | 'closed' | 'coming_soon';
     applicationDeadline: string;
   };
@@ -38,36 +41,39 @@ export interface Theme {
 
 // Current Theme - Update this for future rushes
 export const currentTheme: Theme = {
-  name: "Spring 2026 Rush - Light",
+  name: "Fall 2026 Rush",
   colors: {
-    primary: "0 0% 42%",              // Medium gray for primary buttons/links
-    primaryForeground: "0 0% 100%",   // White text on primary
-    secondary: "0 0% 95%",            // Very light gray
-    secondaryForeground: "0 0% 15%",  // Dark text on secondary
-    accent: "0 0% 88%",               // Light gray accent
-    accentForeground: "0 0% 10%",     // Dark text on accent
-    background: "0 0% 91%",           // Light gray matching background image
-    foreground: "0 0% 10%",           // Near-black text
-    muted: "0 0% 85%",                // Muted gray
-    mutedForeground: "0 0% 40%",      // Medium gray text
-    border: "0 0% 80%",               // Gray borders
-    input: "0 0% 96%",                // Near-white inputs
-    ring: "0 0% 25%",                 // Dark focus ring
+    primary: "221 39% 11%",
+    primaryForeground: "210 40% 98%",
+    secondary: "210 40% 98%",
+    secondaryForeground: "221 39% 11%",
+    accent: "217 39% 94%",
+    accentForeground: "221 39% 11%",
+    background: "222 47% 11%",
+    foreground: "221 39% 11%",
+    muted: "217 39% 94%",
+    mutedForeground: "215 25% 27%",
+    border: "217 33% 79%",
+    input: "210 40% 98%",
+    ring: "217 33% 45%",
     destructive: "0 72% 51%",
     destructiveForeground: "0 0% 100%",
     success: "142 72% 29%",
     warning: "38 92% 50%",
-    info: "0 0% 30%",                 // Dark gray info
-    gradientFrom: "0 0% 20%",
-    gradientTo: "0 0% 35%",
+    info: "217 33% 35%",
+    gradientFrom: "222 47% 11%",
+    gradientTo: "217 33% 35%",
   },
   branding: {
-    rushYear: "Spring '26",
+    rushYear: "Fall '26",
     organization: "UCSD Alpha Kappa Psi",
-    website: "https://www.akpsiatucsd.com",
-    rushChairs: "contact our rush chairs Heather Jeon @ (213)-999-3685 and Hailey Kim @ (714)-715-0072",
-    applicationOpen: 'closed',
-    applicationDeadline: 'Thursday, April 9th at 2 PM',
+    website: "https://www.akpsiatucsd.com/",
+    rushChairs: "Jacqueline He at (626) 454-0312 or Belle Bao at (626) 390-3697",
+    email: "akpfall2026rush@gmail.com",
+    instagramHandle: "@ucsdakpsi",
+    instagramUrl: "https://www.instagram.com/ucsdakpsi/",
+    applicationOpen: 'coming_soon',
+    applicationDeadline: '',
   }
 };
 
@@ -100,8 +106,11 @@ export const springTheme: Theme = {
   branding: {
     rushYear: "Spring '26",
     organization: "UCSD Alpha Kappa Psi",
-    website: "https://akpsiatucsd.com",
+    website: "https://www.akpsiatucsd.com/",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
+    email: "rush@example.com",
+    instagramHandle: "@ucsdakpsi",
+    instagramUrl: "https://www.instagram.com/ucsdakpsi/",
     applicationOpen: 'open',
     applicationDeadline: 'TBD',
   }
@@ -134,8 +143,11 @@ export const fallTheme: Theme = {
   branding: {
     rushYear: "Fall '26",
     organization: "UCSD Alpha Kappa Psi",
-    website: "https://akpsiatucsd.com",
+    website: "https://www.akpsiatucsd.com/",
     rushChairs: "contact [Rush Chair Names] @ [Phone Numbers]",
+    email: "rush@example.com",
+    instagramHandle: "@ucsdakpsi",
+    instagramUrl: "https://www.instagram.com/ucsdakpsi/",
     applicationOpen: 'open',
     applicationDeadline: 'TBD',
   }

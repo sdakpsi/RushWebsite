@@ -66,12 +66,14 @@ export default function ProtectedPage() {
               <h2 className="text-3xl lg:text-4xl font-semibold text-foreground mb-6">
                 {RUSH_YEAR} Rush Application
               </h2>
-              <div className="inline-flex items-center space-x-2 rounded-lg bg-white/90 backdrop-blur-sm border border-border px-4 py-2 shadow-sm">
-                <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="font-medium text-foreground">Due: {APPLICATION_DEADLINE}</span>
-              </div>
+              {APPLICATION_DEADLINE && (
+                <div className="inline-flex items-center space-x-2 rounded-lg bg-white/90 backdrop-blur-sm border border-border px-4 py-2 shadow-sm">
+                  <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-medium text-foreground">Due: {APPLICATION_DEADLINE}</span>
+                </div>
+              )}
             </div>
 
 

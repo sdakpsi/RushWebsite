@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { currentTheme } from '@/utils/theme';
+import { RUSH_EMAIL } from '@/utils/constants';
 
 export default function Footer() {
   return (
@@ -50,7 +51,10 @@ export default function Footer() {
               {currentTheme.branding.rushYear} Rush
             </h3>
             <p className="text-sm text-muted-foreground">
-              For any questions {currentTheme.branding.rushChairs}
+              For any questions, contact {currentTheme.branding.rushChairs}, or email{' '}
+              <a className="underline hover:text-primary" href={`mailto:${RUSH_EMAIL}`}>
+                {RUSH_EMAIL}
+              </a>.
             </p>
           </div>
         </div>
