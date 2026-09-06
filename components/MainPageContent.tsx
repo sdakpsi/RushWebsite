@@ -4,7 +4,7 @@ import Link from "next/link";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import PhotoUploadWrapper from "@/components/PhotoUploadWrapper";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { RUSH_YEAR, RUSH_CHAIR_INFO, APPLICATION_OPEN, APPLICATION_DEADLINE } from "@/utils/constants";
+import { RUSH_YEAR, APPLICATION_OPEN, APPLICATION_DEADLINE } from "@/utils/constants";
 
 export default function MainPageContent() {
   const { user, isActive, hasPhoto, photoUrl, isLoading } = useCurrentUser();
