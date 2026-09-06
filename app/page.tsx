@@ -44,7 +44,7 @@ export default function Index() {
               <Image
                 src={tagline}
                 alt="Into full bloom"
-                className="h-auto w-[85%] max-w-4xl md:w-[70%]"
+                className="h-auto w-[70%] max-w-2xl md:w-[45%]"
                 priority
               />
             </div>
