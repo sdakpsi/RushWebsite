@@ -38,12 +38,12 @@ export default function Index() {
       <div className="relative z-20 flex min-h-screen flex-col">
         {/* Hero Section */}
         <section className="flex flex-1 items-center justify-center px-4 py-8">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto w-full max-w-7xl">
             {/* Tagline */}
             <div className="mb-6 flex animate-slide-down justify-start">
               <Image
                 src={tagline}
-                alt="tagline"
+                alt="Into full bloom"
                 className="h-auto w-[85%] max-w-4xl md:w-[70%]"
                 priority
               />
@@ -84,7 +84,7 @@ export default function Index() {
 
                         <div className="grid gap-4 sm:grid-cols-2">
                           <Link href="/active/comment-form">
-                            <button className="btn-secondary w-full transition-all duration-200 hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white hover:shadow-lg">
+                            <button className="btn-secondary w-full transition-all duration-200 hover:shadow-lg">
                               <svg
                                 className="mr-2 h-4 w-4"
                                 fill="none"
@@ -103,7 +103,7 @@ export default function Index() {
                           </Link>
 
                           <Link href="/active/case">
-                            <button className="btn-secondary w-full transition-all duration-200 hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white hover:shadow-lg">
+                            <button className="btn-secondary w-full transition-all duration-200 hover:shadow-lg">
                               {" "}
                               <svg
                                 className="mr-2 h-4 w-4"
@@ -123,7 +123,7 @@ export default function Index() {
                           </Link>
 
                           <Link href="/active/interview">
-                            <button className="btn-secondary w-full transition-all duration-200 hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white hover:shadow-lg">
+                            <button className="btn-secondary w-full transition-all duration-200 hover:shadow-lg">
                               {" "}
                               <svg
                                 className="mr-2 h-4 w-4"
@@ -143,7 +143,7 @@ export default function Index() {
                           </Link>
 
                           <Link href="/active/delibs">
-                            <button className="btn-secondary w-full transition-all duration-200 hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-500 hover:text-white hover:shadow-lg">
+                            <button className="btn-secondary w-full transition-all duration-200 hover:shadow-lg">
                               {" "}
                               <svg
                                 className="mr-2 h-4 w-4"
@@ -209,7 +209,7 @@ export default function Index() {
                       href={currentTheme.branding.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-blue-600 hover:to-yellow-500 hover:text-white transition-all duration-200"
+                      className="prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center transition-all duration-200"
                     >
                       Official Website
                     </a>
@@ -217,7 +217,7 @@ export default function Index() {
                       href={currentTheme.branding.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center hover:bg-gradient-to-r hover:from-red-500 hover:via-yellow-500 hover:via-green-500 hover:via-blue-500 hover:via-indigo-500 hover:to-purple-500 hover:text-white transition-all duration-200"
+                      className="prospect-btn-secondary w-full rounded-lg px-4 py-2 text-sm font-medium inline-flex items-center justify-center transition-all duration-200"
                     >
                       Instagram
                     </a>
@@ -251,10 +251,7 @@ export default function Index() {
               {/* Right Column - Rush Schedule Only */}
               <div className="space-y-6">
                 {/* Enhanced Rush Schedule Timeline */}
-                <div className="prospect-card rounded-xl p-6 animate-slide-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
-                  {/* Background gradient glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 via-gray-400/5 to-gray-300/5 animate-pulse"></div>
-                  
+                <div className="prospect-card rounded-xl p-4 sm:p-6 animate-slide-up relative overflow-hidden" style={{ animationDelay: '0.2s' }}>
                   <div className="card-header relative z-10">
                     <h3 className="card-title text-foreground mb-6 text-center">
                       <span className="text-foreground">
@@ -267,25 +264,25 @@ export default function Index() {
                     {/* Timeline container with connecting line */}
                     <div className="relative">
                       {/* Vertical connecting line */}
-                      <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 via-purple-400 via-red-400 via-orange-400 to-indigo-400 opacity-30"></div>
+                      <div className="absolute left-5 sm:left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 via-purple-400 via-orange-400 to-indigo-400 opacity-30"></div>
                       
                       {/* Animated progress line */}
-                      <div className="absolute left-6 top-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 to-purple-400 animate-progress-fill opacity-80 shadow-lg shadow-blue-400/50"></div>
+                      <div className="absolute left-5 sm:left-6 top-8 w-0.5 bg-gradient-to-b from-green-400 via-blue-400 to-purple-400 animate-progress-fill opacity-80 shadow-lg shadow-blue-400/50"></div>
                       
                       <div className="space-y-6 relative">
                         {/* Info Night */}
-                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.3s' }}>
-                          <div className="relative z-20">
-                            <div className="w-12 h-12 prospect-glass bg-green-400/20 backdrop-blur-sm border border-green-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-green-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                        <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.3s' }}>
+                          <div className="relative z-20 flex-shrink-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 prospect-glass bg-green-400/20 backdrop-blur-sm border border-green-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-green-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
                               {/* Professional orb with app styling */}
                               <div className="w-4 h-4 bg-green-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
                               <div className="absolute w-1 h-1 bg-green-300/60 rounded-full animate-particle-float" style={{ animationDelay: '0s' }}></div>
                               <div className="absolute w-0.5 h-0.5 bg-green-200/40 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
                             </div>
                           </div>
-                          <div className="flex-1 bg-green-400/10 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-green-400/20 hover:border-green-400/50 hover:shadow-xl hover:shadow-green-400/20 hover:scale-[1.02]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-green-800 font-bold text-sm bg-green-200 px-2 py-1 rounded-full">Mon 10/5</span>
+                          <div className="rush-schedule-panel min-w-0 flex-1 rounded-xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="whitespace-nowrap text-green-800 font-bold text-sm bg-green-200 px-2 py-1 rounded-full">Mon 10/5</span>
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-foreground mb-1">Info Night</h4>
@@ -295,18 +292,18 @@ export default function Index() {
                         </div>
 
                         {/* Business Workshop */}
-                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.4s' }}>
-                          <div className="relative z-20">
-                            <div className="w-12 h-12 prospect-glass bg-blue-400/20 backdrop-blur-sm border border-blue-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-blue-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                        <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.4s' }}>
+                          <div className="relative z-20 flex-shrink-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 prospect-glass bg-blue-400/20 backdrop-blur-sm border border-blue-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-blue-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
                               {/* Professional orb with app styling */}
                               <div className="w-4 h-4 bg-blue-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
                               <div className="absolute w-1 h-1 bg-blue-300/60 rounded-full animate-particle-float" style={{ animationDelay: '0.5s' }}></div>
                               <div className="absolute w-0.5 h-0.5 bg-blue-200/40 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
                             </div>
                           </div>
-                          <div className="flex-1 bg-blue-400/10 backdrop-blur-sm border border-blue-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-blue-400/20 hover:border-blue-400/50 hover:shadow-xl hover:shadow-blue-400/20 hover:scale-[1.02]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-blue-800 font-bold text-sm bg-blue-200 px-2 py-1 rounded-full">Tue 10/6</span>
+                          <div className="rush-schedule-panel min-w-0 flex-1 rounded-xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="whitespace-nowrap text-blue-800 font-bold text-sm bg-blue-200 px-2 py-1 rounded-full">Tue 10/6</span>
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-foreground mb-1">Business Workshop</h4>
@@ -316,18 +313,18 @@ export default function Index() {
                         </div>
 
                         {/* Case Study Night */}
-                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.5s' }}>
-                          <div className="relative z-20">
-                            <div className="w-12 h-12 prospect-glass bg-purple-400/20 backdrop-blur-sm border border-purple-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                        <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.5s' }}>
+                          <div className="relative z-20 flex-shrink-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 prospect-glass bg-purple-400/20 backdrop-blur-sm border border-purple-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-purple-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
                               {/* Professional orb with app styling */}
                               <div className="w-4 h-4 bg-purple-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
                               <div className="absolute w-1 h-1 bg-purple-300/60 rounded-full animate-particle-float" style={{ animationDelay: '1s' }}></div>
                               <div className="absolute w-0.5 h-0.5 bg-purple-200/40 rounded-full animate-particle-float" style={{ animationDelay: '2s' }}></div>
                             </div>
                           </div>
-                          <div className="flex-1 bg-purple-400/10 backdrop-blur-sm border border-purple-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-purple-400/20 hover:border-purple-400/50 hover:shadow-xl hover:shadow-purple-400/20 hover:scale-[1.02]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-purple-800 font-bold text-sm bg-purple-200 px-2 py-1 rounded-full">Wed 10/7</span>
+                          <div className="rush-schedule-panel min-w-0 flex-1 rounded-xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="whitespace-nowrap text-purple-800 font-bold text-sm bg-purple-200 px-2 py-1 rounded-full">Wed 10/7</span>
                               <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-foreground mb-1">Case Study Night</h4>
@@ -337,18 +334,18 @@ export default function Index() {
                         </div>
 
                         {/* Social Night */}
-                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.7s' }}>
-                          <div className="relative z-20">
-                            <div className="w-12 h-12 prospect-glass bg-orange-400/20 backdrop-blur-sm border border-orange-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-orange-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                        <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.7s' }}>
+                          <div className="relative z-20 flex-shrink-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 prospect-glass bg-orange-400/20 backdrop-blur-sm border border-orange-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-orange-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
                               {/* Professional orb with app styling */}
                               <div className="w-4 h-4 bg-orange-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
                               <div className="absolute w-1 h-1 bg-orange-300/60 rounded-full animate-particle-float" style={{ animationDelay: '2s' }}></div>
                               <div className="absolute w-0.5 h-0.5 bg-orange-200/40 rounded-full animate-particle-float" style={{ animationDelay: '3s' }}></div>
                             </div>
                           </div>
-                          <div className="flex-1 bg-orange-400/10 backdrop-blur-sm border border-orange-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-orange-400/20 hover:border-orange-400/50 hover:shadow-xl hover:shadow-orange-400/20 hover:scale-[1.02]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-orange-800 font-bold text-sm bg-orange-200 px-2 py-1 rounded-full">Thu 10/8</span>
+                          <div className="rush-schedule-panel min-w-0 flex-1 rounded-xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="whitespace-nowrap text-orange-800 font-bold text-sm bg-orange-200 px-2 py-1 rounded-full">Thu 10/8</span>
                               <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-foreground mb-1">Social Night</h4>
@@ -358,18 +355,18 @@ export default function Index() {
                         </div>
 
                         {/* Interviews */}
-                        <div className="flex items-center gap-6 animate-timeline-entrance group" style={{ animationDelay: '0.8s' }}>
-                          <div className="relative z-20">
-                            <div className="w-12 h-12 prospect-glass bg-indigo-400/20 backdrop-blur-sm border border-indigo-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
+                        <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.8s' }}>
+                          <div className="relative z-20 flex-shrink-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 prospect-glass bg-indigo-400/20 backdrop-blur-sm border border-indigo-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-400/20 animate-timeline-glow group-hover:animate-magnetic-hover">
                               {/* Professional orb with app styling */}
                               <div className="w-4 h-4 bg-indigo-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
                               <div className="absolute w-1 h-1 bg-indigo-300/60 rounded-full animate-particle-float" style={{ animationDelay: '2.5s' }}></div>
                               <div className="absolute w-0.5 h-0.5 bg-indigo-200/40 rounded-full animate-particle-float" style={{ animationDelay: '3.5s' }}></div>
                             </div>
                           </div>
-                          <div className="flex-1 bg-indigo-400/10 backdrop-blur-sm border border-indigo-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-indigo-400/20 hover:border-indigo-400/50 hover:shadow-xl hover:shadow-indigo-400/20 hover:scale-[1.02]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-indigo-800 font-bold text-sm bg-indigo-200 px-2 py-1 rounded-full">Fri 10/9</span>
+                          <div className="rush-schedule-panel min-w-0 flex-1 rounded-xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="whitespace-nowrap text-indigo-800 font-bold text-sm bg-indigo-200 px-2 py-1 rounded-full">Fri 10/9</span>
                               <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
                             </div>
                             <h4 className="font-bold text-base text-foreground mb-1">Interviews</h4>

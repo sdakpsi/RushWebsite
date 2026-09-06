@@ -176,15 +176,15 @@ const InterestForm = () => {
         {/* Form Container */}
         <div className="prospect-card prospect-glass w-full max-w-md animate-slide-up rounded-xl p-6">
           <div className="card-header text-center">
-            <h2 className="card-title text-white">Join Our Rush</h2>
-            <p className="card-description text-gray-300">
+            <h2 className="card-title text-foreground">Join Our Rush</h2>
+            <p className="card-description text-muted-foreground">
               Fill out this form to stay updated on rush events
             </p>
           </div>
           <div className="card-content">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2 text-white">
+                <label htmlFor="name" className="block text-sm font-medium mb-2 text-foreground">
                   Full Name *
                 </label>
                 <input
@@ -193,7 +193,7 @@ const InterestForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
+                  className="prospect-input w-full h-12 rounded-lg px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200"
                   placeholder="Enter your full name"
                   required
                   minLength={3}
@@ -202,7 +202,7 @@ const InterestForm = () => {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 text-white">
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-foreground">
                   Email *
                 </label>
                 <input
@@ -211,7 +211,7 @@ const InterestForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
+                  className="prospect-input w-full h-12 rounded-lg px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200"
                   placeholder="your@email.com"
                   required
                   maxLength={100}
@@ -219,7 +219,7 @@ const InterestForm = () => {
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-2 text-white">
+                <label htmlFor="phone" className="block text-sm font-medium mb-2 text-foreground">
                   Phone Number (Optional)
                 </label>
                 <input
@@ -233,7 +233,7 @@ const InterestForm = () => {
                     const cleaned = value.replace(/[^\d\s\-\(\)\+]/g, '');
                     setFormData(prev => ({ ...prev, phone: cleaned }));
                   }}
-                  className="w-full h-12 rounded-lg px-4 py-3 text-sm bg-white/95 text-gray-900 placeholder:text-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
+                  className="prospect-input w-full h-12 rounded-lg px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200"
                   placeholder="(123) 456-7890"
                   maxLength={20}
                 />
@@ -242,11 +242,11 @@ const InterestForm = () => {
               <button
                 type="submit"
                 disabled={isSubmitting || !formData.name.trim() || !formData.email.trim()}
-                className="w-full h-12 rounded-lg px-6 py-3 text-sm font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                className="prospect-btn-primary w-full h-12 rounded-lg px-6 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {isSubmitting ? (
                   <div className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-border border-t-foreground rounded-full animate-spin"></div>
                     Submitting...
                   </div>
                 ) : (
