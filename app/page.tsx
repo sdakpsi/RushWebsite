@@ -233,7 +233,7 @@ export default function Index() {
                     {displayAsActive ?
                     (
                       <p className="text-sm text-muted-foreground">
-                       To report any issues or questions please contact Yathin/George/Arish/Eeswar
+                       To report any issues or questions please contact Yathin/George/Arish
                       </p>
                     ) : (
                       <p className="text-sm text-muted-foreground">
