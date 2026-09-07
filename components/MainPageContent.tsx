@@ -4,7 +4,7 @@ import Link from "next/link";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import PhotoUploadWrapper from "@/components/PhotoUploadWrapper";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { RUSH_YEAR, RUSH_CHAIR_INFO, APPLICATION_OPEN, APPLICATION_DEADLINE } from "@/utils/constants";
+import { RUSH_YEAR, APPLICATION_OPEN, APPLICATION_DEADLINE } from "@/utils/constants";
 
 export default function MainPageContent() {
   const { user, isActive, hasPhoto, photoUrl, isLoading } = useCurrentUser();
@@ -27,8 +27,8 @@ export default function MainPageContent() {
   return (
     <div className="space-y-6">
       {/* Professional Headshot Requirement Notice */}
-      {user && !hasPhoto && (
-        <div className="rounded-lg bg-warning/10 border border-warning/30 p-4">
+      {user && !hasPhoto && APPLICATION_OPEN === 'open' && (
+        <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <svg className="h-6 w-6 text-warning mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.99-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -37,7 +37,7 @@ export default function MainPageContent() {
               <p className="font-semibold text-warning mb-1">
                 Picture Required
               </p>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 You must upload a picture of yourself before you can access the application. Please ensure your photo is well-lit and shows your face clearly.
               </p>
             </div>
@@ -47,7 +47,7 @@ export default function MainPageContent() {
 
       {/* Application Deadline Notice - only show if user has photo and apps are open */}
       {hasPhoto && APPLICATION_OPEN === 'open' && (
-        <div className="rounded-lg bg-info/10 border border-info/20 p-4">
+        <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-center space-x-2">
             <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -60,17 +60,17 @@ export default function MainPageContent() {
       )}
 
       {/* Application Opening Soon Notice */}
-      {hasPhoto && APPLICATION_OPEN === 'coming_soon' && (
-        <div className="rounded-lg bg-white border border-gray-300 p-4">
+      {user && APPLICATION_OPEN === 'coming_soon' && (
+        <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-start space-x-3">
-            <svg className="h-5 w-5 text-gray-700 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="font-semibold text-gray-900 mb-1">
+              <p className="font-semibold text-foreground mb-1">
                 Applications Opening Soon
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned!
               </p>
             </div>
@@ -79,8 +79,8 @@ export default function MainPageContent() {
       )}
 
       {/* Application Closed Notice */}
-      {hasPhoto && APPLICATION_OPEN === 'closed' && (
-        <div className="rounded-lg bg-muted/80 border border-border p-4">
+      {user && APPLICATION_OPEN === 'closed' && (
+        <div className="prospect-panel rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <svg className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -112,7 +112,7 @@ export default function MainPageContent() {
           )}
           
           {/* Show photo upload for non-active users */}
-          {!isActive && (
+          {!isActive && APPLICATION_OPEN === 'open' && (
             <button 
               onClick={() => setIsPhotoModalOpen(true)}
               className={`w-full sm:w-auto flex items-center justify-center ${

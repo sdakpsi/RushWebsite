@@ -4,30 +4,30 @@
 
 @layer base {
   :root {
-    /* Light Theme Colors - Spring 2026 Rush */
-    --primary: 0 0% 42%;            /* Medium gray for primary buttons */
-    --primary-foreground: 0 0% 100%;  /* White text on primary */
-    --secondary: 0 0% 95%;          /* Very light gray */
-    --secondary-foreground: 0 0% 15%;  /* Dark text on secondary */
-    --accent: 0 0% 88%;             /* Light gray accent */
-    --accent-foreground: 0 0% 10%;  /* Dark text on accent */
-    --background: 0 0% 91%;         /* Light gray matching background */
-    --foreground: 0 0% 10%;         /* Near-black text */
-    --muted: 0 0% 85%;              /* Muted gray */
-    --muted-foreground: 0 0% 40%;   /* Medium gray text */
-    --border: 0 0% 80%;             /* Gray borders */
-    --input: 0 0% 96%;              /* Near-white inputs */
-    --ring: 0 0% 25%;               /* Dark focus ring */
+    /* Fall 2026 Rush surface colors */
+    --primary: 221 39% 11%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 221 39% 11%;
+    --accent: 217 39% 94%;
+    --accent-foreground: 221 39% 11%;
+    --background: 217 39% 94%;
+    --foreground: 221 39% 11%;
+    --muted: 214 35% 90%;
+    --muted-foreground: 215 25% 27%;
+    --border: 217 33% 79%;
+    --input: 210 40% 98%;
+    --ring: 217 33% 45%;
     --destructive: 0 72% 51%;       /* Error/destructive */
     --destructive-foreground: 0 0% 100%;  /* Text on destructive */
     
     /* Button Colors */
-    --btn-background: 0 0% 42%;
-    --btn-background-hover: 0 0% 36%;
-    --btn-foreground: 0 0% 100%;
-    --btn-secondary: 0 0% 85%;
-    --btn-secondary-hover: 0 0% 78%;
-    --btn-secondary-foreground: 0 0% 15%;
+    --btn-background: 210 40% 98%;
+    --btn-background-hover: 217 39% 94%;
+    --btn-foreground: 221 39% 11%;
+    --btn-secondary: 210 40% 98%;
+    --btn-secondary-hover: 217 39% 94%;
+    --btn-secondary-foreground: 221 39% 11%;
     
     /* Gradient Colors */
     --gradient-from: 0 0% 20%;
@@ -208,21 +208,36 @@
     @apply backdrop-blur-sm bg-background/90 border border-border/30;
   }
 
-  /* Prospect Theme Classes - Off-white on navy blue with white secondary */
+  /* Prospect Theme Classes - light blue surfaces on the navy rush artwork */
   .prospect-theme {
-    --prospect-primary: 0 0% 15%;            /* Near-black primary */
-    --prospect-primary-foreground: 0 0% 100%;  /* White text on primary */
-    --prospect-secondary: 0 0% 100%;         /* White secondary */
-    --prospect-secondary-foreground: 0 0% 15%;  /* Dark text on secondary */
-    --prospect-accent: 0 0% 40%;             /* Medium gray accent */
-    --prospect-accent-foreground: 0 0% 100%;   /* White text on accent */
-    --prospect-background: 0 0% 96%;         /* Near-white card background */
-    --prospect-foreground: 0 0% 10%;         /* Near-black text */
-    --prospect-muted: 0 0% 92%;              /* Light gray muted background */
-    --prospect-muted-foreground: 0 0% 40%;   /* Medium gray muted text */
-    --prospect-border: 0 0% 80%;             /* Gray border */
-    --prospect-input: 0 0% 100%;             /* White input background */
-    --prospect-ring: 0 0% 25%;               /* Dark focus ring */
+    --foreground: 221 39% 11%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 221 39% 11%;
+    --accent: 217 39% 94%;
+    --accent-foreground: 221 39% 11%;
+    --muted: 214 35% 90%;
+    --muted-foreground: 215 25% 27%;
+    --border: 217 33% 79%;
+    --input: 210 40% 98%;
+    --ring: 217 33% 45%;
+    --prospect-primary: 221 39% 11%;
+    --prospect-primary-foreground: 210 40% 98%;
+    --prospect-secondary: 210 40% 98%;
+    --prospect-secondary-foreground: 221 39% 11%;
+    --prospect-accent: 217 39% 94%;
+    --prospect-accent-foreground: 221 39% 11%;
+    --prospect-background: 217 39% 94%;
+    --prospect-foreground: 221 39% 11%;
+    --prospect-muted: 214 35% 90%;
+    --prospect-muted-foreground: 215 25% 27%;
+    --prospect-border: 217 33% 79%;
+    --prospect-input: 210 40% 98%;
+    --prospect-ring: 217 33% 45%;
+    --prospect-outer-surface: #e8edf5;
+    --prospect-inner-surface: #f8fafc;
+    --prospect-border-color: #b8c6dc;
+    --prospect-text-color: #111827;
+    --prospect-secondary-text-color: #475569;
     --prospect-shadow-color: 0 0% 0%;
     --prospect-shadow-elevation-low: 0 1px 3px 0 hsl(var(--prospect-shadow-color) / 0.1);
     --prospect-shadow-elevation-medium: 0 4px 6px -1px hsl(var(--prospect-shadow-color) / 0.1), 0 2px 4px -2px hsl(var(--prospect-shadow-color) / 0.1);
@@ -262,15 +277,23 @@
   }
 
   .prospect-card {
-    background-color: hsl(var(--prospect-background));
-    border: 1px solid hsl(var(--prospect-border));
+    background-color: var(--prospect-outer-surface);
+    border: 1px solid var(--prospect-border-color);
+    color: var(--prospect-text-color);
     box-shadow: var(--prospect-shadow-elevation-low);
   }
 
+  .prospect-panel,
+  .rush-schedule-panel {
+    background-color: var(--prospect-inner-surface);
+    border: 1px solid var(--prospect-border-color);
+    color: var(--prospect-text-color);
+  }
+
   .prospect-input {
-    background-color: hsl(var(--prospect-input));
-    border: 1px solid hsl(var(--prospect-border));
-    color: hsl(var(--prospect-foreground));
+    background-color: var(--prospect-inner-surface);
+    border: 1px solid var(--prospect-border-color);
+    color: var(--prospect-text-color);
   }
 
   .prospect-input:focus {
@@ -279,27 +302,27 @@
   }
 
   .prospect-btn-primary {
-    background-color: hsl(var(--prospect-secondary));
-    color: hsl(var(--prospect-secondary-foreground));
-    border: none;
+    background-color: var(--prospect-inner-surface);
+    color: var(--prospect-text-color);
+    border: 1px solid var(--prospect-border-color);
     transition: all 0.2s ease;
   }
 
   .prospect-btn-primary:hover {
-    background-color: hsl(var(--prospect-primary));
-    color: hsl(var(--prospect-primary-foreground));
+    background-color: var(--prospect-outer-surface);
+    color: var(--prospect-text-color);
     box-shadow: 0 4px 12px -2px hsl(var(--prospect-shadow-color) / 0.15);
   }
 
   .prospect-btn-secondary {
-    background-color: hsl(var(--prospect-secondary));
-    color: hsl(var(--prospect-secondary-foreground));
-    border: none;
+    background-color: var(--prospect-inner-surface);
+    color: var(--prospect-text-color);
+    border: 1px solid var(--prospect-border-color);
     transition: all 0.2s ease;
   }
 
   .prospect-btn-secondary:hover {
-    background-color: hsl(var(--prospect-secondary) / 0.9);
+    background-color: var(--prospect-outer-surface);
     box-shadow: var(--prospect-shadow-elevation-medium);
   }
 
@@ -320,8 +343,21 @@
 
   .prospect-glass {
     backdrop-filter: blur(12px);
-    background-color: hsl(var(--prospect-muted) / 0.9);
-    border: 1px solid hsl(var(--prospect-border) / 0.5);
+    background-color: var(--prospect-outer-surface);
+    border: 1px solid var(--prospect-border-color);
+  }
+
+  .prospect-theme .btn-primary,
+  .prospect-theme .btn-secondary {
+    background-color: var(--prospect-inner-surface);
+    border: 1px solid var(--prospect-border-color);
+    color: var(--prospect-text-color);
+  }
+
+  .prospect-theme .btn-primary:hover,
+  .prospect-theme .btn-secondary:hover {
+    background-color: var(--prospect-outer-surface);
+    color: var(--prospect-text-color);
   }
 }
 
