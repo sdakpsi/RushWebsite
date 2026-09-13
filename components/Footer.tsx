@@ -20,7 +20,7 @@ export default function Footer() {
               href={currentTheme.branding.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               Visit Official Website
               <svg className="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
