@@ -45,8 +45,8 @@ import {
   textLabel,
 } from "./NameForm.styles";
 
-function countWords(value: string) {
-  const trimmedValue = value.trim();
+function countWords(value: string | null | undefined) {
+  const trimmedValue = value?.trim() ?? "";
   return trimmedValue ? trimmedValue.split(/\s+/).length : 0;
 }
 
@@ -110,34 +110,34 @@ export default function NameForm() {
       setApplicationId(data.id);
       setFirstName(data.name.split(" ")[0]);
       setLastName(data.name.split(" ")[1]);
-      setPronouns(data.pronouns);
-      setPhoneNumber(data.phone_number);
+      setPronouns(data.pronouns || "");
+      setPhoneNumber(data.phone_number || "");
       setPersonalEmail(data.personal_email || "");
-      setYearInCollege(data.year);
+      setYearInCollege(data.year || "");
       setGraduationYear(data.graduation_year || "");
-      setGraduationQuarter(data.graduation_qtr);
-      setMajor(data.major);
+      setGraduationQuarter(data.graduation_qtr || "");
+      setMajor(data.major || "");
       setMinor(data.minors || "");
       setCumulativeGPA(data.gpa || "");
-      setCurrentClasses(data.classes);
-      setExtracurricularActivities(data.extracirriculars);
+      setCurrentClasses(data.classes || "");
+      setExtracurricularActivities(data.extracirriculars || "");
       setPreviousRushTerms(data.previous_rush_terms || "");
-      setProudAccomplishment(data.accomplishment);
-      setJoinReason(data.why_akpsi);
-      setLifeGoals(data.goals);
-      setComfortZone(data.comfort_zone);
-      setBusinessType(data.business);
+      setProudAccomplishment(data.accomplishment || "");
+      setJoinReason(data.why_akpsi || "");
+      setLifeGoals(data.goals || "");
+      setComfortZone(data.comfort_zone || "");
+      setBusinessType(data.business || "");
       setKaraokeSong(data.karaoke_song || "");
-      setAdditionalDetails(data.additional);
-      setResumeFileUrl(data.resume);
-      setCoverLetterFileUrl(data.cover_letter);
+      setAdditionalDetails(data.additional || "");
+      setResumeFileUrl(data.resume || "");
+      setCoverLetterFileUrl(data.cover_letter || "");
       setLastSaved(formatTimestamp(data.last_updated));
       setLastSubmitted(formatTimestamp(data.submitted) || null);
       setFacebook(data.social_media?.facebook || "");
       setInstagram(data.social_media?.instagram || "");
       setLinkedIn(data.social_media?.linkedIn || "");
       setTiktok(data.social_media?.tiktok || "");
-      setCollege(data.college);
+      setCollege(data.college || "");
     }
   }, [applicationData]);
 

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { RUSH_YEAR, APPLICATION_OPEN, RUSH_CHAIR_INFO, APPLICATION_DEADLINE } from '@/utils/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import background from '../spring26background.png';
+import background from '../fall26background.jpeg';
 import NameForm from '@/components/NameForm';
 
 export default function ProtectedPage() {
@@ -15,7 +15,7 @@ export default function ProtectedPage() {
     if (!isLoading && (!user || !hasPhoto || isActive)) {
       router.push('/');
     }
-  }, [user, hasPhoto, isLoading, router]);
+  }, [user, hasPhoto, isActive, isLoading, router]);
 
   // Show loading while checking auth/photo status
   if (isLoading || !user || !hasPhoto) {
@@ -55,23 +55,25 @@ export default function ProtectedPage() {
           <div className="mx-auto max-w-4xl w-full">
             {/* Header Section */}
             <div className="text-center mb-12 animate-slide-down">
-              <div className="mx-auto h-20 w-20 rounded-full bg-white/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center mb-6 animate-scale-in">
+              <div className="prospect-panel mx-auto h-20 w-20 rounded-full shadow-sm flex items-center justify-center mb-6 animate-scale-in">
                 <svg className="h-10 w-10 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
                 UCSD Alpha Kappa Psi
               </h1>
-              <h2 className="text-3xl lg:text-4xl font-semibold text-foreground mb-6">
+              <h2 className="text-3xl lg:text-4xl font-semibold text-slate-100 mb-6">
                 {RUSH_YEAR} Rush Application
               </h2>
-              <div className="inline-flex items-center space-x-2 rounded-lg bg-white/90 backdrop-blur-sm border border-border px-4 py-2 shadow-sm">
-                <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="font-medium text-foreground">Due: {APPLICATION_DEADLINE}</span>
-              </div>
+              {APPLICATION_DEADLINE && (
+                <div className="prospect-panel inline-flex items-center space-x-2 rounded-lg px-4 py-2 shadow-sm">
+                  <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-medium text-foreground">Due: {APPLICATION_DEADLINE}</span>
+                </div>
+              )}
             </div>
 
 
@@ -106,7 +108,7 @@ export default function ProtectedPage() {
                   <p className="text-muted-foreground text-lg mb-6 max-w-2xl mx-auto">
                     Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned for updates!
                   </p>
-                  <div className="bg-muted/80 border border-border rounded-lg p-6 max-w-2xl mx-auto text-left">
+                  <div className="prospect-panel rounded-lg p-6 max-w-2xl mx-auto text-left">
                     <p className="text-foreground text-base mb-2">
                       <strong>Questions? Reach out:</strong>
                     </p>
@@ -139,7 +141,7 @@ export default function ProtectedPage() {
                   <p className="text-muted-foreground text-lg mb-6 max-w-2xl mx-auto">
                     Thank you for your interest in Alpha Kappa Psi! Applications for {RUSH_YEAR} Rush have closed.
                   </p>
-                  <div className="bg-muted/80 border border-border rounded-lg p-6 max-w-2xl mx-auto text-left">
+                  <div className="prospect-panel rounded-lg p-6 max-w-2xl mx-auto text-left">
                     <p className="text-foreground text-base mb-2">
                       <strong>If you had any issues please contact:</strong>
                     </p>

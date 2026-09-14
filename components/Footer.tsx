@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { currentTheme } from '@/utils/theme';
+import { RUSH_EMAIL } from '@/utils/constants';
 
 export default function Footer() {
   return (
@@ -19,7 +20,7 @@ export default function Footer() {
               href={currentTheme.branding.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               Visit Official Website
               <svg className="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +39,7 @@ export default function Footer() {
               <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Service
               </Link>
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLScbhQ7B1qzs5_ZWkjY-RFDejC34dG3di7dMbu_xFA4pe33KYA/viewform" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSdJYewWBkiy7ryWcwB5a617X8uvAwhsMndle5C3pDKCZ_h_Pw/viewform" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 Interest Form
               </a>
             </div>
@@ -50,7 +51,10 @@ export default function Footer() {
               {currentTheme.branding.rushYear} Rush
             </h3>
             <p className="text-sm text-muted-foreground">
-              For any questions {currentTheme.branding.rushChairs}
+              For any questions, contact {currentTheme.branding.rushChairs}, or email{' '}
+              <a className="underline hover:text-primary" href={`mailto:${RUSH_EMAIL}`}>
+                {RUSH_EMAIL}
+              </a>.
             </p>
           </div>
         </div>
