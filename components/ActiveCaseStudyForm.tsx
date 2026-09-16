@@ -82,7 +82,7 @@ export default function ActiveCaseStudyForm({
   const [submissionId, setSubmissionId] = useState(existingSubmissionId);
   const [isAutoSaving, setIsAutoSaving] = useState<boolean>(false);
   const [lastAutoSaved, setLastAutoSaved] = useState<string | null>(null);
-  const isQnaDisabled = true;
+  const isQnaDisabled = false;
 
   const {
     register,
