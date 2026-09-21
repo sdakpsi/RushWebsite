@@ -43,8 +43,11 @@ const ActiveButton: React.FC<ActiveButtonProps> = ({ is_active }) => {
   return is_active ? (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center rounded-xl border border-green-400/30 px-5 py-3 text-sm font-medium text-white shadow-xl transition-all duration-200 hover:brightness-90 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:ring-offset-2 active:scale-95 touch-manipulation"
-        style={{ backgroundColor: "#16a34a" }}
+        className="flex items-center rounded-xl border border-green-400/30 px-5 py-3 text-sm font-medium text-white shadow-xl transition-all duration-200 hover:brightness-110 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:ring-offset-2 active:scale-95 touch-manipulation"
+        style={{
+          background:
+            "linear-gradient(to right, rgb(22 163 74 / 0.8), rgb(5 150 105 / 0.8))",
+        }}
         onClick={toggleDropdown}
       >
         Active
