@@ -22,7 +22,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-[#cccccc] bg-[#e8e8e8]/90 backdrop-blur-md">
       <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
         {/* Logo and title */}
         <div 
@@ -78,7 +78,7 @@ export default function Navbar() {
       <div className={`overflow-hidden transition-all duration-500 ease-out sm:hidden ${
         isMobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        <div className="relative border-t border-border bg-background/98 shadow-lg backdrop-blur-xl">
+        <div className="relative border-t border-[#cccccc] bg-[#e8e8e8]/98 shadow-lg backdrop-blur-xl">
           <div className="container px-6 py-8">
             <div className="flex flex-col space-y-6">
               {/* PIC Section */}
