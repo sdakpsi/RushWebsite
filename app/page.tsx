@@ -167,14 +167,14 @@ export default function Index() {
                       // Non-active user content
                       <div className="space-y-4">
                         <p className="text-muted-foreground">
-                          Thank you for visiting {currentTheme.branding.organization}. If you are interested in learning more about our chapter and upcoming rush opportunities, please complete the interest form below.
+                          If you are interested in learning more about upcoming rush opportunities, please complete the interest form below.
                         </p>
 
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-3 sm:flex-row">
                           <Link href="https://docs.google.com/forms/d/e/1FAIpQLSdJYewWBkiy7ryWcwB5a617X8uvAwhsMndle5C3pDKCZ_h_Pw/viewform" className="flex-1">
                             <button className="prospect-btn-primary w-full transform transition-all rounded-lg px-4 py-2 text-sm font-medium">
-                              Express Your Interest
+                               Interest Form
                             </button>
                           </Link>
                         </div>
