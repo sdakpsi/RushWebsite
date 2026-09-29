@@ -291,7 +291,6 @@ export default function ActiveCaseStudyForm({
       if (!isMultiFormContext) {
         // Single form context - reset form
         if (setSelectedProspect) setSelectedProspect(null);
-        localStorage.removeItem("selectedProspectCase");
         if (setShowingForm) setShowingForm(false);
         if (storageKey) localStorage.removeItem(storageKey);
       } else {
@@ -321,7 +320,6 @@ export default function ActiveCaseStudyForm({
       return;
     }
     if (setSelectedProspect) setSelectedProspect(null);
-    localStorage.removeItem("selectedProspectCase");
     if (setShowingForm) setShowingForm(false);
     // Don't remove form data on back - let user resume if they come back to same prospect
   };

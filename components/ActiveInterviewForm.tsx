@@ -229,7 +229,6 @@ export default function ActiveInterviewForm({
       await createInterview(data, selectedProspect);
       customToast("Form submitted successfully", "success");
       setSelectedProspect(null);
-      localStorage.removeItem("selectedProspect");
       setShowingForm(false);
       localStorage.removeItem("formData");
     } catch (error) {
@@ -248,7 +247,6 @@ export default function ActiveInterviewForm({
 
   const handleBack = () => {
     setSelectedProspect(null);
-    localStorage.removeItem("selectedProspect");
     setShowingForm(false);
   };
 
