@@ -377,7 +377,7 @@ export default function ActiveCaseStudyForm({
             })}
           />
           {errors.name && (
-            <p className="text-red-500">{`${
+            <p className="text-destructive">{`${
               errors.name.message ?? "Required!"
             }`}</p>
           )}
@@ -396,7 +396,7 @@ export default function ActiveCaseStudyForm({
             })}
           />
           {errors.otherActives && (
-            <p className="text-red-500">{`${
+            <p className="text-destructive">{`${
               errors.otherActives.message ?? "Required!"
             }`}</p>
           )}
@@ -411,7 +411,7 @@ export default function ActiveCaseStudyForm({
                   `${question.name} Comments`
                 ) : question.qnaRoleLabel ? (
                   <>
-                    <span className="font-bold text-red-600">
+                    <span className="font-bold text-destructive">
                       {question.qnaRoleLabel}:{" "}
                     </span>
                     <span className="font-bold">{question.name}</span>
@@ -447,7 +447,7 @@ export default function ActiveCaseStudyForm({
               {errors[
                 index <= 3 ? `${question.label}_comments` : question.label
               ] && (
-                <p className="text-red-500">{`${
+                <p className="text-destructive">{`${
                   errors[
                     index <= 3 ? `${question.label}_comments` : question.label
                   ]?.message || "Required!"
@@ -477,7 +477,7 @@ export default function ActiveCaseStudyForm({
                 </select>
               </div>
               {errors[`${trait.label}_score`] && (
-                <p className="text-red-500">{`${
+                <p className="text-destructive">{`${
                   errors[`${trait.label}_score`]?.message || "Required!"
                 }`}</p>
               )}
@@ -489,7 +489,7 @@ export default function ActiveCaseStudyForm({
             Invite to social night? (weighted similarly to comment forms)
           </label>
           <input type="hidden" {...register("socialNight", { required: "Please select a social night response" })} />
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-foreground">
             {(["Yes", "Maybe", "No"] as const).map((option) => (
               <button
                 key={option}
@@ -498,11 +498,11 @@ export default function ActiveCaseStudyForm({
                 className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 active:scale-95 ${
                   watch("socialNight") === option
                     ? option === "Yes"
-                      ? "bg-green-600 shadow-lg border-2 border-green-400"
+                      ? "bg-success text-navy-950 shadow-lg border-2 border-success/50"
                       : option === "Maybe"
-                      ? "bg-yellow-600 shadow-lg border-2 border-yellow-400"
-                      : "bg-red-600 shadow-lg border-2 border-red-400"
-                    : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
+                      ? "bg-warning text-navy-950 shadow-lg border-2 border-warning/50"
+                      : "bg-destructive text-navy-950 shadow-lg border-2 border-destructive/50"
+                    : "bg-navy-700 hover:bg-navy-600 border-2 border-transparent"
                 }`}
               >
                 {option}
@@ -510,7 +510,7 @@ export default function ActiveCaseStudyForm({
             ))}
           </div>
           {errors.socialNight && (
-            <p className="mt-1 text-red-500">{`${errors.socialNight.message ?? "Required!"}`}</p>
+            <p className="mt-1 text-destructive">{`${errors.socialNight.message ?? "Required!"}`}</p>
           )}
         </div>
         <div className="mt-5">
@@ -524,7 +524,7 @@ export default function ActiveCaseStudyForm({
             {...register("additionalComments", {})}
           ></textarea>
           {errors["additionalComments"] && (
-            <p className="text-red-500">{`${
+            <p className="text-destructive">{`${
               errors["additionalComments"]?.message || "Required!"
             }`}</p>
           )}{" "}

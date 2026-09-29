@@ -125,7 +125,7 @@ export default function CaseStudiesPage() {
               >
                 <button
                   type="button"
-                  className="w-full flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full flex cursor-pointer items-center justify-between rounded-lg bg-navy-850 px-4 py-2 text-foreground hover:bg-navy-700 focus:outline-none focus:ring-2 focus:ring-primary"
                   onClick={(event) => toggleProspect(cardId, event)}
                 >
                   <div className="flex items-center gap-3 mr-2 min-w-0 flex-1">
@@ -133,22 +133,22 @@ export default function CaseStudiesPage() {
                       <img
                         src={prospectPhotoUrl}
                         alt={prospectName}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-500 flex-shrink-0"
+                        className="w-12 h-12 rounded-full object-cover border-2 border-border flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 border-gray-500 flex-shrink-0">
-                        <span className="text-gray-300 text-sm font-semibold">
+                      <div className="w-12 h-12 rounded-full bg-navy-600 flex items-center justify-center border-2 border-border flex-shrink-0">
+                        <span className="text-muted-foreground text-sm font-semibold">
                           {prospectName.charAt(0).toUpperCase()}
                         </span>
                       </div>
                     )}
                     <div className="flex flex-col items-start min-w-0 flex-1">
                       <span className="text-lg font-bold truncate w-full">{prospectName}</span>
-                      <span className="text-xs text-gray-400 whitespace-nowrap">Avg: {overallAvg}/5</span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">Avg: {overallAvg}/5</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-300">
+                    <span className="text-sm text-muted-foreground">
                       {cases.length} {cases.length > 1 ? 'Cases' : 'Case'}
                     </span>
                   </div>
@@ -156,27 +156,27 @@ export default function CaseStudiesPage() {
 
                 {isExpanded && (
                   <div
-                    className="mt-2 space-y-2 rounded-lg bg-gray-800 p-2 shadow-xl border border-gray-600"
+                    className="mt-2 space-y-2 rounded-lg bg-navy-900 p-2 shadow-xl border border-border"
                   >
                     {/* Average scores summary */}
-                    <div className="bg-gray-700/50 rounded-lg p-3 mb-3">
-                      <h4 className="text-sm font-semibold text-blue-300 mb-2">Average Scores</h4>
+                    <div className="bg-navy-850/50 rounded-lg p-3 mb-3">
+                      <h4 className="text-sm font-semibold text-primary mb-2">Average Scores</h4>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <span className="text-gray-400">Leadership:</span>
-                          <span className="ml-2 text-white font-semibold">{avgScores.leadership}/5</span>
+                          <span className="text-muted-foreground">Leadership:</span>
+                          <span className="ml-2 text-foreground font-semibold">{avgScores.leadership}/5</span>
                         </div>
                         <div>
-                          <span className="text-gray-400">Teamwork:</span>
-                          <span className="ml-2 text-white font-semibold">{avgScores.teamwork}/5</span>
+                          <span className="text-muted-foreground">Teamwork:</span>
+                          <span className="ml-2 text-foreground font-semibold">{avgScores.teamwork}/5</span>
                         </div>
                         <div>
-                          <span className="text-gray-400">Analytical:</span>
-                          <span className="ml-2 text-white font-semibold">{avgScores.analytical}/5</span>
+                          <span className="text-muted-foreground">Analytical:</span>
+                          <span className="ml-2 text-foreground font-semibold">{avgScores.analytical}/5</span>
                         </div>
                         <div>
-                          <span className="text-gray-400">Public Speaking:</span>
-                          <span className="ml-2 text-white font-semibold">{avgScores.public_speaking}/5</span>
+                          <span className="text-muted-foreground">Public Speaking:</span>
+                          <span className="ml-2 text-foreground font-semibold">{avgScores.public_speaking}/5</span>
                         </div>
                       </div>
                     </div>
@@ -185,46 +185,46 @@ export default function CaseStudiesPage() {
                     {cases.map((caseStudy: any) => (
                       <div
                         key={caseStudy.id}
-                        className="rounded-lg border border-gray-600 bg-gray-700 p-4"
+                        className="rounded-lg border border-border bg-navy-850 p-4"
                       >
                         <div className="flex flex-col space-y-2 text-sm">
-                          <p className="font-semibold text-blue-300">
+                          <p className="font-semibold text-primary">
                             {caseStudy.active_name || "Unknown Active"}
                           </p>
 
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             <div>
-                              <span className="text-gray-400">Leadership:</span>
-                              <span className="ml-1 text-white">{caseStudy.leadership_score}/5</span>
+                              <span className="text-muted-foreground">Leadership:</span>
+                              <span className="ml-1 text-foreground">{caseStudy.leadership_score}/5</span>
                             </div>
                             <div>
-                              <span className="text-gray-400">Teamwork:</span>
-                              <span className="ml-1 text-white">{caseStudy.teamwork_score}/5</span>
+                              <span className="text-muted-foreground">Teamwork:</span>
+                              <span className="ml-1 text-foreground">{caseStudy.teamwork_score}/5</span>
                             </div>
                             <div>
-                              <span className="text-gray-400">Analytical:</span>
-                              <span className="ml-1 text-white">{caseStudy.analytical_score}/5</span>
+                              <span className="text-muted-foreground">Analytical:</span>
+                              <span className="ml-1 text-foreground">{caseStudy.analytical_score}/5</span>
                             </div>
                             <div>
-                              <span className="text-gray-400">Public Speaking:</span>
-                              <span className="ml-1 text-white">{caseStudy.public_speaking_score}/5</span>
+                              <span className="text-muted-foreground">Public Speaking:</span>
+                              <span className="ml-1 text-foreground">{caseStudy.public_speaking_score}/5</span>
                             </div>
                           </div>
 
                           {caseStudy.role && (
                             <p className="text-xs">
-                              <span className="text-gray-400">Role:</span>{" "}
-                              <span className="text-gray-200">{caseStudy.role}</span>
+                              <span className="text-muted-foreground">Role:</span>{" "}
+                              <span className="text-foreground">{caseStudy.role}</span>
                             </p>
                           )}
 
                           {caseStudy.thoughts && (
-                            <p className="text-xs italic text-gray-300 mt-2">
+                            <p className="text-xs italic text-muted-foreground mt-2">
                               "{caseStudy.thoughts}"
                             </p>
                           )}
 
-                          <div className="text-xs text-gray-400 mt-2">
+                          <div className="text-xs text-muted-foreground mt-2">
                             {new Intl.DateTimeFormat("en-US", {
                               day: "2-digit",
                               month: "2-digit",
@@ -259,17 +259,17 @@ export default function CaseStudiesPage() {
               {renderSection(
                 "High Performers (Avg ≥ 4.0)",
                 sections.highScore,
-                "bg-green-900/20"
+                "bg-success/10"
               )}
               {renderSection(
                 "Medium Performers (Avg 3.0-3.9)",
                 sections.mediumScore,
-                "bg-yellow-900/20"
+                "bg-warning/10"
               )}
               {renderSection(
                 "Needs Attention (Avg < 3.0)",
                 sections.lowScore,
-                "bg-red-900/20"
+                "bg-destructive/10"
               )}
             </div>
           </div>

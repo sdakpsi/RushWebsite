@@ -42,10 +42,10 @@ export default function ProtectedPage() {
         }}
       />
 
-      {/* Subtle ambient orbs (light theme) */}
+      {/* Subtle ambient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-gray-400/15 via-gray-300/10 to-transparent blur-3xl animate-float" />
-        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-white/40 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-periwinkle-400/12 via-frost-300/8 to-transparent blur-3xl animate-float" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tl from-frost-300/15 to-transparent blur-3xl animate-float" style={{ animationDelay: '3s' }} />
         <div className="absolute top-1/2 left-1/3 h-64 w-64 rounded-full bg-gradient-to-br from-primary/10 to-transparent blur-2xl animate-float" style={{ animationDelay: '1s' }} />
       </div>
 
@@ -60,10 +60,10 @@ export default function ProtectedPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold text-frost-100 mb-4">
                 UCSD Alpha Kappa Psi
               </h1>
-              <h2 className="text-3xl lg:text-4xl font-semibold text-slate-100 mb-6">
+              <h2 className="text-3xl lg:text-4xl font-semibold text-frost-200 mb-6">
                 {RUSH_YEAR} Rush Application
               </h2>
               {APPLICATION_DEADLINE && (
@@ -130,8 +130,8 @@ export default function ProtectedPage() {
                 </div>
               ) : (
                 <div className="card-header text-center py-12">
-                  <div className="mx-auto h-24 w-24 rounded-full bg-red-100 border border-red-200 flex items-center justify-center mb-6">
-                    <svg className="h-12 w-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="mx-auto h-24 w-24 rounded-full bg-destructive/15 border border-destructive/30 flex items-center justify-center mb-6">
+                    <svg className="h-12 w-12 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>

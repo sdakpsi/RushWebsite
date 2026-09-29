@@ -19,10 +19,10 @@ import {
 import { redirect } from "next/navigation";
 
 const RUBRIC_STYLES: Record<string, string> = {
-  "Values Community": "border-emerald-200 bg-emerald-50 text-emerald-900",
-  "Growth Potential": "border-amber-200 bg-amber-50 text-amber-900",
+  "Values Community": "border-success/25 bg-success/10 text-success",
+  "Growth Potential": "border-warning/25 bg-warning/10 text-warning",
   "Vulnerability / Introspection":
-    "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
+    "border-periwinkle-300/25 bg-periwinkle-300/10 text-periwinkle-300",
 };
 
 type ProspectSortOption =
@@ -83,8 +83,8 @@ function StatusCheck({ value }: { value: boolean }) {
       <span
         className={`inline-flex h-7 w-7 items-center justify-center rounded-full border ${
           value
-            ? "border-emerald-300 bg-emerald-100 text-emerald-800"
-            : "border-slate-200 bg-slate-100 text-slate-400"
+            ? "border-success/30 bg-success/15 text-success"
+            : "border-border bg-navy-850 text-muted-foreground"
         }`}
       >
         <svg
@@ -254,10 +254,10 @@ function CommentCard({ thread }: { thread: ProspectAnalyticsCommentThread }) {
         <span
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
             latestComment.interaction === "Good"
-              ? "bg-emerald-100 text-emerald-800"
+              ? "bg-success/15 text-success"
               : latestComment.interaction === "Neutral"
-                ? "bg-amber-100 text-amber-800"
-                : "bg-rose-100 text-rose-800"
+                ? "bg-warning/15 text-warning"
+                : "bg-destructive/15 text-destructive"
           }`}
         >
           {latestComment.interaction}
@@ -290,7 +290,7 @@ function CommentCard({ thread }: { thread: ProspectAnalyticsCommentThread }) {
           <button
             type="button"
             onClick={() => setIsHistoryVisible((currentValue) => !currentValue)}
-            className="text-sm font-medium text-sky-700 hover:text-sky-900"
+            className="text-sm font-medium text-frost-300 hover:text-frost-100"
           >
             {isHistoryVisible
               ? "Hide full history"
@@ -356,12 +356,12 @@ function CaseStudyCard({
         <span
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
             caseStudy.socialInvite === "yes"
-              ? "bg-emerald-100 text-emerald-800"
+              ? "bg-success/15 text-success"
               : caseStudy.socialInvite === "maybe"
-                ? "bg-amber-100 text-amber-800"
+                ? "bg-warning/15 text-warning"
                 : caseStudy.socialInvite === "no"
-                  ? "bg-rose-100 text-rose-800"
-                  : "bg-slate-100 text-slate-600"
+                  ? "bg-destructive/15 text-destructive"
+                  : "bg-navy-850 text-muted-foreground"
           }`}
         >
           {inviteLabel}
@@ -545,7 +545,7 @@ export default function ProspectAnalyticsPage() {
           <div className="container mx-auto px-4 pb-24 pt-6">
             <div className="flex min-h-[400px] items-center justify-center">
               <div className="text-center">
-                <p className="text-lg text-red-400">
+                <p className="text-lg text-destructive">
                   Error loading prospect analytics
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -816,7 +816,7 @@ export default function ProspectAnalyticsPage() {
                                   {prospect.photoUrl ? (
                                     <button
                                       type="button"
-                                      className="rounded-full transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2"
+                                      className="rounded-full transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/60 focus:ring-offset-2"
                                       onClick={(event) => {
                                         event.stopPropagation();
                                         setSelectedPhoto({
@@ -852,13 +852,13 @@ export default function ProspectAnalyticsPage() {
                                   </div>
                                 </div>
                               </td>
-                              <td className="border-b border-border py-4 text-center font-medium text-emerald-700">
+                              <td className="border-b border-border py-4 text-center font-medium text-success">
                                 {prospect.goodCommentsCount}
                               </td>
-                              <td className="border-b border-border py-4 text-center font-medium text-amber-700">
+                              <td className="border-b border-border py-4 text-center font-medium text-warning">
                                 {prospect.neutralCommentsCount}
                               </td>
-                              <td className="border-b border-border py-4 text-center font-medium text-rose-700">
+                              <td className="border-b border-border py-4 text-center font-medium text-destructive">
                                 {prospect.badCommentsCount}
                               </td>
                               <td className="border-b border-border py-4 text-center text-muted-foreground">
@@ -886,7 +886,7 @@ export default function ProspectAnalyticsPage() {
                                   ? formatScore(prospect.resumeScore)
                                   : "N/A"}
                               </td>
-                              <td className="border-b border-border py-4 text-center font-medium text-sky-700">
+                              <td className="border-b border-border py-4 text-center font-medium text-frost-300">
                                 {prospect.caseStudiesCount > 0
                                   ? `${prospect.caseStudyYesInvitesCount}/${prospect.caseStudiesCount}`
                                   : "N/A"}
@@ -933,7 +933,7 @@ export default function ProspectAnalyticsPage() {
                                             disabled={!prospect.applicationId}
                                             className={`rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                                               prospect.applicationId
-                                                ? "bg-sky-600 text-white hover:bg-sky-700"
+                                                ? "bg-primary text-navy-950 hover:bg-primary/90"
                                                 : "cursor-not-allowed border border-border bg-muted text-muted-foreground"
                                             }`}
                                           >
@@ -1017,16 +1017,16 @@ export default function ProspectAnalyticsPage() {
       )}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/70 p-4 backdrop-blur-sm"
           onClick={() => setSelectedPhoto(null)}
         >
           <div
-            className="relative max-h-[90vh] max-w-4xl overflow-hidden rounded-3xl border border-white/20 bg-background shadow-2xl"
+            className="relative max-h-[90vh] max-w-4xl overflow-hidden rounded-3xl border border-periwinkle-400/20 bg-background shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
-              className="absolute right-4 top-4 z-10 rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-black/75"
+              className="absolute right-4 top-4 z-10 rounded-full bg-navy-950/60 px-3 py-1 text-sm font-medium text-foreground transition-colors hover:bg-navy-950/75"
               onClick={() => setSelectedPhoto(null)}
               aria-label="Close photo modal"
             >
@@ -1035,7 +1035,7 @@ export default function ProspectAnalyticsPage() {
             <img
               src={selectedPhoto.photoUrl}
               alt={selectedPhoto.name}
-              className="max-h-[80vh] w-full bg-black/5 object-contain"
+              className="max-h-[80vh] w-full bg-navy-950/5 object-contain"
             />
             <div className="border-t border-border bg-background px-5 py-4">
               <p className="text-lg font-semibold text-foreground">

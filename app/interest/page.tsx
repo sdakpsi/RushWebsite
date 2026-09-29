@@ -24,7 +24,7 @@ const GentleOrb = ({
   delay: number;
 }) => (
   <div
-    className="absolute rounded-full bg-blue-400/5 border border-blue-300/10"
+    className="absolute rounded-full bg-frost-300/5 border border-frost-200/10"
     style={{
       top: `${top}%`,
       left: `${left}%`,
@@ -165,10 +165,10 @@ const InterestForm = () => {
             height={100}
             className="mx-auto mb-4"
           />
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-frost-100 mb-2">
             {RUSH_YEAR} Rush Interest Form
           </h1>
-          <p className="text-gray-300">
+          <p className="text-periwinkle-400">
             Thank you for taking interest in UCSD Alpha Kappa Psi
           </p>
         </div>
@@ -258,9 +258,9 @@ const InterestForm = () => {
         </div>
 
         {/* Contact Info */}
-        <div className="text-center mt-8 text-sm text-gray-300 animate-fade-in">
-          <p>Questions? Follow us on Instagram <a href={RUSH_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-white hover:underline">{RUSH_INSTAGRAM_HANDLE}</a></p>
-          <p>Or email us at <a href={`mailto:${RUSH_EMAIL}`} className="text-white hover:underline">{RUSH_EMAIL}</a></p>
+        <div className="text-center mt-8 text-sm text-periwinkle-400 animate-fade-in">
+          <p>Questions? Follow us on Instagram <a href={RUSH_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-frost-300 hover:underline">{RUSH_INSTAGRAM_HANDLE}</a></p>
+          <p>Or email us at <a href={`mailto:${RUSH_EMAIL}`} className="text-frost-300 hover:underline">{RUSH_EMAIL}</a></p>
         </div>
       </div>
     </div>

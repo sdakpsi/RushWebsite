@@ -74,12 +74,19 @@ This is a modern, fully redesigned rush website for UCSD Alpha Kappa Psi with a 
 - **Adaptive navigation** (mobile menu, desktop dropdowns)
 - **Touch-friendly** interactions
 
-### 🎨 Color Palette (Current: Fall '25 Dark Theme)
-- **Primary**: HSL(220, 70%, 60%) - Bright blue
-- **Secondary**: HSL(217, 33%, 17%) - Dark secondary
-- **Background**: HSL(222, 84%, 5%) - Very dark background
-- **Accent**: HSL(216, 12%, 15%) - Dark accent
-- **Text**: HSL(210, 40%, 98%) - Light text
+### 🎨 Color Palette (Current: Fall '26 "Into Full Bloom")
+Taken from the rush artwork: a dark navy base with bluish-white text.
+- **Background**: `#161e2d` - Deepest navy (page base)
+- **Card / Secondary**: `#1e2637`, `#262d3e` - Raised navy surfaces
+- **Muted / Input**: `#24283a` - Panels and form fields
+- **Border / Accent**: `#2f3750` - Dividers and hover surfaces
+- **Text**: `#f2f6fe` - Frost white (primary text)
+- **Primary**: `#c0d9fd` - Frost blue (buttons, links, accents; pairs with navy text)
+- **Muted Text**: `#9aa5c9` - Periwinkle (secondary text)
+- **Subtle Accent**: `#bdc3e6`, `#d7e5f9` - Periwinkle/frost highlights
+
+Filled elements are light tints from this palette with navy text, mirroring the
+light-on-navy look of the rush graphics.
 
 ### 🚀 Future Rush Configuration
 To update for a new rush:

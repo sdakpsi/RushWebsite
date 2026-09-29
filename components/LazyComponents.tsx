@@ -13,7 +13,7 @@ export const LazyApplicationPopUp = dynamic(
 export const LazyApplicantCard = dynamic(
   () => import('@/components/ApplicantCard'),
   {
-    loading: () => <div className="animate-pulse h-32 bg-gray-700 rounded-lg" />,
+    loading: () => <div className="animate-pulse h-32 bg-muted rounded-lg" />,
     ssr: true,
   }
 );
@@ -21,7 +21,7 @@ export const LazyApplicantCard = dynamic(
 export const LazyProspectCard = dynamic(
   () => import('@/components/ProspectCard'),
   {
-    loading: () => <div className="animate-pulse h-32 bg-gray-700 rounded-lg" />,
+    loading: () => <div className="animate-pulse h-32 bg-muted rounded-lg" />,
     ssr: true,
   }
 );

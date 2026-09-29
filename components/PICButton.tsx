@@ -43,11 +43,7 @@ const PICButton: React.FC<PICButtonProps> = ({ is_pic }) => {
   return is_pic ? (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center rounded-xl border border-blue-400/30 px-5 py-3 text-sm font-medium text-white shadow-xl transition-all duration-200 hover:brightness-110 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 active:scale-95 touch-manipulation"
-        style={{
-          background:
-            "linear-gradient(to right, rgb(37 99 235 / 0.8), rgb(147 51 234 / 0.8))",
-        }}
+        className="flex items-center rounded-xl border border-frost-300 bg-frost-300 px-5 py-3 text-sm font-medium text-navy-950 shadow-xl transition-all duration-200 hover:bg-frost-200 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-frost-300/50 focus:ring-offset-2 active:scale-95 touch-manipulation"
         onClick={toggleDropdown}
       >
         PIC

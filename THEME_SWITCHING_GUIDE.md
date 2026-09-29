@@ -105,10 +105,12 @@ Examples:
 
 ## Common Theme Combinations
 
-### Professional Blue (Current)
+### Into Full Bloom Navy (Current)
 ```typescript
-primary: "220 70% 50%"           // Professional blue
-accent: "210 40% 90%"            // Light blue-gray
+background: "219 34% 13%"        // #161e2d deep navy base
+foreground: "220 86% 97%"        // #f2f6fe frost white text
+primary: "215 94% 87%"           // #c0d9fd frost blue (navy text on top)
+mutedForeground: "226 30% 70%"   // #9aa5c9 periwinkle
 ```
 
 ### Nature Green

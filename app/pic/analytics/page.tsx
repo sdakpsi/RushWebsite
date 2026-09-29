@@ -11,10 +11,10 @@ import {
 import { redirect } from "next/navigation";
 
 const RUBRIC_STYLES: Record<string, string> = {
-  "Values Community": "border-emerald-200 bg-emerald-50 text-emerald-900",
-  "Growth Potential": "border-amber-200 bg-amber-50 text-amber-900",
+  "Values Community": "border-success/25 bg-success/10 text-success",
+  "Growth Potential": "border-warning/25 bg-warning/10 text-warning",
   "Vulnerability / Introspection":
-    "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
+    "border-periwinkle-300/25 bg-periwinkle-300/10 text-periwinkle-300",
 };
 
 const StatCard = ({
@@ -30,18 +30,18 @@ const StatCard = ({
 }) => {
   const colorClasses = {
     blue:
-      "border-2 border-sky-300 bg-sky-50 [box-shadow:0_0_28px_-10px_rgba(14,165,233,0.55)]",
+      "border-2 border-primary/40 bg-primary/10 [box-shadow:0_0_28px_-10px_rgba(14,165,233,0.55)]",
     green:
-      "border-2 border-emerald-300 bg-emerald-50 [box-shadow:0_0_28px_-10px_rgba(16,185,129,0.5)]",
+      "border-2 border-success/30 bg-success/10 [box-shadow:0_0_28px_-10px_rgba(16,185,129,0.5)]",
     red:
-      "border-2 border-rose-300 bg-rose-50 [box-shadow:0_0_28px_-10px_rgba(244,63,94,0.48)]",
+      "border-2 border-destructive/30 bg-destructive/10 [box-shadow:0_0_28px_-10px_rgba(244,63,94,0.48)]",
     yellow:
-      "border-2 border-amber-300 bg-amber-50 [box-shadow:0_0_28px_-10px_rgba(245,158,11,0.5)]",
+      "border-2 border-warning/30 bg-warning/10 [box-shadow:0_0_28px_-10px_rgba(245,158,11,0.5)]",
   };
 
   return (
     <div className={`rounded-lg p-6 ${colorClasses[color]}`}>
-      <h3 className="text-sm font-medium text-slate-800">{title}</h3>
+      <h3 className="text-sm font-medium text-foreground">{title}</h3>
       <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
       {subtitle && (
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
@@ -91,10 +91,10 @@ function ActiveCommentCard({
         <span
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
             latestComment.interaction === "Good"
-              ? "bg-emerald-100 text-emerald-800"
+              ? "bg-success/15 text-success"
               : latestComment.interaction === "Neutral"
-                ? "bg-amber-100 text-amber-800"
-                : "bg-rose-100 text-rose-800"
+                ? "bg-warning/15 text-warning"
+                : "bg-destructive/15 text-destructive"
           }`}
         >
           {latestComment.interaction}
@@ -127,7 +127,7 @@ function ActiveCommentCard({
           <button
             type="button"
             onClick={() => setIsHistoryVisible((currentValue) => !currentValue)}
-            className="text-sm font-medium text-sky-700 hover:text-sky-900"
+            className="text-sm font-medium text-frost-300 hover:text-frost-100"
           >
             {isHistoryVisible
               ? "Hide full history"
@@ -207,7 +207,7 @@ export default function AnalyticsPage() {
           <div className="container mx-auto px-4 pb-24 pt-6">
             <div className="flex min-h-[400px] items-center justify-center">
               <div className="text-center">
-                <p className="text-lg text-red-400">Error loading analytics data</p>
+                <p className="text-lg text-destructive">Error loading analytics data</p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Please try refreshing the page
                 </p>
@@ -344,7 +344,7 @@ export default function AnalyticsPage() {
                                 <td className="py-3 text-foreground">
                                   <div className="flex items-center gap-2">
                                     <span
-                                      className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-emerald-100 font-medium text-emerald-900" : "bg-muted text-muted-foreground"}`}
+                                      className={`rounded px-2 py-1 text-xs ${index < 3 ? "bg-success/15 font-medium text-success" : "bg-muted text-muted-foreground"}`}
                                     >
                                       #{index + 1}
                                     </span>
@@ -370,7 +370,7 @@ export default function AnalyticsPage() {
                                 </td>
                                 <td className="py-3 text-center">
                                   <span
-                                    className={`font-semibold ${active.totalEvaluations > 10 ? "text-emerald-700" : active.totalEvaluations > 5 ? "text-amber-700" : "text-rose-600"}`}
+                                    className={`font-semibold ${active.totalEvaluations > 10 ? "text-success" : active.totalEvaluations > 5 ? "text-warning" : "text-destructive"}`}
                                   >
                                     {active.totalEvaluations}
                                   </span>
@@ -462,21 +462,21 @@ export default function AnalyticsPage() {
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`${prospect.caseStudiesCount >= 3 ? "font-medium text-emerald-700" : "font-medium text-rose-600"}`}
+                                className={`${prospect.caseStudiesCount >= 3 ? "font-medium text-success" : "font-medium text-destructive"}`}
                               >
                                 {prospect.caseStudiesCount}
                               </span>
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`${prospect.interviewsCount >= 3 ? "font-medium text-emerald-700" : "font-medium text-rose-600"}`}
+                                className={`${prospect.interviewsCount >= 3 ? "font-medium text-success" : "font-medium text-destructive"}`}
                               >
                                 {prospect.interviewsCount}
                               </span>
                             </td>
                             <td className="py-3 text-center">
                               <span
-                                className={`rounded px-2 py-1 text-xs ${prospect.needsMoreEvaluations ? "bg-rose-100 font-medium text-rose-800" : "bg-emerald-100 font-medium text-emerald-800"}`}
+                                className={`rounded px-2 py-1 text-xs ${prospect.needsMoreEvaluations ? "bg-destructive/15 font-medium text-destructive" : "bg-success/15 font-medium text-success"}`}
                               >
                                 {prospect.needsMoreEvaluations ? "Needs More" : "Complete"}
                               </span>

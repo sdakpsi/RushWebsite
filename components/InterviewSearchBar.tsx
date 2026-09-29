@@ -67,7 +67,7 @@ export default function InterviewSearchBar({
   if (error) {
     return (
       <div className="mb-6">
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-center text-red-800">
+        <div className="rounded-md border border-destructive/25 bg-destructive/10 p-4 text-center text-destructive">
           There was an error fetching the prospects, please try refreshing.
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function InterviewSearchBar({
   if (!finalProspectData || finalProspectData.length === 0) {
     return (
       <div className="mb-6">
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-center text-amber-900">
+        <div className="rounded-md border border-warning/25 bg-warning/10 p-4 text-center text-warning">
           No prospects available at this time.
         </div>
       </div>

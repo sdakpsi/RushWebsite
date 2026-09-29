@@ -124,11 +124,11 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
   const getQueueTypeDisplay = (queueType: QueueType) => {
     switch (queueType) {
       case QueueType.POSITIVE:
-        return { icon: "", text: "PRO", color: "text-emerald-700" };
+        return { icon: "", text: "PRO", color: "text-success" };
       case QueueType.NEGATIVE:
-        return { icon: "", text: "CON", color: "text-red-700" };
+        return { icon: "", text: "CON", color: "text-destructive" };
       case QueueType.COMMENT:
-        return { icon: "", text: "COMMENT", color: "text-sky-800" };
+        return { icon: "", text: "COMMENT", color: "text-frost-300" };
       default:
         return { icon: "", text: "UNKNOWN", color: "text-muted-foreground" };
     }
@@ -137,9 +137,9 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
   const getStatusDisplay = (status: QueueStatus) => {
     switch (status) {
       case QueueStatus.PENDING:
-        return { text: "WAITING", color: "bg-amber-100 text-amber-950 border border-amber-300" };
+        return { text: "WAITING", color: "bg-warning/15 text-warning border border-warning/30" };
       case QueueStatus.SPEAKING:
-        return { text: "SPEAKING", color: "bg-emerald-100 text-emerald-950 border border-emerald-300" };
+        return { text: "SPEAKING", color: "bg-success/15 text-success border border-success/30" };
       case QueueStatus.COMPLETED:
         return { text: "COMPLETED", color: "bg-muted text-foreground border border-border" };
       default:
@@ -167,7 +167,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
     return (
       <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <h2 className="mb-4 text-xl font-semibold text-foreground">Queue Management</h2>
-        <div className="text-center text-red-600">Error: {error instanceof Error ? error.message : String(error)}</div>
+        <div className="text-center text-destructive">Error: {error instanceof Error ? error.message : String(error)}</div>
         <div className="mt-2 text-center">
           <button
             type="button"
@@ -222,7 +222,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
                   isFirst
                     ? 'border-primary bg-muted/40 shadow-sm'
                     : 'border-border bg-muted/30'
-                } ${entry.status === QueueStatus.SPEAKING ? 'ring-2 ring-emerald-500/80' : ''} ${
+                } ${entry.status === QueueStatus.SPEAKING ? 'ring-2 ring-success/80' : ''} ${
                   isCurrentUser ? 'ring-2 ring-primary/60' : ''
                 }`}
               >
@@ -253,7 +253,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
                         {formatTime(entry.created_at)}
                       </span>
                       {isFirst && (
-                        <span className="rounded bg-sky-100 px-2 py-1 text-xs font-medium text-sky-950 ring-1 ring-sky-300">
+                        <span className="rounded bg-primary/15 px-2 py-1 text-xs font-medium text-frost-300 ring-1 ring-primary/40">
                           NEXT UP
                         </span>
                       )}
@@ -277,7 +277,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
                             type="button"
                             onClick={() => handleSetSpeaking(entry.id)}
                             disabled={isUpdating}
-                            className="rounded-lg bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                            className="rounded-lg bg-success px-3 py-1 text-sm font-medium text-navy-950 hover:bg-success/90 disabled:opacity-50"
                           >
                             Speaking
                           </button>
@@ -287,7 +287,7 @@ const QueueView: React.FC<QueueViewProps> = ({ onQueueUpdate, isPic=false }) => 
                           type="button"
                           onClick={() => handleRemoveFromQueue(entry.id)}
                           disabled={isUpdating}
-                          className="rounded-lg bg-red-600 px-3 py-1 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                          className="rounded-lg bg-destructive px-3 py-1 text-sm font-medium text-navy-950 hover:bg-destructive/90 disabled:opacity-50"
                         >
                           Remove
                         </button>

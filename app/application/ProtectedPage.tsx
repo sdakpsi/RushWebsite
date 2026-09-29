@@ -22,7 +22,7 @@ export default async function ProtectedPage() {
           <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
             {RUSH_YEAR} Rush Application
           </p>
-          <p className="text-gray-500 mt-4">
+          <p className="text-muted-foreground mt-4">
             If you're having any issues or have any questions, please contact
             Ally or Val @ (916) 841-7952 / (408) 805-2888!
           </p>

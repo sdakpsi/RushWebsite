@@ -97,13 +97,13 @@ export default function ProspectGrid({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {/* Loading skeleton cards */}
           {Array.from({ length: 9 }).map((_, index) => (
-            <div key={index} className="rounded-lg bg-gray-200 border border-gray-300 p-2 shadow-md animate-pulse">
-              <div className="flex items-center justify-between rounded-lg px-6 py-4 bg-gray-100">
+            <div key={index} className="rounded-lg bg-navy-800 border border-border p-2 shadow-md animate-pulse">
+              <div className="flex items-center justify-between rounded-lg px-6 py-4 bg-navy-850">
                 <div className="flex items-center space-x-4 flex-1">
-                  <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
+                  <div className="w-16 h-16 bg-navy-800 rounded-full"></div>
                   <div className="flex flex-col space-y-2 flex-1">
-                    <div className="h-6 bg-gray-300 rounded w-3/4"></div>
-                    <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+                    <div className="h-6 bg-navy-800 rounded w-3/4"></div>
+                    <div className="h-5 bg-navy-800 rounded w-1/2"></div>
                   </div>
                 </div>
               </div>
@@ -124,13 +124,13 @@ export default function ProspectGrid({
           ))}
         </div>
       ) : (
-        <div className="text-center text-gray-400 py-8">
+        <div className="text-center text-muted-foreground py-8">
           {searchTerm ? 'No prospects match your search.' : 'No prospects match the current filters.'}
         </div>
       )}
 
       {/* Summary */}
-      <div className="text-center text-sm text-gray-400">
+      <div className="text-center text-sm text-muted-foreground">
         Showing {filteredProspects.length} of {prospects.length} prospects
       </div>
     </div>

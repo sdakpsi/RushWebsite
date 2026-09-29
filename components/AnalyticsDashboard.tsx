@@ -14,17 +14,17 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, color = "blue" }) => {
   const colorClasses = {
-    blue: "bg-blue-900/30 border-blue-500",
-    green: "bg-green-900/30 border-green-500",
-    red: "bg-red-900/30 border-red-500",
-    yellow: "bg-yellow-900/30 border-yellow-500"
+    blue: "bg-primary/15 border-primary",
+    green: "bg-success/15 border-success",
+    red: "bg-destructive/15 border-destructive",
+    yellow: "bg-warning/15 border-warning"
   };
 
   return (
     <div className={`rounded-lg border p-6 ${colorClasses[color]} backdrop-blur-sm`}>
-      <h3 className="text-sm font-medium text-gray-300">{title}</h3>
-      <p className="mt-2 text-3xl font-bold text-white">{value}</p>
-      {subtitle && <p className="mt-1 text-sm text-gray-400">{subtitle}</p>}
+      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+      <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
+      {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
 };
@@ -60,35 +60,35 @@ const ParticipationTable: React.FC<ParticipationTableProps> = ({ data }) => {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-600">
-            <th className="pb-3 text-left font-medium text-gray-300">Active Member</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Comments</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Case Studies</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Interviews</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Total</th>
-            <th className="pb-3 text-left font-medium text-gray-300">Last Activity</th>
+          <tr className="border-b border-border">
+            <th className="pb-3 text-left font-medium text-muted-foreground">Active Member</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Comments</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Case Studies</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Interviews</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Total</th>
+            <th className="pb-3 text-left font-medium text-muted-foreground">Last Activity</th>
           </tr>
         </thead>
         <tbody>
           {sortedData.map((active, index) => (
-            <tr key={active.activeId} className="border-b border-gray-700/50">
-              <td className="py-3 text-white">
+            <tr key={active.activeId} className="border-b border-border">
+              <td className="py-3 text-foreground">
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs px-2 py-1 rounded ${index < 3 ? 'bg-green-900/30 text-green-400' : 'bg-gray-700 text-gray-300'}`}>
+                  <span className={`text-xs px-2 py-1 rounded ${index < 3 ? 'bg-success/15 text-success' : 'bg-navy-850 text-muted-foreground'}`}>
                     #{index + 1}
                   </span>
                   {active.activeName}
                 </div>
               </td>
-              <td className="py-3 text-center text-gray-300">{active.commentsCount}</td>
-              <td className="py-3 text-center text-gray-300">{active.caseStudiesCount}</td>
-              <td className="py-3 text-center text-gray-300">{active.interviewsCount}</td>
+              <td className="py-3 text-center text-muted-foreground">{active.commentsCount}</td>
+              <td className="py-3 text-center text-muted-foreground">{active.caseStudiesCount}</td>
+              <td className="py-3 text-center text-muted-foreground">{active.interviewsCount}</td>
               <td className="py-3 text-center">
-                <span className={`font-semibold ${active.totalEvaluations > 10 ? 'text-green-400' : active.totalEvaluations > 5 ? 'text-yellow-400' : 'text-red-400'}`}>
+                <span className={`font-semibold ${active.totalEvaluations > 10 ? 'text-success' : active.totalEvaluations > 5 ? 'text-warning' : 'text-destructive'}`}>
                   {active.totalEvaluations}
                 </span>
               </td>
-              <td className="py-3 text-gray-400 text-xs">{formatLastActivity(active.lastActivity)}</td>
+              <td className="py-3 text-muted-foreground text-xs">{formatLastActivity(active.lastActivity)}</td>
             </tr>
           ))}
         </tbody>
@@ -121,31 +121,31 @@ const ProspectCoverageTable: React.FC<ProspectCoverageTableProps> = ({ data }) =
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-600">
-            <th className="pb-3 text-left font-medium text-gray-300">Prospect</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Comments</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Case Studies</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Interviews</th>
-            <th className="pb-3 text-center font-medium text-gray-300">Status</th>
+          <tr className="border-b border-border">
+            <th className="pb-3 text-left font-medium text-muted-foreground">Prospect</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Comments</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Case Studies</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Interviews</th>
+            <th className="pb-3 text-center font-medium text-muted-foreground">Status</th>
           </tr>
         </thead>
         <tbody>
           {sortedData.map((prospect) => (
-            <tr key={prospect.prospectId} className="border-b border-gray-700/50">
-              <td className="py-3 text-white">{prospect.prospectName}</td>
-              <td className="py-3 text-center text-gray-300">{prospect.commentsCount}</td>
+            <tr key={prospect.prospectId} className="border-b border-border">
+              <td className="py-3 text-foreground">{prospect.prospectName}</td>
+              <td className="py-3 text-center text-muted-foreground">{prospect.commentsCount}</td>
               <td className="py-3 text-center">
-                <span className={`${prospect.caseStudiesCount >= 3 ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`${prospect.caseStudiesCount >= 3 ? 'text-success' : 'text-destructive'}`}>
                   {prospect.caseStudiesCount}
                 </span>
               </td>
               <td className="py-3 text-center">
-                <span className={`${prospect.interviewsCount >= 3 ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`${prospect.interviewsCount >= 3 ? 'text-success' : 'text-destructive'}`}>
                   {prospect.interviewsCount}
                 </span>
               </td>
               <td className="py-3 text-center">
-                <span className={`text-xs px-2 py-1 rounded ${prospect.needsMoreEvaluations ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'}`}>
+                <span className={`text-xs px-2 py-1 rounded ${prospect.needsMoreEvaluations ? 'bg-destructive/15 text-destructive' : 'bg-success/15 text-success'}`}>
                   {prospect.needsMoreEvaluations ? 'Needs More' : 'Complete'}
                 </span>
               </td>
@@ -177,15 +177,15 @@ const AnalyticsDashboard: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center max-w-2xl">
-          <p className="text-red-400 text-lg">Error loading analytics data</p>
-          <p className="text-gray-400 text-sm mt-2">Please try refreshing the page</p>
+          <p className="text-destructive text-lg">Error loading analytics data</p>
+          <p className="text-muted-foreground text-sm mt-2">Please try refreshing the page</p>
           
           {/* Show specific errors in development */}
           {process.env.NODE_ENV === 'development' && (
             <details className="mt-4 text-left">
-              <summary className="cursor-pointer text-red-400">Error Details</summary>
+              <summary className="cursor-pointer text-destructive">Error Details</summary>
               <div className="mt-2 space-y-2 text-xs">
-                <div className="bg-red-950/50 p-2 rounded">Error: {JSON.stringify(error, null, 2)}</div>
+                <div className="bg-destructive/10 p-2 rounded">Error: {JSON.stringify(error, null, 2)}</div>
               </div>
             </details>
           )}
@@ -229,7 +229,7 @@ const AnalyticsDashboard: React.FC = () => {
 
       {/* Debug Info (remove in production) */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="rounded-lg bg-gray-900 p-4 text-xs text-gray-400">
+        <div className="rounded-lg bg-navy-950 p-4 text-xs text-muted-foreground">
           <details>
             <summary className="cursor-pointer">Debug Info</summary>
             <pre className="mt-2 whitespace-pre-wrap">
@@ -265,37 +265,37 @@ const AnalyticsDashboard: React.FC = () => {
       </div>
 
       {/* Active Member Participation */}
-      <div className="rounded-lg bg-gray-800 p-6">
-        <h2 className="mb-4 text-xl font-bold text-white">Active Member Participation</h2>
+      <div className="rounded-lg bg-navy-900 p-6">
+        <h2 className="mb-4 text-xl font-bold text-foreground">Active Member Participation</h2>
         {participation && participation.length > 0 ? (
           <ParticipationTable data={participation} />
         ) : (
-          <p className="text-gray-400">No participation data available</p>
+          <p className="text-muted-foreground">No participation data available</p>
         )}
       </div>
 
       {/* Prospect Coverage */}
-      <div className="rounded-lg bg-gray-800 p-6">
-        <h2 className="mb-4 text-xl font-bold text-white">Prospect Evaluation Coverage</h2>
+      <div className="rounded-lg bg-navy-900 p-6">
+        <h2 className="mb-4 text-xl font-bold text-foreground">Prospect Evaluation Coverage</h2>
         {coverage && coverage.length > 0 ? (
           <ProspectCoverageTable data={coverage} />
         ) : (
-          <p className="text-gray-400">No prospect data available</p>
+          <p className="text-muted-foreground">No prospect data available</p>
         )}
       </div>
 
       {/* Timeline Summary */}
       {recentActivity.length > 0 && (
-        <div className="rounded-lg bg-gray-800 p-6">
-          <h2 className="mb-4 text-xl font-bold text-white">Recent Activity (Last 7 Days)</h2>
+        <div className="rounded-lg bg-navy-900 p-6">
+          <h2 className="mb-4 text-xl font-bold text-foreground">Recent Activity (Last 7 Days)</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-7">
             {recentActivity.map((day) => (
               <div key={day.date} className="text-center">
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-muted-foreground">
                   {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
                 </div>
-                <div className="mt-1 text-lg font-bold text-white">{day.totalEvaluations}</div>
-                <div className="text-xs text-gray-500">
+                <div className="mt-1 text-lg font-bold text-foreground">{day.totalEvaluations}</div>
+                <div className="text-xs text-muted-foreground">
                   {day.commentsCount + day.caseStudiesCount + day.interviewsCount > 0 && (
                     <div>C:{day.commentsCount} CS:{day.caseStudiesCount} I:{day.interviewsCount}</div>
                   )}

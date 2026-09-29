@@ -90,11 +90,11 @@ export default function ProtectedPage() {
               )}
             </div>
             <div>
-              <p className="mb-1 text-lg font-medium text-blue-800">
+              <p className="mb-1 text-lg font-medium text-frost-300">
                 Selected for Next Wave ({selectedApplicants.length} applicant{selectedApplicants.length !== 1 ? 's' : ''}):
               </p>
               {selectedApplicants.length > 0 && (
-                <div className="mx-auto max-w-2xl text-sm text-blue-900">
+                <div className="mx-auto max-w-2xl text-sm text-frost-300">
                   {selectedApplicants.map(id => {
                     const applicant = filteredUsersData.find(user => user.id === id);
                     return applicant?.full_name;
@@ -113,34 +113,34 @@ export default function ProtectedPage() {
                     placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-grow rounded-lg border px-4 py-2 text-gray-700 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-grow rounded-lg border px-4 py-2 text-foreground shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <button
-                    className="rounded-lg bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                    className="rounded-lg bg-primary px-4 py-2 font-bold text-navy-950 hover:bg-primary/90"
                     onClick={handleSubmitDelibsWithRefresh}
                   >
                     Submit Wave
                   </button>
                   <button
-                    className="rounded-lg bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+                    className="rounded-lg bg-success px-4 py-2 font-bold text-navy-950 hover:bg-success/90"
                     onClick={sortUsers}
                   >
                     Sort By {sortType === "name" ? "Score" : "Name"}
                   </button>
                   <button
-                    className={`rounded-lg px-4 py-2 font-bold text-white transition-colors ${
+                    className={`rounded-lg px-4 py-2 font-bold transition-colors ${
                       filterTwoPlus
-                        ? "bg-purple-600 hover:bg-purple-700"
-                        : "bg-gray-500 hover:bg-gray-600"
+                        ? "bg-periwinkle-300 text-navy-950 hover:bg-periwinkle-400"
+                        : "bg-navy-700 text-foreground hover:bg-navy-600"
                     }`}
                     onClick={toggleFilterTwoPlus}
                   >
                     {filterTwoPlus ? "Show All" : "2+ Good Interactions"}
                   </button>
                   <button
-                    className="rounded-lg bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
+                    className="rounded-lg bg-destructive px-4 py-2 font-bold text-navy-950 hover:bg-destructive/90"
                     onClick={clearSelections}
                   >
                     Clear Selections
@@ -160,7 +160,7 @@ export default function ProtectedPage() {
                       type="button"
                       className={`ml-2 w-1/4 rounded px-2 py-1 text-sm font-bold transition-colors ${
                         selectedApplicants.includes(applicant.id)
-                          ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                          ? "bg-success text-navy-950 hover:bg-success/90"
                           : "border border-border bg-muted text-foreground hover:bg-muted/80"
                       }`}
                       onClick={() => toggleApplicantSelection(applicant.id)}

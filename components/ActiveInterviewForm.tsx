@@ -115,12 +115,12 @@ function CompactCaseStudyScores({
                 <span
                   className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
                     caseStudy.social_invite === "yes"
-                      ? "bg-emerald-100 text-emerald-800"
+                      ? "bg-success/15 text-success"
                       : caseStudy.social_invite === "maybe"
-                        ? "bg-amber-100 text-amber-800"
+                        ? "bg-warning/15 text-warning"
                         : caseStudy.social_invite === "no"
-                          ? "bg-rose-100 text-rose-800"
-                          : "bg-slate-100 text-slate-600"
+                          ? "bg-destructive/15 text-destructive"
+                          : "bg-navy-850 text-muted-foreground"
                   }`}
                 >
                   {inviteLabel}
@@ -192,13 +192,13 @@ export default function ActiveInterviewForm({
 
   function note(note: string) {
     return (
-      <p className="text-center text-sm italic text-gray-600">{note}</p>
+      <p className="text-center text-sm italic text-muted-foreground">{note}</p>
     );
   }
 
   function script(script: string) {
     return (
-      <p className="text-center text-lg font-medium text-blue-700">{script}</p>
+      <p className="text-center text-lg font-medium text-frost-300">{script}</p>
     );
   }
 
@@ -268,7 +268,7 @@ export default function ActiveInterviewForm({
         <div></div>
       </div>
       <p
-        className="interview-guidance-glow mt-4 animate-pulse bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
+        className="interview-guidance-glow mt-4 animate-pulse bg-gradient-to-r from-periwinkle-300 via-frost-200 to-frost-100 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
         role="heading"
         aria-level={2}
       >
@@ -276,7 +276,7 @@ export default function ActiveInterviewForm({
         nice) and do your best to stick to the script.
       </p>
       <p
-        className="interview-guidance-glow mb-4 mt-2 animate-pulse bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
+        className="interview-guidance-glow mb-4 mt-2 animate-pulse bg-gradient-to-r from-periwinkle-300 via-frost-200 to-frost-100 bg-clip-text px-4 py-2 text-center text-xl font-bold text-transparent lg:text-2xl"
         role="heading"
         aria-level={2}
       >
@@ -300,7 +300,7 @@ export default function ActiveInterviewForm({
             })}
           />
           {errors.name && (
-            <p className="text-red-500">{`${
+            <p className="text-destructive">{`${
               errors.name.message ?? "Required!"
             }`}</p>
           )}
@@ -321,7 +321,7 @@ export default function ActiveInterviewForm({
             })}
           />
           {errors.otherActives && (
-            <p className="text-red-500">{`${
+            <p className="text-destructive">{`${
               errors.otherActives.message ?? "Required!"
             }`}</p>
           )}
@@ -329,9 +329,9 @@ export default function ActiveInterviewForm({
         <p className="mt-4 text-center text-foreground">
           <span aria-hidden="true">***</span>
           Script is in{" "}
-          <span className="text-lg font-semibold text-blue-700">BLUE</span> and
+          <span className="text-lg font-semibold text-frost-300">BLUE</span> and
           side notes are in{" "}
-          <span className="text-sm italic text-gray-600">GRAY</span>
+          <span className="text-sm italic text-muted-foreground">GRAY</span>
           <span aria-hidden="true">***</span>
         </p>
         <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
@@ -372,7 +372,7 @@ export default function ActiveInterviewForm({
   ))}
           </div>
           {errors.events && (
-            <p className="text-red-500">At least one event must be selected</p>
+            <p className="text-destructive">At least one event must be selected</p>
           )}
         </div>
 
@@ -455,7 +455,7 @@ export default function ActiveInterviewForm({
                 })}
               ></textarea>
               {errors[question.name] && (
-                <p className="text-red-500">{`${
+                <p className="text-destructive">{`${
                   errors[question.name]?.message || "Required!"
                 }`}</p>
               )}{" "}
@@ -485,7 +485,7 @@ export default function ActiveInterviewForm({
               })}
             ></textarea>
             {errors["additionalComments"] && (
-              <p className="text-red-500">{`${
+              <p className="text-destructive">{`${
                 errors["additionalComments"]?.message || "Required!"
               }`}</p>
             )}{" "}
@@ -516,12 +516,12 @@ export default function ActiveInterviewForm({
                     ))}
                   </select>
                   {errors[trait.propertyName] && (
-                    <p className="text-red-500">{`${
+                    <p className="text-destructive">{`${
                       errors[trait.propertyName]?.message || "Required!"
                     }`}</p>
                   )}{" "}
                 </div>
-                <p className="flex-1 text-sm italic text-gray-600">
+                <p className="flex-1 text-sm italic text-muted-foreground">
                   {trait.note}
                 </p>{" "}
                 {/* Ensures the paragraph uses the remaining space */}

@@ -141,7 +141,7 @@ const CongratulationsPage = () => {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-900">
+    <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-navy-950 via-navy-850 to-navy-800">
       {/* Confetti effect - ensuring it covers the whole screen */}
       {isVisible && (
         <Confetti
@@ -159,12 +159,11 @@ const CongratulationsPage = () => {
             h: 0,
           }}
           colors={[
-            "#FFD700",
-            "#FF6347",
-            "#9370DB",
-            "#00CED1",
-            "#FF1493",
-            "#7CFC00",
+            "#f2f6fe",
+            "#d7e5f9",
+            "#c0d9fd",
+            "#bdc3e6",
+            "#9aa5c9",
           ]}
         />
       )}
@@ -174,7 +173,7 @@ const CongratulationsPage = () => {
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-white opacity-20"
+            className="absolute rounded-full bg-frost-300 opacity-20"
             initial={{
               scale: 0,
               x: Math.random() * width - width / 2,
@@ -211,7 +210,7 @@ const CongratulationsPage = () => {
         <div className="text-center">
           {/* Pulsing glow effect */}
           <motion.div
-            className="absolute left-1/2 top-1/2 h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-500"
+            className="absolute left-1/2 top-1/2 h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-periwinkle-300"
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{
               opacity: [0.2, 0.5, 0.2],
@@ -229,7 +228,7 @@ const CongratulationsPage = () => {
             className="relative"
           >
             <motion.h2
-              className="mb-4 font-sans text-3xl font-bold uppercase tracking-wider text-purple-300"
+              className="mb-4 font-sans text-3xl font-bold uppercase tracking-wider text-periwinkle-300"
               animate={{ scale: [1, 1.02, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -237,7 +236,7 @@ const CongratulationsPage = () => {
             </motion.h2>
 
             <motion.h1
-              className="relative mb-6 font-serif text-7xl font-bold uppercase tracking-wide text-white"
+              className="relative mb-6 font-serif text-7xl font-bold uppercase tracking-wide text-foreground"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{
                 scale: isVisible ? 1 : 0.8,
@@ -259,7 +258,7 @@ const CongratulationsPage = () => {
 
             {/* Animated underline */}
             <motion.div
-              className="mx-auto h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"
+              className="mx-auto h-1 bg-gradient-to-r from-transparent via-frost-300 to-transparent"
               initial={{ width: 0 }}
               animate={{ width: isVisible ? "80%" : 0 }}
               transition={{ duration: 1.5, delay: 1.5 }}

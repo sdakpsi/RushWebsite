@@ -507,7 +507,7 @@ export default function NameForm() {
       <div className="save-status px-4 text-muted-foreground sm:px-0">
         {isSaving ? "Saving..." : lastSaved && `Last saved on ${lastSaved}`}
       </div>
-      <div className="submit-status px-4 text-green-600 sm:px-0">
+      <div className="submit-status px-4 text-success sm:px-0">
         {lastSubmitted && `Last submitted at: ${lastSubmitted}`}
       </div>
       <form
@@ -669,7 +669,7 @@ export default function NameForm() {
                 </label>
                 <input
                   className={`${smallInput} ${
-                    !isGraduationYearValid ? "border-red-500" : ""
+                    !isGraduationYearValid ? "border-destructive" : ""
                   }`}
                   id="graduationYear"
                   type="number"
@@ -678,7 +678,7 @@ export default function NameForm() {
                   placeholder="Enter graduation year"
                 />
                 {!isGraduationYearValid && (
-                  <p className="text-xs italic text-red-500">
+                  <p className="text-xs italic text-destructive">
                     Please enter a valid grad year
                   </p>
                 )}
@@ -742,7 +742,7 @@ export default function NameForm() {
                 </label>
                 <input
                   className={`${smallInput} ${
-                    !isCumulativeGPAValid ? "border-red-500" : ""
+                    !isCumulativeGPAValid ? "border-destructive" : ""
                   }`}
                   id="graduationYear"
                   type="number"
@@ -752,7 +752,7 @@ export default function NameForm() {
                   placeholder="Enter GPA"
                 />
                 {!isCumulativeGPAValid && (
-                  <p className="text-xs italic text-red-500">
+                  <p className="text-xs italic text-destructive">
                     Please enter a valid GPA
                   </p>
                 )}

@@ -59,13 +59,13 @@ const ActiveQueueControls: React.FC<ActiveQueueControlsProps> = ({
     
     switch (queueType) {
       case QueueType.POSITIVE:
-        return `${baseStyle} bg-green-600 text-white hover:bg-green-700`;
+        return `${baseStyle} bg-success text-navy-950 hover:bg-success/90`;
       case QueueType.NEGATIVE:
-        return `${baseStyle} bg-red-600 text-white hover:bg-red-700`;
+        return `${baseStyle} bg-destructive text-navy-950 hover:bg-destructive/90`;
       case QueueType.COMMENT:
-        return `${baseStyle} bg-blue-600 text-white hover:bg-blue-700`;
+        return `${baseStyle} bg-primary text-navy-950 hover:bg-primary/90`;
       default:
-        return `${baseStyle} bg-btn-background hover:bg-btn-background-hover`;
+        return `${baseStyle} bg-btn-background text-btn-foreground hover:bg-btn-background-hover`;
     }
   };
 

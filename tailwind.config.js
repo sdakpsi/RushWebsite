@@ -110,11 +110,30 @@ module.exports = {
         },
       },
       colors: {
+        // "Into Full Bloom" brand palette taken from the rush artwork
+        navy: {
+          950: "#161e2d",
+          900: "#1e2637",
+          850: "#24283a",
+          800: "#262d3e",
+          700: "#2f3750",
+          600: "#3c4560",
+        },
+        periwinkle: {
+          400: "#9aa5c9",
+          300: "#bdc3e6",
+        },
+        frost: {
+          300: "#c0d9fd",
+          200: "#d7e5f9",
+          100: "#f2f6fe",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        subtle: "hsl(var(--subtle))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -136,12 +155,12 @@ module.exports = {
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "hsl(var(--background))",
-          foreground: "hsl(var(--foreground))",
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--background))",
-          foreground: "hsl(var(--foreground))",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",

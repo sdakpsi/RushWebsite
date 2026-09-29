@@ -123,8 +123,8 @@ export default function PastActiveSubmission({
                   <span
                     className={`rounded-full border px-2 py-1 text-xs font-medium ${
                       prospect.status === "complete"
-                        ? "border-emerald-300 bg-emerald-100 text-emerald-900"
-                        : "border-amber-300 bg-amber-100 text-amber-900"
+                        ? "border-success/30 bg-success/15 text-success"
+                        : "border-warning/30 bg-warning/15 text-warning"
                     }`}
                   >
                     {prospect.status === "complete" ? "✓ Complete" : "⧖ In Progress"}
@@ -134,7 +134,7 @@ export default function PastActiveSubmission({
                       type="button"
                       onClick={() => handleDeleteClick(prospect.id)}
                       disabled={deletingId === prospect.id}
-                      className="rounded border border-red-300 bg-red-50 px-2 py-1 text-xs font-medium text-red-800 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded border border-destructive/30 bg-destructive/10 px-2 py-1 text-xs font-medium text-destructive transition-colors hover:bg-destructive/15 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {deletingId === prospect.id ? "Deleting..." : "Delete"}
                     </button>
@@ -184,7 +184,7 @@ export default function PastActiveSubmission({
                     handleConfirmDelete(confirmDeleteId, prospect.name);
                   }
                 }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+                className="rounded-lg bg-destructive px-4 py-2 text-navy-950 transition-colors hover:bg-destructive/90"
               >
                 Delete
               </button>

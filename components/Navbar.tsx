@@ -3,7 +3,7 @@
 import AuthButton from "@/components/AuthButton";
 import ActiveButton from "./ActiveButton";
 import PICButton from "./PICButton";
-import logo from "./akpsiLogoBlack.png";
+import logo from "./akpsilogo.png";
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-[#cccccc] bg-[#e8e8e8]/90 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-border bg-navy-950/85 backdrop-blur-md">
       <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
         {/* Logo and title */}
         <div 
@@ -78,16 +78,16 @@ export default function Navbar() {
       <div className={`overflow-hidden transition-all duration-500 ease-out sm:hidden ${
         isMobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        <div className="relative border-t border-[#cccccc] bg-[#e8e8e8]/98 shadow-lg backdrop-blur-xl">
+        <div className="relative border-t border-border bg-navy-950/95 shadow-lg backdrop-blur-xl">
           <div className="container px-6 py-8">
             <div className="flex flex-col space-y-6">
               {/* PIC Section */}
               {isPIC && (
                 <div className="group">
-                  <div className="rounded-2xl border border-blue-500/35 bg-blue-500/10 p-5 shadow-sm">
+                  <div className="rounded-2xl border border-frost-300/30 bg-frost-300/10 p-5 shadow-sm">
                     <div className="mb-4 flex items-center gap-2">
-                      <div className="h-2 w-2 animate-pulse rounded-full bg-blue-600"></div>
-                      <div className="text-xs font-bold uppercase tracking-wider text-blue-900">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-frost-300"></div>
+                      <div className="text-xs font-bold uppercase tracking-wider text-frost-300">
                         PIC Access
                       </div>
                     </div>
@@ -137,10 +137,10 @@ export default function Navbar() {
               {/* Active Section */}
               {isActive && (
                 <div className="group">
-                  <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 shadow-sm">
+                  <div className="rounded-2xl border border-periwinkle-300/30 bg-periwinkle-300/10 p-5 shadow-sm">
                     <div className="mb-4 flex items-center gap-2">
-                      <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-600"></div>
-                      <div className="text-xs font-bold uppercase tracking-wider text-emerald-900">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-periwinkle-300"></div>
+                      <div className="text-xs font-bold uppercase tracking-wider text-periwinkle-300">
                         Active Access
                       </div>
                     </div>

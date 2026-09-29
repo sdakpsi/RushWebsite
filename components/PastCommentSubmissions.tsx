@@ -146,7 +146,7 @@ export default function PastCommentSubmissions({
                         <button
                           type="button"
                           onClick={() => startEditingThread(thread)}
-                          className="rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
+                          className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-navy-950 transition-colors hover:bg-primary/90"
                         >
                           {isEditing ? "Editing..." : "Add Update"}
                         </button>
@@ -162,14 +162,14 @@ export default function PastCommentSubmissions({
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">
+                      <span className="rounded-full border border-border bg-navy-850 px-2 py-1 text-xs font-semibold text-foreground">
                         {latestComment.interaction ?? "Unknown"}
                       </span>
                       {latestComment.rubric_categories?.length ? (
                         latestComment.rubric_categories.map((category) => (
                           <span
                             key={`${thread.threadKey}-${category}`}
-                            className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                            className="rounded-full border border-primary/25 bg-primary/10 px-2 py-1 text-xs font-medium text-frost-300"
                           >
                             {category}
                           </span>
@@ -180,7 +180,7 @@ export default function PastCommentSubmissions({
                         </span>
                       )}
                     </div>
-                    <p className="line-clamp-2 whitespace-pre-line text-sm font-medium text-slate-900">
+                    <p className="line-clamp-2 whitespace-pre-line text-sm font-medium text-foreground">
                       {latestComment.comment ?? "No comment provided."}
                     </p>
                   </div>
@@ -196,11 +196,11 @@ export default function PastCommentSubmissions({
                           {historyEntries.map((commentEntry) => (
                             <div
                               key={commentEntry.id}
-                              className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+                              className="rounded-lg border border-border bg-navy-850 p-4"
                             >
-                              <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                              <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                                 <span>{formatTimestamp(commentEntry.created_at)}</span>
-                                <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-1 font-semibold text-slate-800">
+                                <span className="rounded-full border border-border bg-navy-850 px-2 py-1 font-semibold text-foreground">
                                   {commentEntry.interaction ?? "Unknown"}
                                 </span>
                               </div>
@@ -209,7 +209,7 @@ export default function PastCommentSubmissions({
                                   commentEntry.rubric_categories.map((category) => (
                                     <span
                                       key={`${commentEntry.id}-${category}`}
-                                      className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                                      className="rounded-full border border-primary/25 bg-primary/10 px-2 py-1 text-xs font-medium text-frost-300"
                                     >
                                       {category}
                                     </span>
@@ -220,7 +220,7 @@ export default function PastCommentSubmissions({
                                   </span>
                                 )}
                               </div>
-                              <p className="whitespace-pre-line text-sm text-slate-700">
+                              <p className="whitespace-pre-line text-sm text-foreground">
                                 {commentEntry.comment ?? "No comment provided."}
                               </p>
                             </div>
@@ -239,7 +239,7 @@ export default function PastCommentSubmissions({
                               <label className="mb-2 block text-sm font-medium text-foreground">
                                 Overall interaction
                               </label>
-                              <div className="grid grid-cols-3 gap-2 text-white">
+                              <div className="grid grid-cols-3 gap-2 text-foreground">
                                 {["Good", "Neutral", "Bad"].map((value) => (
                                   <button
                                     key={value}
@@ -247,11 +247,11 @@ export default function PastCommentSubmissions({
                                     className={`rounded-lg px-3 py-3 text-sm font-medium transition-all ${
                                       draftInteraction === value
                                         ? value === "Good"
-                                          ? "border-2 border-green-400 bg-green-600"
+                                          ? "border-2 border-success/50 bg-success text-navy-950"
                                           : value === "Neutral"
-                                            ? "border-2 border-yellow-400 bg-yellow-600"
-                                            : "border-2 border-red-400 bg-red-600"
-                                        : "border-2 border-transparent bg-gray-500 hover:bg-gray-600"
+                                            ? "border-2 border-warning/50 bg-warning text-navy-950"
+                                            : "border-2 border-destructive/50 bg-destructive text-navy-950"
+                                        : "border-2 border-transparent bg-navy-700 hover:bg-navy-600"
                                     }`}
                                     onClick={() => setDraftInteraction(value)}
                                   >
@@ -275,8 +275,8 @@ export default function PastCommentSubmissions({
                                       type="button"
                                       className={`rounded-lg px-4 py-3 text-left text-sm font-medium transition-all ${
                                         isSelected
-                                          ? "border-2 border-blue-400 bg-blue-600 text-white"
-                                          : "border-2 border-transparent bg-gray-500 text-white hover:bg-gray-600"
+                                          ? "border-2 border-primary/50 bg-primary text-navy-950"
+                                          : "border-2 border-transparent bg-navy-700 text-foreground hover:bg-navy-600"
                                       }`}
                                       onClick={() => toggleRubricCategory(category)}
                                     >
@@ -292,7 +292,7 @@ export default function PastCommentSubmissions({
                                 Update note
                               </label>
                               <textarea
-                                className="w-full rounded-lg border-2 border-gray-300 p-4 text-base text-gray-700 transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                className="w-full rounded-lg border-2 border-border p-4 text-base text-foreground transition-all focus:border-primary focus:ring-2 focus:ring-primary/25"
                                 placeholder="Add any new context, follow-up details, or changes in your opinion."
                                 value={draftComment}
                                 onChange={(event) => setDraftComment(event.target.value)}
@@ -306,7 +306,7 @@ export default function PastCommentSubmissions({
                                 type="button"
                                 onClick={() => void submitUpdate(thread)}
                                 disabled={isSubmittingThreadKey === thread.threadKey}
-                                className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-navy-950 transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                               >
                                 {isSubmittingThreadKey === thread.threadKey
                                   ? "Saving..."
@@ -315,7 +315,7 @@ export default function PastCommentSubmissions({
                               <button
                                 type="button"
                                 onClick={cancelEditingThread}
-                                className="rounded-lg bg-gray-200 px-5 py-2 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-300"
+                                className="rounded-lg bg-navy-800 px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-navy-700"
                               >
                                 Cancel
                               </button>

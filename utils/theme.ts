@@ -42,27 +42,29 @@ export interface Theme {
 // Current Theme - Update this for future rushes
 export const currentTheme: Theme = {
   name: "Fall 2026 Rush",
+  // "Into Full Bloom" palette: navy base (#161e2d/#1e2637/#24283a/#262d3e)
+  // with frost-blue text (#f2f6fe/#d7e5f9/#c0d9fd) and periwinkle accents (#bdc3e6/#9aa5c9).
   colors: {
-    primary: "221 39% 11%",
-    primaryForeground: "210 40% 98%",
-    secondary: "210 40% 98%",
-    secondaryForeground: "221 39% 11%",
-    accent: "217 39% 94%",
-    accentForeground: "221 39% 11%",
-    background: "222 47% 11%",
-    foreground: "221 39% 11%",
-    muted: "217 39% 94%",
-    mutedForeground: "215 25% 27%",
-    border: "217 33% 79%",
-    input: "210 40% 98%",
-    ring: "217 33% 45%",
-    destructive: "0 72% 51%",
-    destructiveForeground: "0 0% 100%",
-    success: "142 72% 29%",
-    warning: "38 92% 50%",
-    info: "217 33% 35%",
-    gradientFrom: "222 47% 11%",
-    gradientTo: "217 33% 35%",
+    primary: "215 94% 87%",          // #c0d9fd
+    primaryForeground: "219 34% 13%", // #161e2d
+    secondary: "223 24% 20%",        // #262d3e
+    secondaryForeground: "220 86% 97%", // #f2f6fe
+    accent: "226 26% 25%",           // #2f3750
+    accentForeground: "220 86% 97%",
+    background: "219 34% 13%",       // #161e2d
+    foreground: "220 86% 97%",       // #f2f6fe
+    muted: "229 23% 18%",            // #24283a
+    mutedForeground: "226 30% 70%",  // #9aa5c9
+    border: "226 26% 25%",
+    input: "229 23% 18%",
+    ring: "215 94% 87%",
+    destructive: "355 72% 68%",
+    destructiveForeground: "219 34% 13%",
+    success: "158 44% 62%",
+    warning: "38 80% 70%",
+    info: "215 94% 87%",
+    gradientFrom: "221 29% 17%",     // #1e2637
+    gradientTo: "215 94% 87%",       // #c0d9fd
   },
   branding: {
     rushYear: "Fall '26",
@@ -179,5 +181,12 @@ export function generateThemeCSS(theme: Theme): string {
     --btn-background: ${theme.colors.primary};
     --btn-background-hover: ${theme.colors.primary};
     --btn-foreground: ${theme.colors.primaryForeground};
+    --btn-secondary: ${theme.colors.secondary};
+    --btn-secondary-hover: ${theme.colors.accent};
+    --btn-secondary-foreground: ${theme.colors.secondaryForeground};
+    --card: ${theme.colors.secondary};
+    --card-foreground: ${theme.colors.secondaryForeground};
+    --popover: ${theme.colors.muted};
+    --popover-foreground: ${theme.colors.foreground};
   `;
 }

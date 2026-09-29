@@ -324,27 +324,27 @@ export default function Page() {
               <div className="flex flex-col items-center space-y-4">
                 <div className="flex gap-2 sm:gap-4 w-full max-w-md">
                   <button
-                    className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold text-white transition-all duration-200 touch-manipulation active:scale-95 ${
+                    className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold transition-all duration-200 touch-manipulation active:scale-95 ${
                       viewMode === 'search'
-                        ? 'bg-blue-600 hover:bg-blue-700 shadow-lg'
-                        : 'bg-gray-500 hover:bg-gray-600'
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg'
+                        : 'bg-navy-700 text-foreground hover:bg-navy-600'
                     }`}
                     onClick={() => setViewMode('search')}
                   >
                     Search
                   </button>
                   <button
-                    className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold text-white transition-all duration-200 touch-manipulation active:scale-95 ${
+                    className={`flex-1 rounded-lg px-4 py-3 sm:px-6 font-semibold transition-all duration-200 touch-manipulation active:scale-95 ${
                       viewMode === 'grid'
-                        ? 'bg-blue-600 hover:bg-blue-700 shadow-lg'
-                        : 'bg-gray-500 hover:bg-gray-600'
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg'
+                        : 'bg-navy-700 text-foreground hover:bg-navy-600'
                     }`}
                     onClick={() => setViewMode('grid')}
                   >
                     Grid
                   </button>
                 </div>
-                <p className="text-sm text-gray-400 text-center max-w-2xl">
+                <p className="text-sm text-muted-foreground text-center max-w-2xl">
                   Use <strong>Search View</strong> to search for prospects manually. <br></br>
                   Use <strong>Grid View</strong> to browse all prospects in a grid layout and see their photos.
                 </p>
@@ -376,39 +376,39 @@ export default function Page() {
               )}
 
               {selectedProspect ? (
-                <div className="bg-green-100 border-2 border-green-500 rounded-lg p-4 w-full max-w-2xl mx-auto" data-selected-prospect>
+                <div className="bg-success/15 border-2 border-success rounded-lg p-4 w-full max-w-2xl mx-auto" data-selected-prospect>
                   <div className="flex flex-col items-center">
-                    <div className="text-lg font-semibold text-green-800 mb-3">
+                    <div className="text-lg font-semibold text-success mb-3">
                       Selected Prospect
                     </div>
                     {selectedProspect.photo_url ? (
                       <img
                         src={selectedProspect.photo_url}
                         alt={selectedProspect.full_name}
-                        className="w-20 h-20 rounded-full object-cover mb-3 border-2 border-green-600"
+                        className="w-20 h-20 rounded-full object-cover mb-3 border-2 border-success"
                       />
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center mb-3 border-2 border-green-700">
-                        <span className="text-white text-2xl font-semibold">
+                      <div className="w-20 h-20 rounded-full bg-success flex items-center justify-center mb-3 border-2 border-success/80">
+                        <span className="text-navy-950 text-2xl font-semibold">
                           {selectedProspect.full_name.charAt(0).toUpperCase()}
                         </span>
                       </div>
                     )}
-                    <div className="text-xl font-bold text-green-900">
+                    <div className="text-xl font-bold text-success">
                       {selectedProspect.full_name}
                     </div>
-                    <div className="text-sm text-green-700">
+                    <div className="text-sm text-success">
                       {selectedProspect.email}
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 w-full max-w-2xl mx-auto">
+                <div className="bg-warning/15 border-2 border-warning rounded-lg p-4 w-full max-w-2xl mx-auto">
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-yellow-800 mb-1">
+                    <div className="text-lg font-semibold text-warning mb-1">
                       No Prospect Selected
                     </div>
-                    <div className="text-sm text-yellow-700">
+                    <div className="text-sm text-warning">
                       Please select a prospect from {viewMode === 'search' ? 'search' : 'grid'} above
                     </div>
                   </div>
@@ -429,7 +429,7 @@ export default function Page() {
               {viewMode === 'grid' && selectedProspect && (
                 <div className="flex justify-center">
                   <button
-                    className="rounded-lg bg-gray-500 px-6 py-3 text-white font-medium hover:bg-gray-600 transition-all duration-200 touch-manipulation active:scale-95 shadow-md"
+                    className="rounded-lg bg-navy-700 px-6 py-3 text-foreground font-medium hover:bg-navy-600 transition-all duration-200 touch-manipulation active:scale-95 shadow-md"
                     onClick={() => {
                       setSelectedProspect(null);
                       resetDraftState();
@@ -441,11 +441,11 @@ export default function Page() {
               )}
 
               {existingThread && (selectedProspect != null || checked) ? (
-                <div className="mx-auto w-full max-w-2xl rounded-lg border border-slate-300 bg-slate-100 p-4 text-slate-800">
-                  <p className="text-sm font-semibold text-slate-900">
+                <div className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-navy-850 p-4 text-foreground">
+                  <p className="text-sm font-semibold text-foreground">
                     You already have a comment thread for this prospect.
                   </p>
-                  <p className="mt-1 text-sm text-slate-700">
+                  <p className="mt-1 text-sm text-foreground">
                     Use the matching card in <strong>Your Comments</strong> above to review history and add an inline update.
                   </p>
                 </div>
@@ -456,7 +456,7 @@ export default function Page() {
                 <div className="flex flex-col" data-comment-form>
                   {checked && !selectedProspect && (
                     <textarea
-                      className="rounzded border p-1 text-gray-700"
+                      className="rounzded border p-1 text-foreground"
                       placeholder="Enter prospect name"
                       value={newProspectName}
                       onChange={(e) => setNewProspectName(e.target.value)}
@@ -465,15 +465,15 @@ export default function Page() {
                   )}
 
                   <div className="mt-4 flex flex-col">
-                    <label className="mb-2 text-gray-700">
+                    <label className="mb-2 text-foreground">
                       How was the interaction?
                     </label>
-                    <div className="grid grid-cols-3 gap-2 sm:gap-4 text-white">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4 text-foreground">
                       <button
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           interaction === "Good"
-                            ? "bg-green-600 shadow-lg border-2 border-green-400"
-                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
+                            ? "bg-success text-navy-950 shadow-lg border-2 border-success/50"
+                            : "bg-navy-700 hover:bg-navy-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Good")}
                       >
@@ -482,8 +482,8 @@ export default function Page() {
                       <button
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           interaction === "Neutral"
-                            ? "bg-yellow-600 shadow-lg border-2 border-yellow-400"
-                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
+                            ? "bg-warning text-navy-950 shadow-lg border-2 border-warning/50"
+                            : "bg-navy-700 hover:bg-navy-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Neutral")}
                       >
@@ -492,8 +492,8 @@ export default function Page() {
                       <button
                         className={`rounded-lg px-3 py-3 sm:px-4 font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                           interaction === "Bad"
-                            ? "bg-red-600 shadow-lg border-2 border-red-400"
-                            : "bg-gray-500 hover:bg-gray-600 border-2 border-transparent"
+                            ? "bg-destructive text-navy-950 shadow-lg border-2 border-destructive/50"
+                            : "bg-navy-700 hover:bg-navy-600 border-2 border-transparent"
                         }`}
                         onClick={() => setInteraction("Bad")}
                       >
@@ -504,13 +504,13 @@ export default function Page() {
 
                   <div className="mt-4 flex flex-col">
                     <div className="mb-2 flex items-center gap-2">
-                      <label className="text-gray-700">
+                      <label className="text-foreground">
                         Relevant rubric categories (optional)
                       </label>
                       <div className="relative" ref={rubricInfoRef}>
                         <button
                           type="button"
-                          className="flex h-5 w-5 items-center justify-center rounded-full border border-black bg-background text-black shadow-sm transition-transform duration-150 hover:scale-105 hover:bg-muted/40"
+                          className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition-transform duration-150 hover:scale-105 hover:bg-muted/40"
                           aria-label="Show rubric category descriptions"
                           aria-expanded={isRubricInfoOpen}
                           aria-haspopup="dialog"
@@ -552,8 +552,8 @@ export default function Page() {
                             type="button"
                             className={`rounded-lg px-4 py-3 text-left font-medium transition-all duration-200 touch-manipulation active:scale-95 ${
                               isSelected
-                                ? "border-2 border-blue-400 bg-blue-600 text-white shadow-lg"
-                                : "border-2 border-transparent bg-gray-500 text-white hover:bg-gray-600"
+                                ? "border-2 border-primary/50 bg-primary text-navy-950 shadow-lg"
+                                : "border-2 border-transparent bg-navy-700 text-foreground hover:bg-navy-600"
                             }`}
                             onClick={() => toggleRubricCategory(category)}
                             aria-pressed={isSelected}
@@ -565,22 +565,22 @@ export default function Page() {
                     </div>
                   </div>
 
-                  <label className="mb-2 mt-4 text-gray-700">
+                  <label className="mb-2 mt-4 text-foreground">
                     Explain the interaction (minimum 15 words):
                   </label>
                   <textarea
-                    className="rounded-lg border-2 border-gray-300 p-4 text-gray-700 text-base leading-relaxed resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                    className="rounded-lg border-2 border-border p-4 text-foreground text-base leading-relaxed resize-none focus:border-primary focus:ring-2 focus:ring-primary/25 transition-all duration-200"
                     placeholder="Be detailed, this will be used in delibs! Include what you talked about, their responses, and your overall impression."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={5}
                     style={{ fontSize: '16px' }} // Prevents zoom on iOS
                   />
-                  <div className="mt-2 text-xs text-gray-400">
+                  <div className="mt-2 text-xs text-muted-foreground">
                     Word count: {comment.trim() ? comment.trim().split(/\s+/).length : 0} (minimum 15 words)
                   </div>
                   <button
-                    className="mb-4 mt-6 self-center rounded-lg bg-blue-600 px-8 py-4 text-white font-semibold text-lg hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="mb-4 mt-6 self-center rounded-lg bg-primary px-8 py-4 text-navy-950 font-semibold text-lg hover:bg-primary/90 active:bg-primary/80 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={submitComment}
                     disabled={createCommentMutation.isPending}
                   >

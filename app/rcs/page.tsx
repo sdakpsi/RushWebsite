@@ -79,11 +79,11 @@ export default function ProtectedPage() {
                 Interest Form Submissions
                 <FontAwesomeIcon
                   icon={faRefresh}
-                  className="ml-2 cursor-pointer text-blue-500"
+                  className="ml-2 cursor-pointer text-primary"
                   onClick={fetchData}
                 />
               </p>
-              <table className="mt-4 min-w-full border-gray-200 bg-black text-left">
+              <table className="mt-4 min-w-full border-border bg-card text-left">
                 <thead>
                   <tr>
                     <th className="border px-4 py-2">#</th>
@@ -93,7 +93,7 @@ export default function ProtectedPage() {
                       Email{" "}
                       <FontAwesomeIcon
                         icon={faCopy}
-                        className="ml-2 cursor-pointer text-blue-500"
+                        className="ml-2 cursor-pointer text-primary"
                         onClick={copyEmails}
                       />
                     </th>
@@ -101,7 +101,7 @@ export default function ProtectedPage() {
                       Phone{" "}
                       <FontAwesomeIcon
                         icon={faCopy}
-                        className="ml-2 cursor-pointer text-blue-500"
+                        className="ml-2 cursor-pointer text-primary"
                         onClick={copyPhones}
                       />
                     </th>

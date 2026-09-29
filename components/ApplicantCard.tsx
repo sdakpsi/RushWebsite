@@ -71,20 +71,20 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({
         </div>
         <div className="mt-2 text-left">
           {numCaseStudies >= 3 ? (
-            <p className="text-xs text-emerald-700">
+            <p className="text-xs text-success">
               {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           ) : (
-            <p className="text-xs text-rose-600">
+            <p className="text-xs text-destructive">
               {numCaseStudies} Cases: {caseActives.join(", ")}
             </p>
           )}
           {numInterviews >= 3 ? (
-            <p className="text-xs text-emerald-700">
+            <p className="text-xs text-success">
               {numInterviews} Interviews: {interviewActives.join(", ")}
             </p>
           ) : (
-            <p className="text-xs text-rose-600">
+            <p className="text-xs text-destructive">
               {numInterviews} Interviews: {interviewActives.join(", ")}
             </p>
           )}

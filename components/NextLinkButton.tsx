@@ -13,7 +13,7 @@ const NextLinkButton: React.FC<NextLinkButtonProps> = ({
   return (
     <Link
       href={destination}
-      className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
+      className="px-6 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition duration-300"
     >
       {children}
     </Link>

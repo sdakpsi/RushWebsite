@@ -270,7 +270,7 @@ export default function MultipleCaseStudyManager({
             <>
               <button
                 onClick={clearAllForms}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="px-4 py-2 bg-destructive text-navy-950 rounded hover:bg-destructive/90"
               >
                 Clear All
               </button>
@@ -348,11 +348,11 @@ export default function MultipleCaseStudyManager({
               {/* Status icon */}
               <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                 activeForm.status === "submitted"
-                  ? "bg-green-100 text-green-800"
+                  ? "bg-success/15 text-success"
                   : activeForm.status === "error"
-                    ? "bg-red-100 text-red-700 animate-pulse"
+                    ? "bg-destructive/15 text-destructive animate-pulse"
                     : activeForm.status === "submitting"
-                      ? "bg-gray-200 text-gray-700"
+                      ? "bg-navy-800 text-foreground"
                       : "bg-muted text-muted-foreground"
               }`}>
                 <span className={activeForm.status === "submitting" ? "animate-spin" : ""}>
@@ -376,7 +376,7 @@ export default function MultipleCaseStudyManager({
               
               {/* Auto-save indicator */}
               {autoSaveStatus[activeForm.id]?.saving && (
-                <div className="w-3 h-3 border border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-3 h-3 border border-border border-t-transparent rounded-full animate-spin"></div>
               )}
             </div>
           </div>
@@ -435,7 +435,7 @@ export default function MultipleCaseStudyManager({
               <button
                 type="button"
                 onClick={handleConfirmDelete}
-                className="rounded-2xl bg-red-600 px-8 py-3 text-2xl font-semibold text-white transition-colors hover:bg-red-700"
+                className="rounded-2xl bg-destructive px-8 py-3 text-2xl font-semibold text-navy-950 transition-colors hover:bg-destructive/90"
               >
                 Delete
               </button>

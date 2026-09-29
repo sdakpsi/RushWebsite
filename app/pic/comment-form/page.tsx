@@ -14,9 +14,9 @@ import { redirect } from "next/navigation";
 import { RUBRIC_CATEGORIES, type RubricCategory } from "@/lib/types";
 
 const RUBRIC_CATEGORY_STYLES: Record<RubricCategory, string> = {
-  "Values Community": "border-emerald-200 bg-emerald-50 text-emerald-900",
-  "Growth Potential": "border-amber-200 bg-amber-50 text-amber-900",
-  "Vulnerability / Introspection": "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900",
+  "Values Community": "border-success/25 bg-success/10 text-success",
+  "Growth Potential": "border-warning/25 bg-warning/10 text-warning",
+  "Vulnerability / Introspection": "border-periwinkle-300/25 bg-periwinkle-300/10 text-periwinkle-300",
 };
 
 export default function ProtectedPage() {
@@ -159,7 +159,7 @@ export default function ProtectedPage() {
       <div className="flex w-full items-center justify-center">
         <div className="animate-in w-full max-w-7xl opacity-0">
           <div className="mt-8 flex items-center justify-center">
-            <p className="text-sm sm:text-lg text-red-400">
+            <p className="text-sm sm:text-lg text-destructive">
               Error loading comments: {commentsError instanceof Error ? commentsError.message : 'Unknown error'}
             </p>
           </div>
@@ -311,14 +311,14 @@ export default function ProtectedPage() {
                     )}
                     <span className="min-w-0 truncate text-lg font-bold text-foreground">
                       {prospectId.slice(0, 5) === "66666" && (
-                        <span className="text-red-600">*</span>
+                        <span className="text-destructive">*</span>
                       )}{" "}
                       {prospectName}
                     </span>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <span className="whitespace-nowrap text-sm text-muted-foreground">
-                      <span className="font-semibold text-green-600">
+                      <span className="font-semibold text-success">
                         {goodInteractionCount} Good
                       </span>{" "}
                       | {numberOfComments}{" "}
@@ -422,7 +422,7 @@ export default function ProtectedPage() {
                                   [thread.threadKey]: !currentValue[thread.threadKey],
                                 }))
                               }
-                              className="text-xs font-semibold text-blue-700 hover:text-blue-900"
+                              className="text-xs font-semibold text-frost-300 hover:text-frost-100"
                             >
                               {expandedThreadHistory[thread.threadKey]
                                 ? "Hide Full History"
@@ -443,7 +443,7 @@ export default function ProtectedPage() {
                                       }).format(new Date(commentEntry.created_at))}
                                     </div>
                                     <div className="mb-2 flex flex-wrap gap-2">
-                                      <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">
+                                      <span className="rounded-full border border-border bg-navy-850 px-2 py-1 text-xs font-semibold text-foreground">
                                         {commentEntry.interaction || "No data"}
                                       </span>
                                       {commentEntry.rubric_categories?.length ? (
@@ -480,8 +480,8 @@ export default function ProtectedPage() {
 
               {/* Linking interface for unlinked comments */}
               {isUnlinkedSection && linkingMode[prospectId] && (
-                <div className="mt-2 rounded-lg border border-sky-200 bg-sky-50/80 p-4">
-                  <h4 className="mb-3 text-sm font-semibold text-sky-950">
+                <div className="mt-2 rounded-lg border border-primary/25 bg-primary/10 p-4">
+                  <h4 className="mb-3 text-sm font-semibold text-frost-300">
                     Link "{prospectName}" to an existing prospect:
                   </h4>
                   
@@ -509,7 +509,7 @@ export default function ProtectedPage() {
                                   });
                                 }}
                                 disabled={linkCommentsMutation.isPending}
-                                className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                                className="rounded bg-success px-3 py-1 text-xs font-medium text-navy-950 transition-colors hover:bg-success/90 disabled:opacity-50"
                               >
                                 {linkCommentsMutation.isPending ? 'Linking...' : 'Link'}
                               </button>

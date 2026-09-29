@@ -48,29 +48,29 @@ const Timer = () => {
 
   return (
     <div className="flex justify-center gap-5">
-      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-white lg:w-[6rem]">
+      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-btn-foreground lg:w-[6rem]">
         <p className="text-2xl font-bold lg:text-5xl">
           {formatTime(timeLeft.days)}
         </p>
-        <p className="lg:text-md text-xs text-gray-400">Days</p>
+        <p className="lg:text-md text-xs text-btn-foreground/70">Days</p>
       </div>
-      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-white lg:w-[6rem]">
+      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-btn-foreground lg:w-[6rem]">
         <p className="text-2xl font-bold lg:text-5xl">
           {formatTime(timeLeft.hours)}
         </p>
-        <p className="lg:text-md text-xs text-gray-400">Hours</p>
+        <p className="lg:text-md text-xs text-btn-foreground/70">Hours</p>
       </div>
-      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-white lg:w-[6rem]">
+      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-btn-foreground lg:w-[6rem]">
         <p className="text-2xl font-bold lg:text-5xl">
           {formatTime(timeLeft.minutes)}
         </p>
-        <p className="lg:text-md text-xs text-gray-400">Minutes</p>
+        <p className="lg:text-md text-xs text-btn-foreground/70">Minutes</p>
       </div>
-      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-white lg:w-[6rem]">
+      <div className="w-[4.5rem] rounded-lg bg-btn-background p-3 text-center text-btn-foreground lg:w-[6rem]">
         <p className="text-2xl font-bold lg:text-5xl">
           {formatTime(timeLeft.seconds)}
         </p>
-        <p className="lg:text-md text-xs text-gray-400">Seconds</p>
+        <p className="lg:text-md text-xs text-btn-foreground/70">Seconds</p>
       </div>
     </div>
   );

@@ -18,9 +18,9 @@ function ProspectCard({
   return (
     <div
       className={`
-        rounded-lg bg-gray-200 border border-gray-300 p-2 shadow-md transition-shadow duration-200 hover:shadow-lg cursor-pointer
+        rounded-lg bg-navy-800 border border-border p-2 shadow-md transition-shadow duration-200 hover:shadow-lg cursor-pointer
         ${isSelected 
-          ? 'ring-2 ring-gray-600' 
+          ? 'ring-2 ring-border' 
           : ''
         }
       `}
@@ -30,8 +30,8 @@ function ProspectCard({
         className={`
           flex items-center justify-between rounded-lg px-6 py-4 transition-colors duration-200
           ${isSelected 
-            ? 'bg-gray-400 text-gray-900 hover:bg-gray-500 border-2 border-gray-600' 
-            : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-200'
+            ? 'bg-navy-700 text-foreground hover:bg-navy-600 border-2 border-border' 
+            : 'bg-navy-850 text-foreground hover:bg-navy-800 border border-border'
           }
         `}
       >
@@ -42,11 +42,11 @@ function ProspectCard({
               <img 
                 src={prospect.photo_url} 
                 alt={`${prospect.full_name}'s photo`}
-                className={`w-16 h-16 object-cover rounded-full border-2 ${isSelected ? 'border-gray-600' : 'border-gray-400'}`}
+                className={`w-16 h-16 object-cover rounded-full border-2 ${isSelected ? 'border-border' : 'border-border'}`}
               />
             ) : (
-              <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center border-2 border-gray-400">
-                <span className="text-sm text-gray-700 font-medium">
+              <div className="w-16 h-16 bg-navy-800 rounded-full flex items-center justify-center border-2 border-border">
+                <span className="text-sm text-foreground font-medium">
                   {prospect.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </span>
               </div>
@@ -60,18 +60,18 @@ function ProspectCard({
                 {prospect.full_name}
               </span>
               {goodCommentCount < 2 && (
-                <span className="flex-shrink-0 rounded-full bg-rose-600 px-2 py-0.5 text-xs font-semibold text-white">
+                <span className="flex-shrink-0 rounded-full bg-destructive px-2 py-0.5 text-xs font-semibold text-navy-950">
                   {goodCommentCount} good
                 </span>
               )}
             </div>
-            <span className={`text-base truncate ${isSelected ? 'text-gray-700' : 'text-gray-600'}`}>
+            <span className={`text-base truncate ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
               {prospect.email}
             </span>
           </div>
         </div>
         {hasExistingComment && (
-          <span className="ml-3 px-3 py-2 rounded-full text-sm bg-green-100 text-green-800 border border-green-300 flex-shrink-0">
+          <span className="ml-3 px-3 py-2 rounded-full text-sm bg-success/15 text-success border border-success/30 flex-shrink-0">
             ✓ Comment
           </span>
         )}

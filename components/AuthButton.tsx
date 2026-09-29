@@ -42,16 +42,16 @@ const AuthButton: React.FC = () => {
     <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
       <div className="flex items-center gap-3">
         <div className={`h-10 w-10 rounded-xl flex items-center justify-center ring-1 ring-border/20 overflow-hidden shadow-lg ${
-          isPIC ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 shadow-purple-500/30' :
-          isActive ? 'bg-gradient-to-br from-blue-500 via-cyan-600 to-blue-700 shadow-blue-500/30' :
+          isPIC ? 'bg-frost-300 shadow-frost-300/25' :
+          isActive ? 'bg-periwinkle-300 shadow-periwinkle-300/25' :
           'bg-gradient-to-br from-primary/20 to-accent/20'
         }`}>
           {isPIC ? (
-            <span className="text-xs font-black text-white">
+            <span className="text-xs font-black text-navy-950">
               PIC
             </span>
           ) : isActive ? (
-            <span className="text-[0.5rem] font-black text-white leading-none">
+            <span className="text-[0.5rem] font-black text-navy-950 leading-none">
               ACTIVE
             </span>
           ) : hasPhoto && photoUrl ? (
@@ -74,11 +74,7 @@ const AuthButton: React.FC = () => {
       </div>
       <button
         onClick={signOut}
-        className="flex w-full items-center justify-center rounded-xl border border-red-400/40 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 active:scale-95 touch-manipulation sm:w-auto"
-        style={{
-          background:
-            "linear-gradient(to right, rgb(239 68 68 / 0.9), rgb(225 29 72 / 0.9))",
-        }}
+        className="flex w-full items-center justify-center rounded-xl border border-destructive/40 bg-destructive/15 px-4 py-2.5 text-sm font-medium text-destructive shadow-sm transition-all duration-200 hover:bg-destructive/25 focus:outline-none focus:ring-2 focus:ring-destructive/50 focus:ring-offset-2 active:scale-95 touch-manipulation sm:w-auto"
       >
         <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

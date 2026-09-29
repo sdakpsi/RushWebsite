@@ -793,7 +793,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     onClick={() => handleViewDocument(application.resume)}
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       application.resume
-                        ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700"
+                        ? "bg-success text-navy-950 shadow-md hover:bg-success/90"
                         : "cursor-not-allowed border border-border bg-muted text-muted-foreground"
                     }`}
                     disabled={!application.resume}
@@ -805,7 +805,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     onClick={() => handleViewDocument(application.cover_letter)}
                     className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
                       application.cover_letter
-                        ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700"
+                        ? "bg-success text-navy-950 shadow-md hover:bg-success/90"
                         : "cursor-not-allowed border border-border bg-muted text-muted-foreground"
                     }`}
                     disabled={!application.cover_letter}
@@ -817,7 +817,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
 
               <button
                 onClick={onClose}
-                className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white shadow-md transition-all duration-200 hover:bg-red-700"
+                className="rounded-lg bg-destructive px-3 py-2 text-sm font-medium text-navy-950 shadow-md transition-all duration-200 hover:bg-destructive/90"
               >
                 Close
               </button>
@@ -866,21 +866,21 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </h3>
                     <ul className="space-y-3 text-muted-foreground">
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Pronouns:</span>
+                        <span className="font-semibold text-frost-300">Pronouns:</span>
                         <span className="text-foreground">{application.pronouns}</span>
                       </li>
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Phone Number:</span>
+                        <span className="font-semibold text-frost-300">Phone Number:</span>
                         <span className="text-foreground">{application.phone_number}</span>
                       </li>
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Personal Email:</span>
+                        <span className="font-semibold text-frost-300">Personal Email:</span>
                         <span className="text-foreground">
                           {application.personal_email || "N/A"}
                         </span>
                       </li>
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Social Media:</span>
+                        <span className="font-semibold text-frost-300">Social Media:</span>
                         <div className="text-foreground">
                           {application.social_media ? (
                             <ul className="mt-1 space-y-1">
@@ -902,7 +902,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                   
                                   return (
                                     <li key={index} className="text-sm">
-                                      <span className="font-medium text-blue-800">
+                                      <span className="font-medium text-frost-300">
                                         {platform.charAt(0).toUpperCase() + platform.slice(1)}:
                                       </span>{" "}
                                       {isUrl ? (
@@ -910,7 +910,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                           href={url} 
                                           target="_blank" 
                                           rel="noopener noreferrer"
-                                          className="text-blue-700 underline hover:text-blue-900"
+                                          className="text-frost-300 underline hover:text-frost-100"
                                         >
                                           {answer}
                                         </a>
@@ -936,29 +936,29 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </h3>
                     <ul className="space-y-3 text-muted-foreground">
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Year:</span>
+                        <span className="font-semibold text-frost-300">Year:</span>
                         <span className="text-foreground">{application.year}</span>
                       </li>
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Graduation Year:</span>
+                        <span className="font-semibold text-frost-300">Graduation Year:</span>
                         <span className="text-foreground">{application.graduation_year}</span>
                       </li>
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Graduation Quarter:</span>
+                        <span className="font-semibold text-frost-300">Graduation Quarter:</span>
                         <span className="text-foreground">{application.graduation_qtr}</span>
                       </li>
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">Major:</span>
+                        <span className="font-semibold text-frost-300">Major:</span>
                         <span className="text-foreground">{application.major}</span>
                       </li>
                       {application.minors && (
                         <li className="flex flex-col">
-                          <span className="font-semibold text-blue-900">Minors:</span>
+                          <span className="font-semibold text-frost-300">Minors:</span>
                           <span className="text-foreground">{application.minors}</span>
                         </li>
                       )}
                       <li className="flex flex-col">
-                        <span className="font-semibold text-blue-900">GPA:</span>
+                        <span className="font-semibold text-frost-300">GPA:</span>
                         <span className="text-foreground">{application.gpa}</span>
                       </li>
                     </ul>
@@ -970,7 +970,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     {(
                       <ul className="space-y-3 text-muted-foreground">
                         <li className="flex flex-col">
-                          <span className="font-semibold text-blue-900">Case Study:</span>
+                          <span className="font-semibold text-frost-300">Case Study:</span>
                           <span className="text-foreground font-mono">
                             {Object.values(averages)
                               .reduce((acc, cur) => acc + cur, 0)
@@ -978,7 +978,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           </span>
                         </li>
                         <li className="flex flex-col">
-                          <span className="font-semibold text-blue-900">Interview:</span>
+                          <span className="font-semibold text-frost-300">Interview:</span>
                           <span className="text-foreground font-mono">
                             {Object.values(ivAverages)
                               .reduce((acc, cur) => acc + cur, 0)
@@ -986,7 +986,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           </span>
                         </li>
                         <li className="flex flex-col">
-                          <span className="font-semibold text-blue-900">
+                          <span className="font-semibold text-frost-300">
                             Application Score:
                           </span>
                           <span className="mb-3 text-base text-foreground">
@@ -1034,7 +1034,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           {isPIC && (
                             <div className="space-y-2">
                               <div className="flex flex-col gap-2 sm:flex-row">
-                                <label className="flex flex-col text-xs font-semibold text-blue-900">
+                                <label className="flex flex-col text-xs font-semibold text-frost-300">
                                   Prof
                                   <input
                                     type="text"
@@ -1046,7 +1046,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                     onChange={handleAppProfessionalismScoreChange}
                                   />
                                 </label>
-                                <label className="flex flex-col text-xs font-semibold text-blue-900">
+                                <label className="flex flex-col text-xs font-semibold text-frost-300">
                                   Broho
                                   <input
                                     type="text"
@@ -1070,7 +1070,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           )}
                         </li>
                         <li className="flex flex-col">
-                          <span className="font-semibold text-blue-900">Resume Score:</span>
+                          <span className="font-semibold text-frost-300">Resume Score:</span>
                           <span className="text-foreground font-mono">
                             {averageResumeScore != null ? averageResumeScore.toFixed(2) : "not set"}
                           </span>
@@ -1111,7 +1111,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           )}
                         </li>
                         <li className="flex flex-col border-t border-border pt-2">
-                          <span className="flex items-center gap-2 text-lg font-bold text-emerald-700">
+                          <span className="flex items-center gap-2 text-lg font-bold text-success">
                             <span>
                               Total Score: <span className="font-mono">{formatScore(totalScoreWithGoodComments)}</span>
                             </span>
@@ -1133,7 +1133,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         key={key}
                         className="rounded-lg border border-border bg-muted/50 p-4"
                       >
-                        <div className="mb-3 text-left text-base font-semibold leading-relaxed text-blue-900">
+                        <div className="mb-3 text-left text-base font-semibold leading-relaxed text-frost-300">
                           {prompt}
                         </div>
                         <div className="text-foreground text-sm leading-relaxed whitespace-pre-line">
@@ -1152,7 +1152,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                 <h3 className="text-2xl font-bold text-foreground mb-6">Case Study Notes</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div className="rounded-lg border border-border bg-card p-4 text-center shadow-sm">
-                    <div className="text-blue-900 font-semibold mb-2">
+                    <div className="text-frost-300 font-semibold mb-2">
                       Leadership
                     </div>
                     <div className="text-2xl font-bold text-foreground font-mono">
@@ -1160,7 +1160,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </div>
                   </div>
                   <div className="rounded-lg border border-border bg-card p-4 text-center shadow-sm">
-                    <div className="text-blue-900 font-semibold mb-2">
+                    <div className="text-frost-300 font-semibold mb-2">
                       Teamwork
                     </div>
                     <div className="text-2xl font-bold text-foreground font-mono">
@@ -1168,7 +1168,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </div>
                   </div>
                   <div className="rounded-lg border border-border bg-card p-4 text-center shadow-sm">
-                    <div className="text-blue-900 font-semibold mb-2">
+                    <div className="text-frost-300 font-semibold mb-2">
                       Analytical
                     </div>
                     <div className="text-2xl font-bold text-foreground font-mono">
@@ -1176,7 +1176,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     </div>
                   </div>
                   <div className="rounded-lg border border-border bg-card p-4 text-center shadow-sm">
-                    <div className="text-blue-900 font-semibold mb-2">
+                    <div className="text-frost-300 font-semibold mb-2">
                       Public Speaking
                     </div>
                     <div className="text-2xl font-bold text-foreground font-mono">
@@ -1193,7 +1193,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         key={attribute}
                         className={`mb-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-card p-4 md:grid-cols-5`}
                       >
-                        <div className="col-span-1 font-semibold text-blue-900">
+                        <div className="col-span-1 font-semibold text-frost-300">
                           {attribute
                             .split("_")
                             .map(
@@ -1223,7 +1223,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         key={attribute}
                         className={`mb-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-card p-4 md:grid-cols-5`}
                       >
-                        <div className="col-span-1 font-semibold text-blue-900">
+                        <div className="col-span-1 font-semibold text-frost-300">
                           {attribute
                             .split("_")
                             .map(
@@ -1262,7 +1262,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         key={attribute}
                         className={`mb-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-card p-4 md:grid-cols-5`}
                       >
-                        <div className="col-span-1 font-semibold text-blue-900">
+                        <div className="col-span-1 font-semibold text-frost-300">
                           {attribute
                             .split("_")
                             .map(
@@ -1297,7 +1297,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       key={key}
                       className="rounded-lg border border-border bg-card p-4 text-center shadow-sm"
                     >
-                      <div className="text-blue-900 font-semibold mb-2 capitalize text-sm">
+                      <div className="text-frost-300 font-semibold mb-2 capitalize text-sm">
                         {key.replace('_', ' ')}
                       </div>
                       <div className="text-xl font-bold text-foreground font-mono">
@@ -1315,7 +1315,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         key={key}
                         className={`mb-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-card p-4 md:grid-cols-5`}
                       >
-                        <div className="col-span-1 font-semibold text-blue-900">
+                        <div className="col-span-1 font-semibold text-frost-300">
                           {key
                             .split("_")
                             .map(
@@ -1349,7 +1349,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                           key={question}
                           className={`mb-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-card p-4 md:grid-cols-5`}
                         >
-                          <div className="col-span-1 font-semibold text-blue-900">
+                          <div className="col-span-1 font-semibold text-frost-300">
                             {question === "learning_about"
                               ? "Achievement"
                               : question
@@ -1388,7 +1388,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       <div className="flex items-center">
                         <input
                           type="text"
-                          className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-black"
+                          className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-foreground"
                           placeholder="Active name"
                           value={activeName}
                           onChange={handleActiveName}
@@ -1396,7 +1396,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         <div className="w-full">
                           <input
                             type="text"
-                            className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-black"
+                            className="input mr-2 mt-1 rounded px-2 py-1 text-lg text-foreground"
                             placeholder="Prospect comment"
                             value={comment}
                             onChange={handleComment}
@@ -1404,7 +1404,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                         </div>
                         <button
                           onClick={handleCommentSubmit}
-                          className="mt-1 rounded bg-blue-500 px-2 py-1 text-lg font-bold text-white hover:bg-blue-700"
+                          className="mt-1 rounded bg-primary px-2 py-1 text-lg font-bold text-navy-950 hover:bg-primary/90"
                         >
                           Submit
                         </button>
@@ -1416,16 +1416,16 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                 )} */}
                 <div className="rounded-md border border-border bg-card p-6">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 text-center">
-                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-blue-900 shadow-sm">
+                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-frost-300 shadow-sm">
                       Active
                     </div>
-                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-blue-900 shadow-sm">
+                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-frost-300 shadow-sm">
                       Interaction
                     </div>
-                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-blue-900 shadow-sm">
+                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-frost-300 shadow-sm">
                       Rubric Tags
                     </div>
-                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-blue-900 shadow-sm">
+                    <div className="mb-2 rounded-lg border border-border bg-muted/50 p-4 text-center text-lg font-bold capitalize text-frost-300 shadow-sm">
                       Comment
                     </div>
                   </div>
@@ -1436,7 +1436,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                       return (
                         <div key={thread.threadKey} className="rounded-lg border border-border bg-muted/40 p-3">
                           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                            <div className="font-semibold text-blue-900">
+                            <div className="font-semibold text-frost-300">
                               {thread.active_name}
                             </div>
                             <div className="text-foreground">
@@ -1448,7 +1448,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                   {thread.latest_comment.rubric_categories.map((category: string) => (
                                     <span
                                       key={`${thread.threadKey}-${category}`}
-                                      className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                                      className="rounded-full border border-primary/25 bg-primary/10 px-2 py-1 text-xs font-medium text-frost-300"
                                     >
                                       {category}
                                     </span>
@@ -1473,7 +1473,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                     [thread.threadKey]: !currentValue[thread.threadKey],
                                   }))
                                 }
-                                className="text-sm font-medium text-blue-700 hover:text-blue-900"
+                                className="text-sm font-medium text-frost-300 hover:text-frost-100"
                               >
                                 {isExpanded ? "Hide full history" : `Show full history (${thread.history.length})`}
                               </button>
@@ -1492,14 +1492,14 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                                         }).format(new Date(commentEntry.created_at))}
                                       </div>
                                       <div className="mb-2 flex flex-wrap gap-2">
-                                        <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">
+                                        <span className="rounded-full border border-border bg-navy-850 px-2 py-1 text-xs font-semibold text-foreground">
                                           {commentEntry.interaction}
                                         </span>
                                         {commentEntry.rubric_categories?.length ? (
                                           commentEntry.rubric_categories.map((category) => (
                                             <span
                                               key={`${commentEntry.id}-${category}`}
-                                              className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-900"
+                                              className="rounded-full border border-primary/25 bg-primary/10 px-2 py-1 text-xs font-medium text-frost-300"
                                             >
                                               {category}
                                             </span>
@@ -1544,7 +1544,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                             key={key}
                             className="rounded-lg border border-border bg-muted/50 p-4"
                           >
-                            <div className="mb-2 flex items-center gap-2 font-semibold text-blue-900">
+                            <div className="mb-2 flex items-center gap-2 font-semibold text-frost-300">
                               <span>{componentCopy.label}</span>
                               <span className="group relative inline-flex">
                                 <button
@@ -1571,8 +1571,8 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
                     )}
                   </div>
                   <div className="text-center">
-                    <div className="inline-block rounded-lg border border-emerald-300 bg-emerald-100 p-4">
-                      <div className="mb-2 font-semibold text-emerald-900">Total Score</div>
+                    <div className="inline-block rounded-lg border border-success/30 bg-success/15 p-4">
+                      <div className="mb-2 font-semibold text-success">Total Score</div>
                       <div className="flex items-center justify-center gap-2 font-mono text-2xl font-bold text-foreground">
                         <span>{formatScore(totalScoreWithGoodComments)}</span>
                         <TotalScoreInfoButton tooltip={totalScoreTooltip} />
@@ -1645,7 +1645,7 @@ const ApplicationPopup: React.FC<ApplicationPopupProps> = ({
             </div>
             <button
               onClick={() => setViewDocument(null)}
-              className="absolute right-2 top-2 rounded-lg bg-red-600 px-4 py-2 font-semibold text-white shadow-md transition-colors hover:bg-red-700"
+              className="absolute right-2 top-2 rounded-lg bg-destructive px-4 py-2 font-semibold text-navy-950 shadow-md transition-colors hover:bg-destructive/90"
             >
               Close
             </button>

@@ -49,14 +49,14 @@ export default function ActiveLoginComponent() {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          className="px-4 py-2 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition duration-300 text-black"
+          className="px-4 py-2 rounded-lg border-2 border-border focus:outline-none focus:border-primary transition duration-300 text-foreground"
           placeholder="Enter the password"
         />
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-2 bg-primary text-navy-950 rounded hover:bg-primary/90 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Verifying...' : 'Submit'}
         </button>

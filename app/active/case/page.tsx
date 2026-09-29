@@ -98,7 +98,7 @@ export default function ProtectedPage() {
         {isActive ? (
           <div className="container mx-auto px-4 pt-6 pb-24 relative">
             {isSubmitting && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-lg">
+              <div className="absolute inset-0 bg-navy-950/50 flex items-center justify-center z-50 rounded-lg">
                 <LoadingSpinner size="medium" fullScreen={false} />
               </div>
             )}
@@ -132,7 +132,7 @@ export default function ProtectedPage() {
                   <div className="flex gap-2 sm:gap-4 w-full max-w-md">
                    
                     <button
-                      className="flex-1 rounded-lg bg-blue-600 px-4 py-3 sm:px-6 font-semibold text-white hover:bg-blue-700 transition-all duration-200 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 rounded-lg bg-primary px-4 py-3 sm:px-6 font-semibold text-navy-950 hover:bg-primary/90 transition-all duration-200 touch-manipulation active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => {
                         // Keep the original single form mode
                       }}
@@ -141,13 +141,13 @@ export default function ProtectedPage() {
                       Single Form
                     </button>
                     <button
-                      className="flex-1 rounded-lg bg-green-600 px-4 py-3 sm:px-6 font-semibold text-white hover:bg-green-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg"
+                      className="flex-1 rounded-lg bg-success px-4 py-3 sm:px-6 font-semibold text-navy-950 hover:bg-success/90 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg"
                       onClick={() => setShowingMultipleForms(true)}
                     >
                       Multiple Forms
                     </button>
                   </div>
-                  <p className="text-sm text-gray-600 text-center max-w-2xl">
+                  <p className="text-sm text-muted-foreground text-center max-w-2xl">
                     Use <strong>Single Form</strong> for the traditional one-at-a-time approach.<br></br>
                     Use <strong>Multiple Forms</strong> to evaluate multiple prospects at once with tabs.
                   </p>
@@ -159,7 +159,7 @@ export default function ProtectedPage() {
                 </p>
                 {selectedProspect && (
                   <button
-                    className="self-center rounded-lg bg-blue-500 px-6 py-4 font-bold text-white hover:bg-blue-700 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg text-lg"
+                    className="self-center rounded-lg bg-primary px-6 py-4 font-bold text-navy-950 hover:bg-primary/90 transition-all duration-200 touch-manipulation active:scale-95 shadow-lg text-lg"
                     onClick={handleStartCaseStudyForm}
                   >
                     Start Case Study Form
