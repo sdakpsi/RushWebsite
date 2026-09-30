@@ -74,8 +74,8 @@ export const currentTheme: Theme = {
     email: "akpfall2026rush@gmail.com",
     instagramHandle: "@ucsdakpsi",
     instagramUrl: "https://www.instagram.com/ucsdakpsi/",
-    applicationOpen: 'coming_soon',
-    applicationDeadline: '',
+    applicationOpen: 'closed',
+    applicationDeadline: 'Wednesday 10/7 at 2:00 PM',
   }
 };
 

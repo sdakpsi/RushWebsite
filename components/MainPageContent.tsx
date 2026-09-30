@@ -4,7 +4,7 @@ import Link from "next/link";
 import GoogleOAuth from "@/components/GoogleOAuth";
 import PhotoUploadWrapper from "@/components/PhotoUploadWrapper";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { RUSH_YEAR, APPLICATION_OPEN, APPLICATION_DEADLINE } from "@/utils/constants";
+import { RUSH_YEAR, APPLICATION_OPEN } from "@/utils/constants";
 
 export default function MainPageContent() {
   const { user, isActive, hasPhoto, photoUrl, isLoading } = useCurrentUser();
@@ -41,20 +41,6 @@ export default function MainPageContent() {
                 You must upload a picture of yourself before you can access the application. Please ensure your photo is well-lit and shows your face clearly.
               </p>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Application Deadline Notice - only show if user has photo and apps are open */}
-      {hasPhoto && APPLICATION_OPEN === 'open' && (
-        <div className="prospect-panel rounded-lg p-4">
-          <div className="flex items-center space-x-2">
-            <svg className="h-5 w-5 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="font-semibold text-info">
-              Application Due: {APPLICATION_DEADLINE}
-            </p>
           </div>
         </div>
       )}

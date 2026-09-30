@@ -7,7 +7,7 @@ import background from "./fall26background.jpeg";
 import tagline from "./fall26tagline.png";
 import MainPageContent from "@/components/MainPageContent";
 import { currentTheme } from "@/utils/theme";
-import { RUSH_EMAIL } from "@/utils/constants";
+import { APPLICATION_DEADLINE, RUSH_EMAIL } from "@/utils/constants";
 import { useOptionalAuth } from "@/hooks/useOptionalAuth";
 
 export default function Index() {
@@ -332,6 +332,28 @@ export default function Index() {
                             <p className="text-sm text-foreground">Tackle a real-life business problem and test your teamwork and analytical skills. Participation in Case Study Night is mandatory for membership consideration.</p>
                           </div>
                         </div>
+
+                        {/* Application Deadline - URGENT */}
+                        {APPLICATION_DEADLINE && (
+                          <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.6s' }}>
+                            <div className="relative z-20 flex-shrink-0">
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 prospect-glass bg-red-400/20 backdrop-blur-sm border border-red-400/30 rounded-xl flex items-center justify-center shadow-lg shadow-red-400/20 animate-urgent-pulse group-hover:animate-magnetic-hover">
+                                <div className="w-4 h-4 bg-red-400 rounded-lg shadow-sm animate-gentle-breathe"></div>
+                                <div className="absolute w-1 h-1 bg-red-300/60 rounded-full animate-particle-float" style={{ animationDelay: '1.5s' }}></div>
+                                <div className="absolute w-0.5 h-0.5 bg-red-200/40 rounded-full animate-particle-float" style={{ animationDelay: '2.5s' }}></div>
+                              </div>
+                            </div>
+                            <div className="min-w-0 flex-1 bg-red-400/10 backdrop-blur-sm border border-red-400/30 rounded-xl p-4 transition-all duration-300 hover:bg-red-400/20 hover:border-red-400/50 hover:shadow-xl hover:shadow-red-400/20 hover:scale-[1.01] animate-urgent-pulse">
+                              <div className="flex flex-wrap items-center gap-2 mb-2">
+                                <span className="whitespace-nowrap text-red-300 font-bold text-sm bg-red-400/20 px-2 py-1 rounded-full animate-pulse">Wed 10/7</span>
+                                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                                <span className="text-xs text-red-200 font-semibold bg-red-500/20 px-2 py-1 rounded-full animate-pulse">DEADLINE</span>
+                              </div>
+                              <h4 className="font-bold text-base text-foreground mb-1">Application Due</h4>
+                              <p className="text-sm text-muted-foreground">{APPLICATION_DEADLINE}</p>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Social Night */}
                         <div className="group flex items-start gap-3 sm:items-center sm:gap-6 animate-timeline-entrance" style={{ animationDelay: '0.7s' }}>
