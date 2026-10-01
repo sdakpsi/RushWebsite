@@ -57,7 +57,7 @@ export default function MainPageContent() {
                 Applications Opening Soon
               </p>
               <p className="text-sm text-muted-foreground">
-                Applications for {RUSH_YEAR} Rush will be opening soon. Stay tuned!
+                Applications for {RUSH_YEAR} Rush will be opening soon after Info Night. Stay tuned! 
               </p>
             </div>
           </div>
