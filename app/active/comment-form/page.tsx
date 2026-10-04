@@ -456,7 +456,7 @@ export default function Page() {
                 <div className="flex flex-col" data-comment-form>
                   {checked && !selectedProspect && (
                     <textarea
-                      className="rounzded border p-1 text-foreground"
+                      className="rounded border p-1 bg-white text-black placeholder:text-gray-500"
                       placeholder="Enter prospect name"
                       value={newProspectName}
                       onChange={(e) => setNewProspectName(e.target.value)}
@@ -569,7 +569,7 @@ export default function Page() {
                     Explain the interaction (minimum 15 words):
                   </label>
                   <textarea
-                    className="rounded-lg border-2 border-border p-4 text-foreground text-base leading-relaxed resize-none focus:border-primary focus:ring-2 focus:ring-primary/25 transition-all duration-200"
+                    className="rounded-lg border-2 border-border p-4 bg-white text-black placeholder:text-gray-500 text-base leading-relaxed resize-none focus:border-primary focus:ring-2 focus:ring-primary/25 transition-all duration-200"
                     placeholder="Be detailed, this will be used in delibs! Include what you talked about, their responses, and your overall impression."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}

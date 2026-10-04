@@ -113,7 +113,7 @@ export default function ProtectedPage() {
                     placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-grow rounded-lg border px-4 py-2 text-foreground shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="flex-grow rounded-lg border px-4 py-2 bg-white text-black placeholder:text-gray-500 shadow-sm transition duration-150 ease-in-out focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
                 <div className="flex flex-wrap gap-4 justify-center">

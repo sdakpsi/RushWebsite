@@ -313,7 +313,7 @@ export default function ActiveInterviewForm({
           <input
             type="text"
             id="otherActives"
-            className="flex-grow rounded-lg border border-border bg-background p-1 text-base text-foreground"
+            className="flex-grow rounded-lg border border-border bg-white p-1 text-base text-black placeholder:text-gray-500"
             {...register("otherActives", {
               required: "Other Actives on Panel is required",
             })}
@@ -444,7 +444,7 @@ export default function ActiveInterviewForm({
               ) : null}
               <textarea
                 id={question.name}
-                className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+                className="w-full rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500"
                 {...register(question.name, {
                   required:
                     index !== 7 && index !== 14
@@ -477,7 +477,7 @@ export default function ActiveInterviewForm({
             </label>
             <textarea
               id={"additionalComments"}
-              className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+              className="w-full rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500"
               {...register("additionalComments", {
                 required: false,
               })}
@@ -501,7 +501,7 @@ export default function ActiveInterviewForm({
                 {/* Added alignment and spacing between items */}
                 <div className="w-1/4">
                   <select
-                    className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+                    className="w-full rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500"
                     {...register(`${trait.propertyName}`, {
                       required: `Please select a value for ${trait.propertyName}`,
                     })}

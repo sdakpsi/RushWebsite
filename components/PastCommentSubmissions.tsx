@@ -292,7 +292,7 @@ export default function PastCommentSubmissions({
                                 Update note
                               </label>
                               <textarea
-                                className="w-full rounded-lg border-2 border-border p-4 text-base text-foreground transition-all focus:border-primary focus:ring-2 focus:ring-primary/25"
+                                className="w-full rounded-lg border-2 border-border p-4 text-base bg-white text-black placeholder:text-gray-500 transition-all focus:border-primary focus:ring-2 focus:ring-primary/25"
                                 placeholder="Add any new context, follow-up details, or changes in your opinion."
                                 value={draftComment}
                                 onChange={(event) => setDraftComment(event.target.value)}

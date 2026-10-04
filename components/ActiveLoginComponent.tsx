@@ -49,7 +49,7 @@ export default function ActiveLoginComponent() {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          className="px-4 py-2 rounded-lg border-2 border-border focus:outline-none focus:border-primary transition duration-300 text-foreground"
+          className="px-4 py-2 rounded-lg border-2 border-border focus:outline-none focus:border-primary transition duration-300 bg-white text-black placeholder:text-gray-500"
           placeholder="Enter the password"
         />
 

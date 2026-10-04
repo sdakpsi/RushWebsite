@@ -387,7 +387,7 @@ export default function ActiveCaseStudyForm({
           <input
             type="text"
             id="otherActives"
-            className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+            className="w-full rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500"
             onInput={handleUserInput}
             {...registerWithAutoSave("otherActives", {
               required: "Other Actives on Panel is required",
@@ -424,11 +424,11 @@ export default function ActiveCaseStudyForm({
                   isQnaDisabled &&
                   (question.label === "role" || question.label === "thoughts")
                 }
-                className={`w-full rounded-lg border border-border p-2.5 text-base text-foreground ${
+                className={`w-full rounded-lg border border-border p-2.5 text-base text-black placeholder:text-gray-500 ${
                   isQnaDisabled &&
                   (question.label === "role" || question.label === "thoughts")
-                    ? "cursor-not-allowed bg-muted"
-                    : "bg-background"
+                    ? "cursor-not-allowed bg-gray-100"
+                    : "bg-white"
                 }`}
                 onInput={handleUserInput}
                 {...registerWithAutoSave(
@@ -461,7 +461,7 @@ export default function ActiveCaseStudyForm({
               <label className="text-foreground">{trait.name + " Score"}</label>
               <div className="mt-1">
                 <select
-                  className="rounded-lg border border-border bg-background p-2.5 text-base text-foreground w-full max-w-[120px]"
+                  className="rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500 w-full max-w-[120px]"
                   {...registerWithAutoSave(`${trait.label}_score`, {
                     required: `Please select a value for ${trait.name}`,
                   })}
@@ -517,7 +517,7 @@ export default function ActiveCaseStudyForm({
           </label>
           <textarea
             id={"additionalComments"}
-            className="w-full rounded-lg border border-border bg-background p-2.5 text-base text-foreground"
+            className="w-full rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500"
             onInput={handleUserInput}
             {...register("additionalComments", {})}
           ></textarea>
