@@ -127,18 +127,6 @@ const APPLICATION_RESPONSE_FIELDS: Array<{
   prompt: string;
 }> = [
   {
-    key: "classes",
-    prompt: CURRENT_CLASSES_QUESTION,
-  },
-  {
-    key: "extracirriculars",
-    prompt: EXTRACURRICULAR_ACTIVITIES_QUESTION,
-  },
-  {
-    key: "previous_rush_terms",
-    prompt: PREVIOUS_RUSH_QUESTION,
-  },
-  {
     key: "accomplishment",
     prompt: PROUD_ACCOMPLISHMENT_QUESTION,
   },
@@ -161,6 +149,18 @@ const APPLICATION_RESPONSE_FIELDS: Array<{
   {
     key: "karaoke_song",
     prompt: KARAOKE_SONG_QUESTION,
+  },
+  {
+    key: "classes",
+    prompt: CURRENT_CLASSES_QUESTION,
+  },
+  {
+    key: "extracirriculars",
+    prompt: EXTRACURRICULAR_ACTIVITIES_QUESTION,
+  },
+  {
+    key: "previous_rush_terms",
+    prompt: PREVIOUS_RUSH_QUESTION,
   },
   {
     key: "additional",

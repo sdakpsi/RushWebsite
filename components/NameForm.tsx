@@ -764,14 +764,14 @@ export default function NameForm() {
             </div>
           </div>
 
-          {/* Social Media & Academic Information Section */}
+          {/* Social Media Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
               <h2 className="text-2xl font-bold text-foreground">
-                Social Media & Academic Information
+                Social Media
               </h2>
               <p className="text-muted-foreground">
-                Share your social media and academic details.
+                Share your social media profiles.
               </p>
             </div>
 
@@ -836,51 +836,14 @@ export default function NameForm() {
                   </div>
                 </div>
               </div>
-              <label className={textLabel} htmlFor="currentClasses">
-                {CURRENT_CLASSES_QUESTION}
-              </label>
-              <textarea
-                className={largeInput}
-                id="currentClasses"
-                value={currentClasses}
-                onChange={handleChange(setCurrentClasses)}
-                placeholder="MGT 3. Lecture: TuTh 9:00 AM - 10:20 AM. Discussion: M 3:00 PM"
-                rows={4}
-              />
-            </div>
-            <div className="mb-8">
-              <label className={textLabel} htmlFor="extracurricularActivities">
-                {EXTRACURRICULAR_ACTIVITIES_QUESTION}
-              </label>
-              <textarea
-                className={largeInput}
-                id="extracurricularActivities"
-                value={extracurricularActivities}
-                onChange={handleChange(setExtracurricularActivities)}
-                placeholder="Enter your activities"
-                rows={4}
-              />
-            </div>
-            <div className="mb-8">
-              <label className={textLabel} htmlFor="previousRushTerms">
-                {PREVIOUS_RUSH_QUESTION}
-              </label>
-              <input
-                className={smallInput}
-                id="previousRushTerms"
-                type="text"
-                value={previousRushTerms}
-                onChange={handleChange(setPreviousRushTerms)}
-                placeholder="Ex. Fall 2025, Spring 2025, or N/A"
-              />
             </div>
           </div>
 
-          {/* Essay Questions Section */}
+          {/* Application Questions Section */}
           <div className="space-y-6">
             <div className="border-b border-border pb-4">
               <h2 className="text-2xl font-bold text-foreground">
-                Essay Questions
+                Application Questions
               </h2>
               <p className="text-muted-foreground">
                 Please answer the following questions thoughtfully and observe
@@ -890,7 +853,7 @@ export default function NameForm() {
 
             <div className="mb-8">
               <label className={textLabel} htmlFor="proudAccomplishment">
-                {PROUD_ACCOMPLISHMENT_QUESTION}
+                1. {PROUD_ACCOMPLISHMENT_QUESTION}
               </label>
               <textarea
                 className={getResponseClassName(proudAccomplishment, 350)}
@@ -907,7 +870,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="joinReason">
-                {WHY_AKPSI_QUESTION}
+                2. {WHY_AKPSI_QUESTION}
               </label>
               <textarea
                 className={getResponseClassName(joinReason, 350)}
@@ -922,7 +885,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="lifeGoals">
-                {COMMUNITY_CONTRIBUTION_QUESTION}
+                3. {COMMUNITY_CONTRIBUTION_QUESTION}
               </label>
               <textarea
                 className={getResponseClassName(lifeGoals, 150)}
@@ -937,7 +900,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="comfortZone">
-                {COMFORT_ZONE_QUESTION}
+                4. {COMFORT_ZONE_QUESTION}
               </label>
               <textarea
                 className={getResponseClassName(comfortZone, 350)}
@@ -952,7 +915,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="businessType">
-                {JOY_QUESTION}
+                5. {JOY_QUESTION}
               </label>
               <textarea
                 className={getResponseClassName(businessType, 100)}
@@ -967,7 +930,7 @@ export default function NameForm() {
             </div>
             <div className="mb-8">
               <label className={textLabel} htmlFor="karaokeSong">
-                {KARAOKE_SONG_QUESTION}
+                6. {KARAOKE_SONG_QUESTION}
               </label>
               <input
                 className={smallInput}
@@ -979,8 +942,47 @@ export default function NameForm() {
               />
             </div>
             <div className="mb-8">
+              <label className={textLabel} htmlFor="currentClasses">
+                7. {CURRENT_CLASSES_QUESTION}
+              </label>
+              <textarea
+                className={largeInput}
+                id="currentClasses"
+                value={currentClasses}
+                onChange={handleChange(setCurrentClasses)}
+                placeholder="MGT 3. Lecture: TuTh 9:00 AM - 10:20 AM. Discussion: M 3:00 PM"
+                rows={4}
+              />
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="extracurricularActivities">
+                8. {EXTRACURRICULAR_ACTIVITIES_QUESTION}
+              </label>
+              <textarea
+                className={largeInput}
+                id="extracurricularActivities"
+                value={extracurricularActivities}
+                onChange={handleChange(setExtracurricularActivities)}
+                placeholder="Enter your activities"
+                rows={4}
+              />
+            </div>
+            <div className="mb-8">
+              <label className={textLabel} htmlFor="previousRushTerms">
+                9. {PREVIOUS_RUSH_QUESTION}
+              </label>
+              <input
+                className={smallInput}
+                id="previousRushTerms"
+                type="text"
+                value={previousRushTerms}
+                onChange={handleChange(setPreviousRushTerms)}
+                placeholder="Ex. Spring 2026, Fall 2025, Spring 2025, or N/A"
+              />
+            </div>
+            <div className="mb-8">
               <label className={textLabel} htmlFor="additionalDetails">
-                {ADDITIONAL_DETAILS_QUESTION}
+                10. {ADDITIONAL_DETAILS_QUESTION}
               </label>
               <textarea
                 className={largeInput}
