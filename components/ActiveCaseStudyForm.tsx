@@ -82,7 +82,21 @@ export default function ActiveCaseStudyForm({
   const [submissionId, setSubmissionId] = useState(existingSubmissionId);
   const [isAutoSaving, setIsAutoSaving] = useState<boolean>(false);
   const [lastAutoSaved, setLastAutoSaved] = useState<string | null>(null);
-  const isQnaDisabled = false;
+  const isQnaDisabled = true;
+
+  const withDisabledQna = useCallback(
+    (data: Partial<CaseStudyForm>): Partial<CaseStudyForm> => {
+      if (!isQnaDisabled) {
+        return data;
+      }
+      return {
+        ...data,
+        role: "no time",
+        thoughts: "no time",
+      };
+    },
+    [isQnaDisabled]
+  );
 
   const {
     register,
@@ -103,7 +117,7 @@ export default function ActiveCaseStudyForm({
       // Only auto-save if not in multi-form context (handled separately)
       if (isMultiFormContext) return;
 
-      const formData = watch(); // Get fresh form data
+      const formData = withDisabledQna(watch());
 
       // Don't auto-save if form is empty or only has the user's name
       const hasContent = Object.entries(formData).some(
@@ -136,7 +150,7 @@ export default function ActiveCaseStudyForm({
         setIsAutoSaving(false);
       }
     }, 1000), // 1 second delay like NameForm
-    [selectedProspect, submissionId, isMultiFormContext, watch]
+    [selectedProspect, submissionId, isMultiFormContext, watch, withDisabledQna]
   );
 
   // Use React Query hook for current user data
@@ -172,15 +186,15 @@ export default function ActiveCaseStudyForm({
   useEffect(() => {
     if (isMultiFormContext && onFormDataChange && !isUserTypingRef.current) {
       const timeoutId = setTimeout(() => {
-        onFormDataChange(currentFormData);
+        onFormDataChange(withDisabledQna(currentFormData));
       }, 100);
       return () => clearTimeout(timeoutId);
     }
     
     if (storageKey && !isMultiFormContext) {
-      localStorage.setItem(storageKey, JSON.stringify(currentFormData));
+      localStorage.setItem(storageKey, JSON.stringify(withDisabledQna(currentFormData)));
     }
-  }, [currentFormData, isMultiFormContext, onFormDataChange, storageKey]);
+  }, [currentFormData, isMultiFormContext, onFormDataChange, storageKey, withDisabledQna]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -206,7 +220,7 @@ export default function ActiveCaseStudyForm({
         if (isMultiFormContext) {
           // Use setTimeout to get updated form data after the onChange
           setTimeout(() => {
-            const freshData = watch();
+            const freshData = withDisabledQna(watch());
             if (onFormDataChange) {
               onFormDataChange(freshData);
             }
@@ -255,7 +269,7 @@ export default function ActiveCaseStudyForm({
       setValue("role", "no time", { shouldValidate: true, shouldDirty: true });
       setValue("thoughts", "no time", { shouldValidate: true, shouldDirty: true });
     }
-  }, [isQnaDisabled, setValue]);
+  }, [isQnaDisabled, selectedProspect.id, setValue]);
 
 
   const onSubmit = async (data: CaseStudyForm) => {
@@ -402,7 +416,15 @@ export default function ActiveCaseStudyForm({
 
         <div>
           {/* im like the look at me using a loop n shi */}
-          {caseStudyData.map((question, index) => (
+          {caseStudyData.map((question, index) => {
+            if (
+              isQnaDisabled &&
+              (question.label === "role" || question.label === "thoughts")
+            ) {
+              return null;
+            }
+
+            return (
             <div key={index} className="mb-5">
               <label htmlFor={question.name} className="mb-2 block text-foreground">
                 {index <= 3 ? (
@@ -420,25 +442,12 @@ export default function ActiveCaseStudyForm({
               </label>
               <textarea
                 id={question.name}
-                disabled={
-                  isQnaDisabled &&
-                  (question.label === "role" || question.label === "thoughts")
-                }
-                className={`w-full rounded-lg border border-border p-2.5 text-base text-black placeholder:text-gray-500 ${
-                  isQnaDisabled &&
-                  (question.label === "role" || question.label === "thoughts")
-                    ? "cursor-not-allowed bg-gray-100"
-                    : "bg-white"
-                }`}
+                className="w-full rounded-lg border border-border bg-white p-2.5 text-base text-black placeholder:text-gray-500"
                 onInput={handleUserInput}
                 {...registerWithAutoSave(
                   index <= 3 ? `${question.label}_comments` : question.label,
                   {
-                    required:
-                      isQnaDisabled &&
-                      (question.label === "role" || question.label === "thoughts")
-                        ? false
-                        : `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`,
+                    required: `Field  ${index <= 3 ? `${question.name} Comments` : question.name} is required`,
                   }
                 )}
               ></textarea>
@@ -452,7 +461,8 @@ export default function ActiveCaseStudyForm({
                 }`}</p>
               )}{" "}
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="flex flex-col justify-evenly sm:flex-row">
