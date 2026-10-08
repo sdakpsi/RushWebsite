@@ -100,6 +100,23 @@ export function useMultipleCaseForms() {
     ));
   }, []);
 
+  // Reorder forms by dragging one tab onto another.
+  const reorderForms = useCallback((draggedFormId: string, targetFormId: string) => {
+    if (draggedFormId === targetFormId) return;
+
+    setForms(prev => {
+      const draggedIndex = prev.findIndex(form => form.id === draggedFormId);
+      const targetIndex = prev.findIndex(form => form.id === targetFormId);
+
+      if (draggedIndex === -1 || targetIndex === -1) return prev;
+
+      const reordered = [...prev];
+      const [draggedForm] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, draggedForm);
+      return reordered;
+    });
+  }, []);
+
   // Remove a form
   const removeForm = useCallback((formId: string) => {
     setForms(prev => {
@@ -139,6 +156,7 @@ export function useMultipleCaseForms() {
     addForm,
     updateFormData,
     updateFormStatus,
+    reorderForms,
     removeForm,
     getFormsByStatus,
     clearAllForms

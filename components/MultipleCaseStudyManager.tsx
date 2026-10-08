@@ -25,6 +25,7 @@ export default function MultipleCaseStudyManager({
     addForm,
     updateFormData,
     updateFormStatus,
+    reorderForms,
     removeForm,
     clearAllForms
   } = useMultipleCaseForms();
@@ -337,6 +338,7 @@ export default function MultipleCaseStudyManager({
         activeFormId={activeFormId}
         onTabClick={setActiveFormId}
         onTabClose={handleTabClose}
+        onTabReorder={reorderForms}
         autoSaveStatus={autoSaveStatus}
       />
 
