@@ -27,6 +27,7 @@ const RUBRIC_STYLES: Record<string, string> = {
 
 type ProspectSortOption =
   | "comments_case"
+  | "good_comments"
   | "packet_scores"
   | "packet_scores_comments";
 
@@ -35,6 +36,7 @@ const PROSPECT_SORT_OPTIONS: Array<{
   label: string;
 }> = [
   { value: "comments_case", label: "Good Comments + Case" },
+  { value: "good_comments", label: "Good Comments" },
   { value: "packet_scores", label: "Packet Scores" },
   {
     value: "packet_scores_comments",
@@ -131,6 +133,8 @@ function getSortMetricValue(
   sortOption: ProspectSortOption
 ) {
   switch (sortOption) {
+    case "good_comments":
+      return prospect.goodCommentsCount;
     case "packet_scores":
       return getPacketScore(prospect);
     case "packet_scores_comments":
@@ -143,6 +147,8 @@ function getSortMetricValue(
 
 function getSortMetricLabel(sortOption: ProspectSortOption) {
   switch (sortOption) {
+    case "good_comments":
+      return "Good Comments";
     case "packet_scores":
       return "Packet Scores";
     case "packet_scores_comments":
@@ -155,6 +161,8 @@ function getSortMetricLabel(sortOption: ProspectSortOption) {
 
 function getSortMetricDescription(sortOption: ProspectSortOption) {
   switch (sortOption) {
+    case "good_comments":
+      return "Total number of good comment forms";
     case "packet_scores":
       return "Total score from the Scoring tab";
     case "packet_scores_comments":
@@ -184,6 +192,17 @@ function compareByCommentsCase(
   if (a.badCommentsCount !== b.badCommentsCount) {
     return a.badCommentsCount - b.badCommentsCount;
   }
+  return a.prospectName.localeCompare(b.prospectName);
+}
+
+function compareByGoodComments(
+  a: ProspectAnalyticsRow,
+  b: ProspectAnalyticsRow
+) {
+  if (b.goodCommentsCount !== a.goodCommentsCount) {
+    return b.goodCommentsCount - a.goodCommentsCount;
+  }
+
   return a.prospectName.localeCompare(b.prospectName);
 }
 
@@ -223,6 +242,8 @@ function sortProspects(
   const sortedProspects = [...prospects];
 
   switch (sortOption) {
+    case "good_comments":
+      return sortedProspects.sort(compareByGoodComments);
     case "packet_scores":
       return sortedProspects.sort(compareByPacketScores);
     case "packet_scores_comments":
