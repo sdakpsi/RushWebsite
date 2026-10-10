@@ -54,5 +54,28 @@ CREATE POLICY "PICs can manage queue" ON delib_queue
         )
     );
 
+-- Allow self-removal, which marks an entry completed rather than deleting it.
+CREATE POLICY "Actives can complete their own queue entries" ON delib_queue
+    FOR UPDATE TO authenticated
+    USING (
+        user_id = auth.uid()
+        AND status IN ('pending', 'speaking')
+        AND EXISTS (
+            SELECT 1 FROM public.users
+            WHERE users.id = auth.uid()
+            AND users.is_active = true
+        )
+    )
+    WITH CHECK (
+        user_id = auth.uid()
+        AND status = 'completed'
+        AND completed_at IS NOT NULL
+        AND EXISTS (
+            SELECT 1 FROM public.users
+            WHERE users.id = auth.uid()
+            AND users.is_active = true
+        )
+    );
+
 -- Enable realtime subscriptions
 ALTER PUBLICATION supabase_realtime ADD TABLE delib_queue;
