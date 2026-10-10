@@ -58,7 +58,7 @@ export const questions = [
   },
   {
     label:
-      "11. Do you have any questions about the pledging process? (Give them time to answer before moving on) It is expected of all members to complete this pledging process, which takes up the time equivalent of a 4-unit class. If you are given an invitation to join AKPsi, would you be able to commit to weekly meetings on Thursday evenings (past 8pm) and Sunday afternoons? (*pause for answer) What other time commitments do you have this quarter? (If they are a red flag, follow the red flag doc) ",
+      "11. Do you have any questions about the pledge education program? (Give them time to answer before moving on) It is expected of all members to complete this pledge education program, which takes up the time equivalent of a 4-unit class. If you are given an invitation to join AKPsi, would you be able to commit to weekly meetings on Thursday evenings (past 8pm) and Sunday afternoons? (*pause for answer) What other time commitments do you have this quarter? (If they are a red flag, follow the red flag doc) ",
     name: "questionsAndCommitments",
   },
   {

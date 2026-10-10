@@ -415,11 +415,11 @@ export default function ActiveInterviewForm({
               ) : index === 10 ? (
                 <label htmlFor={question.name} className="mb-4 block space-y-2">
                   {script(
-                    "11. Do you have any questions about the pledging process?"
+                    "11. Do you have any questions about the pledge education program?"
                   )}
                   {note("Pause for answer")}
                   {script(
-                    "It is expected of all members to complete this pledging process, which takes up the time equivalent of a 4-unit class. If you are given an invitation to join AKPsi, would you be able to commit to weekly meetings on Thursday evenings (past 8pm) and Sunday afternoons?"
+                    "It is expected of all members to complete this pledge education program, which takes up the time equivalent of a 4-unit class. If you are given an invitation to join AKPsi, would you be able to commit to weekly meetings on Thursday evenings (past 8pm) and Sunday afternoons?"
                   )}
                   {note("Pause for answer")}
                   {script(
@@ -427,7 +427,7 @@ export default function ActiveInterviewForm({
                   )}
                   {note("(If they are a red flag, NOTE HERE)")}
                   {note(
-                    'Be prepared to answer questions like "Do you haze?" Just say "No, we are in compliance with Nationals, but our pledging process requires the time commitment of a 4-unit class". MARK AS RED FLAG if they seem concerned. Please listen and see if they have any other commitments that may take time away from the program... any clubs/jobs/etc. Additionally, note any concerns they may have towards the program'
+                    'Be prepared to answer questions like "Do you haze?" Just say "No, we are in compliance with Nationals, but our pledge education program requires the time commitment of a 4-unit class". MARK AS RED FLAG if they seem concerned. Please listen and see if they have any other commitments that may take time away from the program... any clubs/jobs/etc. Additionally, note any concerns they may have towards the program'
                   )}
                 </label>
               ) : (
